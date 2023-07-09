@@ -2,12 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const ticketSubjectSlice = createSlice({
   name: "ticketSubjects",
-  initialState: {        
-    ticketSubjects:null,
+  initialState: {    
+    allTicketSubjects:null,
+    parentTicketSubjects:null,
+    childTicketSubjects:null      
   },
   reducers: {    
-    setTicketSubjects(state,action){
-      state.ticketSubjects=action.payload.ticketSubjects;
+    setAllTicketSubjects(state,action){
+      state.allTicketSubjects=action.payload.allTicketSubjects;
+    },  
+    setTicketSubjectParents(state,action){
+      state.parentTicketSubjects=action.payload.parentTicketSubjects
+    },  
+    setTicketSubjectChilds(state,action){
+      state.childTicketSubjects=action.payload.childTicketSubjects
     }
   },
 });

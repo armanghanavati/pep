@@ -12,6 +12,6 @@ export async function fetchTicketSubjectData(Token){
         }
       );        
     const result= await response.json();
-    console.log(JSON.stringify(result.data));
+    console.log("TICKET SUBJECKTS="+JSON.stringify(result.data));
     return result.data;
 }; 

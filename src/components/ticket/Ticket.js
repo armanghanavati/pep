@@ -45,16 +45,11 @@ import { fetchTicketPriorityData } from '../../redux/reducers/ticketPriority/tic
 
 import DoneIcon from '../../assets/images/icon/done.png';
 import RejectIcon from '../../assets/images/icon/reject.png'
-import SandTimer from '../../assets/images/icon/sandtimer.png' 
-import RegisterComment from '../../assets/images/icon/register_comment.png' 
-import attachment from '../../assets/images/attachment.png'
+import SendTimerIcon from '../../assets/images/icon/sandtimer.png' 
+import RegisterCommentIcon from '../../assets/images/icon/register_comment.png' 
+import AttachmentIcon from '../../assets/images/icon/attachment.png'
+import CommentAttachmentIcon from '../../assets/images/icon/comment_attachment.png'
 
-
-const renderContent = () => {
-    return (
-        <p>فایل پیوست</p>
-    );
-}
 const notesLabel = { 'aria-label': 'Notes' };
 
 class Ticket extends React.Component {
@@ -74,6 +69,7 @@ class Ticket extends React.Component {
         TicketId:null,
         txtCommnetValue:null,     
         UserIdInsertd:null,
+        UserIdExec:null,
         TicketData:null  ,        
         ToastProps:{
             isToastVisible:false,
@@ -84,6 +80,10 @@ class Ticket extends React.Component {
         Attachments:null,
         stateModalAttachment:false,
         errTicketAttached:'',
+        AttachedCommentFiles:null,
+        commentAttachment:null,
+        stateModalCommentAttachment:false,
+        errTicketCommentAttached:'',
       }
     }
 
@@ -127,10 +127,26 @@ class Ticket extends React.Component {
         }))
     }
     fn_TicketSubjectData= async () =>{
-        const ticketSubjects=await fetchTicketSubjectData();
-        this.props.dispatch(ticketSubjectActions.setTicketSubjects({
-            ticketSubjects                     
-          }));  
+        const allTicketSubjects=await fetchTicketSubjectData();
+        let parentTicketSubjects=[];   
+        allTicketSubjects.forEach((item)=>{
+            if(item.parentId==null)
+                parentTicketSubjects.push(item);           
+        });
+
+        console.log('kkkkkkkkkkkkkkkkkkkkkkkkkk='+JSON.stringify(parentTicketSubjects))
+
+        this.props.dispatch(            
+            ticketSubjectActions.setAllTicketSubjects({
+                allTicketSubjects                     
+            }),                
+        );          
+
+        this.props.dispatch(                        
+            ticketSubjectActions.setTicketSubjectParents({
+                parentTicketSubjects                
+            })           
+        ); 
     }
 
     txtSubject_onChanege=(e)=>{
@@ -143,6 +159,20 @@ class Ticket extends React.Component {
 
     cmbTicketPriority_onChange=(e)=>{
         this.setState({cmbTicketPriorityValue:e})
+    }
+
+    cmbTicketSubjectParent_onChange=(e)=>{
+        const tempall=this.props.TicketSubject.allTicketSubjects
+        let childTicketSubjects=[]
+        tempall.forEach((item)=>{
+            if(e==item.parentId)
+                childTicketSubjects.push(item);
+        });
+        this.props.dispatch(
+            ticketSubjectActions.setTicketSubjectChilds({
+                childTicketSubjects
+            })
+        )
     }
 
     cmbTicketSubject_onChange=(e)=>{
@@ -200,17 +230,18 @@ class Ticket extends React.Component {
             TicketId:e.data.id,
             TicketData:e.data,
             UserIdInsertd:e.data.applicationUserId,
+            UserIdExec:e.data.userIdExec,
         })
     }
 
     fn_UpdateGrids=async(AllTicket,tab) =>{
         const tempAllTickets=AllTicket;
-        console.log('ALLLLLLL='+JSON.stringify(tempAllTickets));
+        // console.log('ALLLLLLL='+JSON.stringify(tempAllTickets));
         let tempTicket=[];
         for(let i=0;i<tempAllTickets.length;i++)
             if(tempAllTickets[i].ticketStatusCode==tab)
                 tempTicket.push(tempAllTickets[i]);                   
-        console.log('NEW GRD='+JSON.stringify(tempTicket));
+        // console.log('NEW GRD='+JSON.stringify(tempTicket));
         this.setState({grdTickets:tempTicket})  
     }
 
@@ -266,6 +297,16 @@ class Ticket extends React.Component {
                 Type:"info",
             }
         })
+
+        if(NewCommnet!=null){
+            const attachObj={
+                AttachedFile:this.state.AttachedCommentFiles,
+                AttachmentId:NewCommnet.id,
+                AttachmentType:"tc",
+                AttachmentName:"ticket"
+            }
+            this.state.AttachedCommentFiles && await UploadFiles(attachObj,this.props.User.token);
+        }
 
         await this.fn_LoadAllTickets();
     }
@@ -323,24 +364,6 @@ class Ticket extends React.Component {
         this.setState({ToastProps:{isToastVisible:false}})
     }
 
-    async attachmentList(attachId){
-        const url=window.apiAddress+"/Ticket/attachmentList?attachId=" + attachId  
-        const Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJqdGkiOiJjMmZiMjJiYS02MjRkLTQ2NmUtYWNlNC02Zjc5N2M5ZTE1ZDEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbmlzdHJhdG9yIiwiZXhwIjoxNjg4NTY4ODQ1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUxMzkiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUxMzkifQ.W7Ao-K7bzjXA8T7d-TcGDy-C0YE-yMu0H9Xqkjd5HKo";     
-        const response = await fetch(
-         url,
-            {
-                method: "GET",              
-                headers: { 
-                    'Authorization': `Bearer ${Token}`
-                },   
-            }
-            
-        );        
-        const result= await response.json();
-        console.log(JSON.stringify(result.data));
-        return result.data;
-    }
-
     setFile=(e)=> {  
         let errMsg="";        
         var files=[]; 
@@ -357,6 +380,22 @@ class Ticket extends React.Component {
         });     
     }
 
+    setCommentFile=(e)=> {  
+        let errMsg="";        
+        var commentfiles=[]; 
+        for(let i=0; i<e.target.files.length; i++){
+             if(e.target.files[i].size > 5000000)
+                 errMsg+="فایل" + e.target.files[i].name + "بیشتر از 5 مگابایت است." + "<br>"
+             else{
+                commentfiles.push(e.target.files[i]);
+             }      
+        }       
+        document.getElementById("ErrCommentTicketAttachments").innerHTML = errMsg; 
+        this.setState({ 
+            AttachedCommentFiles: commentfiles ,            
+        });     
+    }
+    
     //  addMenuItems=(e)=>{
     //     if (e.target == 'header') {
     //         // e.items can be undefined
@@ -397,6 +436,20 @@ class Ticket extends React.Component {
     //         }];
     //     }
     // }
+
+    ModalCommentAttachment_onClickAway=()=>{
+        this.setState({stateModalCommentAttachment:false,})
+    }
+
+    async btnShowAttachmentsTicketComment_onClick(CommentId){
+        const obj={
+            AttachmentId:CommentId
+        } 
+        this.setState({commentAttachment:await AttachmentList(obj,this.props.User.token)});
+        this.setState({
+            stateModalCommentAttachment:true
+        })
+    }
     
     render(){    
         // const  fileName=[];
@@ -418,28 +471,28 @@ class Ticket extends React.Component {
                     rtlEnabled={true}
                 />                  
 
-                <Row className="text-center">
+                <Row className="text-center">   
                     <Col>
                         <Modal style={{direction:'rtl'}} 
-                            isOpen={this.state.stateModalAttachment} 
-                            toggle={this.ModalAttachment_onClickAway} 
+                            isOpen={this.state.stateModalCommentAttachment} 
+                            toggle={this.ModalCommentAttachment_onClickAway} 
                             centered={true}
                             size="lg"
                         >
-                            <ModalHeader  toggle={this.ModalNewTicket_onClickAway} >
-                                فایل ضمیمه
+                            <ModalHeader  toggle={this.ModalCommentAttachment_onClickAway} >
+                                فایل های ضمیمه
                             </ModalHeader>
                             <ModalBody>
                                 <Row className="standardPadding" style={{overflowY:'scroll',maxHeight:'450px',background:'#ffcdcd'}}>
-                                            {this.state.attachment && this.state.attachment.map((item,key)=> 
+                                            {this.state.commentAttachment && this.state.commentAttachment.map((item,key)=> 
                                         
                                                 <Card className="shadow bg-white border pointer" key={key}>
                                                     <Row className="standardPadding">
                                                         <Col xs='auto'>
-                                                            {(item.ext.toLowerCase() == ".jpg" || item.ext.toLowerCase() == ".png" || item.ext.toLowerCase() == ".jpeg") &&  
-                                                                <img src={window.siteAddress + "/" + item.attachType + "/" + item.fileName + item.ext} style={{width:"100px", height:"100px"}}/>
+                                                            {(item.ext.toLowerCase() == ".jpg" || item.ext.toLowerCase() == ".png" || item.ext.toLowerCase() == ".jpeg" || item.ext.toLowerCase() == ".ico") &&  
+                                                                <img src={window.siteAddress + "/" + item.attachmentType + "/" + item.fileName + item.ext} style={{width:"100px", height:"100px"}}/>
                                                             }
-                                                            <p><a href={window.siteAddress + "/" + item.attachType + "/" + item.fileName + item.ext} target="_blank">دانلود فایل {item.ext}</a></p>
+                                                            <p><a href={window.siteAddress + "/" + item.attachmentType + "/" + item.fileName + item.ext} target="_blank">دانلود فایل {item.ext}</a></p>
                                                         </Col>
                                                     </Row>                                             
                                                 </Card>                                  
@@ -447,7 +500,7 @@ class Ticket extends React.Component {
                                 </Row>
                             </ModalBody>
                         </Modal>
-                    </Col>
+                    </Col>                                
                     <Col>
                         <Modal style={{direction:'rtl'}} 
                             isOpen={this.state.stateModalTicketDetail} 
@@ -455,7 +508,7 @@ class Ticket extends React.Component {
                             centered={true}
                             size="lg"
                         >
-                            <ModalHeader  toggle={this.ModalNewTicket_onClickAway} >
+                            <ModalHeader  toggle={this.ModalTicketDetail_onClickAway} >
                                 پاسخ ها
                             </ModalHeader>
                             <ModalBody>
@@ -505,8 +558,17 @@ class Ticket extends React.Component {
                                                 </Row>
                                                 <Row className="standardPadding">
                                                     <Col xs="auto">نام کاربری: {item.userName}</Col>
-                                                    <Col xs='auto'>تاریخ ثبت: {item.persianDate}</Col>    
-                                                </Row>                                                
+                                                    <Col xs='auto'>تاریخ ثبت: {item.persianDate}</Col>                                                        
+                                                    <Col  style={{direction:'ltr'}}>
+                                                        <Button                                                            
+                                                            icon={AttachmentIcon}
+                                                            // type="default"
+                                                            stylingMode="contained"
+                                                            rtlEnabled={true}
+                                                            onClick={()=>this.btnShowAttachmentsTicketComment_onClick(item.id)}
+                                                        />
+                                                    </Col>  
+                                                </Row>                                                                                               
                                             </Card>                                
                                     )}                                                                                
                                 </Row>                                              
@@ -525,18 +587,35 @@ class Ticket extends React.Component {
                                 <Row className="standardPadding">
                                     <Col xs="auto">
                                         <Button
-                                            icon={RegisterComment}
+                                            icon={RegisterCommentIcon}
                                             text="ثبت پاسخ"
                                             type="default"
                                             stylingMode="contained"
                                             rtlEnabled={true}
                                             onClick={this.btnRegisterCommet_onClick}
                                         />
-                                    </Col>                                    
-                                    {this.state.UserIdInsertd != this.props.User.userId && (<>
+                                    </Col>    
+                                    <Col xs="auto">
+                                        <label for="file-AttachmentComment">   
+                                            <Button                                            
+                                                icon={AttachmentIcon}
+                                                text="پیوست فایل"
+                                                type="default"
+                                                stylingMode="outlined"
+                                                rtlEnabled={true}                                            
+                                            />   
+                                        </label>
+                                        {this.state.AttachedCommentFiles && this.state.AttachedCommentFiles.map((item, key)=>
+                                            <Col>{item.name}</Col>
+                                        )}
+                                        <input id="file-AttachmentComment" type="file" multiple style={{display:"none"}} onChange={e=>this.setCommentFile(e)}/>
+                                        <p id="ErrCommentTicketAttachments" style={{ textAlign: "right", color: "red" }}></p> 
+                                    </Col>      
+                                                              
+                                    {this.state.UserIdExec == this.props.User.userId && (<>
                                                                                                 <Col xs="auto">
                                                                                                     <Button                                                                                                        
-                                                                                                        icon={SandTimer}                                                                                                    
+                                                                                                        icon={SendTimerIcon}                                                                                                    
                                                                                                         text="شروع"
                                                                                                         type="success"
                                                                                                         stylingMode="contained"
@@ -594,9 +673,22 @@ class Ticket extends React.Component {
                                     />
                                 </Col>
                                 <Col>
+                                    <Label className="standardLabelFont">بخش</Label>                            
+                                    <SelectBox 
+                                        dataSource={this.props.TicketSubject.parentTicketSubjects}
+                                        displayExpr="subject"    
+                                        placeholder="انتخاب بخش"                            
+                                        valueExpr="id"
+                                        searchEnabled={true}
+                                        rtlEnabled={true}        
+                                        on                        
+                                        onValueChange={this.cmbTicketSubjectParent_onChange}
+                                    />
+                                </Col>
+                                <Col>
                                     <Label className="standardLabelFont">موضوع</Label>                            
                                     <SelectBox 
-                                        dataSource={this.props.TicketSubject.ticketSubjects}
+                                        dataSource={this.props.TicketSubject.childTicketSubjects}
                                         displayExpr="subject"    
                                         placeholder="انتخاب موضوع"                            
                                         valueExpr="id"
@@ -642,26 +734,20 @@ class Ticket extends React.Component {
                                     />
                                 </Col>
                                 <Col xs="auto">                    
-                                    <label for="file-input">     
-                                        <Button
-                                        id="btnAttachment"
-                                            icon={attachment}
-                                            stylingMode="contained"
-                                            rtlEnabled={true}
-                                            width={100}
-                                        />
-                                        <Tooltip
-                                            target="#btnAttachment"
-                                            showEvent="dxhoverstart"
-                                            hideEvent="dxhoverend"
-                                            contentRender={renderContent}
-                                        />
+                                    <label for="file-TicketAttachment">     
+                                        <Button                                            
+                                            icon={AttachmentIcon}
+                                            text="پیوست فایل"
+                                            type="default"
+                                            stylingMode="outlined"
+                                            rtlEnabled={true}                                            
+                                        />                                     
                                     </label>
 
                                     {this.state.AttachedFiles && this.state.AttachedFiles.map((item, key)=>
                                        <Col>{item.name}</Col>
                                     )}
-                                    <input id="file-input" type="file" multiple style={{display:"none"}} onChange={e=>this.setFile(e)}/>
+                                    <input id="file-TicketAttachment" type="file" multiple style={{display:"none"}} onChange={e=>this.setFile(e)}/>
                                     <p id="ErrTicketAttachments" style={{ textAlign: "right", color: "red" }}></p>
                                 </Col>                             
                             </Row>                                         
@@ -855,7 +941,7 @@ class Ticket extends React.Component {
 const mapStateToProps=(state)=>({  
     User:state.users,
     Ticket:state.ticket,
-    TicketSubject:state.ticketSubjects,
+    TicketSubject:state.ticketSubjects,        
     TicketPriority: state.ticketPriority,
 });
 

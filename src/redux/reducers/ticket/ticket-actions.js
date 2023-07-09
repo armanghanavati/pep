@@ -1,20 +1,20 @@
 
-export async function fetchSubjectData(Token){
-    const url=window.apiAddress+"/TicketSubject/ticketSubjectList"            
-    const response = await fetch(
-        url,
-        {
-            method: "GET",              
-            headers: { 
-              'Content-Type': 'application/json' ,
-              'Authorization': `Bearer ${Token}`
-            },
-        }
-      );        
-    const result= await response.json();
-    console.log(JSON.stringify(result.data));
-    return result.data;
-}; 
+// export async function fetchSubjectData(Token){
+//     const url=window.apiAddress+"/TicketSubject/ticketSubjectList"            
+//     const response = await fetch(
+//         url,
+//         {
+//             method: "GET",              
+//             headers: { 
+//               'Content-Type': 'application/json' ,
+//               'Authorization': `Bearer ${Token}`
+//             },
+//         }
+//       );        
+//     const result= await response.json();
+//     // console.log(JSON.stringify(result.data));
+//     return result.data;
+// }; 
 
 
 export async function RegisterNewTicket(Object,Token){
@@ -32,7 +32,7 @@ export async function RegisterNewTicket(Object,Token){
     );        
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('New Ticket Insert'+JSON.stringify(result.data));
+    // console.log('New Ticket Insert'+JSON.stringify(result.data));
     return result.data;  
   }
   return null;
@@ -73,8 +73,7 @@ export async function getTicketDetail(TicketId,Token){
     );        
   console.log(response.statusText);  
   console.log(response.status);  
-  const result= await response.json();    
-  // console.log("Result="+JSON.stringify(result));
+  const result= await response.json();      
   if(response.status==200){        
     console.log('Ticket Detail='+JSON.stringify(result.data));                 
     return result.data;  
@@ -97,7 +96,7 @@ export async function updateTicket(object,Token){
       }
     );        
   const result= await response.json();
-  console.log('result='+JSON.stringify(result));
+  // console.log('result='+JSON.stringify(result));
   if(result.status=="Success"){
     console.log('ticket='+JSON.stringify(result.data));
     return result.data;  
