@@ -1,0 +1,41 @@
+.mainBack{
+    font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
+    background: #f1f1f1;
+    /* background-color: #ffcdcd; */
+    direction:rtl;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;    
+    background-repeat: no-repeat;
+    background-size: 500px 200px; 
+    background-image: url('../images/pep_logo.png');
+    background-position: center center;
+    
+  }
+
+  .standardMargin{
+    margin-left: 20px;
+    padding-top: 20px;
+    min-width: 200px;
+  }
+
+  .mainRow{
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    
+  }
+
+  .standardPaddingRight{
+    padding-right: 10px;
+  }
+
+  .standardPadding{
+    padding: 10px;
+  }
+
+  .standardLabelFont{
+    font-size: 14px;
+    font-weight: lighter;
+  }
