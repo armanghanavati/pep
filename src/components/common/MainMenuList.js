@@ -27,6 +27,9 @@ class MainMenuList extends React.Component {
         if(itemData.name=="mnuCartable"){            
             this.props.dispatch(ticketActions.enableNewTicket());        
         }
+        else if(itemData.name=="mnuHome"){            
+            window.location ="http://coapp:8181/"     
+        }
         else if(itemData.name=="mnuRecieveTickets"){            
             this.props.dispatch(ticketActions.disableNewTicket());        
         }

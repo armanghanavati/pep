@@ -180,45 +180,83 @@ class Ticket extends React.Component {
     }
         
     btnRgisterTicket_onClick=async(e)=>{
-        const obj={
-            parentId:null,            
-            title:this.state.txtTilteValue,
-            ticketSubjectId: this.state.cmbTicketSubjectValue,
-            TicketStatusId: 1,
-            ticketPriorityId: this.state.cmbTicketPriorityValue,
-            // insertDate:null,
-            desc:this.state.txtDescValue,                       
-            applicationUserId: this.props.User.userId
-        }
-        var result=await RegisterNewTicket(obj,"kjhkjh");
-        const rtnAllTicket=await this.fn_LoadAllTickets();        
-        this.setState({
-            stateModalNewTicket:false,
-            ToastProps:{  
-                isToastVisible:true,              
-                Message:"تیکت جدید ثبت گردید.",
-                Type:"success",
-            }
-        })
-
-        if(result!=null){
-            const attachObj={
-                AttachedFile:this.state.AttachedFiles,
-                AttachmentId:result.id,
-                AttachmentType:"tc",
-                AttachmentName:"ticket"
-            }
-            this.state.AttachedFiles && await UploadFiles(attachObj,this.props.User.token);
+        let errMsg="";
+        let flag=true;
+        document.getElementById("errTicketTitle").innerHTML = "";
+        document.getElementById("errTicketSubject").innerHTML = "";
+        document.getElementById("errTicketPriority").innerHTML = "";
+        document.getElementById("errTicketDesc").innerHTML = "";
+        if(this.state.txtTilteValue==null){            
+            document.getElementById("errTicketTitle").innerHTML = "عنوان تیکت را مشخص نمائید."; 
+            flag=false;
         }
 
-        await this.fn_UpdateGrids(rtnAllTicket,'1');
-        
+        if(this.state.cmbTicketSubjectValue==null){            
+            document.getElementById("errTicketSubject").innerHTML = "موضوع تیکت را انتخاب نمائید."; 
+            flag=false;
+        }
+
+        if(this.state.cmbTicketPriorityValue==null){            
+            document.getElementById("errTicketPriority").innerHTML = "اولویت تیکت را انتخاب نمائید."; 
+            flag=false;
+        }
+
+        if(this.state.txtDescValue==null){            
+            document.getElementById("errTicketDesc").innerHTML = "توضیحات تیکت را مشخص نمائید."; 
+            flag=false;
+        }
+
+        if(flag){
+            const obj={
+                parentId:null,            
+                title:this.state.txtTilteValue,
+                ticketSubjectId: this.state.cmbTicketSubjectValue,
+                TicketStatusId: 1,
+                ticketPriorityId: this.state.cmbTicketPriorityValue,
+                // insertDate:null,
+                desc:this.state.txtDescValue,                       
+                applicationUserId: this.props.User.userId
+            }
+            // alert(JSON.stringify(obj))
+            var result=await RegisterNewTicket(obj,"kjhkjh");
+            const rtnAllTicket=await this.fn_LoadAllTickets();        
+            this.setState({
+                stateModalNewTicket:false,
+                ToastProps:{  
+                    isToastVisible:true,              
+                    Message:"تیکت جدید ثبت گردید.",
+                    Type:"success",
+                }
+            })
+
+            if(result!=null){
+                const attachObj={
+                    AttachedFile:this.state.AttachedFiles,
+                    AttachmentId:result.id,
+                    AttachmentType:"tc",
+                    AttachmentName:"ticket"
+                }
+                this.state.AttachedFiles && await UploadFiles(attachObj,this.props.User.token);
+            }
+
+            await this.fn_UpdateGrids(rtnAllTicket,'1');
+        }        
     }
 
     
     grdTicket_onClick= async (e)=>{    
         // alert(e.data.id)    
-        // alert(JSON.stringify(e.data))        
+        // alert(JSON.stringify(e.data))   
+        const objStatus={
+            ticketId: e.data.id,
+            ticketStatusId :5             
+        }  
+        
+        if(this.props.User.userId == e.data.userIdExec && e.data.ticketStatusId == 1){
+            await updateTicket(objStatus,"sd");
+            const rtnAllTicket= await this.fn_LoadAllTickets();                               
+        }
+             
         const tickectDetail=await getTicketDetail(e.data.id);
         const obj={
             AttachmentId:e.data.id
@@ -239,8 +277,12 @@ class Ticket extends React.Component {
         // console.log('ALLLLLLL='+JSON.stringify(tempAllTickets));
         let tempTicket=[];
         for(let i=0;i<tempAllTickets.length;i++)
-            if(tempAllTickets[i].ticketStatusCode==tab)
-                tempTicket.push(tempAllTickets[i]);                   
+            // if(tempAllTickets[i].ticketStatusCode==tab)
+            //     tempTicket.push(tempAllTickets[i]);                   
+            if(tab ==1 && (tempAllTickets[i].ticketStatusCode == 1 || tempAllTickets[i].ticketStatusCode == 5))
+                tempTicket.push(tempAllTickets[i]);
+            else if(tempAllTickets[i].ticketStatusCode==tab)
+                tempTicket.push(tempAllTickets[i]);   
         // console.log('NEW GRD='+JSON.stringify(tempTicket));
         this.setState({grdTickets:tempTicket})  
     }
@@ -325,7 +367,9 @@ class Ticket extends React.Component {
             }
         })
 
-        updateTicket(obj,"sd");
+        await updateTicket(obj,"sd");
+        const rtnAllTicket=await this.fn_LoadAllTickets();                   
+        this.tabTickets_onChange('3',rtnAllTicket)
     }
 
     btnDoneTicket_onClick = async()=>{
@@ -341,10 +385,12 @@ class Ticket extends React.Component {
                 Type:"success",
             }
         })
-        updateTicket(obj,"sd");
+        await updateTicket(obj,"sd");
+        const rtnAllTicket=await this.fn_LoadAllTickets();                   
+        this.tabTickets_onChange('2',rtnAllTicket)
     }
 
-    btnRejectTicket_onClick =()=>{
+    btnRejectTicket_onClick = async ()=>{
         const obj={
             ticketId: this.state.TicketId,
             ticketStatusId :4
@@ -357,7 +403,9 @@ class Ticket extends React.Component {
                 Type:"success",
             }
         })
-        updateTicket(obj,"sd");
+        await updateTicket(obj,"sd");
+        const rtnAllTicket=await this.fn_LoadAllTickets();                   
+        this.tabTickets_onChange('4',rtnAllTicket)
     }
 
     onHidingToast=()=>{
@@ -395,47 +443,6 @@ class Ticket extends React.Component {
             AttachedCommentFiles: commentfiles ,            
         });     
     }
-    
-    //  addMenuItems=(e)=>{
-    //     if (e.target == 'header') {
-    //         // e.items can be undefined
-    //         if (!e.items) e.items = [];
- 
-    //         // Add a custom menu item
-    //         e.items.push({
-    //             text: 'Log Column Caption',
-    //             onItemClick: () => {
-    //                 console.log(e.column.caption);
-    //             }
-    //         });
-    //     }
-    //     if (e.target === "content") {
-    //         e.items = [{
-    //             text: "نمایش ضمایم",
-    //             onItemClick: async ()=>{
-    //                 //e.component.editRow(e.row.rowIndex);
-    //                 console.log(e.row.data.id);
-    //                 this.setState({stateModalAttachment:true,})
-    //                 var result= await this.attachmentList(e.row.data.id);
-    //                 this.setState({
-    //                     attachment:result
-    //                 });     
-    //             }
-    //         },
-    //         {
-    //             text: "ویرایش",
-    //             onItemClick: function () {
-    //                 //e.component.addRow();
-    //             }
-    //         },
-    //         {
-    //             text: "حذف",
-    //             onItemClick: function () {
-    //                 //e.component.deleteRow(e.row.rowIndex);
-    //             }
-    //         }];
-    //     }
-    // }
 
     ModalCommentAttachment_onClickAway=()=>{
         this.setState({stateModalCommentAttachment:false,})
@@ -671,6 +678,7 @@ class Ticket extends React.Component {
                                         valueChangeEvent="keyup"
                                         onValueChanged={this.txtSubject_onChanege}                                 
                                     />
+                                    <Label id="errTicketTitle" className="standardLabelFont errMessage" />
                                 </Col>
                                 <Col>
                                     <Label className="standardLabelFont">بخش</Label>                            
@@ -697,6 +705,7 @@ class Ticket extends React.Component {
                                         on                        
                                         onValueChange={this.cmbTicketSubject_onChange}
                                     />
+                                    <Label id="errTicketSubject" className="standardLabelFont errMessage" />
                                 </Col>
                                 <Col>
                                     <Label className="standardLabelFont">اولویت</Label>                            
@@ -708,6 +717,7 @@ class Ticket extends React.Component {
                                         rtlEnabled={true}                                
                                         onValueChange={this.cmbTicketPriority_onChange}
                                     />
+                                    <Label id="errTicketPriority" className="standardLabelFont errMessage" />
                                 </Col>
                             </Row>
                                         
@@ -720,7 +730,8 @@ class Ticket extends React.Component {
                                         inputAttr={notesLabel}
                                         autoResizeEnabled={true} 
                                         onValueChanged={this.txtDesc_onChange}
-                                    />                                                
+                                    />                      
+                                    <Label id="errTicketDesc" className="standardLabelFont errMessage" />                          
                                 </Col>
                             </Row>
                             <Row className="standardPadding">
@@ -748,7 +759,7 @@ class Ticket extends React.Component {
                                        <Col>{item.name}</Col>
                                     )}
                                     <input id="file-TicketAttachment" type="file" multiple style={{display:"none"}} onChange={e=>this.setFile(e)}/>
-                                    <p id="ErrTicketAttachments" style={{ textAlign: "right", color: "red" }}></p>
+                                    <p id="ErrTicketAttachments" className='errMessage' ></p>
                                 </Col>                             
                             </Row>                                         
                         </ModalBody>                    

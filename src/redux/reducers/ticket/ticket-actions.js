@@ -98,7 +98,7 @@ export async function updateTicket(object,Token){
   const result= await response.json();
   // console.log('result='+JSON.stringify(result));
   if(result.status=="Success"){
-    console.log('ticket='+JSON.stringify(result.data));
+    console.log('ticket Updated='+JSON.stringify(result.data));
     return result.data;  
   }
   return null;

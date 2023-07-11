@@ -39,3 +39,8 @@
     font-size: 14px;
     font-weight: lighter;
   }
+
+  .errMessage{
+    text-align: right;
+    color:rgb(224, 3, 3)
+  }
