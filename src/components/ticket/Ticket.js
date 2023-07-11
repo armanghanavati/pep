@@ -523,7 +523,7 @@ class Ticket extends React.Component {
                                     <>                                                                            
                                         <Row className="standardPadding">                                        
                                             <Col xs='auto'>شماره تیکت : {this.state.TicketData.id}</Col>
-                                            <Col xs='auto'>کاربر درخواست دهنده : {this.state.TicketData.userName}</Col>
+                                            <Col xs='auto'>کاربر درخواست دهنده : {this.state.TicketData.userNameInserted}</Col>
                                             <Col xs='auto'>تاریخ ثبت : {this.state.TicketData.persianDate}</Col>
                                         </Row>                                    
                                         <Row className="standardPadding">
