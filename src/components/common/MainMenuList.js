@@ -11,7 +11,7 @@ import List from 'devextreme-react/list.js';
 import NavigationList from './NavigationList.js';
 
 import { ticketActions } from '../../redux/reducers/ticket/ticket-slice.js';
-
+import { paymentActions } from '../../redux/reducers/payment/payment-slice.js';
 
 class MainMenuList extends React.Component {
     constructor(props) {
@@ -25,16 +25,28 @@ class MainMenuList extends React.Component {
     mnuItem_onClick=(e)=>{
         const { itemData, itemElement, itemIndex } = e;        
         if(itemData.name=="mnuCartable"){            
-            this.props.dispatch(ticketActions.enableNewTicket());        
+            this.props.dispatch(ticketActions.enableNewTicket());  
+            this.props.dispatch(paymentActions.disableConfirmPayment()); 
+            this.props.dispatch(paymentActions.disableRequestPayment());     
         }
         else if(itemData.name=="mnuHome"){            
             window.location ="http://coapp:8181/"     
         }
         else if(itemData.name=="mnuRecieveTickets"){            
-            this.props.dispatch(ticketActions.disableNewTicket());        
+            this.props.dispatch(ticketActions.disableNewTicket());  
         }
         else if(itemData.name=="mnuExit"){              
-            window.location ="http://coapp:8181/"     
+            this.props.dispatch(ticketActions.enableNewTicket());     
+        }
+        else if(itemData.name=="mnuRequestPayment"){
+            this.props.dispatch(paymentActions.enableRequestPayment());
+            this.props.dispatch(paymentActions.disableConfirmPayment());
+            this.props.dispatch(ticketActions.disableNewTicket());
+        }
+        else if(itemData.name=="mnuConfirmPayment"){
+            this.props.dispatch(paymentActions.enableConfirmPayment());
+            this.props.dispatch(paymentActions.disableRequestPayment());
+            this.props.dispatch(ticketActions.disableNewTicket());
         }
     }
 
@@ -44,6 +56,8 @@ class MainMenuList extends React.Component {
         const navigation = [
             { id: 4, text: 'صفحه اصلی',name:'mnuHome', icon: 'home' },
             { id: 2, text: 'کارتابل',name:'mnuCartable', icon: 'product' },
+            { id: 5, text: 'درخواست پرداخت',name:'mnuRequestPayment', icon: 'product' },
+            { id: 6, text: 'تایید پرداخت',name:'mnuConfirmPayment', icon: 'product' },
             // { id: 1, text: 'ثبت تیکت ',name:'mnuRegisterTicket', icon: 'product' },            
             // { id: 3, text: 'تیکت های ارسال شده',name:'mnuSentTickets', icon: 'product' },            
             { id: 5, text: 'خروج',name:'mnuExit', icon: 'product' },
@@ -67,7 +81,7 @@ class MainMenuList extends React.Component {
 }
 
 const mapStateToProps=(state)=>({      
-    stateTicket:state.ticket.stateOfNewTicket 
+    stateTicket:state.ticket.stateOfNewTicket ,
 });
 
 

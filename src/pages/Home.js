@@ -11,9 +11,9 @@ import { locale } from "devextreme/localization";
 import Toolbar, { Item } from 'devextreme-react/toolbar';
 import MainMenuList from '../components/common/MainMenuList';
 import Ticket from '../components/ticket/Ticket'
+import PaymentRequest from '../components/payment/PaymentRequest'
+import PaymentRequestConfirm from '../components/payment/PaymentRequestConfirm';
 import logo from "../assets/images/LOGO.jpg";
-
-import { ticketActions } from '../redux/reducers/ticket/ticket-slice';
 
 class Home extends React.Component {
  
@@ -36,9 +36,19 @@ class Home extends React.Component {
                         (<Col>                    
                             <Ticket />                
                         </Col>)                        
-                    }                               
-                </Row>    
-                 
+                    }     
+
+                    {this.props.stateRequestPayment && 
+                        <Col>
+                            <PaymentRequest />
+                        </Col>
+                    }      
+                    {this.props.stateConfirmPayment && 
+                        <Col>
+                            <PaymentRequestConfirm />
+                        </Col>
+                    }                       
+                </Row>  
             </div>
         )
     }    
@@ -46,7 +56,9 @@ class Home extends React.Component {
 
 const mapStateToProps=(state)=>({  
     user:state.users,
-    stateTicket:state.ticket.stateOfNewTicket 
+    stateTicket:state.ticket.stateOfNewTicket,
+    stateRequestPayment:state.payment.stateOfRequestPayment,
+    stateConfirmPayment:state.payment.stateOfConfirmPayment,
  });
 
 export default connect(mapStateToProps)(Home);
