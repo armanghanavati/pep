@@ -3,6 +3,7 @@ import ticketSlice from './ticket/ticket-slice'
 import userSlice from "./user/user-slice";
 import ticketSubjectSlice from "./ticketSubject/ticketSubject-slice";
 import ticketPrioritySlice from "./ticketPriority/ticketPriority-slice";
+import paymentSlice from "./payment/payment-slice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     users:userSlice.reducer,
     ticketSubjects:ticketSubjectSlice.reducer,
     ticketPriority: ticketPrioritySlice.reducer,
+    payment:paymentSlice.reducer,
   },
 });
 export default store;

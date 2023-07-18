@@ -30,7 +30,21 @@
     "workbox-range-requests": "^6.6.0",
     "workbox-routing": "^6.6.0",
     "workbox-strategies": "^6.6.0",
-    "workbox-streams": "^6.6.0"
+    "workbox-streams": "^6.6.0",
+    "@date-io/date-fns-jalali": "^2.16.0",
+    "@date-io/dayjs": "^2.16.0",
+    "@date-io/jalaali": "^2.16.1",
+    "@emotion/core": "^11.0.0",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.10.2",
+    "@mui/material": "^5.10.2",
+    "@mui/styled-engine-sc": "^5.10.1",
+    "@mui/x-data-grid": "^5.16.0",
+    "@mui/x-date-pickers": "^5.0.7",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
