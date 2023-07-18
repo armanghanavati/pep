@@ -35,6 +35,7 @@ import {
     getAllUserInsertTicket,
     getTicketDetail,
     updateTicket,
+    getTicketExecuters,
 } from '../../redux/reducers/ticket/ticket-actions';
 import { UploadFiles,AttachmentList } from '../../redux/reducers/Attachments/attachment-action';
 import { ticketActions } from '../../redux/reducers/ticket/ticket-slice';
@@ -69,6 +70,7 @@ class Ticket extends React.Component {
         TicketId:null,
         txtCommnetValue:null,     
         UserIdInsertd:null,
+        UserNameExec:null,
         UserIdExec:null,
         TicketData:null  ,        
         ToastProps:{
@@ -251,13 +253,25 @@ class Ticket extends React.Component {
             ticketId: e.data.id,
             ticketStatusId :5             
         }  
+        const ticketExecuters= await getTicketExecuters(e.data.id);
+        // const test=ticketExecuters.find(field=>field.userIdExec==this.props.User.userId).userIdExec;
+        let tempUserNameExec=null;
+        let tempUserIdExec=null;
+        for(let i=0;i<ticketExecuters.length;i++)
+            if(ticketExecuters[i].userIdExec==this.props.User.userId){
+                tempUserNameExec=ticketExecuters[i].userNameExec;
+                tempUserIdExec=ticketExecuters[i].userIdExec;
+                break;                
+            }
+
         
-        if(this.props.User.userId == e.data.userIdExec && e.data.ticketStatusId == 1){
+        if(this.props.User.userId == tempUserIdExec && e.data.ticketStatusId == 1){
             await updateTicket(objStatus,"sd");
             const rtnAllTicket= await this.fn_LoadAllTickets();                               
         }
              
-        const tickectDetail=await getTicketDetail(e.data.id);
+        const tickectDetail=await getTicketDetail(e.data.id);        
+        
         const obj={
             AttachmentId:e.data.id
         }        
@@ -268,7 +282,8 @@ class Ticket extends React.Component {
             TicketId:e.data.id,
             TicketData:e.data,
             UserIdInsertd:e.data.applicationUserId,
-            UserIdExec:e.data.userIdExec,
+            UserNameExec:tempUserNameExec,
+            UserIdExec:tempUserIdExec,
         })
     }
 

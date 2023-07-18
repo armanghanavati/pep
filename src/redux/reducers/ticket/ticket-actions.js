@@ -81,6 +81,25 @@ export async function getTicketDetail(TicketId,Token){
   // return null;
 }
 
+export async function getTicketExecuters(TicketId,Token){  
+  const url=window.apiAddress+"/Ticket/ticketExecuters?ticketId="+TicketId  
+  const response = await fetch(
+      url,
+      {
+          method: "GET",                        
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );          
+  const result= await response.json();      
+  if(response.status==200){        
+    console.log('Ticket Executers='+JSON.stringify(result.data));                 
+    return result.data;  
+  }      
+}
+
 
 export async function updateTicket(object,Token){  
   const url=window.apiAddress+"/Ticket/updateTicketStatus";  
