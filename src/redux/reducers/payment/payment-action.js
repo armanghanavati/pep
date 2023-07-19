@@ -16,7 +16,7 @@ export async function sEPPaymentList(statusCode, Token) {
   }
 
   export async function addSEPPayment(Object,Token){
-    const url=window.apiAddress+"/SEPPayment/addSEPPaymen"              
+    const url=window.apiAddress+"/SEPPayment/addSEPPayment"              
     const response = await fetch(
         url,
         {
@@ -30,7 +30,7 @@ export async function sEPPaymentList(statusCode, Token) {
       );        
     const result= await response.json();
     if(result.status=="Success"){
-      // console.log('New Ticket Insert'+JSON.stringify(result.data));
+      console.log('RESULT OF ADD NEW Payment='+JSON.stringify(result.data));
       return result.data;  
     }
     return null; 
@@ -51,18 +51,18 @@ export async function sEPPaymentList(statusCode, Token) {
       );        
     const result= await response.json();
     if(result.status=="Success"){
-      //console.log('seppayment update'+JSON.stringify(result.data));
+      console.log('seppayment update result='+JSON.stringify(result.data));
       return result.data;  
     }
     return null; 
   }
 
-  export async function confirmSEPPaymentAndSendlink(Object, Token){
+  export async function ConfirmSEPPaymentAndSendlink(Object, Token){
     const url=window.apiAddress+"/SEPPayment/sEPPaymentConfirmAndSendLink"              
     const response = await fetch(
         url,
         {
-            method: "PATCH",              
+            method: "POST",              
             body:JSON.stringify(Object),
             headers: { 
               'Content-Type': 'application/json' ,
@@ -72,7 +72,7 @@ export async function sEPPaymentList(statusCode, Token) {
       );        
     const result= await response.json();
     if(result.status=="Success"){
-      //console.log('seppayment update'+JSON.stringify(result.data));
+      console.log('Confirm PaymentRequest='+JSON.stringify(result.data));
       return result.data;  
     }
     return null; 

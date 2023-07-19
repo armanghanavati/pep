@@ -13,7 +13,7 @@ import {
   Modal,
 } from "reactstrap";
 import Button from '@mui/material/Button';
-import {sEPPaymentList, addSEPPayment, updateSEPPayment, confirmSEPPaymentAndSendlink} from '../../redux/reducers/payment/payment-action'
+import {sEPPaymentList, addSEPPayment, updateSEPPayment, ConfirmSEPPaymentAndSendlink} from '../../redux/reducers/payment/payment-action'
 import DataGrid, {
     Column, Editing, Paging, Lookup, Scrolling,
     FilterRow,
@@ -49,7 +49,7 @@ class PaymentRequestConfirm extends React.Component {
       stateUpdateDelete:true,
       RowSelected:null,
       SEPPaymentId:null,
-      stateDisableConfirm_btn:false,
+      stateDisableConfirm_btn:true,            
     };
   }
 
@@ -137,7 +137,7 @@ class PaymentRequestConfirm extends React.Component {
         documentSerial:this.state.FactorSerial,
         amountPay:(this.state.FactorAmount).toString()
     }   
-    await confirmSEPPaymentAndSendlink(data, "ewrwe");
+    await ConfirmSEPPaymentAndSendlink(data, "ewrwe");
   }
 
   render() {

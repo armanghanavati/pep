@@ -10,11 +10,11 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
-window.apiAddress="http://coapp:9191/api";
-//  window.apiAddress="http://localhost:7142/api"; 
+// window.apiAddress="http://coapp:9191/api";
+ window.apiAddress="http://localhost:7142/api"; 
 
- window.siteAddress="http://coapp:9191";
-//  window.siteAddress="http://localhost:7142";
+//  window.siteAddress="http://coapp:9191";
+ window.siteAddress="http://localhost:7142";
 
 // const store = createStore(rootReducer);
 
