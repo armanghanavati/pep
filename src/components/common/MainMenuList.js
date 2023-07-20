@@ -57,7 +57,7 @@ class MainMenuList extends React.Component {
             { id: 4, text: 'صفحه اصلی',name:'mnuHome', icon: 'home' },
             { id: 2, text: 'کارتابل',name:'mnuCartable', icon: 'product' },
             { id: 5, text: 'درخواست پرداخت',name:'mnuRequestPayment', icon: 'product' },
-            { id: 6, text: 'تایید پرداخت',name:'mnuConfirmPayment', icon: 'product' },
+            // { id: 6, text: 'تایید پرداخت',name:'mnuConfirmPayment', icon: 'product' },
             // { id: 1, text: 'ثبت تیکت ',name:'mnuRegisterTicket', icon: 'product' },            
             // { id: 3, text: 'تیکت های ارسال شده',name:'mnuSentTickets', icon: 'product' },            
             { id: 5, text: 'خروج',name:'mnuExit', icon: 'product' },

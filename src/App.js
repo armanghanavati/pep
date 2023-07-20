@@ -9,6 +9,7 @@ import MainMenuList from './components/common/MainMenuList'
 import VersionCO from './components/common/VersionCO'
 import { Login } from './api/UserApi';
 import { userActions } from './redux/reducers/user/user-slice';
+import { authUser } from './redux/reducers/user/user-actions';
 import { Row } from 'reactstrap';
 
 class App extends React.Component {
@@ -20,7 +21,10 @@ class App extends React.Component {
   }
 
 
-  getParamsFromUrl=()=>{
+
+
+
+  getParamsFromUrl = async ()=>{
     // const params = new Proxy(new URLSearchParams(window.location.search), {      
     //   get: (searchParams, prop) => searchParams.get(prop),
     // });
@@ -29,16 +33,28 @@ class App extends React.Component {
     // let Vals=Object.values(userData);
     // const UserId=Vals[1];    
 
-    var Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoicGVkcmFtIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiI0IiwianRpIjoiYTA3MjMzOWUtYjllZi00MTMxLTkyOGYtZDVhZTA1NmM2YWE3IiwiZXhwIjoxNjg5NzgzODgzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUxMzkiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUxMzkifQ.KhqLz0CFzAIdXqgaXEI9ofNxxNHQLs31QTLcnADlLG4"
-    var UserId=4;
+    //------------------------------------------------------------------    
+    
+    let data={
+      username: "pedram",
+      password: "123456"
+    }
+    let resAuthUser=await authUser(data,"Not Token Generated Yet.")
+    const Token=resAuthUser.token;
+    const userData = jwt (Token);
+    let Vals=Object.values(userData);
+    const UserId=Vals[1];
+    const permissions=resAuthUser.permissions;
+    //------------------------------------------------------------------
 
-    this.saveUserData(UserId,Token);
+    this.saveUserData(UserId,Token,permissions);
   }
 
-  saveUserData=(userId,token)=>{    
+  saveUserData=(userId,token,permissions)=>{    
     this.props.dispatch(userActions.setUser({
       userId,
-      token      
+      token,
+      permissions
     }));   
   }
 

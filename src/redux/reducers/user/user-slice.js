@@ -5,11 +5,13 @@ const userSlice = createSlice({
   initialState: {    
     userId: 777,
     token:"",
+    permissions:null,
   },
   reducers: {
     setUser(state,action){        
         state.userId=action.payload.userId;
         state.token=action.payload.token;
+        state.permissions=action.payload.permissions;
     }    
   },
 });

@@ -36,6 +36,7 @@ import {
   updateSEPPayment,
   ConfirmSEPPaymentAndSendlink,
 } from "../../redux/reducers/payment/payment-action";
+import { checkPermission } from "../../redux/reducers/user/user-actions";
 import Wait from "../common/Wait";
 const filterBuilderPopupPosition = {
   of: window,
@@ -57,17 +58,47 @@ class PaymentRequest extends React.Component {
       RowSelected: null,
       SEPPaymentId: null,
       stateDisable_btnConfirmPaymentRequest:false,
+      stateDisable_btnUpdatePaymentRequest:false,
+      stateDisable_btnAddSEPPayment:false,
+      stateDisable_showSEPPayment:false,
     };
   }
 
   async componentDidMount() {
-    this.fn_UpdateSEPPaymentList();    
+    await this.fn_GetPermissions();
+    this.fn_UpdateSEPPaymentList();       
   }
 
-  fn_UpdateSEPPaymentList=async()=>{
-    this.setState({
-      SEPPayment: await sEPPaymentList(1, "qweqw"),
-    });
+  // fn_GetPermissions=()=>{
+  //   const perm=this.props.User.permissions;
+  //   let enable_btnPeymentConfirm=false;
+  //   if(perm!=null)
+  //     for(let i=0;i<perm.length;i++){
+  //       switch(perm[i].value){
+  //         case 'permission.payment.confirm':this.setState({stateDisable_btnConfirmPaymentRequest:true}); break;
+  //       }
+  //     }   
+  // }
+
+  fn_GetPermissions=()=>{
+    const perm=this.props.User.permissions;
+    let enable_btnPeymentConfirm=false;
+    if(perm!=null)
+      for(let i=0;i<perm.length;i++){
+        switch(perm[i].objetName){
+          case 'payment.confirm':this.setState({stateDisable_btnConfirmPaymentRequest:true});break;
+          case 'payment.update' :this.setState({stateDisable_btnUpdatePaymentRequest:true});break;
+          case 'payment.insert' :this.setState({stateDisable_btnAddSEPPayment:true});break;
+          case 'payment.show' :this.setState({stateDisable_showSEPPayment:true});break;
+        }
+      }   
+  }
+
+  fn_UpdateSEPPaymentList=async()=>{    
+    if(this.state.stateDisable_showSEPPayment)
+      this.setState({
+        SEPPayment: await sEPPaymentList(1,this.props.User.token),
+      });
   }
   OpenCloseWait() {
     this.setState({ stateWait: !this.state.stateWait });
@@ -168,7 +199,8 @@ class PaymentRequest extends React.Component {
     await ConfirmSEPPaymentAndSendlink(data, this.props.User.token);
   }
 
-  render() {
+  render() {       
+
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
         {this.state.stateWait ? (
@@ -185,15 +217,16 @@ class PaymentRequest extends React.Component {
             درخواست پرداخت آنلاین وجه
           </p>
           <Row style={{ padding: "10px" }}>
-            <Col>
-              <Button
-                variant="contained"
-                sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
-                onClick={this.btnNewSEPPayment_onClick}
-              >
-                جدید
-              </Button>
-            </Col>
+            {this.state.stateDisable_btnAddSEPPayment &&
+              <Col>
+                <Button
+                  variant="contained"
+                  sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
+                  onClick={this.btnNewSEPPayment_onClick}
+                >
+                  جدید
+                </Button>
+              </Col>}
           </Row>
           <Row style={{ paddingRight: "10px" }}>
             <Col>
@@ -235,37 +268,42 @@ class PaymentRequest extends React.Component {
           </Row>
           {!this.state.stateUpdateDelete ? (
             <Row style={{ padding: "10px", direction: "rtl" }}>
-              <Col xs="auto">
-                <Button
-                  variant="contained"
-                  sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
-                  onClick={this.btnAddSEPPayment_onClick}
-                >
-                  ثبت درخواست پرداخت
-                </Button>
-              </Col>
-            </Row>
-          ) : (
-            <>
-              <Row style={{ padding: "10px", direction: "rtl" }}>
+              {this.state.stateDisable_btnAddSEPPayment &&
                 <Col xs="auto">
                   <Button
                     variant="contained"
                     sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
-                    onClick={this.btnUpdatePaymentRequest_onClick}
+                    onClick={this.btnAddSEPPayment_onClick}
                   >
-                    ذخیره تغییرات
+                    ثبت درخواست پرداخت
                   </Button>
                 </Col>
-                <Col xs="auto">
-                  <Button variant="contained"
-                      sx={{ fontFamily: 'Tahoma', marginTop: '10px' }}
-                      onClick={this.btnConfirmPaymentRequest_onClick}
-                      disabled={this.state.stateDisable_btnConfirmPaymentRequest}
-                  >
-                      تایید برای پرداخت
-                  </Button>
-                </Col> 
+              }
+            </Row>
+          ) : (
+            <>
+              <Row style={{ padding: "10px", direction: "rtl" }}>
+                {this.state.stateDisable_btnUpdatePaymentRequest &&
+                    <Col xs="auto">
+                      <Button
+                        variant="contained"
+                        sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
+                        onClick={this.btnUpdatePaymentRequest_onClick}
+                      >
+                        ذخیره تغییرات
+                      </Button>
+                    </Col>      
+                }                
+                {this.state.stateDisable_btnConfirmPaymentRequest &&
+                    <Col xs="auto">
+                      <Button variant="contained"
+                          sx={{ fontFamily: 'Tahoma', marginTop: '10px' }}
+                          onClick={this.btnConfirmPaymentRequest_onClick}                      
+                      >
+                          تایید برای پرداخت
+                      </Button>
+                    </Col> 
+                }
               </Row>
               <Row style={{ padding: "10px" }}>
                 <Col>

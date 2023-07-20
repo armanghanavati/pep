@@ -9,7 +9,7 @@ export async function sEPPaymentList(statusCode, Token) {
             },   
         }
         
-    );        
+    );            
     const result= await response.json();
     console.log(JSON.stringify(result.data));
     return result.data;  
@@ -27,7 +27,8 @@ export async function sEPPaymentList(statusCode, Token) {
               'Authorization': `Bearer ${Token}`
             },
         }
-      );        
+      );   
+    
     const result= await response.json();
     if(result.status=="Success"){
       console.log('RESULT OF ADD NEW Payment='+JSON.stringify(result.data));
