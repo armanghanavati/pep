@@ -26,7 +26,7 @@ export const DataGridTicketcolumns = [
     },    
     {
         dataField:"ticketPriorityDesc" ,
-        caption:"وضعیت",
+        caption:"اولویت",
         allowEditing:false
     },  
     {

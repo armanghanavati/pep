@@ -28,10 +28,16 @@ class App extends React.Component {
     const params = new Proxy(new URLSearchParams(window.location.search), {      
       get: (searchParams, prop) => searchParams.get(prop),
     });
-    const Token = params.token;
+    const Token = params.token;    
+    let data={
+      username: params.u,
+      password: params.p
+    }
+    let resAuthUser=await authUser(data,"Not Token Generated Yet.")
     const userData = jwt (Token);
     let Vals=Object.values(userData);
     const UserId=Vals[1];    
+    const permissions=resAuthUser.permissions;
 
     //------------------------------------------------------------------    
     
