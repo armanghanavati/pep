@@ -25,26 +25,26 @@ class App extends React.Component {
 
 
   getParamsFromUrl = async ()=>{
-    // const params = new Proxy(new URLSearchParams(window.location.search), {      
-    //   get: (searchParams, prop) => searchParams.get(prop),
-    // });
-    // const Token = params.token;
-    // const userData = jwt (Token);
-    // let Vals=Object.values(userData);
-    // const UserId=Vals[1];    
+    const params = new Proxy(new URLSearchParams(window.location.search), {      
+      get: (searchParams, prop) => searchParams.get(prop),
+    });
+    const Token = params.token;
+    const userData = jwt (Token);
+    let Vals=Object.values(userData);
+    const UserId=Vals[1];    
 
     //------------------------------------------------------------------    
     
-    let data={
-      username: "pedram",
-      password: "123456"
-    }
-    let resAuthUser=await authUser(data,"Not Token Generated Yet.")
-    const Token=resAuthUser.token;
-    const userData = jwt (Token);
-    let Vals=Object.values(userData);
-    const UserId=Vals[1];
-    const permissions=resAuthUser.permissions;
+    // let data={
+    //   username: "pedram",
+    //   password: "123456"
+    // }
+    // let resAuthUser=await authUser(data,"Not Token Generated Yet.")
+    // const Token=resAuthUser.token;
+    // const userData = jwt (Token);
+    // let Vals=Object.values(userData);
+    // const UserId=Vals[1];
+    // const permissions=resAuthUser.permissions;
     //------------------------------------------------------------------
 
     this.saveUserData(UserId,Token,permissions);
