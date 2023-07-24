@@ -1,3 +1,20 @@
+export async function allSEPPaymentList(statusCode, Token) {
+  const url=window.apiAddress+"/SEPPayment/allSEPPaymentList";    
+  const response = await fetch(
+   url,
+      {
+          method: "GET",              
+          headers: { 
+              'Authorization': `Bearer ${Token}`
+          },   
+      }
+      
+  );            
+  const result= await response.json();
+  console.log('PAYMENT LIST='+JSON.stringify(result.data));
+  return result.data;  
+}
+
 export async function sEPPaymentList(statusCode, Token) {
     const url=window.apiAddress+"/SEPPayment/sEPPaymentList?statusCode=" + statusCode;    
     const response = await fetch(
@@ -11,7 +28,7 @@ export async function sEPPaymentList(statusCode, Token) {
         
     );            
     const result= await response.json();
-    console.log(JSON.stringify(result.data));
+    console.log('PAYMENT LIST='+JSON.stringify(result.data));
     return result.data;  
   }
 

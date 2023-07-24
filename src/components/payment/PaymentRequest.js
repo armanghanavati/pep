@@ -10,8 +10,10 @@ import {
   CardBody,
   CardTitle,
   Label,
-  Modal,
+  TabContent, TabPane, Nav, NavItem, NavLink,  
+  Modal, ModalHeader, ModalBody, ModalFooter 
 } from "reactstrap";
+import classnames from 'classnames';
 import Button from "@mui/material/Button";
 import DataGrid, {
   Column,
@@ -29,8 +31,10 @@ import DataGrid, {
   GroupPanel,
   SearchPanel,
 } from "devextreme-react/data-grid";
+import { Toast } from 'devextreme-react/toast';
 import { connect } from "react-redux";
 import {
+  allSEPPaymentList,
   sEPPaymentList,
   addSEPPayment,
   updateSEPPayment,
@@ -38,12 +42,14 @@ import {
 } from "../../redux/reducers/payment/payment-action";
 import { checkPermission } from "../../redux/reducers/user/user-actions";
 import Wait from "../common/Wait";
-const filterBuilderPopupPosition = {
-  of: window,
-  at: "top",
-  my: "top",
-  offset: { y: 10 },
-};
+import { Gfn_NumberDetect,Gfn_convertENunicode,Gfn_ConvertToPersian } from "../../utiliy/GlobalMethods";
+import { DataGridPaymentcolumns } from "./Payment-Config";
+import { DataGridPageSizes,DataGridDefaultPageSize
+  ,DataGridDefaultHeight 
+  ,ToastTime
+  ,ToastWidth
+} from '../../config/config';
+
 class PaymentRequest extends React.Component {
   constructor(props) {
     super(props);
@@ -51,8 +57,9 @@ class PaymentRequest extends React.Component {
       PaymenterName: null,
       PaymenterMobile: null,
       FactorSerial: null,
-      FactorAmount: null,
+      FactorAmount: null,      
       SEPPayment: null,
+      SEPPaymendGridData:null,
       stateWait: false,
       stateUpdateDelete: true,
       RowSelected: null,
@@ -61,12 +68,19 @@ class PaymentRequest extends React.Component {
       stateDisable_btnUpdatePaymentRequest:false,
       stateDisable_btnAddSEPPayment:false,
       stateDisable_showSEPPayment:false,
+      activeTab:null,
+      ToastProps:{
+        isToastVisible:false,
+        Message:"",
+        Type:"",
+      },
     };
   }
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    this.fn_UpdateSEPPaymentList();       
+    const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
+    this.tabPayment_onChange('1',SEPPAYMENT)   
   }
 
   // fn_GetPermissions=()=>{
@@ -85,7 +99,7 @@ class PaymentRequest extends React.Component {
     let enable_btnPeymentConfirm=false;
     if(perm!=null)
       for(let i=0;i<perm.length;i++){
-        switch(perm[i].objetName){
+        switch(perm[i].objectName){
           case 'payment.confirm':this.setState({stateDisable_btnConfirmPaymentRequest:true});break;
           case 'payment.update' :this.setState({stateDisable_btnUpdatePaymentRequest:true});break;
           case 'payment.insert' :this.setState({stateDisable_btnAddSEPPayment:true});break;
@@ -95,10 +109,13 @@ class PaymentRequest extends React.Component {
   }
 
   fn_UpdateSEPPaymentList=async()=>{    
-    if(this.state.stateDisable_showSEPPayment)
+    if(this.state.stateDisable_showSEPPayment){
+      const SEPPAYMENT=await allSEPPaymentList(1,this.props.User.token)
       this.setState({
-        SEPPayment: await sEPPaymentList(1,this.props.User.token),
+        SEPPayment: SEPPAYMENT,
       });
+      return SEPPAYMENT;
+    }
   }
   OpenCloseWait() {
     this.setState({ stateWait: !this.state.stateWait });
@@ -109,30 +126,76 @@ class PaymentRequest extends React.Component {
   };
 
   txtPaymentMobile_onChange = (params) => {
-    this.setState({ PaymenterMobile: params.target.value });
+    // this.setState({ PaymenterMobile: params.target.value });
+    const num = params.target.value;    
+    const flag=isNaN(num)==false ? false : true;    
+    document.getElementById("errPayerMobile").innerHTML = ""; 
+    if(flag){
+      this.setState({ PaymenterMobile:null});
+      document.getElementById("errPayerMobile").innerHTML = "شماره موبایل باید عددی باشد.";
+    }
+    else
+      this.setState({ PaymenterMobile:num});   
   };
 
   txtFactorSerial_onChange = (params) => {
     this.setState({ FactorSerial: params.target.value });
   };
 
-  txtFactorAmount_onChange = (params) => {
-    this.setState({ FactorAmount: params.target.value });
+  txtFactorAmount_onChange = (params) => {    
+    const num = params.target.value;    
+    const flag=isNaN(num)==false ? false : true;    
+    document.getElementById("errPaymentAmount").innerHTML = ""; 
+    if(flag){
+      this.setState({ FactorAmount:null});
+      document.getElementById("errPaymentAmount").innerHTML = "مبلغ باید عددی باشد"; 
+    }
+    else
+      this.setState({ FactorAmount:num});                       
+    
   };
 
   btnAddSEPPayment_onClick = async () => {
-    const data = {
-      userIdInsert: this.props.User.userId,
-      payerName: this.state.PaymenterName,
-      payerMobile: this.state.PaymenterMobile,
-      documentSerial: this.state.FactorSerial,
-      amountPay: this.state.FactorAmount,
-    };
-    await addSEPPayment(data, this.props.User.token);
-    this.fn_UpdateSEPPaymentList();
+    let flag = true;
+    let errMSG = "";
+    document.getElementById("errPayerName").innerHTML = "";
+    document.getElementById("errPayerMobile").innerHTML = "";
+    document.getElementById("errPaymentAmount").innerHTML = "";    
+    if(this.state.PaymenterName.trim()==''){
+      document.getElementById("errPayerName").innerHTML = "نام پرداخت کننده را وارد نمائید."; 
+      flag=false;
+    }
+    if(this.state.PaymenterMobile==null){
+      document.getElementById("errPayerMobile").innerHTML = "موبایل پرداخت کننده را وارد نمائید."; 
+      flag=false;
+    }
+    if(this.state.FactorAmount==null){
+      document.getElementById("errPaymentAmount").innerHTML = "مبلغ پرداخت را وارد نمائید."; 
+      flag=false;
+    }  
+    if(flag){
+      const data = {
+        userIdInsert: this.props.User.userId,
+        payerName: this.state.PaymenterName,
+        payerMobile: this.state.PaymenterMobile,
+        documentSerial: this.state.FactorSerial,
+        amountPay: this.state.FactorAmount,
+      };
+      await addSEPPayment(data, this.props.User.token);
+      const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
+      this.tabPayment_onChange('1',SEPPAYMENT)  
+      this.setState({        
+        ToastProps:{  
+            isToastVisible:true,              
+            Message:"درخواست پرداخت ثبت گردید.",
+            Type:"success",
+        }
+      })
+      this.fn_UpdateSEPPaymentList();
+    }
   };
 
-  grdSEPPayment_onClickCell = (params) => {
+  grdSEPPayment_onClickRow = (params) => {
     console.log(JSON.stringify(params.data));
     this.setState({
       SEPPaymentId: params.data.id,
@@ -148,9 +211,9 @@ class PaymentRequest extends React.Component {
   btnNewSEPPayment_onClick = () => {
     this.setState({
       PaymenterName: "",
-      PaymenterMobile: "",
+      PaymenterMobile: null,
       FactorSerial: "",
-      FactorAmount: "",
+      FactorAmount: null,
       stateUpdateDelete: false,
     });
   };
@@ -159,6 +222,22 @@ class PaymentRequest extends React.Component {
     let tempSelected = this.state.RowSelected;
     let flag = true;
     let errMSG = "";
+    document.getElementById("errPayerName").innerHTML = "";
+    document.getElementById("errPayerMobile").innerHTML = "";
+    document.getElementById("errPaymentAmount").innerHTML = "";    
+    if(this.state.PaymenterName.trim()==''){
+      document.getElementById("errPayerName").innerHTML = "نام پرداخت کننده را وارد نمائید."; 
+      flag=false;
+    }
+    if(this.state.PaymenterMobile==null){
+      document.getElementById("errPayerMobile").innerHTML = "موبایل پرداخت کننده را وارد نمائید."; 
+      flag=false;
+    }
+    if(this.state.FactorAmount==null){
+      document.getElementById("errPaymentAmount").innerHTML = "مبلغ پرداخت را وارد نمائید."; 
+      flag=false;
+    } 
+
     if (tempSelected.token != null) {
       errMSG +=
         "کاربر گرامی این درخواست در حال انجام می باشد. شما قادر به ویرایش نیستید." +
@@ -180,8 +259,13 @@ class PaymentRequest extends React.Component {
       };
       let tempSEPPayment=[];
       tempSEPPayment.push(await updateSEPPayment(data, this.props.User.token));
+
+      const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
+
+      this.tabPayment_onChange('1',SEPPAYMENT)  
+
       this.setState({
-        SEPPayment: tempSEPPayment,
+        SEPPayment: SEPPAYMENT,
       });
     }
   };
@@ -199,10 +283,45 @@ class PaymentRequest extends React.Component {
     await ConfirmSEPPaymentAndSendlink(data, this.props.User.token);
   }
 
+  tabPayment_onChange=async(tab,allPayment)=> {
+    if (this.state.activeTab !== tab) {                        
+        this.setState({
+          activeTab: tab
+        });                 
+    }   
+    
+    await this.fn_UpdateGrids(allPayment,tab)        
+  }
+
+  fn_UpdateGrids=async(allPayment,tab) =>{
+    const tempAllPayment=allPayment;        
+    let tempPayment=[];
+    for(let i=0;i<tempAllPayment.length;i++)                            
+        // if(tab ==1 && (tempAllPayment[i].sepStatusCode == 1 || tempAllPayment[i].ticketStatusCode == 5))        
+            // tempTicket.push(tempAllPayment[i]);
+        // else 
+        if(tempAllPayment[i].sepStatusCode==tab)
+          tempPayment.push(tempAllPayment[i]);           
+    this.setState({SEPPaymendGridData:tempPayment})  
+  }
+
+  onHidingToast=()=>{
+    this.setState({ToastProps:{isToastVisible:false}})
+  }
+
   render() {       
 
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
+          <Toast
+              visible={this.state.ToastProps.isToastVisible}
+              message={this.state.ToastProps.Message}
+              type={this.state.ToastProps.Type}
+              onHiding={this.onHidingToast}
+              displayTime={ToastTime}
+              width={ToastWidth}
+              rtlEnabled={true}
+          />  
         {this.state.stateWait ? (
           <Row className="text-center">
             <Col style={{ textAlign: "center", marginTop: "10px" }}>
@@ -212,166 +331,319 @@ class PaymentRequest extends React.Component {
         ) : (
           ""
         )}
-        <Card className="shadow bg-white border pointer">
-          <p style={{ padding: "10px" }} className="title">
-            درخواست پرداخت آنلاین وجه
-          </p>
-          <Row style={{ padding: "10px" }}>
-            {this.state.stateDisable_btnAddSEPPayment &&
-              <Col>
-                <Button
-                  variant="contained"
-                  sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
-                  onClick={this.btnNewSEPPayment_onClick}
-                >
-                  جدید
-                </Button>
-              </Col>}
-          </Row>
-          <Row style={{ paddingRight: "10px" }}>
-            <Col>
-              <Label>نام پرداخت کننده</Label>
-              <Input
-                type="text"
-                value={this.state.PaymenterName}
-                onChange={this.txtPaymentName_onChange}
-                placeholder="نام پرداخت کننده"
-              />
-            </Col>
-            <Col>
-              <Label>موبایل پرداخت کننده</Label>
-              <Input
-                type="text"
-                value={this.state.PaymenterMobile}
-                onChange={this.txtPaymentMobile_onChange}
-                placeholder="موبایل پرداخت کننده"
-              />
-            </Col>
-            <Col>
-              <Label>شماره فاکتور</Label>
-              <Input
-                type="text"
-                value={this.state.FactorSerial}
-                onChange={this.txtFactorSerial_onChange}
-                placeholder="شماره فاکتور"
-              />
-            </Col>
-            <Col>
-              <Label>مبلغ پرداختی(ریال)</Label>
-              <Input
-                type="text"
-                value={this.state.FactorAmount}
-                onChange={this.txtFactorAmount_onChange}
-                placeholder="مبلغ پرداختی"
-              />
-            </Col>
-          </Row>
-          {!this.state.stateUpdateDelete ? (
-            <Row style={{ padding: "10px", direction: "rtl" }}>
-              {this.state.stateDisable_btnAddSEPPayment &&
-                <Col xs="auto">
-                  <Button
-                    variant="contained"
-                    sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
-                    onClick={this.btnAddSEPPayment_onClick}
-                  >
-                    ثبت درخواست پرداخت
-                  </Button>
-                </Col>
-              }
-            </Row>
-          ) : (
-            <>
-              <Row style={{ padding: "10px", direction: "rtl" }}>
-                {this.state.stateDisable_btnUpdatePaymentRequest &&
-                    <Col xs="auto">
-                      <Button
-                        variant="contained"
-                        sx={{ fontFamily: "Tahoma", marginTop: "10px" }}
-                        onClick={this.btnUpdatePaymentRequest_onClick}
-                      >
-                        ذخیره تغییرات
-                      </Button>
-                    </Col>      
-                }                
-                {this.state.stateDisable_btnConfirmPaymentRequest &&
-                    <Col xs="auto">
-                      <Button variant="contained"
-                          sx={{ fontFamily: 'Tahoma', marginTop: '10px' }}
-                          onClick={this.btnConfirmPaymentRequest_onClick}                      
-                      >
-                          تایید برای پرداخت
-                      </Button>
-                    </Col> 
-                }
-              </Row>
-              <Row style={{ padding: "10px" }}>
-                <Col>
-                  <p
-                    id="ErrorUpdatePaymentRequest"
-                    style={{ textAlign: "right", color: "red" }}
-                  ></p>
-                </Col>
-              </Row>
-            </>
-          )}
-        </Card>
-        <p></p>
-        <Card className="shadow bg-white border pointer">
-          <p style={{ padding: "10px" }} className="title">
-            درخواست های در انتظار تائید
-          </p>
-          <Row style={{ padding: "10px" }}>
-            <DataGrid
-              id="gridSEPPayment"
-              dataSource={this.state.SEPPayment}
-              keyExpr="id"
-              allowColumnReordering={true}
-              showBorders={true}
-              onRowUpdating={this.grdSEPPayment_onRowUpdating}
-              onCellClick={this.grdSEPPayment_onClickCell}
-              // onCellDblClick={this.onCellDblClick_OrderPointInventory}
-              // onRowPrepared={this.onRowPrepared_OrderPointInventory}
-              // onSelectionChanged={this.onSelectionChanged}
-              rtlEnabled={true}
-              allowColumnResizing={true}
-              columnAutoWidth={true}
-              columnResizingMode="widget"
-              height={500}
-            >
-              <Scrolling
-                rowRenderingMode="virtual"
-                showScrollbar="always"
-                columnRenderingMode="virtual"
-              />
-              <Editing mode="cell" allowUpdating={true} />
-              <FilterRow visible={true} />
-              <FilterPanel visible={true} />
-              <FilterBuilderPopup position={filterBuilderPopupPosition} />
-              <HeaderFilter visible={true} />
-              <Column
-                dataField="payerName"
-                allowEditing={false}
-                caption={"نام پرداخت کننده"}
-              />
-              <Column
-                dataField="payerMobile"
-                allowEditing={false}
-                caption={"موبایل پرداخت کننده"}
-              />
-              <Column
-                dataField="documentSerial"
-                allowEditing={false}
-                caption={"شماره فاکتور"}
-              />
-              <Column
-                dataField="amountPay"
-                allowEditing={false}
-                caption={"مبلغ پرداختی(ریال)"}
-              />
-            </DataGrid>
-          </Row>
-        </Card>
+
+        
+                <Card className="shadow bg-white border pointer">
+                  <Row className="standardPadding">   
+                    <Row>                
+                      <Label>
+                        درخواست پرداخت آنلاین وجه
+                      </Label>                
+                    </Row>
+                    {this.state.stateDisable_btnAddSEPPayment &&
+                      <Row>                
+                        <Col>
+                          <Button
+                            variant="contained"
+                            sx={{ fontFamily: "Tahoma"}}
+                            onClick={this.btnNewSEPPayment_onClick}
+                          >
+                            جدید
+                          </Button>
+                        </Col>
+                      </Row>}
+                      <Row className="standardPadding">
+                        <Col>
+                          <Label>نام پرداخت کننده</Label>
+                          <Input
+                            type="text"
+                            value={this.state.PaymenterName}
+                            onChange={this.txtPaymentName_onChange}
+                            placeholder="نام پرداخت کننده"
+                          />
+                          <Label id="errPayerName" className="standardLabelFont errMessage" />
+                        </Col>
+                        <Col>              
+                          <Label>موبایل پرداخت کننده</Label>
+                          <Input
+                            type="text"
+                            value={this.state.PaymenterMobile}
+                            onChange={this.txtPaymentMobile_onChange}
+                            placeholder="موبایل پرداخت کننده"
+                          />
+                          <Label id="errPayerMobile" className="standardLabelFont errMessage" />
+                        </Col>
+                        <Col>
+                          <Label>شماره سند</Label>
+                          <Input
+                            type="text"
+                            value={this.state.FactorSerial}
+                            onChange={this.txtFactorSerial_onChange}
+                            placeholder="شماره سند"
+                          />
+                        </Col>
+                        <Col>              
+                          <Label>مبلغ پرداختی(ریال)</Label>
+                          <Input
+                            type="text"
+                            value={this.state.FactorAmount}
+                            onChange={this.txtFactorAmount_onChange}
+                            placeholder="مبلغ پرداختی"
+                          />
+                          <Label id="errPaymentAmount" className="standardLabelFont errMessage" />
+                        </Col>
+                      </Row>
+                      {!this.state.stateUpdateDelete ? (
+                          <Row>
+                            {this.state.stateDisable_btnAddSEPPayment &&
+                              <Col xs="auto">
+                                <Button
+                                  variant="contained"
+                                  sx={{ fontFamily: "Tahoma"}}
+                                  onClick={this.btnAddSEPPayment_onClick}
+                                >
+                                  ثبت درخواست پرداخت
+                                </Button>
+                              </Col>
+                            }
+                          </Row>
+                        ) : (
+                          <>
+                            <Row>
+                              {this.state.stateDisable_btnUpdatePaymentRequest &&
+                                  <Col xs="auto">
+                                    <Button
+                                      variant="contained"
+                                      sx={{ fontFamily: "Tahoma"}}
+                                      onClick={this.btnUpdatePaymentRequest_onClick}
+                                    >
+                                      ذخیره تغییرات
+                                    </Button>
+                                  </Col>      
+                              }                
+                              {this.state.stateDisable_btnConfirmPaymentRequest &&
+                                  <Col xs="auto">
+                                    <Button variant="contained"
+                                        sx={{ fontFamily: 'Tahoma'}}
+                                        onClick={this.btnConfirmPaymentRequest_onClick}                      
+                                    >
+                                        تایید برای پرداخت
+                                    </Button>
+                                  </Col> 
+                              }
+                            </Row>
+                            <Row>
+                              <Col>
+                                <p
+                                  id="ErrorUpdatePaymentRequest"
+                                  style={{ textAlign: "right", color: "red" }}
+                                ></p>
+                              </Col>
+                            </Row>
+                          </>
+                        )}  
+                  </Row>   
+                </Card>
+              
+              <p></p>
+            
+                <Card className="shadow bg-white border pointer">
+                  <Row className="standardPadding">
+                    <Row>  
+                      <Label className="title">
+                          لیست درخواست های پرداخت
+                      </Label>
+                    </Row>
+
+                    <Row>
+                      <Nav tabs>
+                        <NavItem>
+                            <NavLink
+                                className={classnames({ active: this.state.activeTab === '1' })}
+                                onClick={() => { this.tabPayment_onChange('1',this.state.SEPPayment); }}
+                                >
+                                ثبت شده ها
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={classnames({ active: this.state.activeTab === '2' })}
+                                onClick={() => { this.tabPayment_onChange('2',this.state.SEPPayment); }}
+                                >
+                                تائید مجوز پرداخت
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={classnames({ active: this.state.activeTab === '3' })}
+                                onClick={() => { this.tabPayment_onChange('3',this.state.SEPPayment); }}
+                                >
+                                  ارسال لینک پرداخت
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={classnames({ active: this.state.activeTab === '4' })}
+                                onClick={() => { this.tabPayment_onChange('4',this.state.SEPPayment); }}
+                                >
+                                  پرداخت شده و منتظر تائید بانک
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={classnames({ active: this.state.activeTab === '9' })}
+                                onClick={() => { this.tabPayment_onChange('9',this.state.SEPPayment); }}
+                                >
+                                  تائید نهایی پرداخت
+                            </NavLink>
+                        </NavItem>                  
+                      </Nav>
+                      <TabContent activeTab={this.state.activeTab}>
+                        <TabPane tabId="1">
+                          <Row className="standardPadding">                    
+                            <DataGrid
+                                dataSource={this.state.SEPPaymendGridData}
+                                defaultColumns={DataGridPaymentcolumns}
+                                showBorders={true}
+                                rtlEnabled={true}
+                                allowColumnResizing={true}
+                                onRowClick={this.grdSEPPayment_onClickRow}                                            
+                                height={DataGridDefaultHeight}
+                            >
+                                <Scrolling rowRenderingMode="virtual"
+                                    showScrollbar="always"
+                                    columnRenderingMode="virtual"
+                                />
+                                
+                                <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                <Pager
+                                    visible={true}
+                                    allowedPageSizes={DataGridPageSizes}
+                                    showPageSizeSelector={true}
+                                    showNavigationButtons={true} 
+                                />
+                                <FilterRow visible={true} />
+                                <FilterPanel visible={true} />                                                                            
+                            </DataGrid>                                                         
+                          </Row>
+                        </TabPane>
+                        <TabPane tabId="2">
+                          <Row className="standardPadding">                    
+                            <DataGrid
+                                dataSource={this.state.SEPPaymendGridData}
+                                defaultColumns={DataGridPaymentcolumns}
+                                showBorders={true}
+                                rtlEnabled={true}
+                                allowColumnResizing={true}
+                                onRowClick={this.grdSEPPayment_onClickRow}                                            
+                                height={DataGridDefaultHeight}
+                            >
+                                <Scrolling rowRenderingMode="virtual"
+                                    showScrollbar="always"
+                                    columnRenderingMode="virtual"
+                                />
+                                
+                                <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                <Pager
+                                    visible={true}
+                                    allowedPageSizes={DataGridPageSizes}
+                                    showPageSizeSelector={true}
+                                    showNavigationButtons={true} 
+                                />
+                                <FilterRow visible={true} />
+                                <FilterPanel visible={true} />                                                                            
+                            </DataGrid>                                                         
+                          </Row>
+                        </TabPane>
+                        <TabPane tabId="3">
+                          <Row className="standardPadding">                    
+                            <DataGrid
+                                dataSource={this.state.SEPPaymendGridData}
+                                defaultColumns={DataGridPaymentcolumns}
+                                showBorders={true}
+                                rtlEnabled={true}
+                                allowColumnResizing={true}
+                                onRowClick={this.grdSEPPayment_onClickRow}                                            
+                                height={DataGridDefaultHeight}
+                            >
+                                <Scrolling rowRenderingMode="virtual"
+                                    showScrollbar="always"
+                                    columnRenderingMode="virtual"
+                                />
+                                
+                                <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                <Pager
+                                    visible={true}
+                                    allowedPageSizes={DataGridPageSizes}
+                                    showPageSizeSelector={true}
+                                    showNavigationButtons={true} 
+                                />
+                                <FilterRow visible={true} />
+                                <FilterPanel visible={true} />                                                                            
+                            </DataGrid>                                                         
+                          </Row>
+                        </TabPane>
+                        <TabPane tabId="4">
+                          <Row className="standardPadding">                    
+                            <DataGrid
+                                dataSource={this.state.SEPPaymendGridData}
+                                defaultColumns={DataGridPaymentcolumns}
+                                showBorders={true}
+                                rtlEnabled={true}
+                                allowColumnResizing={true}
+                                onRowClick={this.grdSEPPayment_onClickRow}                                            
+                                height={DataGridDefaultHeight}
+                            >
+                                <Scrolling rowRenderingMode="virtual"
+                                    showScrollbar="always"
+                                    columnRenderingMode="virtual"
+                                />
+                                
+                                <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                <Pager
+                                    visible={true}
+                                    allowedPageSizes={DataGridPageSizes}
+                                    showPageSizeSelector={true}
+                                    showNavigationButtons={true} 
+                                />
+                                <FilterRow visible={true} />
+                                <FilterPanel visible={true} />                                                                            
+                            </DataGrid>                                                         
+                          </Row>
+                        </TabPane>
+                        <TabPane tabId="9">
+                          <Row className="standardPadding">                    
+                            <DataGrid
+                                dataSource={this.state.SEPPaymendGridData}
+                                defaultColumns={DataGridPaymentcolumns}
+                                showBorders={true}
+                                rtlEnabled={true}
+                                allowColumnResizing={true}
+                                onRowClick={this.grdSEPPayment_onClickRow}                                            
+                                height={DataGridDefaultHeight}
+                            >
+                                <Scrolling rowRenderingMode="virtual"
+                                    showScrollbar="always"
+                                    columnRenderingMode="virtual"
+                                />
+                                
+                                <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                <Pager
+                                    visible={true}
+                                    allowedPageSizes={DataGridPageSizes}
+                                    showPageSizeSelector={true}
+                                    showNavigationButtons={true} 
+                                />
+                                <FilterRow visible={true} />
+                                <FilterPanel visible={true} />                                                                            
+                            </DataGrid>                                                         
+                          </Row>
+                        </TabPane>                  
+                      </TabContent>
+                    </Row>
+                  </Row>
+                </Card>          
+          
       </div>
     );
   }

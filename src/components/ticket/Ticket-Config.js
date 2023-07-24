@@ -34,5 +34,6 @@ export const DataGridTicketcolumns = [
         caption:"تاریخ درج",
         allowEditing:false
     },
+    
    
 ];

@@ -288,17 +288,13 @@ class Ticket extends React.Component {
     }
 
     fn_UpdateGrids=async(AllTicket,tab) =>{
-        const tempAllTickets=AllTicket;
-        // console.log('ALLLLLLL='+JSON.stringify(tempAllTickets));
+        const tempAllTickets=AllTicket;        
         let tempTicket=[];
-        for(let i=0;i<tempAllTickets.length;i++)
-            // if(tempAllTickets[i].ticketStatusCode==tab)
-            //     tempTicket.push(tempAllTickets[i]);                   
+        for(let i=0;i<tempAllTickets.length;i++)                            
             if(tab ==1 && (tempAllTickets[i].ticketStatusCode == 1 || tempAllTickets[i].ticketStatusCode == 5))
                 tempTicket.push(tempAllTickets[i]);
             else if(tempAllTickets[i].ticketStatusCode==tab)
-                tempTicket.push(tempAllTickets[i]);   
-        // console.log('NEW GRD='+JSON.stringify(tempTicket));
+                tempTicket.push(tempAllTickets[i]);           
         this.setState({grdTickets:tempTicket})  
     }
 

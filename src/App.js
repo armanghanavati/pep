@@ -14,8 +14,14 @@ import { Row } from 'reactstrap';
 
 class App extends React.Component {
 
+  constructor(props) {
+    super(props);    
+    this.state={
+      stateRenderComponent:false
+    }
+  }
   componentDidMount= async ()=>{    
-    this.getParamsFromUrl();    
+    await this.getParamsFromUrl();    
     // alert(this.props.user.userId)
     // this.saveUserData(2121,"pedrammamad")
   }
@@ -53,7 +59,8 @@ class App extends React.Component {
     // const permissions=resAuthUser.permissions;
     //------------------------------------------------------------------
 
-    this.saveUserData(UserId,Token,permissions);
+    await this.saveUserData(UserId,Token,permissions);
+    this.setState({stateRenderComponent:true})    
   }
 
   saveUserData=(userId,token,permissions)=>{    
@@ -69,8 +76,9 @@ class App extends React.Component {
     return (    
       <div className='mainBack'>        
       {/* <ComThree /> */} 
-            
-        <Home />      
+
+      
+      {this.state.stateRenderComponent &&  <Home />   }
                
         
       </div>

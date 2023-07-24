@@ -10,6 +10,7 @@ import {
 import { locale } from "devextreme/localization";
 import Toolbar, { Item } from 'devextreme-react/toolbar';
 import MainMenuList from '../components/common/MainMenuList';
+import MainMenu from '../components/common/MainMenu';
 import Ticket from '../components/ticket/Ticket'
 import PaymentRequest from '../components/payment/PaymentRequest'
 import PaymentRequestConfirm from '../components/payment/PaymentRequestConfirm';
@@ -29,8 +30,10 @@ class Home extends React.Component {
                     </Toolbar>
                 </Row>
                 <Row>
-                    <Col xs="auto">
+                    <Col xs="auto">                    
                         <MainMenuList />                        
+                        {/* <MainMenu />               */}
+
                     </Col>
                     {this.props.stateTicket &&
                         (<Col>                    

@@ -1,0 +1,31 @@
+.form {
+    display: flex;
+    background-color: blueviolet;
+  }
+  
+  .form > div,
+  #treeview {
+    display: inline-block;
+    vertical-align: top;
+    background-color: aqua;
+  }
+  
+
+  
+  .log-container .dx-icon-clock {
+    position: relative;
+    top: 1px;
+  }
+  
+  #log {
+    margin-top: 10px;
+  }
+  
+  #log .dx-empty-message {
+    padding-left: 0;
+  }
+  
+  .dx-list-item-content {
+    padding-left: 0;
+  }
+  

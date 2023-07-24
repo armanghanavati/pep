@@ -1,6 +1,9 @@
 import React from 'react';
 import { connect } from "react-redux";
 import "devextreme/dist/css/dx.light.css";
+import TreeList, {
+    Column, ColumnChooser, HeaderFilter, SearchPanel, Selection, Lookup,
+  } from 'devextreme-react/tree-list';
 import Drawer from 'devextreme-react/drawer';
 import {    
     Row,
@@ -9,6 +12,7 @@ import {
 } from 'reactstrap';
 import List from 'devextreme-react/list.js';
 import NavigationList from './NavigationList.js';
+import MainMenu from './MainMenu.js'
 
 import { ticketActions } from '../../redux/reducers/ticket/ticket-slice.js';
 import { paymentActions } from '../../redux/reducers/payment/payment-slice.js';
@@ -21,6 +25,9 @@ class MainMenuList extends React.Component {
         }    
     }
     
+    MainMenu_onClick=(e)=>{
+        alert(JSON.stringify(e.data))
+    }
 
     mnuItem_onClick=(e)=>{
         const { itemData, itemElement, itemIndex } = e;        
@@ -30,7 +37,7 @@ class MainMenuList extends React.Component {
             this.props.dispatch(paymentActions.disableRequestPayment());     
         }
         else if(itemData.name=="mnuHome"){            
-            window.location ="http://coapp:8181/"     
+            window.location ="http://coapp:8181/";     
         }
         else if(itemData.name=="mnuRecieveTickets"){            
             this.props.dispatch(ticketActions.disableNewTicket());  
@@ -56,16 +63,13 @@ class MainMenuList extends React.Component {
         const navigation = [
             { id: 4, text: 'صفحه اصلی',name:'mnuHome', icon: 'home' },
             { id: 2, text: 'کارتابل',name:'mnuCartable', icon: 'product' },
-            { id: 5, text: 'درخواست پرداخت',name:'mnuRequestPayment', icon: 'product' },
-            // { id: 6, text: 'تایید پرداخت',name:'mnuConfirmPayment', icon: 'product' },
-            // { id: 1, text: 'ثبت تیکت ',name:'mnuRegisterTicket', icon: 'product' },            
-            // { id: 3, text: 'تیکت های ارسال شده',name:'mnuSentTickets', icon: 'product' },            
-            { id: 5, text: 'خروج',name:'mnuExit', icon: 'product' },
+            { id: 5, text: 'درخواست پرداخت',name:'mnuRequestPayment', icon: 'product' },            
+            { id: 6, text: 'خروج',name:'mnuExit', icon: 'product' },
           ];
 
         return (
-            <div className="list" style={{ width: '250px' }}>                                
-                <List
+            <div className="list" style={{ width: '250px' }}>                                                
+                <List                
                     dataSource={navigation}
                     hoverStateEnabled={false}
                     activeStateEnabled={false}
@@ -73,6 +77,23 @@ class MainMenuList extends React.Component {
                     className="panel-list dx-theme-accent-as-background-color" 
                     onItemClick={this.mnuItem_onClick}
                 />
+
+
+            {/* <TreeList
+                dataSource={tasks}
+                showBorders={true}
+                columnAutoWidth={true}                
+                keyExpr="Task_ID"
+                parentIdExpr="Task_Parent_ID"
+                // id="tasks"
+                rtlEnabled={true}
+                onRowClick={this.MainMenu_onClick}
+            >
+                <SearchPanel visible={true} />
+                <HeaderFilter visible={true} />                
+
+                <Column dataField="Task_Subject" caption="منو اصلی" />                                       
+            </TreeList> */}
                 
                 
           </div>
