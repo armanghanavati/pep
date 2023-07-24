@@ -45,7 +45,7 @@ class App extends React.Component {
     const UserId=Vals[1];    
     const permissions=resAuthUser.permissions;
 
-    //------------------------------------------------------------------    
+    //-------------------Config For Debug------------------------------    
     
     // let data={
     //   username: "pedram",

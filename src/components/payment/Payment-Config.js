@@ -20,7 +20,7 @@ export const DataGridPaymentcolumns = [
         allowEditing:false
     },    
     {
-        dataField:"sepStatusCode" ,
+        dataField:"sepStatusDesc" ,
         caption:"وضعیت درخواست",
         allowEditing:false
     },

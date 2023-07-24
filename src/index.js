@@ -16,6 +16,8 @@ window.apiAddress="http://coapp:9191/api";
  window.siteAddress="http://coapp:9191";
 //  window.siteAddress="http://localhost:7142";
 
+ window.confirmPayment="http://172.16.1.40:2884/api"
+
 // const store = createStore(rootReducer);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -76,7 +76,7 @@ export async function sEPPaymentList(statusCode, Token) {
   }
 
   export async function ConfirmSEPPaymentAndSendlink(Object, Token){
-    const url=window.apiAddress+"/SEPPayment/sEPPaymentConfirmAndSendLink"              
+    const url=window.confirmPayment+"/SEPPayment/sEPPaymentConfirmAndSendLink"              
     const response = await fetch(
         url,
         {
