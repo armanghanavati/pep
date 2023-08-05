@@ -31,32 +31,32 @@ class App extends React.Component {
 
 
   getParamsFromUrl = async ()=>{
-    const params = new Proxy(new URLSearchParams(window.location.search), {      
-      get: (searchParams, prop) => searchParams.get(prop),
-    });
-    const Token = params.token;    
-    let data={
-      username: params.u,
-      password: params.p
-    }
-    let resAuthUser=await authUser(data,"Not Token Generated Yet.")
-    const userData = jwt (Token);
-    let Vals=Object.values(userData);
-    const UserId=Vals[1];    
-    const permissions=resAuthUser.permissions;
+    // const params = new Proxy(new URLSearchParams(window.location.search), {      
+    //   get: (searchParams, prop) => searchParams.get(prop),
+    // });
+    // const Token = params.token;    
+    // let data={
+    //   username: params.u,
+    //   password: params.p
+    // }
+    // let resAuthUser=await authUser(data,"Not Token Generated Yet.")
+    // const userData = jwt (Token);
+    // let Vals=Object.values(userData);
+    // const UserId=Vals[1];    
+    // const permissions=resAuthUser.permissions;
 
     //-------------------Config For Debug------------------------------    
     
-    // let data={
-    //   username: "pedram",
-    //   password: "123456"
-    // }
-    // let resAuthUser=await authUser(data,"Not Token Generated Yet.")
-    // const Token=resAuthUser.token;
-    // const userData = jwt (Token);
-    // let Vals=Object.values(userData);
-    // const UserId=Vals[1];
-    // const permissions=resAuthUser.permissions;
+    let data={
+      username: "pedram",
+      password: "123456"
+    }
+    let resAuthUser=await authUser(data,"Not Token Generated Yet.")
+    const Token=resAuthUser.token;
+    const userData = jwt (Token);
+    let Vals=Object.values(userData);
+    const UserId=Vals[1];
+    const permissions=resAuthUser.permissions;
     //------------------------------------------------------------------
 
     await this.saveUserData(UserId,Token,permissions);
