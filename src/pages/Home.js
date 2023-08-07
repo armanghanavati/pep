@@ -30,12 +30,12 @@ class Home extends React.Component {
                     </Toolbar>
                 </Row>
                 <Row>
-                    <Col xs="auto">                    
-                        <MainMenuList />                        
-                        {/* <MainMenu />               */}
+                    <Col>                    
+                        {/* <MainMenuList />                         */}
 
+                        <MainMenu />              
                     </Col>
-                    {this.props.stateTicket &&
+                    {/* {this.props.stateTicket &&
                         (<Col>                    
                             <Ticket />                
                         </Col>)                        
@@ -50,7 +50,7 @@ class Home extends React.Component {
                         <Col>
                             <PaymentRequestConfirm />
                         </Col>
-                    }                       
+                    }                        */}
                 </Row>  
             </div>
         )

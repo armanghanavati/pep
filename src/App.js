@@ -78,7 +78,7 @@ class App extends React.Component {
       {/* <ComThree /> */} 
 
       
-      {this.state.stateRenderComponent &&  <Home />   }
+      {this.state.stateRenderComponent &&  <Home />   }      
                
         
       </div>
@@ -91,5 +91,11 @@ const mapStateToProps=(state)=>({
   user:state.users
 });
 
-
 export default connect(mapStateToProps)(App);
+
+
+
+
+
+
+

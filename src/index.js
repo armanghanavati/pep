@@ -9,12 +9,13 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { BrowserRouter } from 'react-router-dom'
 
-window.apiAddress="http://coapp:9191/api";
-//  window.apiAddress="http://localhost:7142/api"; 
+// window.apiAddress="http://coapp:9191/api";
+ window.apiAddress="http://localhost:7142/api"; 
 
- window.siteAddress="http://coapp:9191";
-//  window.siteAddress="http://localhost:7142";
+//  window.siteAddress="http://coapp:9191";
+ window.siteAddress="http://localhost:7142";
 
  window.confirmPayment="http://172.16.1.40:2884/api"
 
@@ -22,9 +23,11 @@ window.apiAddress="http://coapp:9191/api";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <BrowserRouter>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </BrowserRouter>
 );
 
 // If you want your app to work offline and load faster, you can change

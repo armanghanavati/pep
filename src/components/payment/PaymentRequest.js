@@ -78,9 +78,9 @@ class PaymentRequest extends React.Component {
   }
 
   async componentDidMount() {
-    await this.fn_GetPermissions();
-    const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
-    this.tabPayment_onChange('1',SEPPAYMENT)   
+    // await this.fn_GetPermissions();
+    // const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
+    // this.tabPayment_onChange('1',SEPPAYMENT)   
   }
 
   // fn_GetPermissions=()=>{
