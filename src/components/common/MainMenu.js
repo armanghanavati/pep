@@ -129,7 +129,7 @@ class MainMenu extends React.Component {
     // alert('Permissions='+JSON.stringify(tempMainMenu));
     let convertedPerm=await this.fn_ConvertLinkComponent(tempMainMenu);   
     this.setState({MainMenuData:convertedPerm});    
-    console.log('Permissions='+JSON.stringify(convertedPerm));
+    // console.log('Permissions='+JSON.stringify(convertedPerm));
     return convertedPerm;
   }
 
@@ -155,10 +155,14 @@ class MainMenu extends React.Component {
 
   render() {
     const { currentItem } = this.state;
+    const MAIN_MENU_ATTR = {  
+      class: 'mainMenuStyle'
+    }
+
     return (
         <>
           <Row>
-            <Col xs='auto' style={{backgroundColor:'#34bdff',color:'white',height:'94vh'}}>
+            <Col xs='auto' style={{backgroundColor:'#0d62cb',color:'white',height:'94vh'}}>
               <div style={{paddingTop:'10px'}}>
                 <TreeView id="simple-treeview"
                     items={this.state.MainMenuData}
@@ -168,9 +172,11 @@ class MainMenu extends React.Component {
                     keyExpr="Id"
                     width={300}                
                     rtlEnabled={true}
-                    selectionMode='single'                
+                    selectionMode='single'   
+                    style={{}}                                 
                     searchEnabled={true}                                 
-                    onItemClick={this.mnuMainMenu_onClick}                                      
+                    onItemClick={this.mnuMainMenu_onClick}   
+                    elementAttr={MAIN_MENU_ATTR}                         
                 />                 
               </div>
             </Col>

@@ -75,12 +75,8 @@ class App extends React.Component {
   render(){
     return (    
       <div className='mainBack'>        
-      {/* <ComThree /> */} 
-
-      
-      {this.state.stateRenderComponent &&  <Home />   }      
-               
-        
+      {/* <ComThree /> */}       
+        {this.state.stateRenderComponent &&  <Home />   }                             
       </div>
       
     );

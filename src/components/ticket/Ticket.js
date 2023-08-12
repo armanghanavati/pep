@@ -90,10 +90,10 @@ class Ticket extends React.Component {
     }
 
     async componentDidMount(){     
-        // const rtnAllTicket=await this.fn_LoadAllTickets();        
-        // await this.fn_TicketPriorityData();
-        // await this.fn_TicketSubjectData();           
-        // this.tabTickets_onChange('1',rtnAllTicket)
+        const rtnAllTicket=await this.fn_LoadAllTickets();        
+        await this.fn_TicketPriorityData();
+        await this.fn_TicketSubjectData();           
+        this.tabTickets_onChange('1',rtnAllTicket)
     }
 
     fn_showNotifyMessage = (msg,typeNotify) => {
