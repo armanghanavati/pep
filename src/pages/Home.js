@@ -9,10 +9,7 @@ import {
 } from 'reactstrap';
 import { locale } from "devextreme/localization";
 import Toolbar, { Item } from 'devextreme-react/toolbar';
-import MainMenuList from '../components/common/MainMenuList';
 import MainMenu from '../components/common/MainMenu';
-import Ticket from '../components/ticket/Ticket'
-import PaymentRequest from '../components/payment/PaymentRequest'
 import logo from "../assets/images/LOGO.jpg";
 
 class Home extends React.Component {
@@ -29,27 +26,9 @@ class Home extends React.Component {
                     </Toolbar>
                 </Row>
                 <Row>
-                    <Col>                    
-                        {/* <MainMenuList />                         */}
-
+                    <Col>                                            
                         <MainMenu />              
-                    </Col>
-                    {/* {this.props.stateTicket &&
-                        (<Col>                    
-                            <Ticket />                
-                        </Col>)                        
-                    }     
-
-                    {this.props.stateRequestPayment && 
-                        <Col>
-                            <PaymentRequest />
-                        </Col>
-                    }      
-                    {this.props.stateConfirmPayment && 
-                        <Col>
-                            <PaymentRequestConfirm />
-                        </Col>
-                    }                        */}
+                    </Col>           
                 </Row>  
             </div>
         )

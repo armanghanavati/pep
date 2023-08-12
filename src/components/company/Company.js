@@ -76,11 +76,11 @@ class Company extends React.Component{
   }
 
   fn_updateGrid=async()=>{
-    if(this.state.stateDisable_showCompany){
-    this.setState({
-        CompanyGridData: await companyList(this.props.User.token
-            )});
-        }
+    if(this.state.stateDisable_showCompany)
+      this.setState({
+        CompanyGridData: await companyList(this.props.User.token)
+      });
+      
   }
 
   fn_GetPermissions=()=>{

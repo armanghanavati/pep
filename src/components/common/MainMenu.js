@@ -25,34 +25,6 @@ var permTest=[
       "linkComponent":"<Ticket />",
       "linkPath":"/Ticket"
   },
-  {
-      "id": 0,
-      "objectId": 4,
-      "objectName": "order.show",
-      "permissionName": "show",
-      "access": "order.show",
-      "objectTitle": "سفارشات",
-      "objectParentId": null,
-      "objectTreeTypeId": 1,
-      "objectTreeTypeName": "MainMenu",
-      "linkName":null,
-      "linkComponent":"",
-      "linkPath":null
-  },
-  {
-      "id": 0,
-      "objectId": 5,
-      "objectName": "order_inv.show",
-      "permissionName": "show",
-      "access": "order_inv.show",
-      "objectTitle": "سفارش از انبار",
-      "objectParentId": 4,
-      "objectTreeTypeId": 1,
-      "objectTreeTypeName": "MainMenu",
-      "linkName":"PaymentRequest",
-      "linkComponent":"<PaymentRequest />",
-      "linkPath":"/PaymentRequest"
-  }
 ]
 
 class MainMenu extends React.Component {
@@ -95,22 +67,18 @@ class MainMenu extends React.Component {
       if(REAL_COMPONENT[i].strComponent==linkParams)
         this.setState({linkComponent:REAL_COMPONENT[i].orgComponent})
   }
-  fn_ConvertLinkComponent=async(perm)=>{
-    // let temp=permTest;
+  fn_ConvertLinkComponent=async(perm)=>{    
     let temp=perm;
     for(let i=0;i<temp.length;i++)
       for(let j=0;j<REAL_COMPONENT.length;j++)
         if(temp[i].LinkComponent==REAL_COMPONENT[j].strComponent){   
-          temp[i].LinkComponent=REAL_COMPONENT[j].orgComponent;   
-          // alert('test')
-        }               
-    // permTest=temp  
+          temp[i].LinkComponent=REAL_COMPONENT[j].orgComponent;             
+        }                   
     return temp;  
   }
 
   getPermission=async()=>{
-    let tempPermission=this.props.User.permissions;
-    // let tempPermission=permTest;
+    let tempPermission=this.props.User.permissions;    
     let tempMainMenu=[];
     if(tempPermission!=null)
     for(let i=0;i<tempPermission.length;i++)
@@ -179,10 +147,9 @@ class MainMenu extends React.Component {
                     elementAttr={MAIN_MENU_ATTR}                         
                 />                 
               </div>
-            </Col>
-            {/* {currentItem.LinkName!==null ? */}
+            </Col>            
               <Col>        
-                {/* <p id="PermissionDeny" style={{textAlign:'center',padding:'30px',color:'red',fontSize:'20px'}} ></p>     */}
+              {/* <p id="PermissionDeny" style={{textAlign:'center',padding:'30px',color:'red',fontSize:'20px'}} ></p>     */}
                 <div style={{color:'black'}}>                   
                   {/* <Link id='lnkRoute' to={this.state.currentItem.LinkPath}></Link>                                
                   <Routes>                                                  
@@ -193,8 +160,7 @@ class MainMenu extends React.Component {
                     <Route exact path={this.state.linkPath} element={this.state.linkComponent}></Route>            
                   </Routes>
                 </div>
-              </Col> 
-             {/* : null}  */}
+              </Col>              
           </Row>         
       </>
     );

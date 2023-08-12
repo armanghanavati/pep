@@ -78,21 +78,17 @@ class Position extends React.Component{
     await this.fn_companyList(); 
   }
  
-  fn_companyList=async()=>{
-    const COMPANYLIST= await companyList(this.props.User.token);
-    let company=[]; 
-    COMPANYLIST.forEach((item)=>{
-      company.push(item);           
-  });
-  await this.props.dispatch(companyActions.setCompany({
-    company:company,
-  }));
+  fn_companyList=async()=>{    
+    await this.props.dispatch(companyActions.setCompany({
+      company:await companyList(this.props.User.token)
+    }));
   }
+
   fn_updateGrid=async()=>{
     if(this.state.stateDisable_showPosition){
-    this.setState({
+      this.setState({
         PositionGridData: await positionList(this.props.User.token)});
-        }
+      }
   }
 
   fn_GetPermissions=()=>{

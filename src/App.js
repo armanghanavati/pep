@@ -5,7 +5,6 @@ import 'devextreme/dist/css/dx.light.css';
 import { connect } from "react-redux";
 import jwt from 'jwt-decode' 
 import Home from './pages/Home'
-import MainMenuList from './components/common/MainMenuList'
 import VersionCO from './components/common/VersionCO'
 import { Login } from './api/UserApi';
 import { userActions } from './redux/reducers/user/user-slice';
