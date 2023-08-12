@@ -111,7 +111,6 @@ class MainMenu extends React.Component {
   getPermission=async()=>{
     let tempPermission=this.props.User.permissions;
     // let tempPermission=permTest;
-    
     let tempMainMenu=[];
     if(tempPermission!=null)
     for(let i=0;i<tempPermission.length;i++)
