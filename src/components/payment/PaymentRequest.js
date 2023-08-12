@@ -78,9 +78,9 @@ class PaymentRequest extends React.Component {
   }
 
   async componentDidMount() {
-    // await this.fn_GetPermissions();
-    // const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
-    // this.tabPayment_onChange('1',SEPPAYMENT)   
+    await this.fn_GetPermissions();
+    const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
+    this.tabPayment_onChange('1',SEPPAYMENT)   
   }
 
   // fn_GetPermissions=()=>{
@@ -96,6 +96,7 @@ class PaymentRequest extends React.Component {
 
   fn_GetPermissions=()=>{
     const perm=this.props.User.permissions;
+    console.log('ALL PERMISSION='+JSON.stringify(perm));
     let enable_btnPeymentConfirm=false;
     if(perm!=null)
       for(let i=0;i<perm.length;i++){
@@ -294,7 +295,7 @@ class PaymentRequest extends React.Component {
   }
 
   fn_UpdateGrids=async(allPayment,tab) =>{
-    const tempAllPayment=allPayment;        
+    const tempAllPayment=allPayment!==null ? allPayment : [];        
     let tempPayment=[];
     for(let i=0;i<tempAllPayment.length;i++)                            
         // if(tab ==1 && (tempAllPayment[i].sepStatusCode == 1 || tempAllPayment[i].ticketStatusCode == 5))        
