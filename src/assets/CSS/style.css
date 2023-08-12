@@ -31,6 +31,10 @@
     padding-right: 10px;
   }
 
+  .standardMarginRight{
+    margin-right: 10px;
+  }
+
   .standardPadding{
     padding: 10px;
   }
@@ -42,8 +46,7 @@
 
   .mainMenuStyle{
     font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 14px;    
     color: rgb(179, 248, 188);
   }
 
