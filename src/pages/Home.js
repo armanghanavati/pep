@@ -13,7 +13,6 @@ import MainMenuList from '../components/common/MainMenuList';
 import MainMenu from '../components/common/MainMenu';
 import Ticket from '../components/ticket/Ticket'
 import PaymentRequest from '../components/payment/PaymentRequest'
-import PaymentRequestConfirm from '../components/payment/PaymentRequestConfirm';
 import logo from "../assets/images/LOGO.jpg";
 
 class Home extends React.Component {
