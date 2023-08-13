@@ -6,6 +6,8 @@ import ticketPrioritySlice from "./ticketPriority/ticketPriority-slice";
 import paymentSlice from "./payment/payment-slice";
 import companySlice from "./company/company-slice";
 import locationSlice from "./location/location-slice";
+import supplierSlice from "./supplier/supplier-slice";
+import orderInventorySlice from "./orderInventory/orderInventory-slice";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +17,9 @@ const store = configureStore({
     ticketPriority: ticketPrioritySlice.reducer,
     payment:paymentSlice.reducer,
     companies:companySlice.reducer,
-    locations:locationSlice.reducer
+    locations:locationSlice.reducer,
+    suppliers:supplierSlice.reducer,
+    orderInventorys:orderInventorySlice.reducer
   },
 });
 export default store;

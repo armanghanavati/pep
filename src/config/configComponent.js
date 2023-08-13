@@ -4,6 +4,7 @@ import Company from '../components/company/Company'
 import Position from '../components/position/Position'
 import Location from '../components/location/Location'
 import Supplier from '../components/supplier/Supplier';
+import OrdersInventory from '../pages/OrdersInventory';
 
 
 export const REAL_COMPONENT=[
@@ -30,5 +31,9 @@ export const REAL_COMPONENT=[
   {
     strComponent:"Supplier",
     orgComponent:<Supplier />
+  },
+  {
+    strComponent:"OrdersInventory",
+    orgComponent:<OrdersInventory />
   },
 ]
