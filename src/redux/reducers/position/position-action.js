@@ -1,5 +1,5 @@
-export async function positionList(Token){
-    const url=window.apiAddress+"/Position/positionList"  
+export async function positionList(companyId, Token){
+    const url=window.apiAddress+"/Position/positionList?companyId=" + companyId  
     const response = await fetch(
         url,
         {
@@ -58,5 +58,25 @@ export async function updatePosition(Object, Token){
     console.log('position update result='+JSON.stringify(result.data));
     return result.data;  
   }
-  return null; 
+  return 0; 
+}
+
+export async function deletePosition(positionId, Token){
+  const url=window.apiAddress+"/Position/deletePosition?positionId=" + positionId         
+  const response = await fetch(
+      url,
+      {
+          method: "DELETE",              
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('Position delete result='+JSON.stringify(result.data));
+    return result.message;  
+  }
+  return 0; 
 }

@@ -1,5 +1,5 @@
-export async function locationList(Token){
-    const url=window.apiAddress+"/Location/locationList"  
+export async function locationList(comapnyId, Token){
+    const url=window.apiAddress+"/Location/locationList?companyId=" + comapnyId;  
     const response = await fetch(
         url,
         {
@@ -12,7 +12,7 @@ export async function locationList(Token){
       );        
     const result= await response.json();
     if(result.status=="Success"){
-      //console.log('All company'+JSON.stringify(result.data));
+      console.log('All location'+JSON.stringify(result.data));
       return result.data;  
     }
     return null;
@@ -58,5 +58,25 @@ export async function updateLocation(Object, Token){
     console.log('Location update result='+JSON.stringify(result.data));
     return result.data;  
   }
-  return null; 
+  return 0; 
+}
+
+export async function deleteLocation(locationId, Token){
+  const url=window.apiAddress+"/Location/deleteLocation?locationId=" + locationId         
+  const response = await fetch(
+      url,
+      {
+          method: "DELETE",              
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('Location delete result='+JSON.stringify(result.data));
+    return result.message;  
+  }
+  return 0; 
 }

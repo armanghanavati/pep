@@ -57,5 +57,25 @@ export async function updateCompany(Object, Token){
     console.log('company update result='+JSON.stringify(result.data));
     return result.data;  
   }
-  return null; 
+  return 0; 
+}
+
+export async function deleteCompany(companyId, Token){
+  const url=window.apiAddress+"/Company/deleteCompany?companyId=" + companyId              
+  const response = await fetch(
+      url,
+      {
+          method: "DELETE",              
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('company delete result='+JSON.stringify(result.data));
+    return result.message;  
+  }
+  return 0; 
 }
