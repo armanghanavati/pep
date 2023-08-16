@@ -49,6 +49,11 @@ import {
   ToastWidth,
 } from "../../config/config";
 
+import { 
+    itemListCombo 
+} from "../../redux/reducers/item/item-action";
+import { itemActions } from "../../redux/reducers/item/item-slice";
+
 import SearchIcon from '../../assets/images/icon/search.png'
 
 const products = [
@@ -87,9 +92,28 @@ class OrderInventory extends React.Component {
     };
   }
 
+  async componentDidMount(){
+    await this.fn_CheckRequireState();
+  }
+
+  fn_CheckRequireState=async()=>{
+    if(this.props.Item.itemCombo==null){
+        let itemCombo=await itemListCombo(this.props.User.token);
+        this.props.dispatch(            
+            itemActions.setItemCombo({
+                itemCombo                    
+            }),                
+        );          
+    }        
+  }
+
   cmbRetailStoreGroup_onChange = (e) => {
     alert(e);
   };
+
+  cmbItem_onChange=(e)=>{
+    alert(e)
+  }
 
   render() {
     return (
@@ -149,9 +173,9 @@ class OrderInventory extends React.Component {
               <Col>
                 <Label className="standardLabelFont">کالا</Label>
                 <TagBox
-                  dataSource={this.props.Supplier.activeSuppliers}
+                  dataSource={this.props.Item.itemCombo}
                   searchEnabled={true}
-                  displayExpr="itemName"
+                  displayExpr="label"
                   placeholder="کالا"
                   valueExpr="id"
                   rtlEnabled={true}
@@ -219,6 +243,7 @@ const mapStateToProps = (state) => ({
   User: state.users,
   Location: state.locations,
   Supplier: state.suppliers,
+  Item : state.items,
 });
 
 export default connect(mapStateToProps)(OrderInventory);

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const supplierSlice = createSlice({
-  name: "supplier",
+  name: "suppliers",
   initialState: {        
     allSuppliers:null,
     activeSuppliers:null,    

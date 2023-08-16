@@ -24,7 +24,6 @@ export async function addSupplier(Object, Token) {
       Authorization: `Bearer ${Token}`,
     },
   });
-
   const result = await response.json();
   if (result.status == "Success") {
     console.log("RESULT OF ADD NEW Supplier=" + JSON.stringify(result.data));
