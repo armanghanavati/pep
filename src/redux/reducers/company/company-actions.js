@@ -4,8 +4,7 @@ export async function companyList(Token){
         url,
         {
             method: "GET",                        
-            headers: { 
-              'Content-Type': 'application/json' ,
+            headers: {               
               'Authorization': `Bearer ${Token}`
             },
         }
