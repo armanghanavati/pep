@@ -94,6 +94,7 @@ class OrderInventory extends React.Component {
 
   async componentDidMount(){    
     await this.fn_CheckRequireState();
+    alert(this.props.Company.currentCompanyId)
   }
 
   fn_CheckRequireState=async()=>{
@@ -244,6 +245,7 @@ const mapStateToProps = (state) => ({
   Location: state.locations,
   Supplier: state.suppliers,
   Item : state.items,
+  Company:state.companies,
 });
 
 export default connect(mapStateToProps)(OrderInventory);

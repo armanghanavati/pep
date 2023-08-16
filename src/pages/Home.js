@@ -8,12 +8,34 @@ import { locale } from "devextreme/localization";
 import Toolbar, { Item } from "devextreme-react/toolbar";
 import SelectBox from "devextreme-react/select-box";
 
+import { companyActions } from "../redux/reducers/company/company-slice";
+import { companyListCombo } from "../redux/reducers/company/company-actions";
+
 import MainMenu from "../components/common/MainMenu";
 import logo from "../assets/images/LOGO.jpg";
 
 class Home extends React.Component {
+
+    async componentDidMount(){
+        await this.fn_SetState();
+    }
+
+    fn_SetState=async()=>{
+        const companyCombo=await companyListCombo(this.props.User.token);                
+        this.props.dispatch(companyActions.setCompanyCombo({
+            companyCombo
+        }))
+    }
+
+    cmbCompany_onChange=(e)=>{        
+        let currentCompanyId=parseInt(e);
+        this.props.dispatch(companyActions.setCurrentCompanyId({
+            currentCompanyId
+        }))
+    }
+
   render() {
-    locale("fa-IR");
+    locale("fa-IR");    
     return (
       <div className="mainRow">
         <Row>
@@ -24,13 +46,13 @@ class Home extends React.Component {
             <Item location="left">
               <div style={{marginLeft:'25px',width:'200px'}}>                
                 <SelectBox
-                  // dataSource={this.props.TicketSubject.parentTicketSubjects}
-                  displayExpr="subject"
+                  dataSource={this.props.Company.companyCombo}
+                  displayExpr="label"
                   placeholder="انتخاب شرکت"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
-                  // onValueChange={this.cmbTicketSubjectParent_onChange}
+                  onValueChange={this.cmbCompany_onChange}
                 />                
               </div>
             </Item>
@@ -47,10 +69,8 @@ class Home extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.users,
-  stateTicket: state.ticket.stateOfNewTicket,
-  stateRequestPayment: state.payment.stateOfRequestPayment,
-  stateConfirmPayment: state.payment.stateOfConfirmPayment,
+  User: state.users,  
+  Company:state.companies,
 });
 
 export default connect(mapStateToProps)(Home);

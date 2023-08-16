@@ -1,5 +1,5 @@
 export async function companyList(Token){
-    const url=window.apiAddress+"/Company/companyList"  
+    const url=window.apiAddress+"/Company/companyListByUserId"  
     const response = await fetch(
         url,
         {
@@ -15,6 +15,26 @@ export async function companyList(Token){
       return result.data;  
     }
     return null;
+}
+
+// --------------Company List For Combo-------------------
+export async function companyListCombo(Token){
+  const url=window.apiAddress+"/Company/companyListCombo"  
+  const response = await fetch(
+      url,
+      {
+          method: "GET",                        
+          headers: {               
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('All company'+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null;
 }
 
 export async function addCompany(Object,Token){
