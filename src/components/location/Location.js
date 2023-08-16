@@ -90,7 +90,7 @@ class Location extends React.Component{
             chkIsActive:null,
             Company:null,
             LocationType:null,
-            CompanyStatus:"",
+            CompanyId:"",
             stateDisable_txtCode:false,
             RowSelected:null,
         }
@@ -101,7 +101,6 @@ class Location extends React.Component{
         this.fn_updateGrid();
         await this.fn_companyList();
         await this.locationTypes();
-        await this.fn_locationList();
       }
     
       fn_companyList=async()=>{    
@@ -115,21 +114,16 @@ class Location extends React.Component{
           }));
       }
 
-      fn_locationList=async()=>{ 
-        if(this.props.Location.location != null)   
-          this.setState({
-            location:this.props.Location.location
-          });
-        else
+      fn_locationList=async(companyId)=>{ 
           await this.props.dispatch(locationActions.setLocation({
-            location:await locationList(this.state.CompanyStatus, this.props.User.token)
+            location:await locationList(companyId, this.props.User.token)
           }));
       }
       
       fn_updateGrid=async()=>{
         if(this.state.stateDisable_show){
         this.setState({
-            LocationGridData: await locationList(this.state.CompanyStatus, this.props.User.token
+            LocationGridData: await locationList(this.state.CompanyId, this.props.User.token
                 )});
             }
       }
@@ -178,7 +172,8 @@ class Location extends React.Component{
           stateDisable_txtCode:false,
           CompanyId:null,
           LocationTypeId:null,
-          LocationId:null
+          LocationId:null,
+          chkIsActive: null,
         });
       }
 
@@ -278,11 +273,11 @@ class Location extends React.Component{
         this.setState({ToastProps:{isToastVisible:false}})
       }
 
-      cmbCompany_onChange=(e)=>{
-        console.log(e);
+      cmbCompany_onChange= async(e)=>{
           this.setState({
             CompanyId:e
-          })
+          });
+          await this.fn_locationList(e);
       }
 
       cmbLocationType_onChange=(e)=>{

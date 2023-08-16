@@ -52,7 +52,7 @@ import {
   addPosition,
   positionList,
   deletePosition
-} from "../../redux/reducers/position/position-action";
+} from "../../redux/reducers/position/position-actions";
 import companySlice, {
   companyActions,
 } from "../../redux/reducers/company/company-slice";
@@ -76,7 +76,6 @@ class Position extends React.Component {
       txtPositionNameValue: null,
       txtDescValue: null,
       PositionId: null,
-      CompanyId: null,
       RowSelected: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
@@ -88,15 +87,15 @@ class Position extends React.Component {
         Type: "",
       },
       chkIsActive:null,
-      CompanyStatus:"",
+      CompanyId:"",
       stateDisable_txtCode:false,
+      Position:null,
     };
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
     await this.fn_companyList();
-    await this.fn_positionList();
   }
 
   fn_companyList=async()=>{    
@@ -110,21 +109,16 @@ class Position extends React.Component {
       }));
   }
 
-  fn_positionList = async () => {
-    if(this.props.Position.position != null)
+  fn_positionList = async (companyId) => {
     this.setState({
-      position:this.props.Position.position
-    });
-    else
-      await this.props.dispatch(positionActions.setPosition({
-        position:await positionList(this.state.CompanyStatus, this.props.User.token)
-    }));
+      Position:await positionList(companyId, this.props.User.token)
+    });     
   };
 
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show) {
       this.setState({
-        PositionGridData: await positionList(this.state.CompanyStatus, this.props.User.token),
+        PositionGridData: await positionList(this.state.CompanyId, this.props.User.token),
       });
     }
   };
@@ -170,7 +164,8 @@ class Position extends React.Component {
       stateDisable_txtCode:false,
       CompanyId:null,
       PositionId:null,
-      LocationId:null
+      LocationId:null,
+      chkIsActive: null,
     });
   };
 
@@ -256,10 +251,11 @@ class Position extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  cmbCompany_onChange = (e) => {
+  cmbCompany_onChange = async(e) => {
     this.setState({
       CompanyId: e,
     });
+    await this.fn_positionList(e);
   };
 
   cmbPosition_onChange = (e) => {
@@ -344,7 +340,7 @@ class Position extends React.Component {
               <Col>
                 <Label className="standardLabelFont">زیر گروه سمت</Label>
                 <SelectBox
-                  dataSource={this.props.Position.position}
+                  dataSource={this.state.Position}
                   displayExpr="positionName"
                   placeholder="گروه سمت"
                   valueExpr="id"
