@@ -91,7 +91,8 @@ class Person extends React.Component{
       Position:null,
       PositionId:null,
       LocationId:null,
-      CompanyId:null,
+      CompanyId:"",
+      CompanyCmb:"",
       Company:null,
       }   
     }
@@ -100,12 +101,14 @@ class Person extends React.Component{
         await this.fn_GetPermissions();
         this.fn_updateGrid();
         await this.fn_companyList();
+        await this.fn_locationList(this.state.CompanyId);
+        await this.fn_positionList(this.state.CompanyId);
       }
     
       fn_updateGrid=async()=>{
         if(this.state.stateDisable_show)
           this.setState({
-            PersonGridData: await personList(this.state.CompanyStatus, this.props.User.token)
+            PersonGridData: await personList(this.state.CompanyId, this.props.User.token)
           });
       }
 
@@ -163,7 +166,7 @@ class Person extends React.Component{
           RowSelected: e.data,
           PositionId:e.data.positionId,
           LocationId:e.data.locationId,
-          CompanyId:e.data.companyId,
+          CompanyCmb:e.data.companyId,
         });
       };
     
@@ -179,7 +182,7 @@ class Person extends React.Component{
           stateUpdateDelete:false,
           PositionId:null,
           LocationId:null,
-          CompanyId:null,
+          CompanyCmb:null,
         });
       }
       
@@ -321,7 +324,7 @@ class Person extends React.Component{
       }
       cmbCompany_onChange= async(e)=>{
         this.setState({
-          CompanyId:e
+          CompanyCmb:e
         })
         await this.fn_positionList(e);
         await this.fn_locationList(e);
@@ -387,7 +390,7 @@ class Person extends React.Component{
                           searchEnabled={true}
                           rtlEnabled={true}
                           onValueChange={this.cmbCompany_onChange}
-                          value={this.state.CompanyId}
+                          value={this.state.CompanyCmb}
                         />
                         <Row>
                             <Label

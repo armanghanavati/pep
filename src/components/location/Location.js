@@ -76,7 +76,6 @@ class Location extends React.Component{
             txtPersianNameValue:null,
             txtDescValue:null,
             LocationTypeId:null,
-            CompanyId:null,
             stateUpdateDelete: true,
             stateDisable_btnAdd:false,
             stateDisable_btnUpdate:false,
@@ -91,6 +90,7 @@ class Location extends React.Component{
             Company:null,
             LocationType:null,
             CompanyId:"",
+            CompanyCmb:"",
             stateDisable_txtCode:false,
             RowSelected:null,
         }
@@ -101,6 +101,7 @@ class Location extends React.Component{
         this.fn_updateGrid();
         await this.fn_companyList();
         await this.locationTypes();
+        await this.fn_locationList(this.state.CompanyId);
       }
     
       fn_companyList=async()=>{    
@@ -115,9 +116,9 @@ class Location extends React.Component{
       }
 
       fn_locationList=async(companyId)=>{ 
-          await this.props.dispatch(locationActions.setLocation({
-            location:await locationList(companyId, this.props.User.token)
-          }));
+          this.setState({
+            Location:await locationList(companyId, this.props.User.token)
+          });
       }
       
       fn_updateGrid=async()=>{
@@ -155,7 +156,7 @@ class Location extends React.Component{
           txtPersianNameValue: e.data.persianName,
           txtDescValue: e.data.desc,
           LocationTypeId: e.data.locationTypeId,
-          CompanyId:e.data.companyId,
+          CompanyCmb:e.data.companyId,
           chkIsActive:e.data.isActive,
           stateUpdateDelete:true,
           stateDisable_txtCode:true,
@@ -170,7 +171,7 @@ class Location extends React.Component{
           txtDescValue: null,
           stateUpdateDelete:false,
           stateDisable_txtCode:false,
-          CompanyId:null,
+          CompanyCmb:null,
           LocationTypeId:null,
           LocationId:null,
           chkIsActive: null,
@@ -216,7 +217,7 @@ class Location extends React.Component{
             desc:this.state.txtDescValue,
             locationTypeId: this.state.LocationTypeId,
             locationId:this.state.LocationId,
-            companyId: this.state.CompanyId,
+            companyId: this.state.CompanyCmb,
             isActive:this.state.chkIsActive
           };
           const RESULT=await addLocation(data, this.props.User.token);   
@@ -254,7 +255,7 @@ class Location extends React.Component{
             desc: this.state.txtDescValue,
             locationTypeId: this.state.LocationTypeId,
             locationId:this.state.LocationId,
-            companyId: this.state.CompanyId,
+            companyId: this.state.CompanyCmb,
             isActive:this.state.chkIsActive
           };
           const RESULT=await updateLocation(data, this.props.User.token);
@@ -275,7 +276,7 @@ class Location extends React.Component{
 
       cmbCompany_onChange= async(e)=>{
           this.setState({
-            CompanyId:e
+            CompanyCmb:e
           });
           await this.fn_locationList(e);
       }
@@ -369,7 +370,7 @@ class Location extends React.Component{
                             searchEnabled={true}
                             rtlEnabled={true}                               
                             onValueChange={this.cmbCompany_onChange}
-                            value={this.state.CompanyId}
+                            value={this.state.CompanyCmb}
                           /> 
                         </Col>
                         <Col>
@@ -388,7 +389,7 @@ class Location extends React.Component{
                         <Col>
                           <Label className="standardLabelFont">زیر گروه محل</Label>                            
                           <SelectBox 
-                            dataSource={this.props.Location.location}
+                            dataSource={this.state.Location}
                             displayExpr="locationName"    
                             placeholder="زیر گروه محل"                            
                             valueExpr="id"

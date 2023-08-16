@@ -88,6 +88,7 @@ class Position extends React.Component {
       },
       chkIsActive:null,
       CompanyId:"",
+      CompanyCmb:"",
       stateDisable_txtCode:false,
       Position:null,
     };
@@ -96,6 +97,7 @@ class Position extends React.Component {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
     await this.fn_companyList();
+    await this.fn_positionList(this.state.CompanyId);
   }
 
   fn_companyList=async()=>{    
@@ -147,7 +149,7 @@ class Position extends React.Component {
       Id: e.data.id,
       PositionId: e.data.positionId,
       txtPositionNameValue: e.data.positionName,
-      CompanyId: e.data.companyId,
+      CompanyCmb: e.data.companyId,
       txtDescValue: e.data.desc,
       RowSelected: e.data,
       stateUpdateDelete: true,
@@ -162,7 +164,7 @@ class Position extends React.Component {
       txtDescValue: null,
       stateUpdateDelete: false,
       stateDisable_txtCode:false,
-      CompanyId:null,
+      CompanyCmb:null,
       PositionId:null,
       LocationId:null,
       chkIsActive: null,
@@ -200,7 +202,7 @@ class Position extends React.Component {
         positionId:this.state.PositionId,
         positionName: this.state.txtPositionNameValue,
         desc: this.state.txtDescValue,
-        companyId: this.state.CompanyId,
+        companyId: this.state.CompanyCmb,
         isActive:this.state.chkIsActive
       };
       const RESULT=await addPosition(data, this.props.User.token);
@@ -233,7 +235,7 @@ class Position extends React.Component {
         positionName: this.state.txtPositionNameValue,
         desc: this.state.txtDescValue,
         isActive:this.state.chkIsActive,
-        companyId:this.state.CompanyId
+        companyId:this.state.CompanyCmb
       };
       const RESULT=await updatePosition(data, this.props.User.token);
       this.setState({
@@ -253,7 +255,7 @@ class Position extends React.Component {
 
   cmbCompany_onChange = async(e) => {
     this.setState({
-      CompanyId: e,
+      CompanyCmb: e,
     });
     await this.fn_positionList(e);
   };
@@ -334,7 +336,7 @@ class Position extends React.Component {
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbCompany_onChange}
-                  value={this.state.CompanyId}
+                  value={this.state.CompanyCmb}
                 />
               </Col>
               <Col>
