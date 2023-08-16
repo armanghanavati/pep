@@ -87,8 +87,6 @@ class Position extends React.Component {
         Type: "",
       },
       chkIsActive:null,
-      CompanyId:"",
-      CompanyCmb:"",
       stateDisable_txtCode:false,
       Position:null,
     };
@@ -96,31 +94,19 @@ class Position extends React.Component {
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
-    await this.fn_companyList();
-    await this.fn_positionList(this.state.CompanyId);
+    await this.fn_positionList();
   }
 
-  fn_companyList=async()=>{    
-    if(this.props.Company.company != null)
-      this.setState({
-        company:this.props.Company.company
-      });
-    else
-      await this.props.dispatch(companyActions.setCompany({
-        company:await companyList(this.props.User.token)
-      }));
-  }
-
-  fn_positionList = async (companyId) => {
+  fn_positionList = async() =>{
     this.setState({
-      Position:await positionList(companyId, this.props.User.token)
-    });     
-  };
+      Position:await positionList(this.props.Company.currentCompanyId, this.props.token)
+    });
+  }
 
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show) {
       this.setState({
-        PositionGridData: await positionList(this.state.CompanyId, this.props.User.token),
+        PositionGridData: await positionList(this.props.Company.currentCompanyId, this.props.User.token),
       });
     }
   };
@@ -149,7 +135,6 @@ class Position extends React.Component {
       Id: e.data.id,
       PositionId: e.data.positionId,
       txtPositionNameValue: e.data.positionName,
-      CompanyCmb: e.data.companyId,
       txtDescValue: e.data.desc,
       RowSelected: e.data,
       stateUpdateDelete: true,
@@ -164,7 +149,6 @@ class Position extends React.Component {
       txtDescValue: null,
       stateUpdateDelete: false,
       stateDisable_txtCode:false,
-      CompanyCmb:null,
       PositionId:null,
       LocationId:null,
       chkIsActive: null,
@@ -202,7 +186,7 @@ class Position extends React.Component {
         positionId:this.state.PositionId,
         positionName: this.state.txtPositionNameValue,
         desc: this.state.txtDescValue,
-        companyId: this.state.CompanyCmb,
+        companyId: this.props.Company.currentCompanyId,
         isActive:this.state.chkIsActive
       };
       const RESULT=await addPosition(data, this.props.User.token);
@@ -235,7 +219,7 @@ class Position extends React.Component {
         positionName: this.state.txtPositionNameValue,
         desc: this.state.txtDescValue,
         isActive:this.state.chkIsActive,
-        companyId:this.state.CompanyCmb
+        companyId:this.props.Company.currentCompanyId
       };
       const RESULT=await updatePosition(data, this.props.User.token);
       this.setState({
@@ -251,13 +235,6 @@ class Position extends React.Component {
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
-  };
-
-  cmbCompany_onChange = async(e) => {
-    this.setState({
-      CompanyCmb: e,
-    });
-    await this.fn_positionList(e);
   };
 
   cmbPosition_onChange = (e) => {
@@ -324,19 +301,6 @@ class Position extends React.Component {
                 <Label
                   id="errCode"
                   className="standardLabelFont errMessage"
-                />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">شرکت</Label>
-                <SelectBox
-                  dataSource={this.props.Company.company}
-                  displayExpr="companyName"
-                  placeholder="انتخاب شرکت"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbCompany_onChange}
-                  value={this.state.CompanyCmb}
                 />
               </Col>
               <Col>

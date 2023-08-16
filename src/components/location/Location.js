@@ -89,8 +89,6 @@ class Location extends React.Component{
             chkIsActive:null,
             Company:null,
             LocationType:null,
-            CompanyId:"",
-            CompanyCmb:"",
             stateDisable_txtCode:false,
             RowSelected:null,
         }
@@ -99,32 +97,19 @@ class Location extends React.Component{
     async componentDidMount(){
         await this.fn_GetPermissions();
         this.fn_updateGrid();
-        await this.fn_companyList();
         await this.locationTypes();
-        await this.fn_locationList(this.state.CompanyId);
-      }
-    
-      fn_companyList=async()=>{    
-        if(this.props.Company.company != null)
-          this.setState({
-            company:this.props.Company.company
-          });
-        else
-          await this.props.dispatch(companyActions.setCompany({
-            company:await companyList(this.props.User.token)
-          }));
-      }
-
-      fn_locationList=async(companyId)=>{ 
-          this.setState({
-            Location:await locationList(companyId, this.props.User.token)
-          });
+        await this.fn_locationList();
       }
       
+      fn_locationList=async()=>{
+        this.setState({
+          Location:await locationList(this.props.Company.currentCompanyId, this.props.User.token)
+        })
+      }
       fn_updateGrid=async()=>{
         if(this.state.stateDisable_show){
         this.setState({
-            LocationGridData: await locationList(this.state.CompanyId, this.props.User.token
+            LocationGridData: await locationList(this.props.Company.currentCompanyId, this.props.User.token
                 )});
             }
       }
@@ -156,7 +141,6 @@ class Location extends React.Component{
           txtPersianNameValue: e.data.persianName,
           txtDescValue: e.data.desc,
           LocationTypeId: e.data.locationTypeId,
-          CompanyCmb:e.data.companyId,
           chkIsActive:e.data.isActive,
           stateUpdateDelete:true,
           stateDisable_txtCode:true,
@@ -171,7 +155,6 @@ class Location extends React.Component{
           txtDescValue: null,
           stateUpdateDelete:false,
           stateDisable_txtCode:false,
-          CompanyCmb:null,
           LocationTypeId:null,
           LocationId:null,
           chkIsActive: null,
@@ -217,7 +200,7 @@ class Location extends React.Component{
             desc:this.state.txtDescValue,
             locationTypeId: this.state.LocationTypeId,
             locationId:this.state.LocationId,
-            companyId: this.state.CompanyCmb,
+            companyId: this.props.Company.currentCompanyId,
             isActive:this.state.chkIsActive
           };
           const RESULT=await addLocation(data, this.props.User.token);   
@@ -255,7 +238,7 @@ class Location extends React.Component{
             desc: this.state.txtDescValue,
             locationTypeId: this.state.LocationTypeId,
             locationId:this.state.LocationId,
-            companyId: this.state.CompanyCmb,
+            companyId: this.props.Company.currentCompanyId,
             isActive:this.state.chkIsActive
           };
           const RESULT=await updateLocation(data, this.props.User.token);
@@ -272,13 +255,6 @@ class Location extends React.Component{
     
       onHidingToast=()=>{
         this.setState({ToastProps:{isToastVisible:false}})
-      }
-
-      cmbCompany_onChange= async(e)=>{
-          this.setState({
-            CompanyCmb:e
-          });
-          await this.fn_locationList(e);
       }
 
       cmbLocationType_onChange=(e)=>{
@@ -359,19 +335,6 @@ class Location extends React.Component{
                             id="errCode"
                             className="standardLabelFont errMessage"
                           />                        
-                        </Col>
-                        <Col>
-                          <Label className="standardLabelFont">شرکت</Label>                            
-                          <SelectBox 
-                            dataSource={this.props.Company.company}
-                            displayExpr="companyName"    
-                            placeholder="انتخاب شرکت"                            
-                            valueExpr="id"
-                            searchEnabled={true}
-                            rtlEnabled={true}                               
-                            onValueChange={this.cmbCompany_onChange}
-                            value={this.state.CompanyCmb}
-                          /> 
                         </Col>
                         <Col>
                           <Label className="standardLabelFont">نوع محل</Label>                            

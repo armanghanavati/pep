@@ -91,16 +91,12 @@ class Person extends React.Component{
       Position:null,
       PositionId:null,
       LocationId:null,
-      CompanyId:"",
-      CompanyCmb:"",
-      Company:null,
       }   
     }
 
     async componentDidMount(){
         await this.fn_GetPermissions();
         this.fn_updateGrid();
-        await this.fn_companyList();
         await this.fn_locationList(this.state.CompanyId);
         await this.fn_positionList(this.state.CompanyId);
       }
@@ -108,30 +104,19 @@ class Person extends React.Component{
       fn_updateGrid=async()=>{
         if(this.state.stateDisable_show)
           this.setState({
-            PersonGridData: await personList(this.state.CompanyId, this.props.User.token)
+            PersonGridData: await personList(this.props.Company.currentCompanyId, this.props.User.token)
           });
       }
 
-      fn_companyList=async()=>{    
-        if(this.props.Company.company != null)
-          this.setState({
-            company:this.props.Company.company
-          });
-        else
-          await this.props.dispatch(companyActions.setCompany({
-            company:await companyList(this.props.User.token)
-          }));
-      }
-
-      fn_positionList = async (companyId) => {
+      fn_positionList = async () => {
         this.setState({
-          Position:await positionList(companyId, this.props.User.token)
+          Position:await positionList(this.props.Company.currentCompanyId, this.props.User.token)
         });
       };
 
-      fn_locationList=async(companyId)=>{ 
+      fn_locationList=async()=>{ 
         this.setState({
-          Location:await locationList(companyId, this.props.User.token)
+          Location:await locationList(this.props.Company.currentCompanyId, this.props.User.token)
         });
       }
     
@@ -140,13 +125,13 @@ class Person extends React.Component{
         if (perm != null)
           for (let i = 0; i < perm.length; i++) {
             switch (perm[i].objectName) {
-              case "person.update":
+              case "location.update":
                 this.setState({ stateDisable_btnUpdate: true });
                 break;
-              case "person.insert":
+              case "location.insert":
                 this.setState({ stateDisable_btnAdd: true });
                 break;
-              case "person.show":
+              case "location.show":
                 this.setState({ stateDisable_show: true });
                 break;
             }
@@ -166,7 +151,6 @@ class Person extends React.Component{
           RowSelected: e.data,
           PositionId:e.data.positionId,
           LocationId:e.data.locationId,
-          CompanyCmb:e.data.companyId,
         });
       };
     
@@ -182,7 +166,6 @@ class Person extends React.Component{
           stateUpdateDelete:false,
           PositionId:null,
           LocationId:null,
-          CompanyCmb:null,
         });
       }
       
@@ -322,13 +305,7 @@ class Person extends React.Component{
           LocationId:e
         });
       }
-      cmbCompany_onChange= async(e)=>{
-        this.setState({
-          CompanyCmb:e
-        })
-        await this.fn_positionList(e);
-        await this.fn_locationList(e);
-      }
+
       render(){
         return(
           <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -376,25 +353,6 @@ class Person extends React.Component{
                         <Row>
                             <Label
                               id="errPersonalCode"
-                              className="standardLabelFont errMessage"
-                            />
-                        </Row>
-                      </Col>
-                      <Col>
-                        <Label className="standardLabelFont">شرکت</Label>
-                        <SelectBox
-                          dataSource={this.props.Company.company}
-                          displayExpr="companyName"
-                          placeholder="شرکت"
-                          valueExpr="id"
-                          searchEnabled={true}
-                          rtlEnabled={true}
-                          onValueChange={this.cmbCompany_onChange}
-                          value={this.state.CompanyCmb}
-                        />
-                        <Row>
-                            <Label
-                              id="errPosition"
                               className="standardLabelFont errMessage"
                             />
                         </Row>
