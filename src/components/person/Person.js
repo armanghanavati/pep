@@ -121,15 +121,15 @@ class Person extends React.Component{
       }
 
       fn_positionList = async (companyId) => {
-          await this.props.dispatch(positionActions.setPosition({
-            position:await positionList(companyId, this.props.User.token)
-        }));
+        this.setState({
+          Position:await positionList(companyId, this.props.User.token)
+        });
       };
 
       fn_locationList=async(companyId)=>{ 
-          await this.props.dispatch(locationActions.setLocation({
-            location:await locationList(companyId, this.props.User.token)
-          }));
+        this.setState({
+          Location:await locationList(companyId, this.props.User.token)
+        });
       }
     
       fn_GetPermissions = () => {
@@ -399,7 +399,7 @@ class Person extends React.Component{
                       <Col>
                         <Label className="standardLabelFont">سمت</Label>
                         <SelectBox
-                          dataSource={this.props.Position.position}
+                          dataSource={this.state.Position}
                           displayExpr="positionName"
                           placeholder="سمت"
                           valueExpr="id"
@@ -418,7 +418,7 @@ class Person extends React.Component{
                       <Col>
                           <Label className="standardLabelFont">محل</Label>                            
                           <SelectBox 
-                            dataSource={this.props.Location.location}
+                            dataSource={this.state.Location}
                             displayExpr="locationName"    
                             placeholder="محل"                            
                             valueExpr="id"
