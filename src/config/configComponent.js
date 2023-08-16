@@ -4,7 +4,7 @@ import Company from '../components/company/Company'
 import Position from '../components/position/Position'
 import Location from '../components/location/Location'
 import Supplier from '../components/supplier/Supplier';
-import Person from '../components/person/Person';
+import Person from '../components/person/Person'
 import OrdersInventory from '../pages/OrdersInventory';
 
 
