@@ -1,7 +1,12 @@
 export const DataGridLocationColumns=[
     {
+        dataField:"code" ,
+        caption:"کد",
+        allowEditing:false    
+    },
+    {
         dataField:"locationName" ,
-        caption:"نام موقعیت",
+        caption:"نام محل",
         allowEditing:false    
     },
     {
@@ -10,18 +15,28 @@ export const DataGridLocationColumns=[
         allowEditing:false    
     },
     {
+        dataField:"locationTop" ,
+        caption:"زیر گروه محل",
+        allowEditing:false    
+    },
+    {
         dataField:"desc" ,
         caption:"توضیحات",
         allowEditing:false
     },
     {
-        dataField:"locationTypeId" ,
-        caption:"نوع موقعیت",
+        dataField:"locationType" ,
+        caption:"نوع محل",
         allowEditing:false
     },    
     {
-        dataField:"ComapnyId" ,
+        dataField:"company" ,
         caption:"شرکت",
+        allowEditing:false
+    },
+    {
+        dataField:"isActive" ,
+        caption:"فعال",
         allowEditing:false
     }
 ];

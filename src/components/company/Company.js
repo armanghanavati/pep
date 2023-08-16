@@ -1,403 +1,480 @@
 import React from "react";
+import { connect } from "react-redux";
 import {
-    Input,
-    Container,
-    Row,
-    Col,
-    Card,
-    CardDeck,
-    CardImg,
-    CardBody,
-    CardTitle,
-    Label,
-    TabContent, TabPane, Nav, NavItem, NavLink,  
-    Modal, ModalHeader, ModalBody, ModalFooter 
-  } from "reactstrap";
-  import DataGrid, {
-    Column,
-    Editing,
-    Paging,
-    Lookup,
-    Scrolling,
-    FilterRow,
-    HeaderFilter,
-    FilterPanel,
-    FilterBuilderPopup,
-    Pager,
-    Selection,
-    Grouping,
-    GroupPanel,
-    SearchPanel,
-  } from "devextreme-react/data-grid";
-  import { Toast } from 'devextreme-react/toast';
-  import { CheckBox } from 'devextreme-react/check-box';
-  import { connect } from "react-redux";
-  import Button from "@mui/material/Button";
-  import {
-    updateCompany,
-    addCompany,
-    companyList
-  } from "../../redux/reducers/company/company-actions";
-  import { DataGridCompanyColumns } from "./Company-config";
-  
-  import { DataGridPageSizes,DataGridDefaultPageSize
-    ,DataGridDefaultHeight 
-    ,ToastTime
-    ,ToastWidth
-  } from '../../config/config';
+  Row,
+  Col,
+  Card,
+  Label,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter, 
+} from "reactstrap";
+import classnames from "classnames";
+import TextBox from "devextreme-react/text-box";
+import TextArea from "devextreme-react/text-area";
+import SelectBox from "devextreme-react/select-box";
+import { Button } from "devextreme-react/button";
+import { CheckBox } from "devextreme-react/check-box";
+import notify from "devextreme/ui/notify";
+import { Toast } from "devextreme-react/toast";
+import { Tooltip } from "devextreme-react/tooltip";
+import DataGrid, {
+  Column,
+  Editing,
+  Paging,
+  Lookup,
+  Scrolling,
+  FilterRow,
+  HeaderFilter,
+  FilterPanel,
+  FilterBuilderPopup,
+  Pager,
+  Selection,
+  Grouping,
+  GroupPanel,
+  SearchPanel,
+} from "devextreme-react/data-grid";
+import {
+  DataGridPageSizes,
+  DataGridDefaultPageSize,
+  DataGridDefaultHeight,
+  ToastTime,
+  ToastWidth,
+} from "../../config/config";
+import {
+  updateCompany,
+  addCompany,
+  companyList,
+  deleteCompany
+} from "../../redux/reducers/company/company-actions";
+import { DataGridCompanyColumns } from "./Company-config";
+
+import PlusNewIcon from "../../assets/images/icon/plus.png";
+import SaveIcon from "../../assets/images/icon/save.png";
+import UpdateIcon from "../../assets/images/icon/update.png";
+import DeleteIcon from "../../assets/images/icon/delete.png";
+
 class Company extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            CompanyGridData:null,
-            companyId:null,
-            Code:'',
-            CompanyName:'',
-            EconomicCode:'',
-            NationalCode:'',
-            CompanyType:'',
-            RowSelected:null,
-            stateUpdateDelete: true,
-            stateDisable_btnAddCompany:false,
-            stateDisable_btnUpdateCompany:false,
-            stateDisable_showCompany:false,
-            ToastProps:{
-                isToastVisible:false,
-                Message:"",
-                Type:"",
-              },
-            Company:null,
-            Active:false,
-        }
+  constructor(props){
+    super(props);
+    this.state = {
+      txtCodeValue:null,
+      txtCompanyNameValue:null,
+      txtEconomicCodeValue:null,
+      txtNationalCodeValue:null,
+      txtCompanyTypeValue:null,
+      txtAddressValue:null,
+      chkIsActive: null,
+      RowSelected:null,
+      CompanyGridData:null,
+      stateUpdateDelete: true,
+      stateDisable_btnAdd:false,
+      stateDisable_btnUpdate:false,
+      stateDisable_show:false,
+      ToastProps:{
+        isToastVisible:false,
+        Message:"",
+        Type:"",
+      },
+      CompanyId:null,
+      Company:null,
+      stateDisable_txtCode:false,
+      }
     }
-   async componentDidMount(){
+  async componentDidMount(){
     await this.fn_GetPermissions();
     this.fn_updateGrid();
   }
 
   fn_updateGrid=async()=>{
-    if(this.state.stateDisable_showCompany)
+    if(this.state.stateDisable_show)
       this.setState({
         CompanyGridData: await companyList(this.props.User.token)
       });
       
   }
 
-  fn_GetPermissions=()=>{
-    const perm=this.props.User.permissions;
-    let enable_btnPeymentConfirm=false;
-    if(perm!=null)
-      for(let i=0;i<perm.length;i++){
-        switch(perm[i].objectName){
-          case 'company.update' :this.setState({stateDisable_btnUpdateCompany:true});break;
-          case 'company.insert' :this.setState({stateDisable_btnAddCompany:true});break;
-          case 'company.show' :this.setState({stateDisable_showCompany:true});break;
+  fn_GetPermissions = () => {
+    const perm = this.props.User.permissions;
+    if (perm != null)
+      for (let i = 0; i < perm.length; i++) {
+        switch (perm[i].objectName) {
+          case "company.update":
+            this.setState({ stateDisable_btnUpdate: true });
+            break;
+          case "company.insert":
+            this.setState({ stateDisable_btnAdd: true });
+            break;
+          case "company.show":
+            this.setState({ stateDisable_show: true });
+            break;
         }
-      }   
-  }
-
-  grdCompany_onClickRow=(params) => {
-    this.setState({
-      Code: params.data.code,
-      CompanyId: params.data.id,
-      CompanyName: params.data.companyName,
-      EconomicCode: params.data.economicCode,
-      NationalCode: params.data.nationalCode,
-      Address: params.data.address,
-      CompanyType:params.data.companyType,
-      Active:params.data.isActive,
-      stateUpdateDelete: true,
-      RowSelected: params.data,
-    });
-    document.getElementById("txtCode").disabled = true;
+      }
   };
 
-  btnNewCompany_onClick=()=>{
+  grdCompany_onClickRow=(e) => {
     this.setState({
-      CompanyName: "",
-      EconomicCode: "",
-      NationalCode: "",
-      Address: "",
-      CompanyType: "",
-      stateUpdateDelete:false
+      txtCodeValue: e.data.code,
+      txtCompanyNameValue: e.data.companyName,
+      txtEconomicCodeValue: e.data.economicCode,
+      txtNationalCodeValue: e.data.nationalCode,
+      txtAddressValue: e.data.address,
+      txtCompanyTypeValue:e.data.companyType,
+      chkIsActive: e.data.isActive,
+      stateUpdateDelete: true,
+      RowSelected: e.data,
+      stateDisable_txtCode:true,
+      CompanyId: e.data.id,
     });
-    document.getElementById("txtCode").disabled = false;
+  };
+
+  btnNew_onClick=()=>{
+    this.setState({
+      txtCodeValue:null,
+      txtCompanyNameValue: null,
+      txtEconomicCodeValue: null,
+      txtNationalCodeValue: null,
+      txtAddressValue: null,
+      txtCompanyTypeValue: null,
+      stateUpdateDelete:false,
+      stateDisable_txtCode:false
+    });
   }
+  
+  chkIsActive_onChange = (e) => {
+    this.setState({
+      chkIsActive: e.value,
+    });
+  };
 
-  btnAddCompany_onClick = async () => {
+  fn_CheckValidation = () => {
+    let errMsg = "";
     let flag = true;
-    let errMSG = "";
     document.getElementById("errCompanyName").innerHTML = "";
-    document.getElementById("errNationalCode").innerHTML = "";  
-    if(this.state.CompanyName.trim()==''){
-      document.getElementById("errCompanyName").innerHTML = "نام شرکت را وارد نمائید."; 
-      flag=false;
+    document.getElementById("errNationalCode").innerHTML = "";
+    if (this.state.txtCompanyNameValue == null) {
+      document.getElementById("errCompanyName").innerHTML =
+        "نام را وارد نمائید";
+      flag = false;
     }
-    if(this.state.NationalCode.trim()==''){
-      document.getElementById("errNationalCode").innerHTML = "کد ملی را وارد نمائید."; 
-      flag=false;
-    } 
+    if (this.state.txtNationalCodeValue == null) {
+      document.getElementById("errNationalCode").innerHTML =
+        "کد ملی را وارد نمائید";
+      flag = false;
+    }
 
-    if(flag){
-      const data = {
-        code:this.state.Code,
-        companyName: this.state.CompanyName,
-        economicCode:this.state.EconomicCode,
-        nationalCode: this.state.NationalCode,
-        address: this.state.Address,
-        companyType: this.state.CompanyType,
-        isActive:this.state.Active
-      };
-      var result=await addCompany(data, this.props.User.token);   
-      if(result == null)
-      {
-        this.setState({        
-          ToastProps:{  
-              isToastVisible:true,              
-              Message:"خطا در ثبت شرکت.",
-              Type:"error",
-          }
-        })
-      }
-      else{
-      this.setState({        
-        ToastProps:{  
-            isToastVisible:true,              
-            Message:"شرکت ثبت گردید.",
-            Type:"success",
-        }
-      })
+    if (this.state.chkIsActive == null) {
+      document.getElementById("errCompanyIsActive").innerHTML =
+        "فعال بودن را مشخص نمائید.";
+      flag = false;
     }
+    return flag;
+  };
+  btnAdd_onClick = async () => {
+    if (await this.fn_CheckValidation()) {
+      const data = {
+        code:this.state.txtCodeValue,
+        companyName: this.state.txtCompanyNameValue,
+        economicCode:this.state.txtEconomicCodeValue,
+        nationalCode: this.state.txtNationalCodeValue,
+        address: this.state.txtAddressValue,
+        companyType: this.state.txtCompanyTypeValue,
+        isActive:this.state.chkIsActive
+      };
+      const RESULT=await addCompany(data, this.props.User.token);   
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: RESULT!=null ? "ثبت با موفقیت انجام گردید" : "عدم ثبت" ,
+          Type: RESULT!=null ? "success" : "error",
+        },
+      });
       this.fn_updateGrid();
     }
   };
-  txtCode_onChange = (params) => {
-    this.setState({ Code: params.target.value });
+  txtCode_onChange = (e) => {
+    this.setState({ txtCodeValue: e.value });
   };
-  txtCompanyName_onChange = (params) => {
-    this.setState({ CompanyName: params.target.value });
-  };
-
-  txtEconomicCode_onChange = (params) => {
-    this.setState({ EconomicCode: params.target.value });
+  txtCompanyName_onChange = (e) => {
+    this.setState({ txtCompanyNameValue: e.value });
   };
 
-  txtNationalCode_onChange = (params) => {
-    this.setState({ NationalCode: params.target.value });
+  txtEconomicCode_onChange = (e) => {
+    this.setState({ txtEconomicCodeValue: e.value });
   };
 
-  txtAddress_onChange = (params) => {
-    this.setState({ Address: params.target.value });
+  txtNationalCode_onChange = (e) => {
+    this.setState({ txtNationalCodeValue: e.value });
   };
 
-  txtCompanyType_onChange = (params) => {
-    this.setState({ CompanyType: params.target.value });
+  txtAddress_onChange = (e) => {
+    this.setState({ txtAddressValue: e.value });
   };
 
-  btnUpdateCompany_onClick = async () => {
-    let flag = true;
-    let errMSG = "";
-    document.getElementById("errCompanyName").innerHTML = "";
-    document.getElementById("errNationalCode").innerHTML = "";  
-    if(this.state.CompanyName.trim()==''){
-      document.getElementById("errCompanyName").innerHTML = "نام شرکت را وارد نمائید."; 
-      flag=false;
-    }
-    if(this.state.NationalCode.trim()==''){
-      document.getElementById("errNationalCode").innerHTML = "کد ملی را وارد نمائید."; 
-      flag=false;
-    } 
+  txtCompanyType_onChange = (e) => {
+    this.setState({ txtCompanyTypeValue: e.value });
+  };
 
-    if (this.state.CompanyId == null) {
-      errMSG += "درخواستی برای ویرایش انتخاب نشده است." + "<br>";
-      flag = false;
-    }
-    document.getElementById("ErrorUpdateCompany").innerHTML = errMSG;
-    if (flag) {
-      let data = {
+  btnUpdate_onClick = async () => {
+    if (await this.fn_CheckValidation()) {
+      const data = {
         id: this.state.CompanyId,
-        companyName: this.state.CompanyName,
-        economicCode:this.state.EconomicCode,
-        nationalCode: this.state.NationalCode,
-        address: this.state.Address,
-        companyType: this.state.CompanyType,
-        isActive:this.state.Active
+        companyName: this.state.txtCompanyNameValue,
+        economicCode:this.state.txtEconomicCodeValue,
+        nationalCode: this.state.txtNationalCodeValue,
+        address: this.state.txtAddressValue,
+        companyType: this.state.txtCompanyTypeValue,
+        isActive:this.state.chkIsActive,
       };
-      await updateCompany(data, this.props.User.token);
-    }
+      
+      const RESULT=await updateCompany(data, this.props.User.token);
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: RESULT>0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش" ,
+          Type: RESULT>0 ? "success" : "error",
+        },
+      });
     this.fn_updateGrid();
+    }
   };
 
   onHidingToast=()=>{
     this.setState({ToastProps:{isToastVisible:false}})
   }
 
-  chkActive_onChange=(args)=> {
-    this.setState({
-      Active: args.value,
-    });
+
+  btnDelete_onClick=async()=>{
+      const MSG=await deleteCompany(this.state.RowSelected.id, this.props.User.token);
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: MSG,
+          Type: "success",
+        },
+      });
+      this.fn_updateGrid();
   }
-    render(){
-        return(
-          <div className="standardMargin" style={{ direction: "rtl" }}>
-          <Toast
-              visible={this.state.ToastProps.isToastVisible}
-              message={this.state.ToastProps.Message}
-              type={this.state.ToastProps.Type}
-              onHiding={this.onHidingToast}
-              displayTime={ToastTime}
-              width={ToastWidth}
-              rtlEnabled={true}
-          />  
-            <Card className="shadow bg-white border pointer">
-                  <Row className="standardPadding">   
-                    <Row>                
-                      <Label>
-                            شرکت
-                      </Label>                
+  render(){
+    return(
+      <div className="standardMargin" style={{ direction: "rtl" }}>
+        <Toast
+          visible={this.state.ToastProps.isToastVisible}
+          message={this.state.ToastProps.Message}
+          type={this.state.ToastProps.Type}
+          onHiding={this.onHidingToast}
+          displayTime={ToastTime}
+          width={ToastWidth}
+          rtlEnabled={true}
+      />  
+      <Card className="shadow bg-white border pointer">
+            <Row className="standardPadding">   
+              <Row>                
+                <Label>
+                      شرکت
+                </Label>                
+              </Row>
+              {this.state.stateDisable_btnAdd &&
+                <Row>                
+                  <Col xs="auto">
+                    <Button
+                      icon={PlusNewIcon}
+                      text="جدید"
+                      type="default"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnNew_onClick}
+                  />
+                  </Col>
+                </Row>}
+                <Row className="standardPadding">
+                  <Col>
+                    <Label className="standardLabelFont">کد</Label>
+                    <TextBox
+                      value={this.state.txtCodeValue}
+                      showClearButton={true}
+                      placeholder="کد"
+                      rtlEnabled={true}
+                      valueChangeEvent="keyup"
+                      onValueChanged={this.txtCode_onChange}
+                      disabled={this.state.stateDisable_txtCode}
+                    />
+                  </Col>
+                  <Col>
+                      <Label className="standardLabelFont">نام شرکت</Label>
+                      <TextBox
+                        value={this.state.txtCompanyNameValue}
+                        showClearButton={true}
+                        placeholder="نام شرکت"
+                        rtlEnabled={true}
+                        valueChangeEvent="keyup"
+                        onValueChanged={this.txtCompanyName_onChange}             
+                      />
+                      <Row>
+                        <Label
+                          id="errCompanyName"
+                          className="standardLabelFont errMessage"
+                        />
+                      </Row>
+                    </Col>
+                    <Col>              
+                      <Label className="standardLabelFont">کد اقتصادی</Label>
+                      <TextBox
+                        value={this.state.txtEconomicCodeValue}
+                        showClearButton={true}
+                        placeholder="کد اقتصادی"
+                        rtlEnabled={true}
+                        valueChangeEvent="keyup"
+                        onValueChanged={this.txtEconomicCode_onChange}
+                        
+                      />
+                      <Row>
+                        <Label
+                          id="errEconomicCode"
+                          className="standardLabelFont errMessage"
+                        />
+                      </Row>
+                    </Col>
+                  <Col>
+                    <Label className="standardLabelFont">کد ملی</Label>
+                    <TextBox
+                      value={this.state.txtNationalCodeValue}
+                      showClearButton={true}
+                      placeholder="کد ملی"
+                      rtlEnabled={true}
+                      valueChangeEvent="keyup"
+                      onValueChanged={this.txtNationalCode_onChange}
+                      
+                    />
+                    <Row>
+                        <Label
+                          id="errNationalCode"
+                          className="standardLabelFont errMessage"
+                        />
                     </Row>
-                    {this.state.stateDisable_btnAddCompany &&
-                      <Row>                
-                        <Col>
+                  </Col>
+                  <Col>              
+                    <Label className="standardLabelFont">آدرس</Label>
+                    <TextBox
+                      value={this.state.txtAddressValue}
+                      showClearButton={true}
+                      placeholder="آدرس"
+                      rtlEnabled={true}
+                      valueChangeEvent="keyup"
+                      onValueChanged={this.txtAddress_onChange}
+                    />
+                  </Col>
+                  <Col>              
+                    <Label className="standardLabelFont">نوع شرکت</Label>
+                    <TextBox
+                      value={this.state.txtCompanyTypeValue}
+                      showClearButton={true}
+                      placeholder="نوع شرکت"
+                      rtlEnabled={true}
+                      valueChangeEvent="keyup"
+                      onValueChanged={this.txtCompanyType_onChange}
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsActive}
+                    text="فعال"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsActive_onChange}
+                  />
+                  <Row>
+                    <Label
+                      id="errCompanyIsActive"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+              </Row>
+                {!this.state.stateUpdateDelete ? (
+                    <Row>
+                      {this.state.stateDisable_btnAdd &&(
+                        <Col xs="auto">
                           <Button
-                            variant="contained"
-                            sx={{ fontFamily: "Tahoma"}}
-                            onClick={this.btnNewCompany_onClick}
-                          >
-                            جدید
-                          </Button>
-                        </Col>
-                      </Row>}
-                      <Row className="standardPadding">
-                      <Col>
-                          <Label>کد</Label>
-                          <Input
-                            type="text"
-                            value={this.state.Code}
-                            onChange={this.txtCode_onChange}
-                            placeholder="کد"
-                            id="txtCode"
+                            icon={SaveIcon}
+                            text="ثبت"
+                            type="success"
+                            stylingMode="contained"
+                            rtlEnabled={true}
+                            onClick={this.btnAdd_onClick}
                           />
                         </Col>
+                      )}
+                    </Row>
+                  ) : (
+                    <Row className="standardSpaceTop">
+                      <Row>
+                        {this.state.stateDisable_btnUpdate &&(
+                          <>
+                            <Col xs="auto">
+                              <Button
+                                icon={UpdateIcon}
+                                text="ذخیره تغییرات"
+                                type="success"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                onClick={this.btnUpdate_onClick}
+                              />
+                            </Col>      
+                                     
+                            <Col xs="auto">
+                              <Button
+                                icon={DeleteIcon}
+                                text="حذف"
+                                type="danger"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                onClick={this.btnDelete_onClick}
+                              />
+                            </Col>
+                          </>
+                             )}
+                             </Row>
+                           </Row>
+                         )}
+                      <Row>
                         <Col>
-                          <Label>نام شرکت</Label>
-                          <Input
-                            type="text"
-                            value={this.state.CompanyName}
-                            onChange={this.txtCompanyName_onChange}
-                            placeholder="نام شرکت"
-                          />
-                          <Label id="errCompanyName" className="standardLabelFont errMessage" />
-                        </Col>
-                        <Col>              
-                          <Label>کد اقتصادی</Label>
-                          <Input
-                            type="text"
-                            value={this.state.EconomicCode}
-                            onChange={this.txtEconomicCode_onChange}
-                            placeholder="کد اقتصادی"
-                          />
-                        </Col>
-                        <Col>
-                          <Label>کد ملی</Label>
-                          <Input
-                            type="text"
-                            value={this.state.NationalCode}
-                            onChange={this.txtNationalCode_onChange}
-                            placeholder="کد ملی"
-                          />
-                          <Label id="errNationalCode" className="standardLabelFont errMessage" />
-                        </Col>
-                        <Col>              
-                          <Label>آدرس</Label>
-                          <Input
-                            type="text"
-                            value={this.state.Address}
-                            onChange={this.txtAddress_onChange}
-                            placeholder="آدرس"
-                          />
-                        </Col>
-                        <Col>              
-                          <Label>نوع شرکت</Label>
-                          <Input
-                            type="text"
-                            value={this.state.CompanyType}
-                            onChange={this.txtCompanyType_onChange}
-                            placeholder="نوع شرکت"
-                          />
-                        </Col>
-                        <Col>              
-                          <Label>فعال</Label>
-                          <CheckBox
-                            value={this.state.Active}
-                            //elementAttr={handleValueChangeLabel}
-                            onValueChanged={this.chkActive_onChange}
-                          />
+                          <p
+                            id="ErrorUpdateCompany"
+                            style={{ textAlign: "right", color: "red" }}
+                          ></p>
                         </Col>
                       </Row>
-                      {!this.state.stateUpdateDelete ? (
-                          <Row>
-                            {this.state.stateDisable_btnAddCompany &&
-                              <Col xs="auto">
-                                <Button
-                                  variant="contained"
-                                  sx={{ fontFamily: "Tahoma"}}
-                                  onClick={this.btnAddCompany_onClick}
-                                >
-                                  ثبت شرکت
-                                </Button>
-                              </Col>
-                            }
-                          </Row>
-                        ) : (
-                          <>
-                            <Row>
-                              {this.state.stateDisable_btnUpdateCompany &&
-                                  <Col xs="auto">
-                                    <Button
-                                      variant="contained"
-                                      sx={{ fontFamily: "Tahoma"}}
-                                      onClick={this.btnUpdateCompany_onClick}
-                                    >
-                                      ذخیره تغییرات
-                                    </Button>
-                                  </Col>      
-                              }                
-                            </Row>
-                            <Row>
-                              <Col>
-                                <p
-                                  id="ErrorUpdateCompany"
-                                  style={{ textAlign: "right", color: "red" }}
-                                ></p>
-                              </Col>
-                            </Row>
-                          </>
-                        )}  
-                  </Row>   
-                </Card>
-                <p></p>
-<Card className="shadow bg-white border pointer">
-<Row className="standardPadding">
-  <Row>  
-    <Label className="title">
-        لیست شرکت ها
-    </Label>
-  </Row>
-
-  <Row>
-        <Row className="standardPadding">                    
-          <DataGrid
-              dataSource={this.state.CompanyGridData}
-              defaultColumns={DataGridCompanyColumns}
-              showBorders={true}
-              rtlEnabled={true}
-              allowColumnResizing={true}
-              onRowClick={this.grdCompany_onClickRow}                                            
-              height={DataGridDefaultHeight}
-              keyExpr="id"
-          >
-              <Scrolling rowRenderingMode="virtual"
+                    </Row> 
+                  </Card>
+          <p></p>
+        <Card className="shadow bg-white border pointer">
+          <Row className="standardPadding"> 
+            <Row>
+              <Label className="title">
+                  لیست شرکت ها
+              </Label>
+            </Row>
+          <Row>
+            <Col xs="auto" className="standardMarginRight">                     
+              <DataGrid
+                  dataSource={this.state.CompanyGridData}
+                  defaultColumns={DataGridCompanyColumns}
+                  showBorders={true}
+                  rtlEnabled={true}
+                  allowColumnResizing={true}
+                  onRowClick={this.grdCompany_onClickRow}                                            
+                  height={DataGridDefaultHeight}
+              >
+              <Scrolling 
+                  rowRenderingMode="virtual"
                   showScrollbar="always"
                   columnRenderingMode="virtual"
               />
@@ -411,18 +488,17 @@ class Company extends React.Component{
               />
               <FilterRow visible={true} />
               <FilterPanel visible={true} />                                                                            
-          </DataGrid>                                                         
+              </DataGrid>                                                         
+            </Col>
+          </Row>
         </Row>
-
-  </Row>
-</Row>
-</Card>    
-</div>   
-        )
-    }
+      </Card>    
+    </div>   
+    );
+  }
 }
 const mapStateToProps = (state) => ({
-    User: state.users,
-  });
-  
-  export default connect(mapStateToProps)(Company);
+  User: state.users,
+});
+                  
+export default connect(mapStateToProps)(Company);

@@ -8,7 +8,6 @@ import companySlice from "./company/company-slice";
 import locationSlice from "./location/location-slice";
 import supplierSlice from "./supplier/supplier-slice";
 import orderInventorySlice from "./orderInventory/orderInventory-slice";
-import itemSlice from "./item/item-slice";
 
 const store = configureStore({
   reducer: {
@@ -20,8 +19,7 @@ const store = configureStore({
     companies:companySlice.reducer,
     locations:locationSlice.reducer,
     suppliers:supplierSlice.reducer,
-    items:itemSlice.reducer,
-    orderInventory:orderInventorySlice.reducer
+    orderInventorys:orderInventorySlice.reducer
   },
 });
 export default store;

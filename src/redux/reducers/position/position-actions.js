@@ -1,24 +1,25 @@
-export async function companyList(Token){
-    const url=window.apiAddress+"/Company/companyList"  
+export async function positionList(companyId, Token){
+    const url=window.apiAddress+"/Position/positionList?companyId=" + companyId  
     const response = await fetch(
         url,
         {
             method: "GET",                        
-            headers: {               
+            headers: { 
+              'Content-Type': 'application/json' ,
               'Authorization': `Bearer ${Token}`
             },
         }
       );        
     const result= await response.json();
     if(result.status=="Success"){
-      console.log('All company'+JSON.stringify(result.data));
+      console.log('All position'+JSON.stringify(result.data));
       return result.data;  
     }
     return null;
 }
 
-export async function addCompany(Object,Token){
-  const url=window.apiAddress+"/Company/addCompany"              
+export async function addPosition(Object,Token){
+  const url=window.apiAddress+"/Position/addPosition"              
   const response = await fetch(
       url,
       {
@@ -33,14 +34,14 @@ export async function addCompany(Object,Token){
   
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('RESULT OF ADD NEW Company='+JSON.stringify(result.data));
+    console.log('RESULT OF ADD NEW position='+JSON.stringify(result.data));
     return result.data;  
   }
   return null; 
 }
 
-export async function updateCompany(Object, Token){
-  const url=window.apiAddress+"/Company/updateCompany"              
+export async function updatePosition(Object, Token){
+  const url=window.apiAddress+"/Position/updatePosition"              
   const response = await fetch(
       url,
       {
@@ -54,14 +55,14 @@ export async function updateCompany(Object, Token){
     );        
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('company update result='+JSON.stringify(result.data));
+    console.log('position update result='+JSON.stringify(result.data));
     return result.data;  
   }
   return 0; 
 }
 
-export async function deleteCompany(companyId, Token){
-  const url=window.apiAddress+"/Company/deleteCompany?companyId=" + companyId              
+export async function deletePosition(positionId, Token){
+  const url=window.apiAddress+"/Position/deletePosition?positionId=" + positionId         
   const response = await fetch(
       url,
       {
@@ -74,7 +75,7 @@ export async function deleteCompany(companyId, Token){
     );        
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('company delete result='+JSON.stringify(result.data));
+    console.log('Position delete result='+JSON.stringify(result.data));
     return result.message;  
   }
   return 0; 

@@ -3,12 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const locationSlice=createSlice({
     name:"locations",
     initialState: {    
-        locations:null,
+        location:null,
         locationPermission:null, 
     },
     reducers: {
         setLocation(state, action){
-            state.locations=action.payload.locations
+            state.location=action.payload.location
         },
         setLocationPermission(state,action){
             state.locationPermission=action.payload.locationPermission

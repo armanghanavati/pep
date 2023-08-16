@@ -1,5 +1,5 @@
-export async function positionList(Token){
-    const url=window.apiAddress+"/Position/positionList"  
+export async function personList(companyId,Token){
+    const url=window.apiAddress+"/Person/personList?companyId=" + companyId  
     const response = await fetch(
         url,
         {
@@ -12,14 +12,14 @@ export async function positionList(Token){
       );        
     const result= await response.json();
     if(result.status=="Success"){
-      console.log('All position'+JSON.stringify(result.data));
+      console.log('All person'+JSON.stringify(result.data));
       return result.data;  
     }
     return null;
 }
 
-export async function addPosition(Object,Token){
-  const url=window.apiAddress+"/Position/addPosition"              
+export async function addPerson(Object,Token){
+  const url=window.apiAddress+"/Person/addPerson"              
   const response = await fetch(
       url,
       {
@@ -34,14 +34,14 @@ export async function addPosition(Object,Token){
   
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('RESULT OF ADD NEW position='+JSON.stringify(result.data));
+    console.log('RESULT OF ADD NEW person='+JSON.stringify(result.data));
     return result.data;  
   }
   return null; 
 }
 
-export async function updatePosition(Object, Token){
-  const url=window.apiAddress+"/Position/updatePosition"              
+export async function updatePerson(Object, Token){
+  const url=window.apiAddress+"/Person/updatePerson"              
   const response = await fetch(
       url,
       {
@@ -55,8 +55,28 @@ export async function updatePosition(Object, Token){
     );        
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('position update result='+JSON.stringify(result.data));
+    console.log('Person update result='+JSON.stringify(result.data));
     return result.data;  
   }
-  return null; 
+  return 0; 
+}
+
+export async function deletePerson(personId, Token){
+  const url=window.apiAddress+"/Person/deletePerson?personId=" + personId         
+  const response = await fetch(
+      url,
+      {
+          method: "DELETE",              
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('Person delete result='+JSON.stringify(result.data));
+    return result.message;  
+  }
+  return 0; 
 }

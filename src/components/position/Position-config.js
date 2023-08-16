@@ -10,8 +10,18 @@ export const DataGridPositionColumns = [
         allowEditing:false    
     },
     {
+        dataField:"positionTop" ,
+        caption:"گروه سمت",
+        allowEditing:false    
+    },
+    {
         dataField:"desc" ,
         caption:"توضیحات",
+        allowEditing:false    
+    },
+    {
+        dataField:"isActive" ,
+        caption:"فعال",
         allowEditing:false    
     }
 ];

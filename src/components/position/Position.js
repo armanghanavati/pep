@@ -1,14 +1,29 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-  Input,
-  Container,
   Row,
   Col,
   Card,
-  
-  Label,  
+  Label,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter, 
 } from "reactstrap";
+import classnames from "classnames";
+import TextBox from "devextreme-react/text-box";
+import TextArea from "devextreme-react/text-area";
+import SelectBox from "devextreme-react/select-box";
+import { Button } from "devextreme-react/button";
+import { CheckBox } from "devextreme-react/check-box";
+import notify from "devextreme/ui/notify";
+import { Toast } from "devextreme-react/toast";
+import { Tooltip } from "devextreme-react/tooltip";
 import DataGrid, {
   Column,
   Editing,
@@ -25,20 +40,6 @@ import DataGrid, {
   GroupPanel,
   SearchPanel,
 } from "devextreme-react/data-grid";
-import { Toast } from "devextreme-react/toast";
-import SelectBox from "devextreme-react/select-box";
-import Button from "@mui/material/Button";
-import {
-  updatePosition,
-  addPosition,
-  positionList,
-} from "../../redux/reducers/position/position-action";
-import companySlice, {
-  companyActions,
-} from "../../redux/reducers/company/company-slice";
-import { companyList } from "../../redux/reducers/company/company-actions";
-import { DataGridPositionColumns } from "./Position-config";
-
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
@@ -46,47 +47,80 @@ import {
   ToastTime,
   ToastWidth,
 } from "../../config/config";
+import {
+  updatePosition,
+  addPosition,
+  positionList,
+  deletePosition
+} from "../../redux/reducers/position/position-actions";
+import companySlice, {
+  companyActions,
+} from "../../redux/reducers/company/company-slice";
+import {
+  positionActions,
+} from "../../redux/reducers/position/position-slice";
+import { companyList } from "../../redux/reducers/company/company-actions";
+import { DataGridPositionColumns } from "./Position-config";
+import PlusNewIcon from "../../assets/images/icon/plus.png";
+import SaveIcon from "../../assets/images/icon/save.png";
+import UpdateIcon from "../../assets/images/icon/update.png";
+import DeleteIcon from "../../assets/images/icon/delete.png";
+
 class Position extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       PositionGridData: null,
-      Code: null,
+      txtCodeValue: null,
       Id: null,
-      PositionName: null,
-      Desc: null,
+      txtPositionNameValue: null,
+      txtDescValue: null,
       PositionId: null,
-      CompanyId: null,
       RowSelected: null,
       stateUpdateDelete: true,
-      stateDisable_btnAddPosition: false,
-      stateDisable_btnUpdatePosition: false,
-      stateDisable_showPosition: false,
+      stateDisable_btnAdd: false,
+      stateDisable_btnUpdate: false,
+      stateDisable_show: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
         Type: "",
       },
+      chkIsActive:null,
+      CompanyId:"",
+      CompanyCmb:"",
+      stateDisable_txtCode:false,
+      Position:null,
     };
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
     await this.fn_companyList();
+    await this.fn_positionList(this.state.CompanyId);
   }
 
-  fn_companyList = async () => {
-    await this.props.dispatch(
-      companyActions.setCompany({
-        company: await companyList(this.props.User.token),
-      })
-    );
+  fn_companyList=async()=>{    
+    if(this.props.Company.company != null)
+      this.setState({
+        company:this.props.Company.company
+      });
+    else
+      await this.props.dispatch(companyActions.setCompany({
+        company:await companyList(this.props.User.token)
+      }));
+  }
+
+  fn_positionList = async (companyId) => {
+    this.setState({
+      Position:await positionList(companyId, this.props.User.token)
+    });     
   };
 
   fn_updateGrid = async () => {
-    if (this.state.stateDisable_showPosition) {
+    if (this.state.stateDisable_show) {
       this.setState({
-        PositionGridData: await positionList(this.props.User.token),
+        PositionGridData: await positionList(this.state.CompanyId, this.props.User.token),
       });
     }
   };
@@ -97,111 +131,153 @@ class Position extends React.Component {
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
           case "position.update":
-            this.setState({ stateDisable_btnUpdatePosition: true });
+            this.setState({ stateDisable_btnUpdate: true });
             break;
           case "position.insert":
-            this.setState({ stateDisable_btnAddPosition: true });
+            this.setState({ stateDisable_btnAdd: true });
             break;
           case "position.show":
-            this.setState({ stateDisable_showPosition: true });
+            this.setState({ stateDisable_show: true });
             break;
         }
       }
   };
 
-  grdPosition_onClickRow = (params) => {
+  grdPosition_onClickRow = (e) => {
     this.setState({
-      Id: params.data.id,
-      PositionId: params.data.positionId,
-      PositionName: params.data.positionName,
-      CompanyId: params.data.companyId,
-      Desc: params.data.desc,
-      RowSelected: params.data,
+      txtCodeValue:e.data.code,
+      Id: e.data.id,
+      PositionId: e.data.positionId,
+      txtPositionNameValue: e.data.positionName,
+      CompanyCmb: e.data.companyId,
+      txtDescValue: e.data.desc,
+      RowSelected: e.data,
+      stateUpdateDelete: true,
+      chkIsActive:e.data.isActive,
+      stateDisable_txtCode:true,
     });
   };
 
-  btnNewPosition_onClick = () => {
+  btnNew_onClick = () => {
     this.setState({
-      PositionName: "",
-      Desc: "",
+      txtPositionNameValue: null,
+      txtDescValue: null,
       stateUpdateDelete: false,
+      stateDisable_txtCode:false,
+      CompanyCmb:null,
+      PositionId:null,
+      LocationId:null,
+      chkIsActive: null,
     });
   };
 
-  btnAddPosition_onClick = async () => {
+  chkIsActive_onChange = (e) => {
+    this.setState({
+      chkIsActive: e.value,
+    });
+  };
+
+  fn_CheckValidation = () => {
+    let errMsg = "";
     let flag = true;
-    let errMSG = "";
     document.getElementById("errPositionName").innerHTML = "";
-    if ((this.state.CompanyName = "")) {
+    if (this.state.txtPositionNameValue == null) {
       document.getElementById("errPositionName").innerHTML =
-        "نام سمت را وارد نمائید.";
+        "نام  سمت را وارد نمائید";
       flag = false;
     }
 
-    if (flag) {
+    if (this.state.chkIsActive == null) {
+      document.getElementById("errPositionIsActive").innerHTML =
+        "فعال بودن را مشخص نمائید.";
+      flag = false;
+    }
+    return flag;
+  };
+
+  btnAdd_onClick = async () => {
+    if (await this.fn_CheckValidation()) {
       const data = {
-        code: this.state.Code,
-        positionName: this.state.PositionName,
-        desc: this.state.Desc,
-        companyId: this.state.CompanyId,
+        code: this.state.txtCodeValue,
+        positionId:this.state.PositionId,
+        positionName: this.state.txtPositionNameValue,
+        desc: this.state.txtDescValue,
+        companyId: this.state.CompanyCmb,
+        isActive:this.state.chkIsActive
       };
-      await addPosition(data, this.props.User.token);
+      const RESULT=await addPosition(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
-          Message: "سمت ثبت گردید.",
-          Type: "success",
+          Message: RESULT!=null ? "ثبت با موفقیت انجام گردید" : "عدم ثبت" ,
+          Type: RESULT!=null ? "success" : "error",
         },
       });
       this.fn_updateGrid();
     }
   };
-  txtCode_onChange = (params) => {
-    this.setState({ Code: params.target.value });
+  txtCode_onChange = (e) => {
+    this.setState({ txtCodeValue: e.value });
   };
-  txtPositionName_onChange = (params) => {
-    this.setState({ PositionName: params.target.value });
-  };
-
-  txtDesc_onChange = (params) => {
-    this.setState({ Desc: params.target.value });
+  txtPositionName_onChange = (e) => {
+    this.setState({ txtPositionNameValue: e.value });
   };
 
-  btnUpdatePosition_onClick = async () => {
-    let flag = true;
-    let errMSG = "";
-    document.getElementById("errPositionName").innerHTML = "";
-    if (this.state.CompanyName == "") {
-      document.getElementById("errpositionName").innerHTML =
-        "نام شرکت را وارد نمائید.";
-      flag = false;
-    }
+  txtDesc_onChange = (e) => {
+    this.setState({ txtDescValue: e.value });
+  };
 
-    if (this.state.CompanyId == null) {
-      errMSG += "درخواستی برای ویرایش انتخاب نشده است." + "<br>";
-      flag = false;
-    }
-    document.getElementById("ErrorUpdatePosition").innerHTML = errMSG;
-    if (flag) {
-      let data = {
+  btnUpdate_onClick = async () => {
+    if (await this.fn_CheckValidation()) {
+      const data = {
         id: this.state.Id,
-        positionName: this.state.PositionNameName,
-        desc: this.state.Desc,
+        positionId:this.state.PositionId,
+        positionName: this.state.txtPositionNameValue,
+        desc: this.state.txtDescValue,
+        isActive:this.state.chkIsActive,
+        companyId:this.state.CompanyCmb
       };
-      await updatePosition(data, this.props.User.token);
-    }
+      const RESULT=await updatePosition(data, this.props.User.token);
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: RESULT>0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش" ,
+          Type: RESULT>0 ? "success" : "error",
+        },
+      });
     this.fn_updateGrid();
+    }
   };
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  cmbCompany_onChange = (e) => {
+  cmbCompany_onChange = async(e) => {
     this.setState({
-      CompanyId: e,
+      CompanyCmb: e,
+    });
+    await this.fn_positionList(e);
+  };
+
+  cmbPosition_onChange = (e) => {
+    this.setState({
+      PositionId: e,
     });
   };
+
+  btnDelete_onClick=async()=>{
+    const MSG=await deletePosition(this.state.RowSelected.id, this.props.User.token);
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: MSG,
+        Type: "success",
+      },
+    });
+    this.fn_updateGrid();
+}
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -219,20 +295,37 @@ class Position extends React.Component {
             <Row>
               <Label>سمت</Label>
             </Row>
-            {this.state.stateDisable_btnAddPosition && (
-              <Row>
-                <Col>
-                  <Button
-                    variant="contained"
-                    sx={{ fontFamily: "Tahoma" }}
-                    onClick={this.btnNewPosition_onClick}
-                  >
-                    جدید
-                  </Button>
-                </Col>
-              </Row>
-            )}
+            {this.state.stateDisable_btnAdd && 
+            <Row>                
+               <Col xs="auto">
+                 <Button
+                   icon={PlusNewIcon}
+                   text="جدید"
+                   type="default"
+                   stylingMode="contained"
+                   rtlEnabled={true}
+                   onClick={this.btnNew_onClick}
+                 />
+               </Col>
+            </Row>
+            }
             <Row className="standardPadding">
+            <Col>
+                <Label className="standardLabelFont">کد</Label>
+                <TextBox
+                  value={this.state.txtCodeValue}
+                  showClearButton={true}
+                  placeholder="کد"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtCode_onChange}
+                  disabled={this.state.stateDisable_txtCode}
+                />
+                <Label
+                  id="errCode"
+                  className="standardLabelFont errMessage"
+                />
+              </Col>
               <Col>
                 <Label className="standardLabelFont">شرکت</Label>
                 <SelectBox
@@ -243,28 +336,31 @@ class Position extends React.Component {
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbCompany_onChange}
+                  value={this.state.CompanyCmb}
                 />
               </Col>
               <Col>
-                <Label>کد</Label>
-                <Input
-                  type="text"
-                  value={this.state.Code}
-                  onChange={this.txtCode_onChange}
-                  placeholder="کد"
-                />
-                <Label
-                  id="errPositionName"
-                  className="standardLabelFont errMessage"
+                <Label className="standardLabelFont">زیر گروه سمت</Label>
+                <SelectBox
+                  dataSource={this.state.Position}
+                  displayExpr="positionName"
+                  placeholder="گروه سمت"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbPosition_onChange}
+                  value={this.state.PositionId}
                 />
               </Col>
               <Col>
-                <Label>نام سمت</Label>
-                <Input
-                  type="text"
-                  value={this.state.PositionName}
-                  onChange={this.txtPositionName_onChange}
+                <Label className="standardLabelFont">نام سمت</Label>
+                <TextBox
+                  value={this.state.txtPositionNameValue}
+                  showClearButton={true}
                   placeholder="نام سمت"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtPositionName_onChange}     
                 />
                 <Label
                   id="errPositionName"
@@ -272,44 +368,78 @@ class Position extends React.Component {
                 />
               </Col>
               <Col>
-                <Label>توضیحات</Label>
-                <Input
-                  type="text"
-                  value={this.state.Desc}
-                  onChange={this.txtDesc_onChange}
+                <Label className="standardLabelFont">توضیحات</Label>
+                <TextBox
+                  value={this.state.txtDescValue}
+                  showClearButton={true}
                   placeholder="توضیحات"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtDesc_onChange}     
                 />
               </Col>
-            </Row>
+             </Row>
+             <Row>
+              <Col xs="auto">
+                <CheckBox
+                  value={this.state.chkIsActive}
+                  text="فعال"
+                  rtlEnabled={true}
+                  onValueChanged={this.chkIsActive_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errLocationIsActive"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+             </Row>
             {!this.state.stateUpdateDelete ? (
               <Row>
-                {this.state.stateDisable_btnAddPosition && (
+                {this.state.stateDisable_btnAdd && (
                   <Col xs="auto">
                     <Button
-                      variant="contained"
-                      sx={{ fontFamily: "Tahoma" }}
-                      onClick={this.btnAddPosition_onClick}
-                    >
-                      ثبت سمت
-                    </Button>
+                      icon={SaveIcon}
+                      text="ثبت"
+                      type="success"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnAdd_onClick}
+                    />
                   </Col>
                 )}
               </Row>
             ) : (
-              <>
-                <Row>
-                  {this.state.stateDisable_btnUpdatePosition && (
+                <Row className="standardSpaceTop">
+                  <Row>
+                  {this.state.stateDisable_btnUpdate && (
+                    <>
                     <Col xs="auto">
                       <Button
-                        variant="contained"
-                        sx={{ fontFamily: "Tahoma" }}
-                        onClick={this.btnUpdatePosition_onClick}
-                      >
-                        ذخیره تغییرات
-                      </Button>
+                        icon={UpdateIcon}
+                        text="ذخیره تغییرات"
+                        type="success"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnUpdate_onClick}
+                      />
                     </Col>
-                  )}
+                    <Col xs="auto">
+                      <Button
+                        icon={DeleteIcon}
+                        text="حذف"
+                        type="danger"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnDelete_onClick}
+                      />
+                    </Col>
+                  </>
+                )}
+                 </Row>
                 </Row>
+              )}
                 <Row>
                   <Col>
                     <p
@@ -318,11 +448,9 @@ class Position extends React.Component {
                     ></p>
                   </Col>
                 </Row>
-              </>
-            )}
-          </Row>
-        </Card>
-        <p></p>
+              </Row>
+            </Card>
+          <p></p>
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
@@ -330,7 +458,7 @@ class Position extends React.Component {
             </Row>
 
             <Row>
-              <Row className="standardPadding">
+              <Col xs="auto" className="standardPadding">
                 <DataGrid
                   dataSource={this.state.PositionGridData}
                   defaultColumns={DataGridPositionColumns}
@@ -340,23 +468,23 @@ class Position extends React.Component {
                   onRowClick={this.grdPosition_onClickRow}
                   height={DataGridDefaultHeight}
                 >
-                  <Scrolling
-                    rowRenderingMode="virtual"
-                    showScrollbar="always"
-                    columnRenderingMode="virtual"
-                  />
+                <Scrolling
+                  rowRenderingMode="virtual"
+                  showScrollbar="always"
+                  columnRenderingMode="virtual"
+                />
 
-                  <Paging defaultPageSize={DataGridDefaultPageSize} />
-                  <Pager
-                    visible={true}
-                    allowedPageSizes={DataGridPageSizes}
-                    showPageSizeSelector={true}
-                    showNavigationButtons={true}
-                  />
-                  <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
+              <Paging defaultPageSize={DataGridDefaultPageSize} />
+                <Pager
+                  visible={true}
+                  allowedPageSizes={DataGridPageSizes}
+                  showPageSizeSelector={true}
+                  showNavigationButtons={true}
+                />
+                <FilterRow visible={true} />
+                <FilterPanel visible={true} />
                 </DataGrid>
-              </Row>
+              </Col>
             </Row>
           </Row>
         </Card>
@@ -367,6 +495,7 @@ class Position extends React.Component {
 const mapStateToProps = (state) => ({
   User: state.users,
   Company: state.companies,
+  Position:state.positions
 });
 
 export default connect(mapStateToProps)(Position);
