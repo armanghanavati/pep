@@ -92,7 +92,7 @@ class OrderInventory extends React.Component {
     };
   }
 
-  async componentDidMount(){
+  async componentDidMount(){    
     await this.fn_CheckRequireState();
   }
 
