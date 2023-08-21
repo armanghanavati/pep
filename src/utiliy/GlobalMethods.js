@@ -1,3 +1,25 @@
+export function Gfn_BuildValueComboMulti(data){
+    const IDS=data.toString().split(',');    
+    let temp=[];
+    for(let i=0;i<IDS.length;i++){
+        let obj={ Id: parseInt(IDS[i])}
+        temp.push(obj);
+    }
+    return temp;
+}
+
+
+export function Gfn_BuildValueComboSelectAll(data){
+    const TEMP=data==null ? [] : data;
+    let tempPush=[]    
+    for(let i=0;i<TEMP.length;i++){        
+        let obj={ Id: TEMP[i].id}
+        tempPush.push(obj);
+    }
+    return tempPush;
+    
+}
+
 //----------Convert All UniCode Number to English UniCode Number----------
 export function Gfn_convertENunicode(number){
     let str=number;

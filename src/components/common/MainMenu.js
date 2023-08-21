@@ -131,7 +131,7 @@ class MainMenu extends React.Component {
         <>
           <Row>
             <Col xs='auto' style={{backgroundColor:'#0d62cb',color:'white',height:'94vh'}}>
-              <div style={{paddingTop:'10px'}}>
+              <div style={{padding:'10px'}}>
                 <TreeView id="simple-treeview"
                     items={this.state.MainMenuData}
                     dataStructure="plain"
@@ -140,27 +140,21 @@ class MainMenu extends React.Component {
                     keyExpr="Id"
                     width={300}                
                     rtlEnabled={true}
-                    selectionMode='single'   
-                    style={{}}                                 
+                    selectionMode='single'                                                     
                     searchEnabled={true}                                 
                     onItemClick={this.mnuMainMenu_onClick}   
                     elementAttr={MAIN_MENU_ATTR}                         
                 />                 
               </div>
             </Col>            
-              <Col>        
-              {/* <p id="PermissionDeny" style={{textAlign:'center',padding:'30px',color:'red',fontSize:'20px'}} ></p>     */}
-                <div style={{color:'black'}}>                   
-                  {/* <Link id='lnkRoute' to={this.state.currentItem.LinkPath}></Link>                                
-                  <Routes>                                                  
-                    <Route exact path={this.state.currentItem.LinkPath} element={this.state.currentItem.LinkComponent}></Route>            
-                  </Routes> */}
-                  <Link id='lnkRoute' to={this.state.linkPath}></Link>                                
-                  <Routes>                                                  
-                    <Route exact path={this.state.linkPath} element={this.state.linkComponent}></Route>            
-                  </Routes>
-                </div>
-              </Col>              
+            <Col style={{minWidth:"400px"}}>                    
+              <div style={{color:'black'}}>                                   
+                <Link id='lnkRoute' to={this.state.linkPath}></Link>                                
+                <Routes>                                                  
+                  <Route exact path={this.state.linkPath} element={this.state.linkComponent}></Route>            
+                </Routes>
+              </div>
+            </Col>              
           </Row>         
       </>
     );

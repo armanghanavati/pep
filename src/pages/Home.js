@@ -50,6 +50,7 @@ class Home extends React.Component {
                   displayExpr="label"
                   placeholder="انتخاب شرکت"
                   valueExpr="id"
+                  value={this.props.Company.currentCompanyId}
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbCompany_onChange}

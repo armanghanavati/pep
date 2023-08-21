@@ -699,8 +699,7 @@ class Ticket extends React.Component {
                                         placeholder="انتخاب بخش"                            
                                         valueExpr="id"
                                         searchEnabled={true}
-                                        rtlEnabled={true}        
-                                        on                        
+                                        rtlEnabled={true}                                                                   
                                         onValueChange={this.cmbTicketSubjectParent_onChange}
                                     />
                                 </Col>
@@ -712,8 +711,7 @@ class Ticket extends React.Component {
                                         placeholder="انتخاب موضوع"                            
                                         valueExpr="id"
                                         searchEnabled={true}
-                                        rtlEnabled={true}        
-                                        on                        
+                                        rtlEnabled={true}                                            
                                         onValueChange={this.cmbTicketSubject_onChange}
                                     />
                                     <Label id="errTicketSubject" className="standardLabelFont errMessage" />

@@ -7,8 +7,9 @@ import paymentSlice from "./payment/payment-slice";
 import companySlice from "./company/company-slice";
 import locationSlice from "./location/location-slice";
 import supplierSlice from "./supplier/supplier-slice";
-import orderInventorySlice from "./orderInventory/orderInventory-slice";
 import itemSlice from "./item/item-slice";
+import orderPointInventorySlice from "./OrderPointInventory/orderPointInventory-slice";
+import logsOrderPointInventorySlice from "./logsOrderPointInventory/logsOrderPointInventory-slice";
 
 const store = configureStore({
   reducer: {
@@ -19,9 +20,10 @@ const store = configureStore({
     payment:paymentSlice.reducer,
     companies:companySlice.reducer,
     locations:locationSlice.reducer,
-    suppliers:supplierSlice.reducer,
-    orderInventorys:orderInventorySlice.reducer,
+    suppliers:supplierSlice.reducer,    
     items:itemSlice.reducer,
+    orderPointInventories:orderPointInventorySlice.reducer,
+    logsOrderPointInventories:logsOrderPointInventorySlice.reducer,
   },
 });
 export default store;

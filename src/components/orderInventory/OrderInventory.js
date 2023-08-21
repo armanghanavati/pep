@@ -41,49 +41,75 @@ import DataGrid, {
   GroupPanel,
   SearchPanel,
 } from "devextreme-react/data-grid";
+
+import Wait from "../common/Wait";
+import OrderInventoryNew from "./OrderInventoryNew";
+
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
   DataGridDefaultHeight,
   ToastTime,
   ToastWidth,
+  ALL_MOD,
+  CHECK_BOXES_MOD,
+  FILTER_BUILDER_POPUP_POSITION,
 } from "../../config/config";
 
-import { 
-    itemListCombo 
-} from "../../redux/reducers/item/item-action";
 import { itemActions } from "../../redux/reducers/item/item-slice";
+import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-slice";
+import { locationActions } from "../../redux/reducers/location/location-slice";
 
-import SearchIcon from '../../assets/images/icon/search.png'
+import {
+  itemListCombo,
+  itemListComboBySupplierId,
+} from "../../redux/reducers/item/item-action";
+import { supplierOrderInventoryComboList } from "../../redux/reducers/supplier/supplier-action";
+import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
+import {
+  orderPintInventoryListByLSI,
+  updateGroupsOrderPointInventory,
+} from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import {
+  logsOPITodayListByUserId,
+  logsOPIByOPIid,
+} from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
 
-const products = [
-  {
-    id: 1,
-    locationName: "HD Video Player",
-    Price: 330,
-    Current_Inventory: 225,
-    Backorder: 0,
-    Manufacturing: 10,
-    Category: "Video Players",
-    ImageSrc: "images/products/1.png",
-  },
-  {
-    id: 2,
-    locationName: "SuperHD Video Player",
-    Price: 400,
-    Current_Inventory: 150,
-    Backorder: 0,
-    Manufacturing: 25,
-    Category: "Video Players",
-    ImageSrc: "images/products/2.png",
-  },
-];
+import {
+  Gfn_BuildValueComboMulti,
+  Gfn_BuildValueComboSelectAll,
+} from "../../utiliy/GlobalMethods";
+import { Template } from "devextreme-react";
+
+import { DataGridOrderPointInventoryColumns } from "./OrderInventory-config";
+import { orderPointInventoryActions } from "../../redux/reducers/OrderPointInventory/orderPointInventory-slice";
+
+import SearchIcon from "../../assets/images/icon/search.png";
+import PlusNewIcon from "../../assets/images/icon/plus.png";
+import UpdateIcon from "../../assets/images/icon/update.png";
 
 class OrderInventory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      Locations: null,
+      stateWait: false,      
+      cmbLocationGroupValue: null,
+      cmbLocation: null,
+      cmbLocationValue: null,
+      cmbSupplier: null,
+      cmbSupplierValue: null,
+      cmbItems: null,
+      cmbItemsValue: null,
+      OrderInventoryGridData: null,
+      OrderPointInventoryEdited: [],
+      allLogsOrderPointInventory: [],
+      stateShowRoute: false,
+      stateUpdateDelete: true,
+      stateEnable_btnAdd: false,
+      stateEnable_btnAddGroup: false,
+      stateEnable_btnUpdate: false,
+      stateEnable_show: false,
+      stateModal_OrderInventoryNew: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -92,29 +118,286 @@ class OrderInventory extends React.Component {
     };
   }
 
-  async componentDidMount(){    
+  async componentDidMount() {
+    await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
-    alert(this.props.Company.currentCompanyId)
+    // alert('CompanyId='+this.props.Company.currentCompanyId)
   }
 
-  fn_CheckRequireState=async()=>{
-    if(this.props.Item.itemCombo==null){
-        let itemCombo=await itemListCombo(this.props.User.token);
-        this.props.dispatch(            
-            itemActions.setItemCombo({
-                itemCombo                    
-            }),                
-        );          
-    }        
-  }
-
-  cmbRetailStoreGroup_onChange = (e) => {
-    alert(e);
+  fn_GetPermissions = () => {
+    const perm = this.props.User.permissions;
+    if (perm != null)
+      for (let i = 0; i < perm.length; i++) {
+        switch (perm[i].objectName) {
+          case "orders_inventory.update":
+            this.setState({ stateEnable_btnUpdate: true });
+            break;
+          case "orders_inventory.insert":
+            this.setState({ stateEnable_btnAdd: true });
+            break;
+          case "orders_inventory.insert_group":
+            this.setState({ stateEnable_btnAddGroup: true });
+            break;
+          case "orders_inventory.show":
+            this.setState({ stateEnable_show: true });
+            break;
+        }
+      }
   };
 
-  cmbItem_onChange=(e)=>{
-    alert(e)
+  OpenCloseWait() {
+    this.setState({ stateWait: !this.state.stateWait });
   }
+
+  fn_CheckRequireState = async () => {
+    const locationPermission = await locationListOrderInventoryCombo(
+      this.props.Company.currentCompanyId,
+      this.props.User.token
+    );
+
+    this.props.dispatch(
+      locationActions.setLocationPermission({
+        locationPermission      
+      })
+    );
+
+    this.setState({      
+      cmbSupplier: await supplierOrderInventoryComboList(
+        this.props.Company.currentCompanyId,
+        this.props.User.token
+      ),
+    });
+  };
+
+  cmbRetailStoreGroup_onChange = async (e) => {
+    const IDS = e.toString().split(",");
+    const TEMP_LocationGroup = this.props.Location.locationPermission;
+    let tempLocation = [];
+    for (let i = 0; i < IDS.length; i++)
+      for (let j = 0; j < TEMP_LocationGroup.length; j++)
+        if (IDS[i] == TEMP_LocationGroup[j].id)
+          tempLocation.push(TEMP_LocationGroup[j]);
+    this.setState({
+      cmbLocation: tempLocation,
+      cmbLocationGroupValue: await Gfn_BuildValueComboMulti(e),
+    });
+  };
+
+  cmbRetailStore_onChange = async (e) => {
+    this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(e) });
+  };
+
+  cmbSupplier_onChange = async (e) => {
+    const TEMP_cmbSupplier =
+      e == null || e == "" ? null : await Gfn_BuildValueComboMulti(e);
+    alert(TEMP_cmbSupplier);
+    this.setState({
+      cmbSupplierValue: TEMP_cmbSupplier,
+      cmbItems:
+        TEMP_cmbSupplier == null
+          ? null
+          : await itemListComboBySupplierId(
+              TEMP_cmbSupplier,
+              this.props.User.token
+            ),
+    });
+  };
+
+  cmbItem_onChange = async (e) => {
+    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(e) });
+  };
+
+  btnSearch_onClick = async () => {
+    this.OpenCloseWait();
+    let tempLocationGroupValue = this.state.cmbLocationGroupValue;
+    if (
+      this.state.cmbLocationGroupValue == null ||
+      this.state.cmbLocationGroupValue == ""
+    ) {
+      tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
+        this.props.Location.locationPermission
+      );
+      this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
+    }
+
+    let tempLocationValue = this.state.cmbLocationValue;
+    if (
+      this.state.cmbLocationValue == null ||
+      this.state.cmbLocationValue == ""
+    ) {
+      tempLocationValue = await Gfn_BuildValueComboSelectAll(
+        this.state.cmbLocation
+      );
+      this.setState({ cmbLocationValue: tempLocationValue });
+    }
+
+    let tempSupplierValue = this.state.cmbSupplierValue;
+    if (
+      this.state.cmbSupplierValue == null ||
+      this.state.cmbSupplierValue == ""
+    ) {
+      tempSupplierValue = await Gfn_BuildValueComboSelectAll(
+        this.state.cmbSupplier
+      );
+      this.setState({ cmbSupplierValue: tempSupplierValue });
+    }
+
+    let tempItemValue = this.state.cmbItemsValue;
+    if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {
+      tempItemValue = await Gfn_BuildValueComboSelectAll(this.state.cmbItems);
+      this.setState({ cmbItemsValue: tempItemValue });
+    }
+
+    const OBJ = {
+      locationIds: tempLocationGroupValue,
+      supplierIds: tempSupplierValue,
+      itemIds: tempItemValue,
+    };
+    // alert(JSON.stringify(OBJ))
+    this.setState({
+      OrderInventoryGridData: await orderPintInventoryListByLSI(
+        OBJ,
+        this.props.User.token
+      ),
+    });
+
+    this.fn_SetLogsOrderPointInventory();
+
+    this.OpenCloseWait();
+  };
+
+  fn_SetLogsOrderPointInventory = async () => {
+    const AllLogsOrderPointInventory = await logsOPITodayListByUserId(
+      this.props.User.userId,
+      this.props.User.token
+    );
+    this.props.dispatch(
+      logsOrderPointInventoryActions.setLogsOrderPointInventory({
+        AllLogsOrderPointInventory,
+      })
+    );
+  };
+
+  grdOrderPointInventory_onRowPrepared = (e) => {
+    if (e.rowType === "data" && e.data.orderUser !== null)
+      e.rowElement.style.backgroundColor = "#60c77f";
+  };
+
+  grdOrderPointInventory_onRowUpdating = (params) => {
+    let FirstVal = 1;
+    console.log("Old Data=" + JSON.stringify(params.oldData));
+    console.log("New Data=" + JSON.stringify(params.newData));
+    let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;
+
+    let Logs = this.props.LogsOrderPointInventory.AllLogsOrderPointInventory;
+
+    let flagEditRowCount = false;
+    if (Logs == null) Logs = [];
+    for (let i = 0; i < Logs.length; i++)
+      if (Logs[i].orderPointInventoryId == params.oldData.id) {
+        flagEditRowCount = true;
+        // alert('edit row cont permited')
+      }
+
+    let flagPush = true;
+    for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
+      if (tempOrderPointInventoryEdited[i].OrderId === params.oldData.id) {
+        tempOrderPointInventoryEdited[i].OrderValue =
+          params.newData.orderUser === undefined
+            ? params.oldData.orderUser
+            : params.newData.orderUser;
+        tempOrderPointInventoryEdited[i].Description =
+          params.newData.description === undefined
+            ? params.oldData.description
+            : params.newData.description;
+        flagPush = false;
+        break;
+      }
+    // alert('edited='+tempOrderPointInventoryEdited.length+
+    //         '\nMaxEdit='+AuthOBJ.orderInventoryEditRowCount+
+    //         '\nRelaLogs='+(this.state.RealLogs).length)
+
+    let FlagError = true;
+    let errMsg = "";
+    // ------------------------------------------------
+    // let tempLocations = this.state.Locations;
+    // let tempRemainMaxOrder = 0;
+    // for (let i = 0; i < tempLocations.length; i++)
+    //   if (tempLocations[i].kyLocationId == params.oldData.retailStoreId)
+    //     tempRemainMaxOrder = tempLocations[i].editOrder;
+
+    // if (tempOrderPointInventoryEdited.length >= tempRemainMaxOrder) {
+    //   FlagError = false;
+    //   errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
+    // }
+    // ------------------------------------------------
+    if (
+      params.newData.orderUser > 0 &&
+      params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
+      params.newData.orderUser % params.oldData.itemsPerPack2 !== 0
+    ) {
+      FlagError = false;
+      flagEditRowCount = false;
+      errMsg += "\nکاربر گرامی عدد سفارش باید مضربی از تعداد در بسته باشد.";
+    }
+    if (params.newData.orderUser < 0) {
+      FlagError = false;
+      flagEditRowCount = false;
+      errMsg += "\n کاربر گرامی عدد سفارش باید بزرگتر یا مساوی با 0 باشد.";
+    }
+    if (flagPush)
+      if (FlagError || flagEditRowCount) {
+        let obj = {
+          UserId: this.props.User.userId,
+          OrderPointInventoryId: params.oldData.id,
+          FirstValue:
+            params.oldData.orderUser == null
+              ? params.oldData.orderSystem
+              : params.oldData.orderUser,
+          OrderValue: params.newData.orderUser,
+          Description:
+            params.oldData.description === null
+              ? ""
+              : params.oldData.description,
+        };
+        tempOrderPointInventoryEdited.push(obj);
+      } else {
+        params.cancel = true;
+        alert(errMsg);
+      }
+
+    console.log(
+      "Edited Params=" + JSON.stringify(tempOrderPointInventoryEdited)
+    );
+    this.setState({
+      OrderPointInventoryEdited: tempOrderPointInventoryEdited,
+    });
+  };
+
+  grdOrderPointInventory_onCellDblClick = async (e) => {
+    const LogsOfOPI = await logsOPIByOPIid(e.data.id, this.props.User.token);
+    this.props.dispatch(
+      logsOrderPointInventoryActions.setLogsOrderPointInventoryByOPIid({
+        LogsOfOPI,
+      })
+    );
+  };
+
+  btnUpdateOrders_onClick = async () => {
+    this.OpenCloseWait();
+    await updateGroupsOrderPointInventory(
+      this.state.OrderPointInventoryEdited,
+      this.props.User.token
+    );
+    this.OpenCloseWait();
+  };
+
+  btnNew_onClick = () => {
+    this.setState({ stateModal_OrderInventoryNew: true });
+  };
+  ModalOrderInventoryNew_onClickAway = () => {
+    this.setState({ stateModal_OrderInventoryNew: false });
+  };
 
   render() {
     return (
@@ -128,6 +411,13 @@ class OrderInventory extends React.Component {
           width={ToastWidth}
           rtlEnabled={true}
         />
+        {this.state.stateWait && (
+          <Row className="text-center">
+            <Col style={{ textAlign: "center", marginTop: "10px" }}>
+              <Wait />
+            </Col>
+          </Row>
+        )}
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
@@ -137,10 +427,9 @@ class OrderInventory extends React.Component {
               <Col>
                 <Label className="standardLabelFont">گروه فروشگاه</Label>
                 <TagBox
-                  //   dataSource={this.props.Location.locationPermission}
-                  dataSource={products}
+                  dataSource={this.props.Location.locationPermission}
                   searchEnabled={true}
-                  displayExpr="locationName"
+                  displayExpr="label"
                   placeholder="گروه فروشگاه"
                   valueExpr="id"
                   rtlEnabled={true}
@@ -150,9 +439,9 @@ class OrderInventory extends React.Component {
               <Col>
                 <Label className="standardLabelFont">فروشگاه</Label>
                 <TagBox
-                  dataSource={this.state.Locations}
+                  dataSource={this.state.cmbLocation}
                   searchEnabled={true}
-                  displayExpr="locationName"
+                  displayExpr="label"
                   placeholder="فروشگاه"
                   valueExpr="id"
                   rtlEnabled={true}
@@ -162,9 +451,9 @@ class OrderInventory extends React.Component {
               <Col>
                 <Label className="standardLabelFont">تامین کننده</Label>
                 <TagBox
-                  dataSource={this.props.Supplier.activeSuppliers}
+                  dataSource={this.state.cmbSupplier}
                   searchEnabled={true}
-                  displayExpr="supplierName"
+                  displayExpr="label"
                   placeholder="تامین کننده"
                   valueExpr="id"
                   rtlEnabled={true}
@@ -174,7 +463,7 @@ class OrderInventory extends React.Component {
               <Col>
                 <Label className="standardLabelFont">کالا</Label>
                 <TagBox
-                  dataSource={this.props.Item.itemCombo}
+                  dataSource={this.state.cmbItems}
                   searchEnabled={true}
                   displayExpr="label"
                   placeholder="کالا"
@@ -184,18 +473,20 @@ class OrderInventory extends React.Component {
                 />
               </Col>
             </Row>
-            <Row className="standardSpaceTop">
-              <Col xs="auto">
-                <Button
-                  icon={SearchIcon}
-                  text="جستجو"
-                  type="default"
-                  stylingMode="contained"
-                  rtlEnabled={true}
-                  onClick={this.btnSearch_onClick}
-                />
-              </Col>
-            </Row>
+            {this.state.stateEnable_show && (
+              <Row className="standardSpaceTop">
+                <Col xs="auto">
+                  <Button
+                    icon={SearchIcon}
+                    text="جستجو"
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnSearch_onClick}
+                  />
+                </Col>
+              </Row>
+            )}
           </Row>
         </Card>
         <p></p>
@@ -204,16 +495,51 @@ class OrderInventory extends React.Component {
             <Row>
               <Label className="title">لیست سفارشات از انبار</Label>
             </Row>
-            <Row>
+            {this.state.stateEnable_btnAdd && (
+              <Row>
+                <Col xs="auto" className="standardMarginRight">
+                  <Button
+                    icon={PlusNewIcon}
+                    text="سفارش جدید"
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnNew_onClick}
+                  />
+                </Col>
+                {this.state.stateEnable_btnAddGroup && (
+                  <Col xs="auto" className="standardMarginRight">
+                    <Button
+                      icon={PlusNewIcon}
+                      text="سفارش جدید گروهی"
+                      type="default"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnNewGroup_onClick}
+                    />
+                  </Col>
+                )}
+              </Row>
+            )}
+            <Row className="standardSpaceTop">
               <Col xs="auto" className="standardMarginRight">
-                {/* <DataGrid
-                  dataSource={this.state.SupplierGridData}
-                  defaultColumns={DataGridSupplierColumns}
+                <DataGrid
+                  id="grdOrderPointInventory"
+                  dataSource={this.state.OrderInventoryGridData}
+                  defaultColumns={DataGridOrderPointInventoryColumns}
+                  keyExpr="id"
+                  columnAutoWidth={true}
+                  allowColumnReordering={true}
                   showBorders={true}
                   rtlEnabled={true}
                   allowColumnResizing={true}
-                  onRowClick={this.grdSupplier_onClickRow}
-                  height={DataGridDefaultHeight}
+                  columnResizingMode="widget"
+                  onRowUpdating={this.grdOrderPointInventory_onRowUpdating}
+                  onCellDblClick={this.grdOrderPointInventory_onCellDblClick}
+                  onRowPrepared={this.grdOrderPointInventory_onRowPrepared}
+                  //   onSelectionChanged={
+                  //     this.grdOrderPointInventory_onSelectionChanged
+                  //   }
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
@@ -228,13 +554,65 @@ class OrderInventory extends React.Component {
                     showPageSizeSelector={true}
                     showNavigationButtons={true}
                   />
+                  {this.state.stateShowRoute && (
+                    <Selection
+                      mode="multiple"
+                      selectAllMode={ALL_MOD}
+                      showCheckBoxesMode={CHECK_BOXES_MOD}
+                    />
+                  )}
+                  <Editing mode="cell" allowUpdating={true} />
                   <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
-                </DataGrid> */}
+                  {/* <FilterPanel visible={true} />                   */}
+                  <HeaderFilter visible={true} />
+                </DataGrid>
               </Col>
             </Row>
+            {this.state.stateEnable_btnUpdate && (
+              <Row>
+                <Col xs="auto" className="standardMarginRight">
+                  <Button
+                    icon={UpdateIcon}
+                    text="ذخیره تغییرات"
+                    type="success"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnUpdateOrders_onClick}
+                  />
+                </Col>
+              </Row>
+            )}
           </Row>
         </Card>
+
+        {this.state.stateModal_OrderInventoryNew && (
+          <Row className="text-center">
+            <Col>
+              <Modal
+                style={{ direction: "rtl" }}
+                isOpen={this.state.stateModal_OrderInventoryNew}
+                toggle={this.ModalOrderInventoryNew_onClickAway}
+                centered={true}
+                size="lg"
+              >
+                <ModalHeader toggle={this.ModalOrderInventoryNew_onClickAway}>
+                  ثبت سفارش
+                </ModalHeader>
+                <ModalBody>
+                  <Row
+                    className="standardPadding"
+                    style={{
+                      // overflowY: "scroll",
+                      maxHeight: "450px",                   
+                    }}
+                  >
+                    <OrderInventoryNew />
+                  </Row>
+                </ModalBody>
+              </Modal>
+            </Col>
+          </Row>
+        )}
       </div>
     );
   }
@@ -244,8 +622,10 @@ const mapStateToProps = (state) => ({
   User: state.users,
   Location: state.locations,
   Supplier: state.suppliers,
-  Item : state.items,
-  Company:state.companies,
+  Item: state.items,
+  Company: state.companies,
+  OrderPointInventory: state.orderPointInventories,
+  LogsOrderPointInventory: state.logsOrderPointInventories,
 });
 
 export default connect(mapStateToProps)(OrderInventory);
