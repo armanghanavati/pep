@@ -5,6 +5,8 @@ import Position from '../components/position/Position'
 import Location from '../components/location/Location'
 import Supplier from '../components/supplier/Supplier';
 import Person from '../components/person/Person'
+import User from '../components/user/User'
+import Role from '../components/role/Role'
 import OrdersInventory from '../pages/OrdersInventory';
 
 
@@ -41,4 +43,16 @@ export const REAL_COMPONENT=[
     strComponent:"Person",
     orgComponent:<Person />
   },
+  {
+    strComponent:"User",
+    orgComponent:<User />
+  },
+  {
+    strComponent:"Ticket",
+    orgComponent:<Ticket />
+  },
+  {
+    strComponent:"Role",
+    orgComponent:<Role />
+  }
 ]

@@ -143,7 +143,8 @@ class Company extends React.Component{
       txtAddressValue: null,
       txtCompanyTypeValue: null,
       stateUpdateDelete:false,
-      stateDisable_txtCode:false
+      stateDisable_txtCode:false,
+      chkIsActive:null,
     });
   }
   

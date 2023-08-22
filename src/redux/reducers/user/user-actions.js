@@ -29,3 +29,86 @@ export async function authUser(Object,Token){
     const rtn=result==null ? false : true;
     return rtn;
   }
+
+  export async function userList(companyId, Token){
+    const url=window.apiAddress+"/User/userList?companyId=" + companyId  
+    const response = await fetch(
+        url,
+        {
+            method: "GET",                        
+            headers: { 
+              'Content-Type': 'application/json' ,
+              'Authorization': `Bearer ${Token}`
+            },
+        }
+      );        
+    const result= await response.json();
+    if(result.status=="Success"){
+      console.log('All user'+JSON.stringify(result.data));
+      return result.data;  
+    }
+    return null;
+}
+
+export async function addUser(Object,Token){
+  const url=window.apiAddress+"/User/addUser"              
+  const response = await fetch(
+      url,
+      {
+          method: "POST",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );   
+  
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('RESULT OF ADD NEW user='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null; 
+}
+
+export async function updateUser(Object, Token){
+  const url=window.apiAddress+"/User/updateUser"              
+  const response = await fetch(
+      url,
+      {
+          method: "PATCH",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('User update result='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return 0; 
+}
+
+export async function deleteUser(userId, Token){
+  const url=window.apiAddress+"/User/deleteUser?userId=" + userId         
+  const response = await fetch(
+      url,
+      {
+          method: "DELETE",              
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('User delete result='+JSON.stringify(result.data));
+    return result.message;  
+  }
+  return 0; 
+}
