@@ -54,9 +54,6 @@ import {
     userList,
 } from '../../redux/reducers/user/user-actions';
 import { 
-  roleList,
-} from '../../redux/reducers/role/role-actions';
-import { 
   personList,
 } from '../../redux/reducers/person/person-actions';
   import { userActions } from '../../redux/reducers/user/user-slice';
@@ -88,25 +85,16 @@ class User extends React.Component{
             userId:null,
             user:null,
             stateDisable_txtCode:false,
-            RoleList:null,
-            RoleId:null,
             PersonList:null,
             PersonId:null,
-            RoleName:null
+            txtPasswordValue:null,
         }
     }
 
     async componentDidMount(){
       await this.fn_GetPermissions();
       this.fn_updateGrid();
-      await this.fn_roleList();
       await this.fn_personList();
-    }
-
-    fn_roleList=async ()=>{
-      this.setState({
-        RoleList:await roleList(this.props.User.token)
-      })
     }
 
     fn_personList=async()=>{
@@ -144,10 +132,9 @@ class User extends React.Component{
     grdUser_onClickRow=(e) => {
       this.setState({
         txtUserNameValue: e.data.userName,
-        chkIsActive: e.data.isActive,
+        chkIsActive: e.data.isActive,        
         stateUpdateDelete: true,
         RowSelected: e.data,
-        RoleId:e.data.roleId,
         PersonId:e.data.personId
       });
     };
@@ -158,7 +145,7 @@ class User extends React.Component{
         chkIsActive:null,
         stateUpdateDelete:false,
         stateDisable_txtCode:false,
-        RoleId:null,
+        PersonId:null,
       });
     }
     
@@ -189,12 +176,9 @@ class User extends React.Component{
       if (await this.fn_CheckValidation()) {
         const data = {
           userName: this.state.txtUserNameValue,
-          password:"1234567",
           isActive:this.state.chkIsActive,
-          roleName:"ItManager",
           personId:this.state.PersonId,
         };
-        alert(JSON.stringify(data));
         const RESULT=await addUser(data, this.props.User.token);   
         this.setState({
           ToastProps: {
@@ -203,19 +187,26 @@ class User extends React.Component{
             Type: RESULT!=null ? "success" : "error",
           },
         });
+        await this.fn_personList();
         this.fn_updateGrid();
+
       }
     };
     txtUserName_onChange = (e) => {
       this.setState({ txtUserNameValue: e.value });
     };
   
+    txtPassword_onChange=(e) =>{
+      this.setState({txtPasswordValue:e. value});
+    }
     btnUpdate_onClick = async () => {
       if (await this.fn_CheckValidation()) {
         const data = {
           id: this.state.RowSelected.id,
           userName: this.state.txtUserNameValue,
           isActive:this.state.chkIsActive,
+          password:this.state.txtPasswordValue,
+          personId:this.state.PersonId
         };
         
         const RESULT=await updateUser(data, this.props.User.token);
@@ -244,6 +235,7 @@ class User extends React.Component{
             Type: "success",
           },
         });
+        await this.fn_personList();
         this.fn_updateGrid();
     }
 
@@ -285,7 +277,7 @@ class User extends React.Component{
                     </Col>
                   </Row>}
                   <Row className="standardPadding">
-                    <Col>
+                    <Col xs={3}>
                         <Label className="standardLabelFont">نام کاربری</Label>
                         <TextBox
                           value={this.state.txtUserNameValue}
@@ -302,24 +294,11 @@ class User extends React.Component{
                           />
                         </Row>
                       </Col>
-                      <Col>
-                        <Label className="standardLabelFont">نقش</Label>
-                        <SelectBox
-                          dataSource={this.state.RoleList}
-                          displayExpr="name"
-                          placeholder="نقش"
-                          valueExpr="id"
-                          searchEnabled={true}
-                          rtlEnabled={true}
-                          onValueChange={this.cmbRole_onChange}
-                          value={this.state.RoleId}
-                        />
-                      </Col>
-                      <Col>
+                      <Col xs={3}>
                         <Label className="standardLabelFont">شخص</Label>
                         <SelectBox
                           dataSource={this.state.PersonList}
-                          displayExpr="name"
+                          displayExpr="fullName"
                           placeholder="شخص"
                           valueExpr="id"
                           searchEnabled={true}
@@ -328,6 +307,25 @@ class User extends React.Component{
                           value={this.state.PersonId}
                         />
                       </Col>
+                      {this.state.stateUpdateDelete &&
+                      <Col xs={3}>
+                        <Label className="standardLabelFont">رمز عبور</Label>
+                        <TextBox
+                          value={this.state.txtPasswordValue}
+                          showClearButton={true}
+                          placeholder="رمز عبور"
+                          rtlEnabled={true}
+                          valueChangeEvent="keyup"
+                          onValueChanged={this.txtPassword_onChange}             
+                        />
+                        <Row>
+                          <Label
+                            id="errUserName"
+                            className="standardLabelFont errMessage"
+                          />
+                        </Row>
+                      </Col>
+                      }
                   </Row>
                   <Row>
                   <Col xs="auto">

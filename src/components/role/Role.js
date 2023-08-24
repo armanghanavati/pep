@@ -226,7 +226,7 @@ import {
               </Row>
               }
               <Row className="standardPadding">
-              <Col>
+              <Col xs={3}>
                   <Label className="standardLabelFont">نام</Label>
                   <TextBox
                     value={this.state.txtRoleNameValue}

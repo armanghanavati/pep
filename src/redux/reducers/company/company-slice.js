@@ -4,7 +4,7 @@ const companySlice=createSlice({
     name:"companies",
     initialState: {     
         company: null, 
-        currentCompanyId:1, 
+        currentCompanyId:null, 
       },
       reducers: {
           setCompany(state, action) {
