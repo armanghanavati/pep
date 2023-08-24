@@ -21,6 +21,10 @@ import { Button } from "devextreme-react/button";
 import notify from "devextreme/ui/notify";
 import { Toast } from "devextreme-react/toast";
 
+import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
+import { itemListComboByItemGroupId } from "../../redux/reducers/item/item-action";
+import { supplierListComboByItemId } from "../../redux/reducers/supplier/supplier-action";
+import { insertNewDataOrderPointInventory } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 import Wait from "../common/Wait";
 
 import { Gfn_BuildValueComboMulti } from "../../utiliy/GlobalMethods";
@@ -33,10 +37,16 @@ class OrderInventoryNew extends React.Component{
         this.state={
             cmbLocation:null,
             cmbLocationValue:null,
+            cmbItemGroup:null,
             cmbItemGroupValue:null,
+            cmbItems:null,
             cmbItemValue:null,
+            cmbSuppliers:null,
             cmbSupplierValue:null,
             txtOrderNumberValue:null,
+            lblQtyPerPack:null,
+            lblRetailStoreMojoodi:null,
+            lblSetadMojoodi:null,
             ToastProps: {
                 isToastVisible: false,
                 Message: "",
@@ -45,7 +55,7 @@ class OrderInventoryNew extends React.Component{
         }
     }
 
-    cmbRetailStoreGroup_onChange = async (e) => {     
+    cmbLocationGroup_onChange = async (e) => {     
         const TEMP_LocationGroup = this.props.Location.locationPermission;
         let tempLocation = [];        
         for (let j = 0; j < TEMP_LocationGroup.length; j++)
@@ -57,18 +67,113 @@ class OrderInventoryNew extends React.Component{
         });
     };
 
-    cmbRetailStore_onChange=(e)=>{
-        this.setState({cmbLocationGroupValue:e})
+    cmbLocation_onChange=async (e)=>{
+        this.setState({
+            cmbLocationValue:e,
+            cmbItemGroupValue:null,
+            cmbItemValue:null,
+            txtOrderNumberValue:null,
+            cmbSupplierValue:null,
+            cmbItemGroup:await itemGroupListCombo(this.props.User.token)
+        })        
     }
 
-    cmbItemGroup_onChange=(e)=>{
-        document.getElementById("errRetailStore").innerHTML = "";        
+    cmbItemGroup_onChange=async(e)=>{
+        document.getElementById("errLocation").innerHTML = "";        
         if (this.state.cmbLocationValue == null || this.state.cmbLocationValue =="")
-            document.getElementById("errRetailStore").innerHTML = "فروشگاه را انتخاب نمائید.";        
+            document.getElementById("errLocation").innerHTML = "فروشگاه را انتخاب نمائید.";                            
+    
+        else{
+            const OBJ={
+                ItemGroupId:e,                
+                LocationId:this.state.cmbLocationValue
+            }
+            this.setState({
+                cmbItemGroupValue:e,
+                cmbItems:await itemListComboByItemGroupId(OBJ,this.props.User.token)
+            });
+        }
     }
 
     txtOrderNumber_onChanege=(e)=>{
         this.setState({txtOrderNumberValue:e.value})
+    }
+
+    cmbItem_onChange=async(e)=>{
+        const data={
+            ItemId:e
+        }
+        const tempItems=this.state.cmbItems;
+        for(let i=0;i<tempItems.length;i++)
+            if(tempItems[i].id==e)
+                this.setState({
+                    lblQtyPerPack:tempItems[i].qtyPerPack,
+                    lblRetailStoreMojoodi:tempItems[i].mojoodi,
+                    lblSetadMojoodi:tempItems[i].mojoodiSetad
+                })
+        this.setState({
+            cmbItemValue:e,
+            cmbSuppliers:await supplierListComboByItemId(data,this.props.User.token)
+        })
+    }
+    cmbSupplier_onChange=async(e)=>{
+        this.setState({
+            cmbSupplierValue:e
+        });
+    }
+
+    fn_CheckFinalValidation=()=>{        
+        let flagSend = true;
+        document.getElementById("errLocation").innerHTML = ""; 
+        document.getElementById("errItem").innerHTML = ""; 
+        document.getElementById("errSupplier").innerHTML = ""; 
+        document.getElementById("errOrderNumber").innerHTML = ""; 
+        if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
+            const msg= "فروشگاه را انتخاب نمائید.";
+            document.getElementById("errLocation").innerHTML = msg; 
+            flagSend = false;
+        }
+        if (this.state.cmbItemValue == null  || this.state.cmbItemValue == "") {
+            const msg= "کالا را انتخاب نمائید.";
+            document.getElementById("errItem").innerHTML = msg; 
+            flagSend = false;
+        }
+        if (this.state.cmbSupplierValue == null || this.state.cmbSupplierValue == "") {
+            const msg= "تامین کننده را انتخاب نمائید."
+            document.getElementById("errSupplier").innerHTML = msg; 
+            flagSend = false;
+        }
+        if (this.state.txtOrderNumberValue == null || this.state.cmbSupplierValue == "") {
+            const msg= "تعداد سفارش را وارد نمائید." 
+            document.getElementById("errOrderNumber").innerHTML = msg; 
+            flagSend = false;
+        }
+
+        let errMSG = '';        
+        if (this.state.txtOrderNumberValue > this.state.lblSetadMojoodi) {
+            errMSG += "تعداد سفارش از موجودی ستاد بیشتر است." + "<br>";
+            flagSend = false;
+        }
+        if(this.state.txtOrderNumberValue%this.state.lblQtyPerPack!==0 || this.state.txtOrderNumberValue<=0){
+            errMSG+='تعداد سفارش باید ضریبی از واحد بسته بندی باشد.'
+            flagSend=false;
+        }     
+        document.getElementById("InserNewOrderValidation").innerHTML = errMSG; 
+        return flagSend;
+    }
+
+    btnSaveOrder_onClick=async()=>{
+        const flag_insert=await this.fn_CheckFinalValidation();
+        if(flag_insert){
+            let data = {
+                locationId: this.state.cmbLocationValue,
+                supplierId: this.state.cmbSupplierValue,
+                itemId: this.state.cmbItemValue,
+                numberOrder: this.state.txtOrderNumberValue,
+                userId: this.props.User.userId
+            }
+            alert(JSON.stringify(await insertNewDataOrderPointInventory(data,this.props.User.userId)))
+        }        
     }
 
     render(){
@@ -84,7 +189,7 @@ class OrderInventoryNew extends React.Component{
                             valueExpr="id"
                             searchEnabled={true}
                             rtlEnabled={true}                                        
-                            onValueChange={this.cmbRetailStoreGroup_onChange}
+                            onValueChange={this.cmbLocationGroup_onChange}
                         />
                     </Col>
                     <Col>
@@ -95,67 +200,82 @@ class OrderInventoryNew extends React.Component{
                             placeholder="فروشگاه"
                             valueExpr="id"
                             searchEnabled={true}
-                            rtlEnabled={true}                                        
-                            onValueChange={this.cmbRetailStore_onChange}
+                            rtlEnabled={true}     
+                            value={this.state.cmbLocationValue}                                   
+                            onValueChange={this.cmbLocation_onChange}
                         />
-                        <Label id="errRetailStore" className="standardLabelFont errMessage" />
+                        <Label id="errLocation" className="standardLabelFont errMessage" />
                     </Col>
                 </Row>      
                 <Row>
                     <Col>
                         <Label className="standardLabelFont">گروه کالا</Label>                            
                         <SelectBox 
-                            dataSource={this.state.cmbLocation}
+                            dataSource={this.state.cmbItemGroup}
                             displayExpr="label"    
                             placeholder="گروه کالا"
+                            value={this.state.cmbItemGroupValue}
                             valueExpr="id"
                             searchEnabled={true}
                             rtlEnabled={true}                                        
                             onValueChange={this.cmbItemGroup_onChange}
-                        />
-                        <Label id="errItemGroup" className="standardLabelFont errMessage" />
+                        />                        
                     </Col>
                     <Col>
                         <Label className="standardLabelFont">کالا</Label>                            
                         <SelectBox 
-                            dataSource={this.state.cmbLocation}
+                            dataSource={this.state.cmbItems}
                             displayExpr="label"    
                             placeholder="کالا"
                             valueExpr="id"
+                            value={this.state.cmbItemValue}
                             searchEnabled={true}
                             rtlEnabled={true}                                        
                             onValueChange={this.cmbItem_onChange}
                         />
                         <Label id="errItem" className="standardLabelFont errMessage" />
-                    </Col>
+                    </Col>                    
+                </Row>
+                <Row>
                     <Col>
+                        <Label className="standardLabelFont">تعداد در کارتن: {this.state.lblQtyPerPack}</Label>      
+                    </Col>                    
+                    <Col>
+                        <Label className="standardLabelFont">موجودی فروشگاه: {this.state.lblRetailStoreMojoodi}</Label>      
+                    </Col>                    
+                    <Col>
+                        <Label className="standardLabelFont">موجودی ستاد: {this.state.lblSetadMojoodi}</Label>      
+                    </Col>                    
+                </Row>
+                <Row className="standardSpaceTop">     
+                    <Col xs="auto">
                         <Label className="standardLabelFont">تامین کننده</Label>                            
                         <SelectBox 
-                            dataSource={this.state.cmbLocation}
+                            dataSource={this.state.cmbSuppliers}
                             displayExpr="label"    
                             placeholder="تامین کننده"
                             valueExpr="id"
                             searchEnabled={true}
-                            rtlEnabled={true}                                        
+                            rtlEnabled={true}                  
+                            value={this.state.cmbSupplierValue}                      
                             onValueChange={this.cmbSupplier_onChange}
                         />
                         <Label id="errSupplier" className="standardLabelFont errMessage" />
-                    </Col>
-                </Row>
-                <Row>                
+                    </Col>           
                     <Col xs="auto"> 
                         <Label className="standardLabelFont">تعداد</Label>
                         <TextBox
                             value={this.state.txtOrderNumberValue}
                             showClearButton={true}
-                            placeholder="تعداد"
+                            placeholder="تعداد سفارش"
                             rtlEnabled={true}
                             valueChangeEvent="keyup"
                             onValueChanged={this.txtOrderNumber_onChanege}
                         />  
-                    </Col>
-                    <Label id="errOrderNumber" className="standardLabelFont errMessage" />
+                        <Label id="errOrderNumber" className="standardLabelFont errMessage" />
+                    </Col>                    
                 </Row>
+                
                 <Row className="standardSpaceTop">                
                   <Col xs="auto">
                     <Button
@@ -164,10 +284,13 @@ class OrderInventoryNew extends React.Component{
                       type="success"
                       stylingMode="contained"
                       rtlEnabled={true}
-                      onClick={this.btnAdd_onClick}
+                      onClick={this.btnSaveOrder_onClick}
                     />
                   </Col>                
-              </Row>                      
+                  <Col xs="auto">
+                    <Label id="InserNewOrderValidation" className="standardLabelFont errMessage" />
+                  </Col>
+              </Row>               
             </div>
         )
     }
@@ -178,6 +301,7 @@ const mapStateToProps = (state) => ({
     Location: state.locations,
     Supplier: state.suppliers,
     Item: state.items,
+    ItemGroup:state.itemGroups,
     Company: state.companies,    
   });
   

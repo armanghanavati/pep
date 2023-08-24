@@ -8,6 +8,7 @@ import companySlice from "./company/company-slice";
 import locationSlice from "./location/location-slice";
 import supplierSlice from "./supplier/supplier-slice";
 import itemSlice from "./item/item-slice";
+import itemGroupSlice from "./itemGroup/itemGroup-slice";
 import orderPointInventorySlice from "./OrderPointInventory/orderPointInventory-slice";
 import logsOrderPointInventorySlice from "./logsOrderPointInventory/logsOrderPointInventory-slice";
 
@@ -22,6 +23,7 @@ const store = configureStore({
     locations:locationSlice.reducer,
     suppliers:supplierSlice.reducer,    
     items:itemSlice.reducer,
+    itemGroups:itemGroupSlice.reducer,
     orderPointInventories:orderPointInventorySlice.reducer,
     logsOrderPointInventories:logsOrderPointInventorySlice.reducer,
   },
