@@ -39,6 +39,10 @@ import DataGrid, {
   Grouping,
   GroupPanel,
   SearchPanel,
+  RowDragging,
+  Toolbar,
+  Item,
+  Texts
 } from "devextreme-react/data-grid";
 import {
   DataGridPageSizes,
@@ -52,15 +56,19 @@ import {
   updateUser,
   deleteUser,
   userList,
+  roleAsignToUser,
+  userRoleList,
+  removeRoleFromUser,
+  removeRoleListFromUser,
 } from "../../redux/reducers/user/user-actions";
 import {
   personList,
   personNoneAsignList,
 } from "../../redux/reducers/person/person-actions";
 import { userActions } from "../../redux/reducers/user/user-slice";
-
+import { DataGridRoleColumns } from "../role/Role-config";
 import { DataGridUserColumns } from "./User-config";
-
+import { roleList } from "../../redux/reducers/role/role-actions";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
@@ -69,6 +77,7 @@ import DeleteIcon from "../../assets/images/icon/delete.png";
 class User extends React.Component {
   constructor(props) {
     super(props);
+    this.gridRef = React.createRef();
     this.state = {
       txtUserNameValue: null,
       chkIsActive: null,
@@ -89,13 +98,20 @@ class User extends React.Component {
       PersonList: null,
       PersonId: null,
       txtPasswordValue: null,
+      RoleGridData: null,
+      UserRoleGridData: null,
+      selectedItemKeys: [],
     };
   }
 
+  get dataGrid() {
+    return this.gridRef.current.instance.getDataSource();
+  }
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
     await this.fn_personList();
+    this.fn_roleGrid();
   }
 
   fn_personList = async () => {
@@ -126,6 +142,22 @@ class User extends React.Component {
       });
   };
 
+  fn_roleGrid = async () => {
+    if (this.state.stateDisable_show) {
+      this.setState({
+        RoleGridData: await roleList(this.props.User.token),
+      });
+    }
+  };
+
+  fn_userRoleGrid = async (userId) => {
+    if (this.state.stateDisable_show) {
+      this.setState({
+        UserRoleGridData: await userRoleList(userId, this.props.User.token),
+      });
+    }
+  };
+
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
@@ -146,6 +178,7 @@ class User extends React.Component {
 
   grdUser_onClickRow = async (e) => {
     await this.fn_personList();
+    await this.fn_userRoleGrid(e.data.id);
     this.setState({
       txtUserNameValue: e.data.userName,
       chkIsActive: e.data.isActive,
@@ -262,6 +295,32 @@ class User extends React.Component {
       PersonId: e,
     });
   };
+  onAdd = async (e) => {
+    if (this.state.RowSelected == null) {
+      const MSG = "خطا کاربر را انتخاب کنید";
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: MSG,
+          Type: "error",
+        },
+      });
+      return;
+    }
+
+    var items = this.dataGrid._items;
+    if (e.toIndex >= items.length) return;
+    const id = e.itemData.id;
+    const roleName = items[e.toIndex].name;
+    var data = {
+      userId: id,
+      roleName: roleName,
+    };
+    await roleAsignToUser(data, this.props.User.token);
+    this.fn_updateGrid();
+    await this.fn_userRoleGrid(this.state.RowSelected.id);
+  };
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -419,44 +478,187 @@ class User extends React.Component {
         <p></p>
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
-            <Row>
-              <Label className="title">لیست کاربران</Label>
-            </Row>
-            <Row>
-              <Col xs="auto" className="standardMarginRight">
-                <DataGrid
-                  dataSource={this.state.UserGridData}
-                  defaultColumns={DataGridUserColumns}
-                  showBorders={true}
-                  rtlEnabled={true}
-                  allowColumnResizing={true}
-                  onRowClick={this.grdUser_onClickRow}
-                  height={DataGridDefaultHeight}
-                >
-                  <Scrolling
-                    rowRenderingMode="virtual"
-                    showScrollbar="always"
-                    columnRenderingMode="virtual"
-                  />
+            <Col xs={4}>
+              <Row>
+                <Label className="title">لیست کاربران</Label>
+              </Row>
+              <Row>
+                <Col xs="auto" className="standardMarginRight">
+                  <DataGrid
+                    dataSource={this.state.UserGridData}
+                    defaultColumns={DataGridUserColumns}
+                    showBorders={true}
+                    rtlEnabled={true}
+                    allowColumnResizing={true}
+                    onRowClick={this.grdUser_onClickRow}
+                    height={DataGridDefaultHeight}
+                  >
+                    <RowDragging group="tasksGroup" onAdd={this.onAdd} />
+                    <Scrolling
+                      rowRenderingMode="virtual"
+                      showScrollbar="always"
+                      columnRenderingMode="virtual"
+                    />
 
-                  <Paging defaultPageSize={DataGridDefaultPageSize} />
-                  <Pager
-                    visible={true}
-                    allowedPageSizes={DataGridPageSizes}
-                    showPageSizeSelector={true}
-                    showNavigationButtons={true}
-                  />
-                  <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
-                </DataGrid>
-              </Col>
-            </Row>
+                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                    <Pager
+                      visible={true}
+                      allowedPageSizes={DataGridPageSizes}
+                      showPageSizeSelector={true}
+                      showNavigationButtons={true}
+                    />
+                    <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
+                  </DataGrid>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={4}>
+              <Row>
+                <Label className="title">لیست نقش ها</Label>
+              </Row>
+              <Row>
+                <Col xs="auto">
+                  <DataGrid
+                    ref={this.gridRef}
+                    dataSource={this.state.RoleGridData}
+                    defaultColumns={DataGridRoleColumns}
+                    showBorders={true}
+                    rtlEnabled={true}
+                    allowColumnResizing={true}
+                    onRowClick={this.grdRole_onClickRow}
+                    height={DataGridDefaultHeight}
+                  >
+                    <RowDragging
+                      data={this.state.RoleGridData}
+                      group="tasksGroup"
+                      onAdd={this.onAdd}
+                    />
+                    <Scrolling
+                      rowRenderingMode="virtual"
+                      showScrollbar="always"
+                      columnRenderingMode="virtual"
+                    />
+
+                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                    <Pager
+                      visible={true}
+                      allowedPageSizes={DataGridPageSizes}
+                      showPageSizeSelector={true}
+                      showNavigationButtons={true}
+                    />
+                    <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
+                  </DataGrid>
+                </Col>
+              </Row>
+            </Col>
+            <Col>
+              <Row>
+                <Label className="title">نقش کاربر</Label>
+              </Row>
+              <Row>
+                <Col xs="auto">
+                  <DataGrid
+                    dataSource={this.state.UserRoleGridData}
+                    defaultColumns={DataGridRoleColumns}
+                    showBorders={true}
+                    rtlEnabled={true}
+                    allowColumnResizing={true}
+                    onRowClick={this.grdRole_onClickRow}
+                    height={DataGridDefaultHeight}
+                    selectedRowKeys={this.state.selectedItemKeys}
+                    onSelectionChanged={this.selectionChanged}
+                    onRowRemoved={this.onRowRemoved}
+                  >
+                    <Selection mode="multiple" />
+                    <Scrolling
+                      rowRenderingMode="virtual"
+                      showScrollbar="always"
+                      columnRenderingMode="virtual"
+                    />
+                    <Editing mode="cell" allowDeleting={true}>
+                    <Texts
+                        deleteRow="حذف"
+                    />
+                    </Editing>
+                     
+                    <Toolbar>
+                      <Item name="addRowButton" showText="always" />
+                      <Item location="after">
+                        <Button
+                          onClick={this.deleteRecords}
+                          icon="trash"
+                          disabled={!this.state.selectedItemKeys.length}
+                          text="حذف گروهی از لیست"
+                        />
+                      </Item>
+                    </Toolbar>
+                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                    <Pager
+                      visible={true}
+                      allowedPageSizes={DataGridPageSizes}
+                      showPageSizeSelector={true}
+                      showNavigationButtons={true}
+                    />
+                    <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
+                  </DataGrid>
+                </Col>
+              </Row>
+            </Col>
           </Row>
         </Card>
       </div>
     );
   }
+  deleteRecords = async () => {
+    var roles = [];
+    this.state.selectedItemKeys.forEach((key) => {
+      roles.push(key.name);
+    });
+    //console.log(role[0]);
+    this.setState({
+      selectedItemKeys: [],
+    });
+
+    const RESULT = await removeRoleListFromUser(
+      this.state.RowSelected.id,
+      roles,
+      this.props.User.token
+    );
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: RESULT > 0 ? "حذف با موفقیت انجام گردید" : "عدم حذف",
+        Type: RESULT > 0 ? "success" : "error",
+      },
+    });
+    await this.fn_userRoleGrid(this.state.RowSelected.id);
+  };
+
+  selectionChanged = (data) => {
+    this.setState({
+      selectedItemKeys: data.selectedRowKeys,
+    });
+  };
+
+  onRowRemoved = async (e) => {
+    const RESULT = await removeRoleFromUser(
+      this.state.RowSelected.id,
+      e.data.name,
+      this.props.User.token
+    );
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: RESULT > 0 ? "حذف با موفقیت انجام گردید" : "عدم حذف",
+        Type: RESULT > 0 ? "success" : "error",
+      },
+    });
+  };
 }
+
 const mapStateToProps = (state) => ({
   User: state.users,
   Company: state.companies,

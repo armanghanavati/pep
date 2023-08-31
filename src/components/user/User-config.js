@@ -5,11 +5,6 @@ export const DataGridUserColumns = [
     allowEditing: false,
   },
   {
-    dataField: "roleName",
-    caption: "نقش",
-    allowEditing: false,
-  },
-  {
     dataField: "isActive",
     caption: "فعال",
     allowEditing: false,

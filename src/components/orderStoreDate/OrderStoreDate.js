@@ -67,7 +67,7 @@ class OrderStoreDate extends React.Component {
       RowSelected: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
-      stateDisable_btnUpdate: false,
+      stateDisable_btnUpdate: true,
       stateDisable_show: false,
       ToastProps: {
         isToastVisible: false,
@@ -299,6 +299,65 @@ class OrderStoreDate extends React.Component {
                   className="standardLabelFont errMessage"
                 />
               </Col>
+              <p></p>
+              <Row>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsSaturday}
+                    text="شنبه"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsSaturday_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsSunday}
+                    text="یک شنبه"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsSunday_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsMonday}
+                    text="دو شنبه"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsMonday_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsTuesday}
+                    text="سه شنبه"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsTuesday_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsWednsday}
+                    text="چهار شنبه"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsWednsday_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsThursday}
+                    text="پنج شنبه"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsThursday_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <CheckBox
+                    value={this.state.chkIsFriday}
+                    text="جمعه"
+                    rtlEnabled={true}
+                    onValueChanged={this.chkIsFriday_onChange}
+                  />
+                </Col>
+              </Row>
             </Row>
             <Row className="standardSpaceTop">
               <Row>
@@ -317,65 +376,6 @@ class OrderStoreDate extends React.Component {
                   </>
                 )}
               </Row>
-            </Row>
-            <p></p>
-            <Row>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsSaturday}
-                  text="شنبه"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsSaturday_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsSunday}
-                  text="یک شنبه"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsSunday_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsMonday}
-                  text="دو شنبه"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsMonday_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsTuesday}
-                  text="سه شنبه"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsTuesday_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsWednsday}
-                  text="چهار شنبه"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsWednsday_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsThursday}
-                  text="پنج شنبه"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsThursday_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsFriday}
-                  text="جمعه"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsFriday_onChange}
-                />
-              </Col>
             </Row>
           </Row>
         </Card>
