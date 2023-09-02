@@ -95,7 +95,7 @@ class PaymentRequest extends React.Component {
   // }
 
   fn_GetPermissions=()=>{
-    const perm=this.props.User.permissions;
+    const perm=this.props.User.permissions;    
     console.log('ALL PERMISSION='+JSON.stringify(perm));
     let enable_btnPeymentConfirm=false;
     if(perm!=null)
@@ -182,6 +182,7 @@ class PaymentRequest extends React.Component {
         documentSerial: this.state.FactorSerial,
         amountPay: this.state.FactorAmount,
       };
+      
       await addSEPPayment(data, this.props.User.token);
       const SEPPAYMENT=await this.fn_UpdateSEPPaymentList();       
       this.tabPayment_onChange('1',SEPPAYMENT)  

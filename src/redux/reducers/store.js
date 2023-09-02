@@ -11,6 +11,8 @@ import itemSlice from "./item/item-slice";
 import itemGroupSlice from "./itemGroup/itemGroup-slice";
 import orderPointInventorySlice from "./OrderPointInventory/orderPointInventory-slice";
 import logsOrderPointInventorySlice from "./logsOrderPointInventory/logsOrderPointInventory-slice";
+import orderPointSupplierSlice from "./orderPointSupplier/orderPointSupplier-slice";
+import logsOrderPointSupplierSlice from "./logsOrderPointSupplier/logsOrderPointSupplier-slice";
 
 const store = configureStore({
   reducer: {
@@ -26,6 +28,8 @@ const store = configureStore({
     itemGroups:itemGroupSlice.reducer,
     orderPointInventories:orderPointInventorySlice.reducer,
     logsOrderPointInventories:logsOrderPointInventorySlice.reducer,
+    orderPointSuppliers: orderPointSupplierSlice.reducer,  
+    logsOrderPointSuppliers: logsOrderPointSupplierSlice.reducer,  
   },
 });
 export default store;

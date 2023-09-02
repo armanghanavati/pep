@@ -38,7 +38,7 @@ import { Toast } from "devextreme-react/toast";
 
 import Wait from "../common/Wait";
 
-import { DataGridOrderPointInventoryNewGroupColumns } from "./OrderInventory-config";
+import { DataGridOrderPointSupplierNewGroupColumns } from "./OrderSupplier-config";
 
 import {
   DataGridPageSizes,
@@ -53,7 +53,7 @@ import {
 
 import { activeSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
 import { itemListRemainBySupplierId } from "../../redux/reducers/item/item-action";
-import { insertNewDataGroupOrderPointInventory } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import { insertNewDataGroupOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 
 import SaveIcon from '../../assets/images/icon/save.png'
 
@@ -154,7 +154,7 @@ class OrderInventoryNewGroup extends React.Component {
     let data = {
         values: JSON.stringify(this.state.NewDataGroup)
     }
-    await insertNewDataGroupOrderPointInventory(data,this.props.User.token)
+    await insertNewDataGroupOrderPointSupplier(data,this.props.User.token)
   }
 
   render() {
@@ -207,7 +207,7 @@ class OrderInventoryNewGroup extends React.Component {
             <DataGrid
               id="grdOrderPointInventory"
               dataSource={this.state.ItemsGridData}
-              defaultColumns={DataGridOrderPointInventoryNewGroupColumns}
+              defaultColumns={DataGridOrderPointSupplierNewGroupColumns}
               keyExpr="id"
               columnAutoWidth={true}
               allowColumnReordering={true}

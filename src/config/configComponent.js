@@ -6,6 +6,7 @@ import Location from '../components/location/Location'
 import Supplier from '../components/supplier/Supplier';
 import Person from '../components/person/Person'
 import OrdersInventory from '../pages/OrdersInventory';
+import OrdersSupplier from '../pages/OrdersSupplier'
 
 
 export const REAL_COMPONENT=[
@@ -40,5 +41,9 @@ export const REAL_COMPONENT=[
   {
     strComponent:"Person",
     orgComponent:<Person />
+  },
+  {
+    strComponent:"OrdersSupplier",
+    orgComponent:<OrdersSupplier />
   },
 ]

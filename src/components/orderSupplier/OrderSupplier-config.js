@@ -1,4 +1,4 @@
-export const DataGridOrderPointInventoryColumns = [    
+export const DataGridOrderPointSupplierColumns = [    
     {
         dataField:"id" ,
         caption:"شماره سفارش",
@@ -87,7 +87,7 @@ export const DataGridOrderPointInventoryColumns = [
 ]
 
 
-export const DataGridOrderPointInventoryNewGroupColumns = [    
+export const DataGridOrderPointSupplierNewGroupColumns = [    
     {
         dataField:"id" ,
         caption:"کد کالا",

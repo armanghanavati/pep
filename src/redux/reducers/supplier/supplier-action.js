@@ -30,6 +30,23 @@ export async function supplierOrderInventoryComboList(companyId,Token) {
   return null;
 }
 
+
+export async function supplierOrderSupplierComboList(companyId,Token) {
+  const url = window.apiAddress + "/Supplier/supplierOrderSupplierComboList?companyId="+companyId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All Supplier COMBO" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
 export async function supplierListComboByItemId(Object,Token) {
   const url = window.apiAddress + "/Supplier/supplierListComboByItemId?itemId="+Object.ItemId;
   const response = await fetch(url, {
@@ -41,6 +58,23 @@ export async function supplierListComboByItemId(Object,Token) {
   const result = await response.json();
   if (result.status == "Success") {
     console.log("All Supplier ByItem" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+//-----------------All Active Supplier Dor ComboBox------------------------
+export async function activeSupplierComboList(Token) {
+  const url = window.apiAddress + "/Supplier/activeSupplierComboList";
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All Supplier" + JSON.stringify(result.data));
     return result.data;
   }
   return null;

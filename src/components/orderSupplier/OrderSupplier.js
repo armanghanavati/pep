@@ -43,8 +43,8 @@ import DataGrid, {
 } from "devextreme-react/data-grid";
 
 import Wait from "../common/Wait";
-import OrderInventoryNew from "./OrderInventoryNew";
-import OrderInventoryNewGroup from "./OrderInventoryNewGroup";
+import OrderSupplierNew from "./OrderSupplierNew";
+import OrderSupplierNewGroup from "./OrderSupplierNewGroup";
 
 import {
   DataGridPageSizes,
@@ -58,23 +58,22 @@ import {
 } from "../../config/config";
 
 import { itemActions } from "../../redux/reducers/item/item-slice";
-import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-slice";
+import { logsOrderPointSupplierActions } from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-slice";
 import { locationActions } from "../../redux/reducers/location/location-slice";
 
 import {
   itemListCombo,
   itemListComboBySupplierId,
 } from "../../redux/reducers/item/item-action";
-import { supplierOrderInventoryComboList } from "../../redux/reducers/supplier/supplier-action";
-import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
-import {
-  orderPintInventoryListByLSI,
-  updateGroupsOrderPointInventory,
-} from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
-import {
-  logsOPITodayListByUserId,
-  logsOPIByOPIid,
-} from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
+import { supplierOrderInventoryComboList,
+  supplierOrderSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
+import { locationOrderSupplierComboListByCompanyId } from "../../redux/reducers/location/location-actions";
+
+import { orderPointSupplierListByLSI,
+  updateGroupsOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
+
+import { logsOPSTodayListByUserId,
+  logsOPSByOPSid } from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-actions";
 
 import {
   Gfn_BuildValueComboMulti,
@@ -82,14 +81,13 @@ import {
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
-import { DataGridOrderPointInventoryColumns } from "./OrderInventory-config";
-import { orderPointInventoryActions } from "../../redux/reducers/OrderPointInventory/orderPointInventory-slice";
+import {DataGridOrderPointSupplierColumns} from "./OrderSupplier-config"
 
 import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 
-class OrderInventory extends React.Component {
+class OrderSupplier extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -101,17 +99,16 @@ class OrderInventory extends React.Component {
       cmbSupplierValue: null,
       cmbItems: null,
       cmbItemsValue: null,
-      OrderInventoryGridData: null,
-      OrderPointInventoryEdited: [],
-      allLogsOrderPointInventory: [],
+      OrderSupplierGridData: null,
+      OrderPointSupplierEdited: [],      
       stateShowRoute: false,
       stateUpdateDelete: true,
       stateEnable_btnAdd: false,
       stateEnable_btnAddGroup: false,
       stateEnable_btnUpdate: false,
       stateEnable_show: false,
-      stateModal_OrderInventoryNew: false,
-      stateModal_OrderInventoryNewGroup: false,
+      stateModal_OrderSupplierNew: false,
+      stateModal_OrderSupplierNewGroup: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -122,8 +119,7 @@ class OrderInventory extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    await this.fn_CheckRequireState();
-    // alert('CompanyId='+this.props.Company.currentCompanyId)
+    await this.fn_CheckRequireState();    
   }
 
   fn_GetPermissions = () => {
@@ -131,16 +127,16 @@ class OrderInventory extends React.Component {
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "orders_inventory.update":
+          case "orders_supplier.update":
             this.setState({ stateEnable_btnUpdate: true });
             break;
-          case "orders_inventory.insert":
+          case "orders_supplier.insert":
             this.setState({ stateEnable_btnAdd: true });
             break;
-          case "orders_inventory.insert_group":
+          case "orders_supplier.insert_group":
             this.setState({ stateEnable_btnAddGroup: true });
             break;
-          case "orders_inventory.show":
+          case "orders_supplier.show":
             this.setState({ stateEnable_show: true });
             break;
         }
@@ -152,7 +148,7 @@ class OrderInventory extends React.Component {
   }
 
   fn_CheckRequireState = async () => {
-    const locationPermission = await locationListOrderInventoryCombo(
+    const locationPermission = await locationOrderSupplierComboListByCompanyId(
       this.props.Company.currentCompanyId,
       this.props.User.token
     );
@@ -164,7 +160,7 @@ class OrderInventory extends React.Component {
     );
 
     this.setState({      
-      cmbSupplier: await supplierOrderInventoryComboList(
+      cmbSupplier: await supplierOrderSupplierComboList(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
@@ -192,7 +188,7 @@ class OrderInventory extends React.Component {
   cmbSupplier_onChange = async (e) => {
     const TEMP_cmbSupplier =
       e == null || e == "" ? null : await Gfn_BuildValueComboMulti(e);
-    alert(TEMP_cmbSupplier);
+    // alert(TEMP_cmbSupplier);
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
       cmbItems:
@@ -257,66 +253,66 @@ class OrderInventory extends React.Component {
     };
     // alert(JSON.stringify(OBJ))
     this.setState({
-      OrderInventoryGridData: await orderPintInventoryListByLSI(
+      OrderSupplierGridData: await orderPointSupplierListByLSI(
         OBJ,
         this.props.User.token
       ),
     });
 
-    this.fn_SetLogsOrderPointInventory();
+    this.fn_SetLogsOrderPointSupplier();
 
     this.OpenCloseWait();
   };
 
-  fn_SetLogsOrderPointInventory = async () => {
-    const AllLogsOrderPointInventory = await logsOPITodayListByUserId(
+  fn_SetLogsOrderPointSupplier = async () => {
+    const AllLogsOrderPointSupplier = await logsOPSTodayListByUserId(
       this.props.User.userId,
       this.props.User.token
     );
     this.props.dispatch(
-      logsOrderPointInventoryActions.setLogsOrderPointInventory({
-        AllLogsOrderPointInventory,
+      logsOrderPointSupplierActions.setLogsOrderPointSupplier({
+        AllLogsOrderPointSupplier,
       })
     );
   };
 
-  grdOrderPointInventory_onRowPrepared = (e) => {
+  grdOrderPointSupplier_onRowPrepared = (e) => {
     if (e.rowType === "data" && e.data.orderUser !== null)
       e.rowElement.style.backgroundColor = "#60c77f";
   };
 
-  grdOrderPointInventory_onRowUpdating = (params) => {
+  grdOrderPointSupplier_onRowUpdating = (params) => {
     let FirstVal = 1;
     console.log("Old Data=" + JSON.stringify(params.oldData));
     console.log("New Data=" + JSON.stringify(params.newData));
-    let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;
+    let tempOrderPointSupplierEdited = this.state.OrderPointSupplierEdited;
 
-    let Logs = this.props.LogsOrderPointInventory.AllLogsOrderPointInventory;
+    let Logs = this.props.LogsOrderPointSupplier.AllLogsOrderPointSupplier;
 
     let flagEditRowCount = false;
     if (Logs == null) Logs = [];
     for (let i = 0; i < Logs.length; i++)
-      if (Logs[i].orderPointInventoryId == params.oldData.id) {
+      if (Logs[i].orderPointSupplierId == params.oldData.id) {
         flagEditRowCount = true;
         // alert('edit row cont permited')
       }
 
     let flagPush = true;
-    for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
-      if (tempOrderPointInventoryEdited[i].OrderPointInventoryId === params.oldData.id) {
-        tempOrderPointInventoryEdited[i].OrderValue =
+    for (let i = 0; i < tempOrderPointSupplierEdited.length; i++)
+      if (tempOrderPointSupplierEdited[i].OrderPointSupplierId === params.oldData.id) {
+        tempOrderPointSupplierEdited[i].OrderValue =
           params.newData.orderUser === undefined
             ? params.oldData.orderUser
             : params.newData.orderUser;
-        tempOrderPointInventoryEdited[i].Description =
+        tempOrderPointSupplierEdited[i].Description =
           params.newData.description === undefined
             ? params.oldData.description
             : params.newData.description;
         flagPush = false;
         break;
       }
-    // alert('edited='+tempOrderPointInventoryEdited.length+
-    //         '\nMaxEdit='+AuthOBJ.orderInventoryEditRowCount+
+    // alert('edited='+tempOrderPointSupplierEdited.length+
+    //         '\nMaxEdit='+AuthOBJ.orderSupplierEditRowCount+
     //         '\nRelaLogs='+(this.state.RealLogs).length)
 
     let FlagError = true;
@@ -328,7 +324,7 @@ class OrderInventory extends React.Component {
     //   if (tempLocations[i].kyLocationId == params.oldData.retailStoreId)
     //     tempRemainMaxOrder = tempLocations[i].editOrder;
 
-    // if (tempOrderPointInventoryEdited.length >= tempRemainMaxOrder) {
+    // if (tempOrderPointSupplierEdited.length >= tempRemainMaxOrder) {
     //   FlagError = false;
     //   errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
     // }
@@ -351,7 +347,7 @@ class OrderInventory extends React.Component {
       if (FlagError || flagEditRowCount) {
         let obj = {
           UserId: this.props.User.userId,
-          OrderPointInventoryId: params.oldData.id,
+          OrderPointSupplierId: params.oldData.id,
           FirstValue:
             params.oldData.orderUser == null
               ? params.oldData.orderSystem
@@ -362,33 +358,34 @@ class OrderInventory extends React.Component {
               ? ""
               : params.oldData.description,
         };
-        tempOrderPointInventoryEdited.push(obj);
+        tempOrderPointSupplierEdited.push(obj);
       } else {
         params.cancel = true;
         alert(errMsg);
       }
 
     console.log(
-      "Edited Params=" + JSON.stringify(tempOrderPointInventoryEdited)
+      "Edited Params=" + JSON.stringify(tempOrderPointSupplierEdited)
     );
     this.setState({
-      OrderPointInventoryEdited: tempOrderPointInventoryEdited,
+      OrderPointSupplierEdited: tempOrderPointSupplierEdited,
     });
   };
 
-  grdOrderPointInventory_onCellDblClick = async (e) => {
-    const LogsOfOPI = await logsOPIByOPIid(e.data.id, this.props.User.token);
+  grdOrderPointSupplier_onCellDblClick = async (e) => {
+    const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);
     this.props.dispatch(
-      logsOrderPointInventoryActions.setLogsOrderPointInventoryByOPIid({
-        LogsOfOPI,
+      logsOrderPointSupplierActions.setLogsOrderPointSupplierByOPSid({
+        LogsOfOPS,
       })
     );
   };
 
   btnUpdateOrders_onClick = async () => {
     this.OpenCloseWait();
-    await updateGroupsOrderPointInventory(
-      this.state.OrderPointInventoryEdited,
+    // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
+    await updateGroupsOrderPointSupplier(
+      this.state.OrderPointSupplierEdited,
       this.props.User.token
     );
     this.setState({
@@ -402,23 +399,24 @@ class OrderInventory extends React.Component {
   };
 
   btnNew_onClick = () => {
-    this.setState({ stateModal_OrderInventoryNew: true });
+    this.setState({ stateModal_OrderSupplierNew: true });
   };
   ModalOrderInventoryNew_onClickAway = () => {
-    this.setState({ stateModal_OrderInventoryNew: false });
+    this.setState({ stateModal_OrderSupplierNew: false });
   };
 
 
   btnNewGroup_onClick = () => {
-    this.setState({ stateModal_OrderInventoryNewGroup: true });
+    this.setState({ stateModal_OrderSupplierNewGroup: true });
   };
   ModalOrderInventoryNewGroup_onClickAway = () => {
-    this.setState({ stateModal_OrderInventoryNewGroup: false });
+    this.setState({ stateModal_OrderSupplierNewGroup: false });
   };
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -441,7 +439,7 @@ class OrderInventory extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>سفارش از انبار</Label>
+              <Label>سفارش از تامین کننده</Label>
             </Row>
             <Row>
               <Col>
@@ -513,7 +511,7 @@ class OrderInventory extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label className="title">لیست سفارشات از انبار</Label>
+              <Label className="title">لیست سفارشات از تامین کننده</Label>
             </Row>
             {this.state.stateEnable_btnAdd && (
               <Row>
@@ -545,8 +543,8 @@ class OrderInventory extends React.Component {
               <Col xs="auto" className="standardMarginRight">
                 <DataGrid
                   id="grdOrderPointInventory"
-                  dataSource={this.state.OrderInventoryGridData}
-                  defaultColumns={DataGridOrderPointInventoryColumns}
+                  dataSource={this.state.OrderSupplierGridData}
+                  defaultColumns={DataGridOrderPointSupplierColumns}
                   keyExpr="id"
                   columnAutoWidth={true}
                   allowColumnReordering={true}
@@ -554,12 +552,9 @@ class OrderInventory extends React.Component {
                   rtlEnabled={true}
                   allowColumnResizing={true}
                   columnResizingMode="widget"
-                  onRowUpdating={this.grdOrderPointInventory_onRowUpdating}
-                  onCellDblClick={this.grdOrderPointInventory_onCellDblClick}
-                  onRowPrepared={this.grdOrderPointInventory_onRowPrepared}
-                  //   onSelectionChanged={
-                  //     this.grdOrderPointInventory_onSelectionChanged
-                  //   }
+                  onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}
+                  onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
+                  onRowPrepared={this.grdOrderPointSupplier_onRowPrepared}                 
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
@@ -605,12 +600,12 @@ class OrderInventory extends React.Component {
           </Row>
         </Card>
 
-        {this.state.stateModal_OrderInventoryNew && (
+        {this.state.stateModal_OrderSupplierNew && (
           <Row className="text-center">
             <Col>
               <Modal
                 style={{ direction: "rtl" }}
-                isOpen={this.state.stateModal_OrderInventoryNew}
+                isOpen={this.state.stateModal_OrderSupplierNew}
                 toggle={this.ModalOrderInventoryNew_onClickAway}
                 centered={true}
                 size="lg"
@@ -626,7 +621,7 @@ class OrderInventory extends React.Component {
                       maxHeight: "450px",                   
                     }}
                   >
-                    <OrderInventoryNew />
+                    <OrderSupplierNew />
                   </Row>
                 </ModalBody>
               </Modal>
@@ -634,11 +629,11 @@ class OrderInventory extends React.Component {
           </Row>
         )}
 
-        {this.state.stateModal_OrderInventoryNewGroup && (
+        {this.state.stateModal_OrderSupplierNewGroup && (
           <Row className="text-center">
             <Col>
               <Modal                
-                isOpen={this.state.stateModal_OrderInventoryNewGroup}
+                isOpen={this.state.stateModal_OrderSupplierNewGroup}
                 toggle={this.ModalOrderInventoryNewGroup_onClickAway}
                 centered={true}    
                 dir="rtl"                            
@@ -655,7 +650,7 @@ class OrderInventory extends React.Component {
                       maxHeight: "750px",                                         
                     }}
                   >
-                    <OrderInventoryNewGroup />
+                    <OrderSupplierNewGroup />
                   </Row>
                 </ModalBody>
               </Modal>
@@ -673,8 +668,8 @@ const mapStateToProps = (state) => ({
   Supplier: state.suppliers,
   Item: state.items,
   Company: state.companies,
-  OrderPointInventory: state.orderPointInventories,
-  LogsOrderPointInventory: state.logsOrderPointInventories,
+  OrderPointSupplier: state.orderPointSuppliers,
+  LogsOrderPointSupplier: state.logsOrderPointSuppliers,
 });
 
-export default connect(mapStateToProps)(OrderInventory);
+export default connect(mapStateToProps)(OrderSupplier);

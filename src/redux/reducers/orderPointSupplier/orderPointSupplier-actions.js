@@ -1,6 +1,6 @@
-//-------------OrderPointInventory By Location Supplier Item----------------------
-export async function orderPintInventoryListByLSI(Object, Token){
-    const url=window.apiAddress+"/OrderPointInventory/orderPintInventoryListByLSI"              
+//-------------OrderPointSupplier By Location Supplier Item----------------------
+export async function orderPointSupplierListByLSI(Object, Token){
+    const url=window.apiAddress+"/OrderPointSupplier/orderPointSupplierListByLSI"              
     const response = await fetch(
         url,
         {
@@ -14,16 +14,15 @@ export async function orderPintInventoryListByLSI(Object, Token){
       );        
     const result= await response.json();
     if(result.status=="Success"){
-      console.log('OrderPointInventory='+JSON.stringify(result.data));
+      console.log('OrderPointSupplier='+JSON.stringify(result.data));
       return result.data;  
     }
     return null; 
   }
 
-
-//-------------OrderPointInventory EDIT----------------------
-export async function updateGroupsOrderPointInventory(Object, Token){
-  const url=window.apiAddress+"/OrderPointInventory/updateGroupsOrderPointInventory"              
+  //-------------OrderPointSupplier EDIT----------------------
+export async function updateGroupsOrderPointSupplier(Object, Token){
+  const url=window.apiAddress+"/OrderPointSupplier/updateGroupsOrderPointSupplier"              
   const response = await fetch(
       url,
       {
@@ -37,38 +36,39 @@ export async function updateGroupsOrderPointInventory(Object, Token){
     );        
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('UpdateOrderPointInventory='+JSON.stringify(result.data));
+    console.log('UpdateOrderPointSupplier='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null; 
+}
+
+//-------------OrderPointSupplier New Insert----------------------
+export async function insertNewDataOrderPointSupplier(Object, Token){
+  const url=window.apiAddress+"/OrderPointSupplier/insertNewDataOrderPointSupplier"              
+  const response = await fetch(
+      url,
+      {
+          method: "POST",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('new OrderPoint Supplier='+JSON.stringify(result.data));
     return result.data;  
   }
   return null; 
 }
 
 
-//-------------OrderPointInventory New Insert----------------------
-export async function insertNewDataOrderPointInventory(Object, Token){
-  const url=window.apiAddress+"/OrderPointInventory/insertNewDataOrderPointInventory"              
-  const response = await fetch(
-      url,
-      {
-          method: "POST",              
-          body:JSON.stringify(Object),
-          headers: { 
-            'Content-Type': 'application/json' ,
-            'Authorization': `Bearer ${Token}`
-          },
-      }
-    );        
-  const result= await response.json();
-  if(result.status=="Success"){
-    console.log('new OrderPointInventory='+JSON.stringify(result.data));
-    return result.data;  
-  }
-  return null; 
-}
 
-//-------------OrderPointInventory New Group Insert----------------------
-export async function insertNewDataGroupOrderPointInventory(Object, Token){
-  const url=window.apiAddress+"/OrderPointInventory/insertNewDataGroupOrderPointInventory"              
+//-------------OrderPointSupplier New Group Insert----------------------
+export async function insertNewDataGroupOrderPointSupplier(Object, Token){
+  const url=window.apiAddress+"/OrderPointSupplier/insertNewDataGroupOrderPointSupplier"              
   const response = await fetch(
       url,
       {
@@ -82,7 +82,7 @@ export async function insertNewDataGroupOrderPointInventory(Object, Token){
     );        
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('new OrderPointInventory='+JSON.stringify(result.data));
+    console.log('new OrderPointSupplier='+JSON.stringify(result.data));
     return result.data;  
   }
   return null; 

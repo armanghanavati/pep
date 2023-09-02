@@ -38,6 +38,26 @@ export async function locationListOrderInventoryCombo(comapnyId, Token){
   return null;
 }
 
+export async function locationOrderSupplierComboListByCompanyId(comapnyId, Token){
+  const url=window.apiAddress+"/Location/locationOrderSupplierComboListByCompanyId?companyId=" + comapnyId;  
+  const response = await fetch(
+      url,
+      {
+          method: "GET",                        
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('All location OrderSupplier'+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null;
+}
+
 export async function addLocation(Object,Token){
   const url=window.apiAddress+"/Location/addLocation"              
   const response = await fetch(
