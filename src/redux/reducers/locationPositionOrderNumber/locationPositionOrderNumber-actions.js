@@ -1,5 +1,5 @@
 export async function locationPositionOrderNumberList(companyId, Token) {
-    const url = window.apiAddress + "/PepObject/pepObjectList?companyId=" + companyId;
+    const url = window.apiAddress + "/LocationPositionOrderNumber/locationPositionOrderNumberList?companyId=" + companyId;
     const response = await fetch(url, {
       method: "GET",
       headers: {

@@ -75,15 +75,15 @@ class LocationPositionOrderNumber extends React.Component {
     super(props);
     this.state = {
       txtMaxOrderNumberValue: null,
-      txtMaxOutRouteNumbervalue: null,
+      txtMaxOutRouteNumberValue: null,
       LocationId: null,
       PositionId: null,
       RowSelected: null,
-      LocationPositionorderNumberGridData: null,
+      LocationPositionOrderNumberGridData: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
-      stateDisable_show: true,
+      stateDisable_show: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -93,7 +93,6 @@ class LocationPositionOrderNumber extends React.Component {
       LocationGroupList: null,
       LocationList: null,
       PositionList: null,
-      LocationPositionOrderNumberGridData: null,
     };
   }
 
@@ -171,7 +170,7 @@ class LocationPositionOrderNumber extends React.Component {
 
   grdLocationPositionOrderNumber_onClickRow = (e) => {
     this.setState({
-      txtMaxOrdernumberValue: e.data.maxOrderNumber,
+      txtMaxOrderNumberValue: e.data.maxOrderNumber,
       txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
       stateUpdateDelete: true,
       RowSelected: e.data,
