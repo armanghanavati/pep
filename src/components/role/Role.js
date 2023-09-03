@@ -48,32 +48,24 @@ import {
   ToastWidth,
 } from "../../config/config";
 import {
-  updatePosition,
-  addPosition,
-  positionList,
-  deletePosition,
-} from "../../redux/reducers/position/position-actions";
-import companySlice, {
-  companyActions,
-} from "../../redux/reducers/company/company-slice";
-import { positionActions } from "../../redux/reducers/position/position-slice";
-import { companyList } from "../../redux/reducers/company/company-actions";
-import { DataGridPositionColumns } from "./Position-config";
+  updateRole,
+  addRole,
+  roleList,
+  deleteRole,
+} from "../../redux/reducers/role/role-actions";
+import { DataGridRoleColumns } from "./Role-config";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 
-class Position extends React.Component {
+class Role extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      PositionGridData: null,
-      txtCodeValue: null,
+      RoleGridData: null,
+      txtRoleNameValue: null,
       Id: null,
-      txtPositionNameValue: null,
-      txtDescValue: null,
-      PositionId: null,
       RowSelected: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
@@ -84,33 +76,18 @@ class Position extends React.Component {
         Message: "",
         Type: "",
       },
-      chkIsActive: null,
-      stateDisable_txtCode: false,
-      Position: null,
+      Role: null,
     };
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
-    await this.fn_positionList();
   }
-
-  fn_positionList = async () => {
-    this.setState({
-      Position: await positionList(
-        this.props.Company.currentCompanyId,
-        this.props.token
-      ),
-    });
-  };
 
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show) {
       this.setState({
-        PositionGridData: await positionList(
-          this.props.Company.currentCompanyId,
-          this.props.User.token
-        ),
+        RoleGridData: await roleList(this.props.User.token),
       });
     }
   };
@@ -120,64 +97,43 @@ class Position extends React.Component {
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "position.update":
+          case "role.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "position.insert":
+          case "role.insert":
             this.setState({ stateDisable_btnAdd: true });
             break;
-          case "position.show":
+          case "role.show":
             this.setState({ stateDisable_show: true });
             break;
         }
       }
   };
 
-  grdPosition_onClickRow = (e) => {
+  grdRole_onClickRow = (e) => {
     this.setState({
-      txtCodeValue: e.data.code,
-      Id: e.data.id,
-      PositionId: e.data.positionId,
-      txtPositionNameValue: e.data.positionName,
-      txtDescValue: e.data.desc,
+      txtRoleNameValue: e.data.name,
       RowSelected: e.data,
       stateUpdateDelete: true,
-      chkIsActive: e.data.isActive,
       stateDisable_txtCode: true,
     });
   };
 
   btnNew_onClick = () => {
     this.setState({
-      txtPositionNameValue: null,
-      txtDescValue: null,
+      txtRoleNameValue: null,
       stateUpdateDelete: false,
-      stateDisable_txtCode: false,
-      PositionId: null,
-      LocationId: null,
       chkIsActive: null,
-    });
-  };
-
-  chkIsActive_onChange = (e) => {
-    this.setState({
-      chkIsActive: e.value,
     });
   };
 
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
-    document.getElementById("errPositionName").innerHTML = "";
-    if (this.state.txtPositionNameValue == null) {
-      document.getElementById("errPositionName").innerHTML =
-        "نام  سمت را وارد نمائید";
-      flag = false;
-    }
-
-    if (this.state.chkIsActive == null) {
-      document.getElementById("errPositionIsActive").innerHTML =
-        "فعال بودن را مشخص نمائید.";
+    document.getElementById("errRoleName").innerHTML = "";
+    if (this.state.txtRoleNameValue == null) {
+      document.getElementById("errRoleName").innerHTML =
+        "نام  نقش را وارد نمائید";
       flag = false;
     }
     return flag;
@@ -186,14 +142,9 @@ class Position extends React.Component {
   btnAdd_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
-        code: this.state.txtCodeValue,
-        positionId: this.state.PositionId,
-        positionName: this.state.txtPositionNameValue,
-        desc: this.state.txtDescValue,
-        companyId: this.props.Company.currentCompanyId,
-        isActive: this.state.chkIsActive,
+        name: this.state.txtRoleNameValue,
       };
-      const RESULT = await addPosition(data, this.props.User.token);
+      const RESULT = await addRole(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -204,28 +155,18 @@ class Position extends React.Component {
       this.fn_updateGrid();
     }
   };
-  txtCode_onChange = (e) => {
-    this.setState({ txtCodeValue: e.value });
-  };
-  txtPositionName_onChange = (e) => {
-    this.setState({ txtPositionNameValue: e.value });
-  };
 
-  txtDesc_onChange = (e) => {
-    this.setState({ txtDescValue: e.value });
+  txtRoleName_onChange = (e) => {
+    this.setState({ txtRoleNameValue: e.value });
   };
 
   btnUpdate_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
-        id: this.state.Id,
-        positionId: this.state.PositionId,
-        positionName: this.state.txtPositionNameValue,
-        desc: this.state.txtDescValue,
-        isActive: this.state.chkIsActive,
-        companyId: this.props.Company.currentCompanyId,
+        id: this.state.RowSelected.id,
+        name: this.state.txtRoleNameValue,
       };
-      const RESULT = await updatePosition(data, this.props.User.token);
+      const RESULT = await updateRole(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -241,14 +182,8 @@ class Position extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  cmbPosition_onChange = (e) => {
-    this.setState({
-      PositionId: e,
-    });
-  };
-
   btnDelete_onClick = async () => {
-    const MSG = await deletePosition(
+    const MSG = await deleteRole(
       this.state.RowSelected.id,
       this.props.User.token
     );
@@ -277,7 +212,7 @@ class Position extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>سمت</Label>
+              <Label>نقش</Label>
             </Row>
             {this.state.stateDisable_btnAdd && (
               <Row>
@@ -294,73 +229,20 @@ class Position extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col>
-                <Label className="standardLabelFont">کد</Label>
+              <Col xs={3}>
+                <Label className="standardLabelFont">نام</Label>
                 <TextBox
-                  value={this.state.txtCodeValue}
+                  value={this.state.txtRoleNameValue}
                   showClearButton={true}
-                  placeholder="کد"
+                  placeholder="نام"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
-                  onValueChanged={this.txtCode_onChange}
-                  disabled={this.state.stateDisable_txtCode}
-                />
-                <Label id="errCode" className="standardLabelFont errMessage" />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">زیر گروه سمت</Label>
-                <SelectBox
-                  dataSource={this.state.Position}
-                  displayExpr="positionName"
-                  placeholder="گروه سمت"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbPosition_onChange}
-                  value={this.state.PositionId}
-                />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">نام سمت</Label>
-                <TextBox
-                  value={this.state.txtPositionNameValue}
-                  showClearButton={true}
-                  placeholder="نام سمت"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtPositionName_onChange}
+                  onValueChanged={this.txtRoleName_onChange}
                 />
                 <Label
-                  id="errPositionName"
+                  id="errRoleName"
                   className="standardLabelFont errMessage"
                 />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">توضیحات</Label>
-                <TextBox
-                  value={this.state.txtDescValue}
-                  showClearButton={true}
-                  placeholder="توضیحات"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtDesc_onChange}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsActive}
-                  text="فعال"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsActive_onChange}
-                />
-                <Row>
-                  <Label
-                    id="errLocationIsActive"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
               </Col>
             </Row>
             {!this.state.stateUpdateDelete ? (
@@ -411,7 +293,7 @@ class Position extends React.Component {
             <Row>
               <Col>
                 <p
-                  id="ErrorUpdatePosition"
+                  id="ErrorUpdateRole"
                   style={{ textAlign: "right", color: "red" }}
                 ></p>
               </Col>
@@ -422,18 +304,18 @@ class Position extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label className="title">لیست سمت ها</Label>
+              <Label className="title">لیست نقش ها</Label>
             </Row>
 
             <Row>
               <Col xs="auto" className="standardPadding">
                 <DataGrid
-                  dataSource={this.state.PositionGridData}
-                  defaultColumns={DataGridPositionColumns}
+                  dataSource={this.state.RoleGridData}
+                  defaultColumns={DataGridRoleColumns}
                   showBorders={true}
                   rtlEnabled={true}
                   allowColumnResizing={true}
-                  onRowClick={this.grdPosition_onClickRow}
+                  onRowClick={this.grdRole_onClickRow}
                   height={DataGridDefaultHeight}
                 >
                   <Scrolling
@@ -460,10 +342,8 @@ class Position extends React.Component {
     );
   }
 }
+
 const mapStateToProps = (state) => ({
   User: state.users,
-  Company: state.companies,
-  Position: state.positions,
 });
-
-export default connect(mapStateToProps)(Position);
+export default connect(mapStateToProps)(Role);

@@ -39,6 +39,7 @@ import DataGrid, {
   Grouping,
   GroupPanel,
   SearchPanel,
+  RowDragging,
 } from "devextreme-react/data-grid";
 import {
   DataGridPageSizes,
@@ -48,33 +49,30 @@ import {
   ToastWidth,
 } from "../../config/config";
 import {
-  updatePosition,
-  addPosition,
-  positionList,
-  deletePosition,
-} from "../../redux/reducers/position/position-actions";
-import companySlice, {
-  companyActions,
-} from "../../redux/reducers/company/company-slice";
-import { positionActions } from "../../redux/reducers/position/position-slice";
-import { companyList } from "../../redux/reducers/company/company-actions";
-import { DataGridPositionColumns } from "./Position-config";
+  pepObjectList,
+  addPepObject,
+  deletePepObject,
+  updatePepObject,
+} from "../../redux/reducers/pepObject/pepObject-actions";
+import { treeTypeList } from "../../redux/reducers/treeType/treeType-actions";
+import { DataGridPepObjectColumns } from "../pepObject/PepObject-config";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
-
-class Position extends React.Component {
+class PepObject extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      PositionGridData: null,
-      txtCodeValue: null,
-      Id: null,
-      txtPositionNameValue: null,
-      txtDescValue: null,
-      PositionId: null,
+      txtObjectNameValue: null,
+      txtTitleValue: null,
+      txtLinkComponentValue: null,
+      txtLinkNameValue: null,
+      TreeTypeId: null,
+      ParentId: null,
       RowSelected: null,
+      PepObjectGridData: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
@@ -84,35 +82,28 @@ class Position extends React.Component {
         Message: "",
         Type: "",
       },
-      chkIsActive: null,
-      stateDisable_txtCode: false,
-      Position: null,
+      ObjectList: null,
+      ObjectId: null,
+      TreeTypeList: null,
+      ObjectList: null,
     };
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
-    await this.fn_positionList();
+    this.fn_TreeTypeList();
   }
 
-  fn_positionList = async () => {
+  fn_updateGrid = async () => {
     this.setState({
-      Position: await positionList(
-        this.props.Company.currentCompanyId,
-        this.props.token
-      ),
+      PepObjectGridData: await pepObjectList(this.props.User.token),
     });
   };
 
-  fn_updateGrid = async () => {
-    if (this.state.stateDisable_show) {
-      this.setState({
-        PositionGridData: await positionList(
-          this.props.Company.currentCompanyId,
-          this.props.User.token
-        ),
-      });
-    }
+  fn_TreeTypeList = async () => {
+    this.setState({
+      TreeTypeList: await treeTypeList(this.props.User.token),
+    });
   };
 
   fn_GetPermissions = () => {
@@ -120,80 +111,67 @@ class Position extends React.Component {
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "position.update":
+          case "pepObject.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "position.insert":
+          case "pepObject.insert":
             this.setState({ stateDisable_btnAdd: true });
             break;
-          case "position.show":
+          case "pepObject.show":
             this.setState({ stateDisable_show: true });
             break;
         }
       }
   };
 
-  grdPosition_onClickRow = (e) => {
+  grdPepObject_onClickRow = (e) => {
     this.setState({
-      txtCodeValue: e.data.code,
-      Id: e.data.id,
-      PositionId: e.data.positionId,
-      txtPositionNameValue: e.data.positionName,
-      txtDescValue: e.data.desc,
-      RowSelected: e.data,
+      txtObjectNameValue: e.data.objectName,
+      txtTitleValue: e.data.title,
+      txtLinkComponentValue: e.data.linkComponent,
+      txtLinkNameValue: e.data.linkName,
+      TreeTypeId: e.data.treeTypeId,
+      ParentId: e.data.parentId,
       stateUpdateDelete: true,
-      chkIsActive: e.data.isActive,
-      stateDisable_txtCode: true,
+      RowSelected: e.data,
     });
   };
 
-  btnNew_onClick = () => {
+  btnNew_onClick = async () => {
     this.setState({
-      txtPositionNameValue: null,
-      txtDescValue: null,
-      stateUpdateDelete: false,
-      stateDisable_txtCode: false,
-      PositionId: null,
-      LocationId: null,
+      txtObjectNameValue: null,
+      txtTitleValue: null,
+      txtLinkComponentValue: null,
+      txtLinkNameValue: null,
       chkIsActive: null,
-    });
-  };
-
-  chkIsActive_onChange = (e) => {
-    this.setState({
-      chkIsActive: e.value,
+      TreeTypeId: null,
+      ParentId: null,
+      stateUpdateDelete: false,
     });
   };
 
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
-    document.getElementById("errPositionName").innerHTML = "";
-    if (this.state.txtPositionNameValue == null) {
-      document.getElementById("errPositionName").innerHTML =
-        "نام  سمت را وارد نمائید";
-      flag = false;
-    }
-
-    if (this.state.chkIsActive == null) {
-      document.getElementById("errPositionIsActive").innerHTML =
-        "فعال بودن را مشخص نمائید.";
+    document.getElementById("errObjectName").innerHTML = "";
+    if (this.state.txtObjectNameValue == null) {
+      document.getElementById("errObjectName").innerHTML =
+        "نام آیتم را وارد نمائید";
       flag = false;
     }
     return flag;
   };
-
   btnAdd_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
-        code: this.state.txtCodeValue,
-        positionId: this.state.PositionId,
-        positionName: this.state.txtPositionNameValue,
-        desc: this.state.txtDescValue,
-        companyId: this.props.Company.currentCompanyId,
-        isActive: this.state.chkIsActive,
+        objectName: this.state.txtObjectNameValue,
+        title: this.state.txtTitleValue,
+        parentId: this.state.ParentId,
+        treeTypeId: this.state.TreeTypeId,
+        linkComponent: this.state.txtLinkComponentValue,
+        linkName: this.state.txtLinkNameValue,
       };
-      const RESULT = await addPosition(data, this.props.User.token);
+      const RESULT = await addPepObject(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -204,28 +182,53 @@ class Position extends React.Component {
       this.fn_updateGrid();
     }
   };
-  txtCode_onChange = (e) => {
-    this.setState({ txtCodeValue: e.value });
-  };
-  txtPositionName_onChange = (e) => {
-    this.setState({ txtPositionNameValue: e.value });
+  txtObjectName_onChange = (e) => {
+    this.setState({ txtObjectNameValue: e.value });
   };
 
-  txtDesc_onChange = (e) => {
-    this.setState({ txtDescValue: e.value });
+  txtTitle_onChange = (e) => {
+    this.setState({ txtTitleValue: e.value });
   };
 
+  txtComponentName_onChange = (e) => {
+    this.setState({ txtLinkComponentValue: e.value });
+  };
+
+  txtLinkName_onChange = (e) => {
+    this.setState({ txtLinkNameValue: e.value });
+  };
+
+  cmbObject_onChange = (e) => {
+    this.setState({ ParentId: e });
+  };
+
+  cmbTreeType_onChange = (e) => {
+    this.setState({ TreeTypeId: e });
+  };
   btnUpdate_onClick = async () => {
-    if (await this.fn_CheckValidation()) {
+    if (this.state.RowSelected == null) {
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: "خطا ردیف انتخاب گردد",
+          Type: "error",
+        },
+      });
+      return;
+    }
+
+    if (this.fn_CheckValidation()) {
       const data = {
-        id: this.state.Id,
-        positionId: this.state.PositionId,
-        positionName: this.state.txtPositionNameValue,
-        desc: this.state.txtDescValue,
-        isActive: this.state.chkIsActive,
-        companyId: this.props.Company.currentCompanyId,
+        id: this.state.RowSelected.id,
+        objectName: this.state.txtObjectNameValue,
+        title: this.state.txtTitleValue,
+        parentId: this.state.ParentId,
+        treeTypeId: this.state.TreeTypeId,
+        linkComponent: this.state.txtLinkComponentValue,
+        linkName: this.state.txtLinkNameValue,
       };
-      const RESULT = await updatePosition(data, this.props.User.token);
+      console.log("pep objetc data for update" + JSON.stringify(data));
+      const RESULT = await updatePepObject(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -241,14 +244,8 @@ class Position extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  cmbPosition_onChange = (e) => {
-    this.setState({
-      PositionId: e,
-    });
-  };
-
   btnDelete_onClick = async () => {
-    const MSG = await deletePosition(
+    const MSG = await deletePepObject(
       this.state.RowSelected.id,
       this.props.User.token
     );
@@ -277,11 +274,11 @@ class Position extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>سمت</Label>
+              <Label>آیتم</Label>
             </Row>
             {this.state.stateDisable_btnAdd && (
               <Row>
-                <Col xs="auto">
+                <Col>
                   <Button
                     icon={PlusNewIcon}
                     text="جدید"
@@ -295,73 +292,92 @@ class Position extends React.Component {
             )}
             <Row className="standardPadding">
               <Col>
-                <Label className="standardLabelFont">کد</Label>
+                <Label className="standardLabelFont">نام آیتم</Label>
                 <TextBox
-                  value={this.state.txtCodeValue}
+                  value={this.state.txtObjectNameValue}
                   showClearButton={true}
-                  placeholder="کد"
+                  placeholder="نام آیتم"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
-                  onValueChanged={this.txtCode_onChange}
-                  disabled={this.state.stateDisable_txtCode}
-                />
-                <Label id="errCode" className="standardLabelFont errMessage" />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">زیر گروه سمت</Label>
-                <SelectBox
-                  dataSource={this.state.Position}
-                  displayExpr="positionName"
-                  placeholder="گروه سمت"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbPosition_onChange}
-                  value={this.state.PositionId}
-                />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">نام سمت</Label>
-                <TextBox
-                  value={this.state.txtPositionNameValue}
-                  showClearButton={true}
-                  placeholder="نام سمت"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtPositionName_onChange}
-                />
-                <Label
-                  id="errPositionName"
-                  className="standardLabelFont errMessage"
-                />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">توضیحات</Label>
-                <TextBox
-                  value={this.state.txtDescValue}
-                  showClearButton={true}
-                  placeholder="توضیحات"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtDesc_onChange}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsActive}
-                  text="فعال"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsActive_onChange}
+                  onValueChanged={this.txtObjectName_onChange}
                 />
                 <Row>
                   <Label
-                    id="errLocationIsActive"
+                    id="errObjectName"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
               </Col>
+              <Col>
+                <Label className="standardLabelFont">عنوان</Label>
+                <TextBox
+                  value={this.state.txtTitleValue}
+                  showClearButton={true}
+                  placeholder="عنوان"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtTitle_onChange}
+                />
+              </Col>
+              <Col>
+                <Label className="standardLabelFont">لینک کامپوننت</Label>
+                <TextBox
+                  value={this.state.txtLinkComponentValue}
+                  showClearButton={true}
+                  placeholder="لینک کامپوننت"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtComponentName_onChange}
+                />
+              </Col>
+              <Col>
+                <Label className="standardLabelFont">نام لینک</Label>
+                <TextBox
+                  value={this.state.txtLinkNameValue}
+                  showClearButton={true}
+                  placeholder="نام لینک"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtLinkName_onChange}
+                />
+              </Col>
+              <Col>
+                <Label className="standardLabelFont">گروه آیتم</Label>
+                <SelectBox
+                  dataSource={this.state.PepObjectGridData}
+                  displayExpr="objectName"
+                  placeholder="گروه آیتم"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbObject_onChange}
+                  value={this.state.ParentId}
+                />
+              </Col>
+              <Col>
+                <Label className="standardLabelFont">نوع آیتم</Label>
+                <SelectBox
+                  dataSource={this.state.TreeTypeList}
+                  displayExpr="typeName"
+                  placeholder="نوع آیتم"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbTreeType_onChange}
+                  value={this.state.TreeTypeId}
+                />
+              </Col>
+
+              {this.state.stateUpdateDelete && (
+                <Col xs={3}>
+                  <Row>
+                    <Label
+                      id="errUserName"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+              )}
             </Row>
             {!this.state.stateUpdateDelete ? (
               <Row>
@@ -393,6 +409,7 @@ class Position extends React.Component {
                           onClick={this.btnUpdate_onClick}
                         />
                       </Col>
+
                       <Col xs="auto">
                         <Button
                           icon={DeleteIcon}
@@ -411,7 +428,7 @@ class Position extends React.Component {
             <Row>
               <Col>
                 <p
-                  id="ErrorUpdatePosition"
+                  id="ErrorUpdateUser"
                   style={{ textAlign: "right", color: "red" }}
                 ></p>
               </Col>
@@ -422,18 +439,17 @@ class Position extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label className="title">لیست سمت ها</Label>
+              <Label className="title">لیست آیتم ها</Label>
             </Row>
-
             <Row>
-              <Col xs="auto" className="standardPadding">
+              <Col xs="auto" className="standardMarginRight">
                 <DataGrid
-                  dataSource={this.state.PositionGridData}
-                  defaultColumns={DataGridPositionColumns}
+                  dataSource={this.state.PepObjectGridData}
+                  defaultColumns={DataGridPepObjectColumns}
                   showBorders={true}
                   rtlEnabled={true}
                   allowColumnResizing={true}
-                  onRowClick={this.grdPosition_onClickRow}
+                  onRowClick={this.grdPepObject_onClickRow}
                   height={DataGridDefaultHeight}
                 >
                   <Scrolling
@@ -457,13 +473,13 @@ class Position extends React.Component {
           </Row>
         </Card>
       </div>
+
     );
   }
 }
 const mapStateToProps = (state) => ({
   User: state.users,
   Company: state.companies,
-  Position: state.positions,
 });
 
-export default connect(mapStateToProps)(Position);
+export default connect(mapStateToProps)(PepObject);

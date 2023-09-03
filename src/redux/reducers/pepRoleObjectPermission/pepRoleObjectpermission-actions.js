@@ -1,6 +1,6 @@
-export async function positionList(companyId, Token) {
+export async function pepRoleObjectPermissionList(Token) {
   const url =
-    window.apiAddress + "/Position/positionList?companyId=" + companyId;
+    window.apiAddress + "/PepRoleObjectPermission/pepRoleObjectPermissionList";
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -10,14 +10,15 @@ export async function positionList(companyId, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("All position" + JSON.stringify(result.data));
+    console.log("All pepRoleObjectPermission" + JSON.stringify(result.data));
     return result.data;
   }
   return null;
 }
 
-export async function addPosition(Object, Token) {
-  const url = window.apiAddress + "/Position/addPosition";
+export async function addPepRoleObjectPermission(Object, Token) {
+  const url =
+    window.apiAddress + "/PepRoleObjectPermission/addPepRoleObjectPermission";
   const response = await fetch(url, {
     method: "POST",
     body: JSON.stringify(Object),
@@ -29,14 +30,18 @@ export async function addPosition(Object, Token) {
 
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("RESULT OF ADD NEW position=" + JSON.stringify(result.data));
+    console.log(
+      "RESULT OF ADD NEW pepRoleObjectPermission=" + JSON.stringify(result.data)
+    );
     return result.data;
   }
   return null;
 }
 
-export async function updatePosition(Object, Token) {
-  const url = window.apiAddress + "/Position/updatePosition";
+export async function updatePepRoleObjectPermission(Object, Token) {
+  const url =
+    window.apiAddress +
+    "/PepRoleObjectPermission/updatePepRoleObjectPermission";
   const response = await fetch(url, {
     method: "PATCH",
     body: JSON.stringify(Object),
@@ -47,15 +52,24 @@ export async function updatePosition(Object, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("position update result=" + JSON.stringify(result.data));
+    console.log(
+      "PepRoleObjectPermission update result=" + JSON.stringify(result.data)
+    );
     return result.data;
   }
   return 0;
 }
 
-export async function deletePosition(positionId, Token) {
+export async function deletePepRoleObjectPermission(
+  roleId,
+  objectId,
+  permissionId,
+  Token
+) {
   const url =
-    window.apiAddress + "/Position/deletePosition?positionId=" + positionId;
+    window.apiAddress +
+    "/PepRoleObjectPermission/deletePepRoleObjectPermission?roleId=" +
+    roleId + "&objectId=" + objectId + "&permissionId=" + permissionId;
   const response = await fetch(url, {
     method: "DELETE",
     headers: {
@@ -65,7 +79,9 @@ export async function deletePosition(positionId, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("Position delete result=" + JSON.stringify(result.data));
+    console.log(
+      "PepRoleObjectPermission delete result=" + JSON.stringify(result.data)
+    );
     return result.message;
   }
   return 0;

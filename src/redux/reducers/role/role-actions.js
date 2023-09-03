@@ -1,6 +1,5 @@
-export async function positionList(companyId, Token) {
-  const url =
-    window.apiAddress + "/Position/positionList?companyId=" + companyId;
+export async function roleList(Token) {
+  const url = window.apiAddress + "/Role/roleList";
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -10,14 +9,14 @@ export async function positionList(companyId, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("All position" + JSON.stringify(result.data));
+    console.log("All role" + JSON.stringify(result.data));
     return result.data;
   }
   return null;
 }
 
-export async function addPosition(Object, Token) {
-  const url = window.apiAddress + "/Position/addPosition";
+export async function addRole(Object, Token) {
+  const url = window.apiAddress + "/Role/addRole";
   const response = await fetch(url, {
     method: "POST",
     body: JSON.stringify(Object),
@@ -29,14 +28,14 @@ export async function addPosition(Object, Token) {
 
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("RESULT OF ADD NEW position=" + JSON.stringify(result.data));
+    console.log("RESULT OF ADD NEW role=" + JSON.stringify(result.data));
     return result.data;
   }
   return null;
 }
 
-export async function updatePosition(Object, Token) {
-  const url = window.apiAddress + "/Position/updatePosition";
+export async function updateRole(Object, Token) {
+  const url = window.apiAddress + "/Role/updateRole";
   const response = await fetch(url, {
     method: "PATCH",
     body: JSON.stringify(Object),
@@ -47,15 +46,14 @@ export async function updatePosition(Object, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("position update result=" + JSON.stringify(result.data));
+    console.log("role update result=" + JSON.stringify(result.data));
     return result.data;
   }
   return 0;
 }
 
-export async function deletePosition(positionId, Token) {
-  const url =
-    window.apiAddress + "/Position/deletePosition?positionId=" + positionId;
+export async function deleteRole(roleId, Token) {
+  const url = window.apiAddress + "/Role/deleteRole?roleId=" + roleId;
   const response = await fetch(url, {
     method: "DELETE",
     headers: {
@@ -65,7 +63,7 @@ export async function deletePosition(positionId, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("Position delete result=" + JSON.stringify(result.data));
+    console.log("Role delete result=" + JSON.stringify(result.data));
     return result.message;
   }
   return 0;

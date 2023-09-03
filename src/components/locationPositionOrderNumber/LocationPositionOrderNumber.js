@@ -39,6 +39,7 @@ import DataGrid, {
   Grouping,
   GroupPanel,
   SearchPanel,
+  RowDragging,
 } from "devextreme-react/data-grid";
 import {
   DataGridPageSizes,
@@ -48,36 +49,37 @@ import {
   ToastWidth,
 } from "../../config/config";
 import {
-  updateLocation,
-  addLocation,
-  locationList,
-  deleteLocation,
-} from "../../redux/reducers/location/location-actions";
-import { locationTypeList } from "../../redux/reducers/locationType/locationType-action";
-import companySlice, {
-  companyActions,
-} from "../../redux/reducers/company/company-slice";
-import { locationActions } from "../../redux/reducers/location/location-slice";
-import { companyList } from "../../redux/reducers/company/company-actions";
-import { DataGridLocationColumns } from "./Location-config";
-
+  pepObjectList,
+  addPepObject,
+  deletePepObject,
+  updatePepObject,
+} from "../../redux/reducers/pepObject/pepObject-actions";
+import { treeTypeList } from "../../redux/reducers/treeType/treeType-actions";
+import { DataGridPepObjectColumns } from "../pepObject/PepObject-config";
+import { locationList } from "../../redux/reducers/location/location-actions";
+import { positionList } from "../../redux/reducers/position/position-actions";
+import {
+  locationPositionOrderNumberList,
+  addLocationPositionOrderNumber,
+  updateLocationPositionOrderNumber,
+  deleteLocationPositionOrderNumber,
+} from "../../redux/reducers/locationPositionOrderNumber/locationPositionOrderNumber-actions";
+import { DataGridLocationPositionOrderNumberColumns } from "./LocationPositionOrderNumber-config";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 
-class Location extends React.Component {
+class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      LocationGridData: null,
-      Id: null,
+      txtMaxOrderNumberValue: null,
+      txtMaxOutRouteNumberValue: null,
       LocationId: null,
-      txtCodeValue: null,
-      txtLocationNameValue: null,
-      txtPersianNameValue: null,
-      txtDescValue: null,
-      LocationTypeId: null,
+      PositionId: null,
+      RowSelected: null,
+      LocationPositionOrderNumberGridData: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
@@ -87,113 +89,152 @@ class Location extends React.Component {
         Message: "",
         Type: "",
       },
-      Location: null,
-      chkIsActive: null,
-      Company: null,
-      LocationType: null,
-      stateDisable_txtCode: false,
-      RowSelected: null,
+      LocationGroupId: null,
+      LocationGroupList: null,
+      LocationList: null,
+      PositionList: null,
     };
   }
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_locationGroupList();
+    await this.fn_positionList();
     this.fn_updateGrid();
-    await this.locationTypes();
-    await this.fn_locationList();
   }
-
-  fn_locationList = async () => {
-    this.setState({
-      Location: await locationList(
-        this.props.Company.currentCompanyId,
-        this.props.User.token
-      ),
-    });
-  };
-  fn_updateGrid = async () => {
-    if (this.state.stateDisable_show) {
-      this.setState({
-        LocationGridData: await locationList(
-          this.props.Company.currentCompanyId,
-          this.props.User.token
-        ),
-      });
-    }
-  };
 
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "location.update":
+          case "locationPositionOrderNumber.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "location.insert":
+          case "locationPositionOrderNumber.insert":
             this.setState({ stateDisable_btnAdd: true });
             break;
-          case "location.show":
+          case "locationPositionOrderNumber.show":
             this.setState({ stateDisable_show: true });
             break;
         }
       }
   };
 
-  grdLocation_onClickRow = (e) => {
+  fn_locationGroupList = async () => {
     this.setState({
-      Id: e.data.id,
-      txtCodeValue: e.data.code,
-      LocationId: e.data.locationId,
-      txtLocationNameValue: e.data.locationName,
-      txtPersianNameValue: e.data.persianName,
-      txtDescValue: e.data.desc,
-      LocationTypeId: e.data.locationTypeId,
-      chkIsActive: e.data.isActive,
+      LocationGroupList: await locationList(
+        this.props.User.userId,
+        this.props.Company.currentCompanyId,
+        this.props.User.token
+      ),
+    });
+  };
+  fn_positionList = async () => {
+    this.setState({
+      PositionList: await positionList(
+        this.props.Company.currentCompanyId,
+        this.props.User.token
+      ),
+    });
+  };
+
+  fn_updateGrid = async () => {
+    if (this.state.stateDisable_show)
+      this.setState({
+        LocationPositionOrderNumberGridData:
+          await locationPositionOrderNumberList(
+            this.props.Company.currentCompanyId,
+            this.props.User.token
+          ),
+      });
+  };
+
+  cmbLocationGroup_onChange = (e) => {
+    this.setState({
+      LocationGroupId: e,
+      LocationList: this.state.LocationGroupList,
+    });
+  };
+
+  cmbLocation_onChange = (e) => {
+    this.setState({
+      LocationId: e,
+    });
+  };
+  cmbPosition_onChange = (e) => {
+    this.setState({
+      PositionId: e,
+    });
+  };
+
+  grdLocationPositionOrderNumber_onClickRow = (e) => {
+    this.setState({
+      txtMaxOrderNumberValue: e.data.maxOrderNumber,
+      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
       stateUpdateDelete: true,
-      stateDisable_txtCode: true,
       RowSelected: e.data,
+      PositionId: e.data.positionId,
+      LocationGroupId: e.data.LocationGroupId,
+      LocationId: e.data.locationId,
     });
   };
 
   btnNew_onClick = () => {
     this.setState({
-      txtLocationNameValue: null,
-      txtPersianNameValue: null,
-      txtDescValue: null,
-      stateUpdateDelete: false,
-      stateDisable_txtCode: false,
-      LocationTypeId: null,
+      txtMaxOrderNumberValue: null,
+      txtMaxOutRouteorderValue: null,
+      LocationGroupId: null,
       LocationId: null,
-      chkIsActive: null,
+      positionId: null,
+      stateUpdateDelete: false,
     });
   };
 
-  chkIsActive_onChange = (e) => {
+  txtMaxOrderNumber_onChange = (e) => {
     this.setState({
-      chkIsActive: e.value,
+      txtMaxOrderNumberValue: e.value,
+    });
+  };
+
+  txtMaxOutRouteNumber_onChange = (e) => {
+    this.setState({
+      txtMaxOutRouteNumberValue: e.value,
     });
   };
 
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
-    document.getElementById("errLocationName").innerHTML = "";
-    document.getElementById("errPersianName").innerHTML = "";
-    if (this.state.txtLocationNameValue == null) {
-      document.getElementById("errLocationName").innerHTML =
-        "نام  محل را وارد نمائید";
-      flag = false;
-    }
-    if (this.state.txtPersianNameValue == null) {
-      document.getElementById("errPersianName").innerHTML =
-        "نام فارسی را وارد نمائید";
-      flag = false;
-    }
+    document.getElementById("errLocationGroup").innerHTML = "";
+    document.getElementById("errLocation").innerHTML = "";
+    document.getElementById("errPosition").innerHTML = "";
+    document.getElementById("errMaxOrderNumber").innerHTML = "";
+    document.getElementById("errMaxOutRouteNumber").innerHTML = "";
 
-    if (this.state.chkIsActive == null) {
-      document.getElementById("errLocationIsActive").innerHTML =
-        "فعال بودن را مشخص نمائید.";
+    if (this.state.LocationGroupId == null) {
+      document.getElementById("errLocationGroup").innerHTML =
+        "نام گروه فروشگاه را انتخاب نمائید";
+      flag = false;
+    }
+    if (this.state.LocationId == null) {
+      document.getElementById("errLocation").innerHTML =
+        " نام فروشگاه را انتخاب نمایید.";
+      flag = false;
+    }
+    if (this.state.PositionId == null) {
+      document.getElementById("errPosition").innerHTML =
+        "سمت را انتخاب نمائید.";
+      flag = false;
+    }
+    if (this.state.txtMaxOrderNumberValue == null) {
+      document.getElementById("errMaxOrderNumber").innerHTML =
+        "تعداد مجاز ویرایش سفارش را مشخص نمائید.";
+      flag = false;
+    }
+    if (this.state.txtMaxOutRouteNumberValue == null) {
+      document.getElementById("errMaxOutRouteNumber").innerHTML =
+        "تعداد مجاز ویرایش سفارش بدون برنامه ریزی را مشخص نمائید.";
       flag = false;
     }
     return flag;
@@ -202,16 +243,15 @@ class Location extends React.Component {
   btnAdd_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
-        code: this.state.txtCodeValue,
-        locationName: this.state.txtLocationNameValue,
-        persianName: this.state.txtPersianNameValue,
-        desc: this.state.txtDescValue,
-        locationTypeId: this.state.LocationTypeId,
         locationId: this.state.LocationId,
-        companyId: this.props.Company.currentCompanyId,
-        isActive: this.state.chkIsActive,
+        positionId: this.state.PositionId,
+        maxOrderNumber: parseInt(this.state.txtMaxOrderNumberValue),
+        maxOutRouteNumber: parseInt(this.state.txtMaxOutRouteNumberValue),
       };
-      const RESULT = await addLocation(data, this.props.User.token);
+      const RESULT = await addLocationPositionOrderNumber(
+        data,
+        this.props.User.token
+      );
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -222,81 +262,11 @@ class Location extends React.Component {
       this.fn_updateGrid();
     }
   };
-  txtCode_onChange = (e) => {
-    this.setState({ txtCodeValue: e.value });
-  };
-  txtLocationName_onChange = (e) => {
-    this.setState({ txtLocationNameValue: e.value });
-  };
-
-  txtPersianName_onChange = (e) => {
-    this.setState({ txtPersianNameValue: e.value });
-  };
-
-  txtDesc_onChange = (e) => {
-    this.setState({ txtDescValue: e.value });
-  };
-
-  btnUpdate_onClick = async () => {
-    if (await this.fn_CheckValidation()) {
-      const data = {
-        id: this.state.Id,
-        locationName: this.state.txtLocationNameValue,
-        persianName: this.state.txtPersianNameValue,
-        desc: this.state.txtDescValue,
-        locationTypeId: this.state.LocationTypeId,
-        locationId: this.state.LocationId,
-        companyId: this.props.Company.currentCompanyId,
-        isActive: this.state.chkIsActive,
-      };
-      const RESULT = await updateLocation(data, this.props.User.token);
-      this.setState({
-        ToastProps: {
-          isToastVisible: true,
-          Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
-          Type: RESULT > 0 ? "success" : "error",
-        },
-      });
-      this.fn_updateGrid();
-    }
-  };
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  cmbLocationType_onChange = (e) => {
-    this.setState({
-      LocationTypeId: e,
-    });
-  };
-
-  cmbLocation_onChange = (e) => {
-    this.setState({
-      LocationId: e,
-    });
-  };
-
-  locationTypes = async () => {
-    this.setState({
-      LocationType: await locationTypeList(this.props.User.token),
-    });
-  };
-
-  btnDelete_onClick = async () => {
-    const MSG = await deleteLocation(
-      this.state.RowSelected.id,
-      this.props.User.token
-    );
-    this.setState({
-      ToastProps: {
-        isToastVisible: true,
-        Message: MSG,
-        Type: "success",
-      },
-    });
-    this.fn_updateGrid();
-  };
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -312,11 +282,11 @@ class Location extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>محل</Label>
+              <Label>آیتم</Label>
             </Row>
             {this.state.stateDisable_btnAdd && (
               <Row>
-                <Col xs="auto">
+                <Col>
                   <Button
                     icon={PlusNewIcon}
                     text="جدید"
@@ -330,101 +300,98 @@ class Location extends React.Component {
             )}
             <Row className="standardPadding">
               <Col>
-                <Label className="standardLabelFont">کد</Label>
-                <TextBox
-                  value={this.state.txtCodeValue}
-                  showClearButton={true}
-                  placeholder="کد"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtCode_onChange}
-                  disabled={this.state.stateDisable_txtCode}
-                />
-                <Label id="errCode" className="standardLabelFont errMessage" />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">نوع محل</Label>
+                <Label className="standardLabelFont">نام گروه فروشگاه</Label>
                 <SelectBox
-                  dataSource={this.state.LocationType}
-                  displayExpr="persianName"
-                  placeholder="انتخاب نوع محل"
+                  dataSource={this.state.LocationGroupList}
+                  displayExpr="locationName"
+                  placeholder="نام گروه فروشگاه"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
-                  onValueChange={this.cmbLocationType_onChange}
-                  value={this.state.LocationTypeId}
+                  onValueChange={this.cmbLocationGroup_onChange}
+                  value={this.state.LocationGroupId}
                 />
+                <Row>
+                  <Label
+                    id="errLocationGroup"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
               </Col>
               <Col>
-                <Label className="standardLabelFont">زیر گروه محل</Label>
+                <Label className="standardLabelFont">نام فروشگاه</Label>
                 <SelectBox
-                  dataSource={this.state.Location}
+                  dataSource={this.state.LocationList}
                   displayExpr="locationName"
-                  placeholder="زیر گروه محل"
+                  placeholder="نام فروشگاه"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbLocation_onChange}
                   value={this.state.LocationId}
                 />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">نام محل</Label>
-                <TextBox
-                  value={this.state.txtLocationNameValue}
-                  showClearButton={true}
-                  placeholder="نام محل"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtLocationName_onChange}
-                />
                 <Row>
                   <Label
-                    id="errLocationName"
+                    id="errLocation"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
               </Col>
               <Col>
-                <Label className="standardLabelFont">نام فارسی محل</Label>
-                <TextBox
-                  value={this.state.txtPersianNameValue}
-                  showClearButton={true}
-                  placeholder="نام فارسی موقعیت"
+                <Label className="standardLabelFont">سمت</Label>
+                <SelectBox
+                  dataSource={this.state.PositionList}
+                  displayExpr="positionName"
+                  placeholder="سمت"
+                  valueExpr="id"
+                  searchEnabled={true}
                   rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtPersianName_onChange}
+                  onValueChange={this.cmbPosition_onChange}
+                  value={this.state.PositionId}
                 />
                 <Row>
                   <Label
-                    id="errPersianName"
+                    id="errPosition"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">توضیحات</Label>
-                <TextBox
-                  value={this.state.txtDescValue}
-                  showClearButton={true}
-                  placeholder="توضیحات"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtDesc_onChange}
-                />
               </Col>
             </Row>
             <Row>
               <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsActive}
-                  text="فعال"
+                <Label className="standardLabelFont">
+                  تعداد مجاز ویرایش سفارش
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز ویرایش سفارش"
                   rtlEnabled={true}
-                  onValueChanged={this.chkIsActive_onChange}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxOrderNumber_onChange}
                 />
                 <Row>
                   <Label
-                    id="errLocationIsActive"
+                    id="errMaxOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز ویرایش سفارشات بدون برنامه ریزی
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxOutRouteNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز ویرایش  سفارشات بدون برنامه ریزی"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxOutRouteNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxOutRouteNumber"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
@@ -460,6 +427,7 @@ class Location extends React.Component {
                           onClick={this.btnUpdate_onClick}
                         />
                       </Col>
+
                       <Col xs="auto">
                         <Button
                           icon={DeleteIcon}
@@ -478,7 +446,7 @@ class Location extends React.Component {
             <Row>
               <Col>
                 <p
-                  id="ErrorUpdateLocation"
+                  id="ErrorUpdateUser"
                   style={{ textAlign: "right", color: "red" }}
                 ></p>
               </Col>
@@ -489,18 +457,19 @@ class Location extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label className="title">لیست محل ها</Label>
+              <Label className="title">
+                لیست تعداد مجاز ثبت درخواست فروشگاه
+              </Label>
             </Row>
-
             <Row>
-              <Col xs="auto" className="standardPadding">
+              <Col xs="auto" className="standardMarginRight">
                 <DataGrid
-                  dataSource={this.state.LocationGridData}
-                  defaultColumns={DataGridLocationColumns}
+                  dataSource={this.state.LocationPositionOrderNumberGridData}
+                  defaultColumns={DataGridLocationPositionOrderNumberColumns}
                   showBorders={true}
                   rtlEnabled={true}
                   allowColumnResizing={true}
-                  onRowClick={this.grdLocation_onClickRow}
+                  onRowClick={this.grdLocationPositionOrderNumber_onClickRow}
                   height={DataGridDefaultHeight}
                 >
                   <Scrolling
@@ -527,11 +496,9 @@ class Location extends React.Component {
     );
   }
 }
-
 const mapStateToProps = (state) => ({
   User: state.users,
   Company: state.companies,
-  Location: state.locations,
 });
 
-export default connect(mapStateToProps)(Location);
+export default connect(mapStateToProps)(LocationPositionOrderNumber);
