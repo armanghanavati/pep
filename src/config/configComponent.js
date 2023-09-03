@@ -13,7 +13,6 @@ import Role from "../components/role/Role";
 import PepObject from "../components/pepObject/PepObject";
 import PepRoleObjectPermission from "../components/pepRoleObjectPermission/PepRoleObjectPermission";
 import OrderStoreDate from "../components/orderStoreDate/OrderStoreDate";
-import OrdersInventory from "../pages/OrdersInventory";
 import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber"
 
 

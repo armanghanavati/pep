@@ -55,6 +55,8 @@ export async function addLocation(Object,Token){
   if(result.status=="Success"){
     console.log('RESULT OF ADD NEW Location='+JSON.stringify(result.data));
     return result.data;  
+  }
+}
 
 export async function locationListOrderInventoryCombo(comapnyId, Token) {
   const url =
@@ -76,24 +78,6 @@ export async function locationListOrderInventoryCombo(comapnyId, Token) {
   return null;
 }
 
-export async function addLocation(Object, Token) {
-  const url = window.apiAddress + "/Location/addLocation";
-  const response = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(Object),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Token}`,
-    },
-  });
-
-  const result = await response.json();
-  if (result.status == "Success") {
-    console.log("RESULT OF ADD NEW Location=" + JSON.stringify(result.data));
-    return result.data;
-  }
-  return null;
-}
 
 export async function updateLocation(Object, Token) {
   const url = window.apiAddress + "/Location/updateLocation";
