@@ -48,21 +48,22 @@ import {
   ToastWidth,
 } from "../../config/config";
 import {
-  addOrderStoreDate,
-  orderStoreDateList,
-} from "../../redux/reducers/orderStoreDate/orderStoreDate-actions";
-import { DataGridOrderStoreDateColumns } from "./OrderStoreDate-config";
+  addOrderStoreSupplierDate,
+  orderStoreSupplierDateList,
+} from "../../redux/reducers/orderStoreSupplierDate/orderStoreSupplierDate-actions.js";
+import { DataGridOrderStoreSupplierDateColumns } from "./OrderStoreSupplierDate-config";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { location } from "../../redux/reducers/location/location-actions";
+import {supplierList} from "../../redux/reducers/supplier/supplier-action";
 import { json } from "react-router";
 
-class OrderStoreDate extends React.Component {
+class OrderStoreSupplierDate extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       LocationId: null,
-      OrderStoreDateGridData: null,
+      OrderStoreSupplierDateGridData: null,
       Id: null,
       RowSelected: null,
       stateUpdateDelete: true,
@@ -83,6 +84,8 @@ class OrderStoreDate extends React.Component {
       chkIsWednsday: false,
       chkIsThursday: false,
       chkIsFriday: false,
+      SupplierList:null,
+      SupplierId:null,
     };
   }
 
@@ -90,19 +93,21 @@ class OrderStoreDate extends React.Component {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
     this.fn_locationList();
+    this.fn_supplierList();
   }
 
-  fn_updateGrid = async (locationId = "") => {
+  fn_updateGrid = async (locationId = "", supplierId= "") => {
     if (this.state.stateDisable_show) {
-      var result = await orderStoreDateList(
+      var result = await orderStoreSupplierDateList(
         this.props.Company.currentCompanyId,
         locationId,
+        supplierId,
         this.props.User.token
       );
       this.setState({
-        OrderStoreDateGridData: result,
+        OrderStoreSupplierDateGridData: result,
       });
-      if (locationId != "") {
+      if (locationId != "" && result != null) {
         for (let i = 0; i < result.length; i++)
           switch (result[i].daysOfWeek) {
             case 1:
@@ -141,15 +146,23 @@ class OrderStoreDate extends React.Component {
     });
   };
 
+  fn_supplierList = async () => {
+    this.setState({
+      SupplierList: await supplierList(
+        this.props.User.token
+      ),
+    });
+  };
+
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "orderStoreDate.update":
+          case "orderStoreSupplierDate.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "orderStoreDate.show":
+          case "orderStoreSupplierDate.show":
             this.setState({ stateDisable_show: true });
             break;
         }
@@ -172,9 +185,16 @@ class OrderStoreDate extends React.Component {
       chkIsThursday: false,
       chkIsFriday: false,
       chkIsSaturday: false,
+      LocationId:e,
     });
-    await this.fn_updateGrid(e);
   };
+
+  cmbSupplier_onChange= async (e)=>{
+    this.setState({
+      SupplierId:e
+    })
+      await this.fn_updateGrid(this.state.LocationId, e)
+  }
   chkIsSaturday_onChange = (e) => {
     this.setState({
       chkIsSaturday: e.value,
@@ -227,6 +247,7 @@ class OrderStoreDate extends React.Component {
     if (await this.fn_CheckValidation()) {
       const data = {
         locationId: this.state.LocationId,
+        supplierId:this.state.SupplierId,
         sunday: this.state.chkIsSunday,
         monday: this.state.chkIsMonday,
         tuesday: this.state.chkIsTuesday,
@@ -235,7 +256,7 @@ class OrderStoreDate extends React.Component {
         friday: this.state.chkIsFriday,
         saturday: this.state.chkIsSaturday,
       };
-      const RESULT = await addOrderStoreDate(data, this.props.User.token);
+      const RESULT = await addOrderStoreSupplierDate(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -266,10 +287,10 @@ class OrderStoreDate extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>روز ویرایش سفارشات هر فروشگاه در هفته</Label>
+              <Label>روز ویرایش سفارشات هر تامین کننده فروشگاه در هفته</Label>
             </Row>
             <Row className="standardPadding">
-              <Col xs="auto">
+              <Col>
                 <Label className="standardLabelFont">نام گروه فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.LocationList}
@@ -281,7 +302,7 @@ class OrderStoreDate extends React.Component {
                   onValueChange={this.cmbLocationList_onChange}
                 />
               </Col>
-              <Col xs="auto">
+              <Col>
                 <Label className="standardLabelFont">نام فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.Location}
@@ -294,6 +315,22 @@ class OrderStoreDate extends React.Component {
                 />
                 <Label
                   id="errLocationId"
+                  className="standardLabelFont errMessage"
+                />
+              </Col>
+              <Col>
+                <Label className="standardLabelFont">نام تامین کننده</Label>
+                <SelectBox
+                  dataSource={this.state.SupplierList}
+                  displayExpr="supplierName"
+                  placeholder="نام تامین کننده"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbSupplier_onChange}
+                />
+                <Label
+                  id="errSupplierId"
                   className="standardLabelFont errMessage"
                 />
               </Col>
@@ -381,14 +418,14 @@ class OrderStoreDate extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label className="title">لیست زمانبندی فروشگاه ها</Label>
+              <Label className="title">لیست زمانبندی تامین کننده ها</Label>
             </Row>
 
             <Row>
               <Col xs="auto" className="standardPadding">
                 <DataGrid
-                  dataSource={this.state.OrderStoreDateGridData}
-                  defaultColumns={DataGridOrderStoreDateColumns}
+                  dataSource={this.state.OrderStoreSupplierDateGridData}
+                  defaultColumns={DataGridOrderStoreSupplierDateColumns}
                   showBorders={true}
                   rtlEnabled={true}
                   allowColumnResizing={true}
@@ -424,4 +461,4 @@ const mapStateToProps = (state) => ({
   Company: state.companies,
 });
 
-export default connect(mapStateToProps)(OrderStoreDate);
+export default connect(mapStateToProps)(OrderStoreSupplierDate);

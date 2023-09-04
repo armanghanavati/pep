@@ -6,13 +6,14 @@ import Position from '../components/position/Position'
 import Location from '../components/location/Location'
 import Supplier from '../components/supplier/Supplier';
 import Person from '../components/person/Person'
-import OrdersInventory from '../pages/OrdersInventory';
 import OrdersSupplier from '../pages/OrdersSupplier'
 import User from "../components/user/User";
 import Role from "../components/role/Role";
 import PepObject from "../components/pepObject/PepObject";
 import PepRoleObjectPermission from "../components/pepRoleObjectPermission/PepRoleObjectPermission";
 import OrderStoreDate from "../components/orderStoreDate/OrderStoreDate";
+import OrdersInventory from "../pages/OrdersInventory";
+import OrderStoreSupplierDate from "../components/orderStoreSupplierDate/OrderStoreSupplierDate";
 import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber"
 
 
@@ -85,6 +86,10 @@ export const REAL_COMPONENT = [
   {
     strComponent: "LocationPositionOrderNumber",
     orgComponent: <LocationPositionOrderNumber />,
+  },
+  {
+    strComponent: "OrderStoreSupplierDate",
+    orgComponent: <OrderStoreSupplierDate />,
   },
 ];
 

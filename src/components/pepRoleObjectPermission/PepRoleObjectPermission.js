@@ -471,7 +471,6 @@ class PepObject extends React.Component {
                     onRowClick={this.grdPepRoleObjectPermission_onClickRow}
                     height={DataGridDefaultHeight}
                   >
-                    <RowDragging group="tasksGroup" onAdd={this.onAdd} />
                     <Scrolling
                       rowRenderingMode="virtual"
                       showScrollbar="always"
