@@ -65,10 +65,12 @@ import {
   deleteLocationPositionOrderNumber,
 } from "../../redux/reducers/locationPositionOrderNumber/locationPositionOrderNumber-actions";
 import { DataGridLocationPositionOrderNumberColumns } from "./LocationPositionOrderNumber-config";
+import { location } from "../../redux/reducers/location/location-actions";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
+import { ElevenMp } from "@mui/icons-material";
 
 class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
@@ -150,11 +152,12 @@ class LocationPositionOrderNumber extends React.Component {
       });
   };
 
-  cmbLocationGroup_onChange = (e) => {
+  cmbLocationGroup_onChange = async (e) => {
     this.setState({
-      LocationGroupId: e,
-      LocationList: this.state.LocationGroupList,
+      LocationGroupId:e,
+      LocationList: await location(e, this.props.User.token),
     });
+
   };
 
   cmbLocation_onChange = (e) => {
@@ -175,8 +178,7 @@ class LocationPositionOrderNumber extends React.Component {
       stateUpdateDelete: true,
       RowSelected: e.data,
       PositionId: e.data.positionId,
-      LocationGroupId: e.data.LocationGroupId,
-      LocationId: e.data.locationId,
+      LocationGroupId: e.data.locationId, 
     });
   };
 

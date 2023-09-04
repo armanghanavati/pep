@@ -110,18 +110,9 @@ class User extends React.Component {
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
-    await this.fn_personList();
+    await this.fn_personNoneAsignList();
     this.fn_roleGrid();
   }
-
-  fn_personList = async () => {
-    this.setState({
-      PersonList: await personList(
-        this.props.Company.currentCompanyId,
-        this.props.User.token
-      ),
-    });
-  };
 
   fn_personNoneAsignList = async () => {
     this.setState({
@@ -177,7 +168,7 @@ class User extends React.Component {
   };
 
   grdUser_onClickRow = async (e) => {
-    await this.fn_personList();
+    await this.fn_personNoneAsignList();
     await this.fn_userRoleGrid(e.data.id);
     this.setState({
       txtUserNameValue: e.data.userName,
@@ -185,7 +176,12 @@ class User extends React.Component {
       stateUpdateDelete: true,
       RowSelected: e.data,
       PersonId: e.data.personId,
-    });
+    }); 
+    var person=await personList(this.props.Company.currentCompanyId, this.props.User.token);
+    var t= person.find((element) => {
+      return element.id === e.data.personId;
+    })
+      this.setState({ PersonList: [...this.state.PersonList, t] })
   };
 
   btnNew_onClick = async () => {
@@ -286,7 +282,7 @@ class User extends React.Component {
         Type: "success",
       },
     });
-    await this.fn_personList();
+    await this.fn_personNoneAsignListList();
     this.fn_updateGrid();
   };
 
