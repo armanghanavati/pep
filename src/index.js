@@ -18,6 +18,7 @@ import { BrowserRouter } from 'react-router-dom'
  window.siteAddress="http://localhost:7142";
 
  window.confirmPayment="http://172.16.1.40:2884/api"
+//  window.confirmPayment="http://localhost:7142/api"
 
 // const store = createStore(rootReducer);
 

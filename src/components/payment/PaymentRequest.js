@@ -281,8 +281,23 @@ class PaymentRequest extends React.Component {
         payerMobile:this.state.PaymenterMobile,
         documentSerial:this.state.FactorSerial,
         amountPay:(this.state.FactorAmount).toString()
-    }   
-    await ConfirmSEPPaymentAndSendlink(data, this.props.User.token);
+    } 
+    this.OpenCloseWait();      
+    const RTN=await ConfirmSEPPaymentAndSendlink(data, this.props.User.token);
+    this.OpenCloseWait();
+    let msg="خطا در تائید پرداخت.";
+    let msgType="error";
+    if(RTN!==null){
+      let msg="درخواست پرداخت تائید گردید.";
+      let msgType="success"
+    }    
+    this.setState({        
+      ToastProps:{  
+          isToastVisible:true,              
+          Message:msg,
+          Type:msgType,
+      }
+    })
   }
 
   tabPayment_onChange=async(tab,allPayment)=> {

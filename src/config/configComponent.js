@@ -3,7 +3,7 @@ import Ticket from '../components/ticket/Ticket'
 import PaymentRequest from '../components/payment/PaymentRequest'
 import Company from '../components/company/Company'
 import Position from '../components/position/Position'
-import Location from '../components/location/Location'
+import Locations from '../pages/Locations'
 import Supplier from '../components/supplier/Supplier';
 import Person from '../components/person/Person'
 import OrdersSupplier from '../pages/OrdersSupplier'
@@ -35,8 +35,8 @@ export const REAL_COMPONENT = [
     orgComponent: <Position />,
   },
   {
-    strComponent: "Location",
-    orgComponent: <Location />,
+    strComponent: "Locations",
+    orgComponent: <Locations />,
   },
   {
     strComponent: "Supplier",

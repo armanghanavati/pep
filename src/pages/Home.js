@@ -22,6 +22,12 @@ class Home extends React.Component {
 
     fn_SetState=async()=>{
         const companyCombo=await companyListCombo(this.props.User.token);                
+        if(companyCombo!==null){                  
+          const currentCompanyId=companyCombo[0].id;
+          this.props.dispatch(companyActions.setCurrentCompanyId({              
+            currentCompanyId
+          }));
+        }
         this.props.dispatch(companyActions.setCompanyCombo({
             companyCombo
         }))
