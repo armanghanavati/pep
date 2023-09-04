@@ -282,7 +282,7 @@ class User extends React.Component {
         Type: "success",
       },
     });
-    await this.fn_personNoneAsignListList();
+    await this.fn_personNoneAsignList();
     this.fn_updateGrid();
   };
 
