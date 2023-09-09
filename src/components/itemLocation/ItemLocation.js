@@ -80,9 +80,9 @@ class OrderStoreDate extends React.Component {
     this.state = {
       LocationGroupIds: null,
       LocationIds: null,
-      SupplierIds: null,
-      ItemGroupIds: null,
-      ItemIds: null,
+      SupplierId: null,
+      ItemGroupId: null,
+      ItemId: null,
       ItemLocationGridData: null,
 
       Id: null,
@@ -203,27 +203,21 @@ class OrderStoreDate extends React.Component {
   };
 
   cmbSupplier_onChange = async (e) => {
-    var temp = [];
-    temp.push(e);
     var data = await Gfn_BuildValueComboMulti(e);
     this.setState({
-      SupplierIds: temp,
+      SupplierId: e,
       ItemList: await itemListComboBySupplierId(data, this.props.User.token),
     });
   };
 
   cmbItemGroup_onChange = async (e) => {
-    var temp = [];
-    temp.push(e);
     this.setState({
-      ItemGroupIds: temp,
+      ItemGroupId: e,
     });
   };
   cmbItem_onChange = async (e) => {
-    var temp = [];
-    temp.push(e);
     this.setState({
-      ItemIds: temp,
+      ItemId: e,
     });
   };
 
@@ -261,9 +255,9 @@ class OrderStoreDate extends React.Component {
   btnFilter_onClick = async () => {
     var data = {
       locationIds: this.state.LocationIds,
-      itemIds: this.state.ItemIds,
-      supplierIds: this.state.SupplierIds,
-      itemGroupIds: this.state.ItemGroupIds,
+      itemId: this.state.ItemId,
+      supplierId: this.state.SupplierId,
+      itemGroupId: this.state.ItemGroupId,
       inventoryIds: this.state.InventoryIds,
     };
     this.setState({
@@ -424,10 +418,10 @@ class OrderStoreDate extends React.Component {
 
   grdItemLocation_onClickRow = (e) => {
     this.setState({
-      ItemIds: e.data.ItemIds,
+      ItemId: e.data.ItemId,
       LocationIds: e.data.locationIds,
       LocationGroupIds: e.data.LocationGroupIds,
-      SupplierIds: e.data.supplierIds,
+      SupplierId: e.data.supplierId,
     });
   };
   render() {
@@ -497,7 +491,7 @@ class OrderStoreDate extends React.Component {
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
-                  value={this.state.SupplierIds}
+                  value={this.state.SupplierId}
                 />
                 <Label
                   id="errLocationId"
@@ -514,7 +508,7 @@ class OrderStoreDate extends React.Component {
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbItemGroup_onChange}
-                  value={this.state.ItemGroupIds}
+                  value={this.state.ItemGroupId}
                 />
                 <Label
                   id="errLocationId"
@@ -531,7 +525,7 @@ class OrderStoreDate extends React.Component {
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbItem_onChange}
-                  value={this.state.ItemIds}
+                  value={this.state.ItemId}
                 />
                 <Label
                   id="errLocationId"
