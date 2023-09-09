@@ -178,10 +178,10 @@ class User extends React.Component {
       PersonId: e.data.personId,
     }); 
     var person=await personList(this.props.Company.currentCompanyId, this.props.User.token);
-    var t= person.find((element) => {
+    var personIdSelected= person.find((element) => {
       return element.id === e.data.personId;
     })
-      this.setState({ PersonList: [...this.state.PersonList, t] })
+      this.setState({ PersonList: [...this.state.PersonList, personIdSelected] })
   };
 
   btnNew_onClick = async () => {
@@ -617,10 +617,12 @@ class User extends React.Component {
     this.setState({
       selectedItemKeys: [],
     });
-
+    var data={
+      roleNames:roles
+    }
     const RESULT = await removeRoleListFromUser(
       this.state.RowSelected.id,
-      roles,
+      data,
       this.props.User.token
     );
     this.setState({

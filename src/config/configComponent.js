@@ -14,8 +14,8 @@ import PepRoleObjectPermission from "../components/pepRoleObjectPermission/PepRo
 import OrderStoreDate from "../components/orderStoreDate/OrderStoreDate";
 import OrdersInventory from "../pages/OrdersInventory";
 import OrderStoreSupplierDate from "../components/orderStoreSupplierDate/OrderStoreSupplierDate";
-import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber"
-
+import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber";
+import ItemLocations from '../components/itemLocation/ItemLocation';
 
 export const REAL_COMPONENT = [
   {
@@ -90,6 +90,10 @@ export const REAL_COMPONENT = [
   {
     strComponent: "OrderStoreSupplierDate",
     orgComponent: <OrderStoreSupplierDate />,
+  },
+  {
+    strComponent: "ItemLocations",
+    orgComponent: <ItemLocations />,
   },
 ];
 

@@ -71,6 +71,7 @@ import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import { ElevenMp } from "@mui/icons-material";
+import { userLocationList } from "../../redux/reducers/user/user-actions";
 
 class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
@@ -125,7 +126,7 @@ class LocationPositionOrderNumber extends React.Component {
 
   fn_locationGroupList = async () => {
     this.setState({
-      LocationGroupList: await locationList(
+      LocationGroupList: await userLocationList(
         this.props.User.userId,
         this.props.Company.currentCompanyId,
         this.props.User.token
