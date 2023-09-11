@@ -91,5 +91,9 @@ export const REAL_COMPONENT = [
     strComponent: "OrderStoreSupplierDate",
     orgComponent: <OrderStoreSupplierDate />,
   },
+  {
+    strComponent: "ItemLocations",
+    orgComponent: <ItemLocations />,
+  },
 ];
 
