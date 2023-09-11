@@ -134,3 +134,20 @@ export async function deleteSupplier(Object, Token) {
     }
     return null;
   }
+
+  export async function supplierListComboByCompanyId(companyId, Token) {
+    const url = window.apiAddress + "/Supplier/supplierListComboByCompanyId?companyId=" + companyId;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Token}`,
+      },
+    });
+    const result = await response.json();
+    if (result.status == "Success") {
+      console.log("SupplierList combo result=" + JSON.stringify(result.data));
+      return result.data;
+    }
+    return null;
+  }
