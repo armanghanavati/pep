@@ -78,6 +78,7 @@ import { logsOPSTodayListByUserId,
 import {
   Gfn_BuildValueComboMulti,
   Gfn_BuildValueComboSelectAll,
+  Gfn_ExportToExcel,
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
@@ -86,6 +87,7 @@ import {DataGridOrderPointSupplierColumns} from "./OrderSupplier-config"
 import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 
 class OrderSupplier extends React.Component {
   constructor(props) {
@@ -200,6 +202,10 @@ class OrderSupplier extends React.Component {
             ),
     });
   };
+
+  btnExportExcel_onClick=()=>{
+    Gfn_ExportToExcel(this.state.OrderInventoryGridData,"OrderSupplier")
+  }
 
   cmbItem_onChange = async (e) => {
     this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(e) });
@@ -539,6 +545,17 @@ class OrderSupplier extends React.Component {
                 )}
               </Row>
             )}
+            <Row style={{direction:'ltr'}}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}                  
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
+            </Row>
             <Row className="standardSpaceTop">
               <Col xs="auto" className="standardMarginRight">
                 <DataGrid

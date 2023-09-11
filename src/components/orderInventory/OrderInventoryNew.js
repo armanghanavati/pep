@@ -25,6 +25,7 @@ import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-act
 import { itemListComboByItemGroupId } from "../../redux/reducers/item/item-action";
 import { supplierListComboByItemId } from "../../redux/reducers/supplier/supplier-action";
 import { insertNewDataOrderPointInventory } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import { locationListOrderInventoryComboNew,locationListOrderInventoryComboNewOutRoute } from "../../redux/reducers/location/location-actions";
 import Wait from "../common/Wait";
 
 import { Gfn_BuildValueComboMulti } from "../../utiliy/GlobalMethods";
@@ -35,6 +36,7 @@ class OrderInventoryNew extends React.Component{
     constructor(props){
         super(props);
         this.state={
+            cmbLocationGroups:null,
             cmbLocation:null,
             cmbLocationValue:null,
             cmbItemGroup:null,
@@ -55,8 +57,22 @@ class OrderInventoryNew extends React.Component{
         }
     }
 
+    componentDidMount(){        
+        this.fn_CheckRequireState();
+    }
+
+    fn_CheckRequireState = async () => {            
+        this.setState({      
+            cmbLocationGroups:
+                    this.props.isOutRoute ? 
+                        await locationListOrderInventoryComboNewOutRoute(this.props.Company.currentCompanyId,this.props.User.token)
+                    :
+                        await locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token)
+        });
+    };
+
     cmbLocationGroup_onChange = async (e) => {     
-        const TEMP_LocationGroup = this.props.Location.locationPermission;
+        const TEMP_LocationGroup = this.state.cmbLocationGroups;
         let tempLocation = [];        
         for (let j = 0; j < TEMP_LocationGroup.length; j++)
             if (e == TEMP_LocationGroup[j].id)
@@ -79,6 +95,7 @@ class OrderInventoryNew extends React.Component{
     }
 
     cmbItemGroup_onChange=async(e)=>{
+        
         document.getElementById("errLocation").innerHTML = "";        
         if (this.state.cmbLocationValue == null || this.state.cmbLocationValue =="")
             document.getElementById("errLocation").innerHTML = "فروشگاه را انتخاب نمائید.";                            
@@ -183,7 +200,7 @@ class OrderInventoryNew extends React.Component{
                     <Col>
                         <Label className="standardLabelFont">گروه فروشگاه</Label>                            
                         <SelectBox 
-                            dataSource={this.props.Location.locationPermission}
+                            dataSource={this.state.cmbLocationGroups}
                             displayExpr="label"    
                             placeholder="گروه فروشگاه"
                             valueExpr="id"

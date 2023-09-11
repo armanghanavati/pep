@@ -1,3 +1,34 @@
+import exportFromJSON from 'export-from-json'
+
+
+export function Gfn_ExportToExcel (data,file_name)  {       
+    if (data!==null) {
+        let fileName = file_name
+        let exportType = 'xls'
+        exportFromJSON({ data, fileName, exportType })
+    }
+    else
+        alert('اطلاعاتی برای خروجی به اکسل وجود ندارد.')    
+
+}
+
+
+export function Gfn_DT2StringSql(dt) {
+    let year = dt.getFullYear().toString();
+    let month = (dt.getMonth() + 1).toString();
+    let day = dt.getDate().toString();
+    let hour = dt.getHours().toString();
+    let min = dt.getMinutes().toString();
+    let sec = dt.getSeconds();
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+    if (hour.length < 2) hour = "0" + hour;
+    if (min.length < 2) min = "0" + min;
+    var time =
+        year + "-" + month + "-" + day + " " + hour + ":" + min ;
+    return time
+}
+
 export function Gfn_BuildValueComboMulti(data){
     const IDS=data.toString().split(',');    
     let temp=[];
@@ -8,6 +39,18 @@ export function Gfn_BuildValueComboMulti(data){
     return temp;
 }
 
+
+export function Gfn_ConvertComboForAll(e,data){
+    const IDS = e.toString().split(",");   
+    let converting=e;
+    if(IDS.includes('0')){
+      let tempIds=[];
+      for(let i=0;i<data.length;i++)
+        tempIds.push(data[i].id)      
+      converting=tempIds
+    }  
+    return converting;
+}
 
 export function Gfn_BuildValueComboSelectAll(data){
     const TEMP=data==null ? [] : data;

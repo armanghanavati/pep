@@ -54,6 +54,7 @@ import {
 import { activeSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
 import { itemListRemainBySupplierId } from "../../redux/reducers/item/item-action";
 import { insertNewDataGroupOrderPointInventory } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import { locationListOrderInventoryComboNew } from "../../redux/reducers/location/location-actions";
 
 import SaveIcon from '../../assets/images/icon/save.png'
 
@@ -61,6 +62,7 @@ class OrderInventoryNewGroup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      cmbLocationGroups:null,
       cmbSuppliers: null,
       cmbSupplierValue: null,
       cmbLocation: null,
@@ -82,6 +84,7 @@ class OrderInventoryNewGroup extends React.Component {
   fn_CheckRequireState = async () => {
     this.setState({
       cmbSuppliers: await activeSupplierComboList(this.props.User.token),
+      cmbLocationGroups:  locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token),
     });
   };
 
@@ -164,7 +167,7 @@ class OrderInventoryNewGroup extends React.Component {
           <Col>
             <Label className="standardLabelFont">گروه فروشگاه</Label>
             <SelectBox
-              dataSource={this.props.Location.locationPermission}
+              dataSource={this.state.cmbLocationGroups}
               displayExpr="label"
               placeholder="گروه فروشگاه"
               valueExpr="id"

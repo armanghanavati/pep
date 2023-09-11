@@ -25,6 +25,7 @@ import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-act
 import { itemListComboByItemGroupId } from "../../redux/reducers/item/item-action";
 import { supplierListComboByItemId } from "../../redux/reducers/supplier/supplier-action";
 import { insertNewDataOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
+import { locationListOrderInventoryComboNew } from "../../redux/reducers/location/location-actions";
 import Wait from "../common/Wait";
 
 import { Gfn_BuildValueComboMulti } from "../../utiliy/GlobalMethods";
@@ -35,6 +36,7 @@ class OrderSupplierNew extends React.Component{
     constructor(props){
         super(props);
         this.state={
+            cmbLocationGroups:null,
             cmbLocation:null,
             cmbLocationValue:null,
             cmbItemGroup:null,
@@ -56,8 +58,18 @@ class OrderSupplierNew extends React.Component{
         }
     }
 
+    componentDidMount(){
+        this.fn_CheckRequireState();
+    }
+
+    fn_CheckRequireState = async () => {            
+        this.setState({      
+            cmbLocationGroups: await locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token),
+        });
+    };
+
     cmbLocationGroup_onChange = async (e) => {     
-        const TEMP_LocationGroup = this.props.Location.locationPermission;
+        const TEMP_LocationGroup = this.state.cmbLocationGroups;
         let tempLocation = [];        
         for (let j = 0; j < TEMP_LocationGroup.length; j++)
             if (e == TEMP_LocationGroup[j].id)
@@ -189,7 +201,7 @@ class OrderSupplierNew extends React.Component{
                     <Col>
                         <Label className="standardLabelFont">گروه فروشگاه</Label>                            
                         <SelectBox 
-                            dataSource={this.props.Location.locationPermission}
+                            dataSource={this.state.cmbLocationGroups}
                             displayExpr="label"    
                             placeholder="گروه فروشگاه"
                             valueExpr="id"

@@ -54,6 +54,7 @@ import {
 import { activeSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
 import { itemListRemainBySupplierId } from "../../redux/reducers/item/item-action";
 import { insertNewDataGroupOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
+import { locationListOrderInventoryComboNew } from "../../redux/reducers/location/location-actions";
 
 import SaveIcon from '../../assets/images/icon/save.png'
 
@@ -61,6 +62,7 @@ class OrderInventoryNewGroup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      cmbLocationGroups:null,
       cmbSuppliers: null,
       cmbSupplierValue: null,
       cmbLocation: null,
@@ -76,17 +78,20 @@ class OrderInventoryNewGroup extends React.Component {
   }
 
   async componentDidMount() {
-    this.fn_CheckRequireState();
+    await this.fn_CheckRequireState();
   }
 
   fn_CheckRequireState = async () => {
     this.setState({
-      cmbSuppliers: await activeSupplierComboList(this.props.User.token),
+      cmbSuppliers:  activeSupplierComboList(this.props.User.token),
+      cmbLocationGroups:  locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token),
     });
   };
 
+  
+
   cmbLocationGroup_onChange = async (e) => {
-    const TEMP_LocationGroup = this.props.Location.locationPermission;
+    const TEMP_LocationGroup = this.state.cmbLocationGroups;
     let tempLocation = [];
     for (let j = 0; j < TEMP_LocationGroup.length; j++)
       if (e == TEMP_LocationGroup[j].id)
@@ -164,7 +169,7 @@ class OrderInventoryNewGroup extends React.Component {
           <Col>
             <Label className="standardLabelFont">گروه فروشگاه</Label>
             <SelectBox
-              dataSource={this.props.Location.locationPermission}
+              dataSource={this.state.cmbLocationGroups}
               displayExpr="label"
               placeholder="گروه فروشگاه"
               valueExpr="id"

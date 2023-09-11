@@ -16,7 +16,7 @@ export async function locationList(comapnyId, Token) {
   return null;
 }
 
-
+// ----------------------------------------------------------------------------------------
 export async function locationOrderSupplierComboListByCompanyId(comapnyId, Token){
   const url=window.apiAddress+"/Location/locationOrderSupplierComboListByCompanyId?companyId=" + comapnyId;  
   const response = await fetch(
@@ -37,6 +37,7 @@ export async function locationOrderSupplierComboListByCompanyId(comapnyId, Token
   return null;
 }
 
+// ----------------------------------------------------------------------------------------
 export async function addLocation(Object,Token){
   const url=window.apiAddress+"/Location/addLocation"              
   const response = await fetch(
@@ -58,6 +59,7 @@ export async function addLocation(Object,Token){
   }
 }
 
+// ----------------------------------------------------------------------------------------
 export async function locationListOrderInventoryCombo(comapnyId, Token) {
   const url =
     window.apiAddress +
@@ -78,7 +80,49 @@ export async function locationListOrderInventoryCombo(comapnyId, Token) {
   return null;
 }
 
+// ----------------------------------------------------------------------------------------
+export async function locationListOrderInventoryComboNew(comapnyId, Token) {
+  const url =
+    window.apiAddress +
+    "/Location/locationListComboOPINew?companyId=" +
+    comapnyId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("LOCATION FOR NEW" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
 
+// ----------------------------------------------------------------------------------------
+export async function locationListOrderInventoryComboNewOutRoute(comapnyId, Token) {
+  const url =
+    window.apiAddress +
+    "/Location/locationListComboOPINewOutRoute?companyId=" +
+    comapnyId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All location OrderInventory" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+// ----------------------------------------------------------------------------------------
 export async function updateLocation(Object, Token) {
   const url = window.apiAddress + "/Location/updateLocation";
   const response = await fetch(url, {
@@ -97,6 +141,7 @@ export async function updateLocation(Object, Token) {
   return 0;
 }
 
+// ----------------------------------------------------------------------------------------
 export async function deleteLocation(locationId, Token) {
   const url =
     window.apiAddress + "/Location/deleteLocation?locationId=" + locationId;
@@ -115,6 +160,7 @@ export async function deleteLocation(locationId, Token) {
   return 0;
 }
 
+// ----------------------------------------------------------------------------------------
 export async function location(locationId, Token) {
   const url =
     window.apiAddress + "/Location/SearchLocationById?locationId=" + locationId;
