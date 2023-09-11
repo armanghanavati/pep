@@ -15,6 +15,7 @@ import OrderStoreDate from "../components/orderStoreDate/OrderStoreDate";
 import OrdersInventory from "../pages/OrdersInventory";
 import OrderStoreSupplierDate from "../components/orderStoreSupplierDate/OrderStoreSupplierDate";
 import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber"
+import ItemLocations from '../pages/ItemLocations'
 
 
 export const REAL_COMPONENT = [
