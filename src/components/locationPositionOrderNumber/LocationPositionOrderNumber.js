@@ -101,8 +101,8 @@ class LocationPositionOrderNumber extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    await this.fn_locationGroupList();
-    await this.fn_positionList();
+    await this.fn_locationGroupList(this.props.Company.currentCompanyId);
+    await this.fn_positionList(this.props.Company.currentCompanyId);
     this.fn_updateGrid();
   }
 
@@ -124,19 +124,19 @@ class LocationPositionOrderNumber extends React.Component {
       }
   };
 
-  fn_locationGroupList = async () => {
+  fn_locationGroupList = async (companyId) => {
     this.setState({
       LocationGroupList: await userLocationList(
         this.props.User.userId,
-        this.props.Company.currentCompanyId,
+        companyId,
         this.props.User.token
       ),
     });
   };
-  fn_positionList = async () => {
+  fn_positionList = async (companyId) => {
     this.setState({
       PositionList: await positionList(
-        this.props.Company.currentCompanyId,
+        companyId,
         this.props.User.token
       ),
     });
@@ -172,7 +172,14 @@ class LocationPositionOrderNumber extends React.Component {
     });
   };
 
-  grdLocationPositionOrderNumber_onClickRow = (e) => {
+  grdLocationPositionOrderNumber_onClickRow = async(e) => {
+    this.setState({
+      LocationList: await location(e.data.locationId, this.props.User.token),
+    })
+    
+    this.fn_positionList(this.props.Company.currentCompanyId);
+    this.fn_locationGroupList(this.props.Company.currentCompanyId);
+
     this.setState({
       txtMaxOrderNumberValue: e.data.maxOrderNumber,
       txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
@@ -180,18 +187,40 @@ class LocationPositionOrderNumber extends React.Component {
       RowSelected: e.data,
       PositionId: e.data.positionId,
       LocationGroupId: e.data.locationId, 
+      LocationId:e.data.locationId
     });
   };
 
   btnNew_onClick = () => {
     this.setState({
       txtMaxOrderNumberValue: null,
-      txtMaxOutRouteorderValue: null,
+      txtMaxOutRouteNumberValue: null,
       LocationGroupId: null,
       LocationId: null,
-      positionId: null,
+      PositionId: null,
       stateUpdateDelete: false,
     });
+  };
+
+  btnUpdate_onClick = async () => {
+    if (await this.fn_CheckValidation()) {
+      const data = {
+        locationId: this.state.LocationId,
+        positionId: this.state.PositionId,
+        maxOrderNumber:this.state.txtMaxOrderNumberValue,
+        maxOutRouteNumber:this.state.txtMaxOutRouteNumberValue
+      };
+
+      const RESULT = await updateLocationPositionOrderNumber(data, this.props.User.token);
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
+          Type: RESULT > 0 ? "success" : "error",
+        },
+      });
+      this.fn_updateGrid();
+    }
   };
 
   txtMaxOrderNumber_onChange = (e) => {
@@ -266,6 +295,22 @@ class LocationPositionOrderNumber extends React.Component {
     }
   };
 
+  btnDelete_onClick = async () => {
+    const MSG = await deleteLocationPositionOrderNumber(
+      this.state.LocationId,
+      this.state.PositionId,
+      this.props.User.token
+    );
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: MSG,
+        Type: "success",
+      },
+    });
+    this.fn_updateGrid();
+  };
+
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
@@ -306,7 +351,7 @@ class LocationPositionOrderNumber extends React.Component {
                 <Label className="standardLabelFont">نام گروه فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.LocationGroupList}
-                  displayExpr="locationName"
+                  displayExpr="label"
                   placeholder="نام گروه فروشگاه"
                   valueExpr="id"
                   searchEnabled={true}
@@ -325,7 +370,7 @@ class LocationPositionOrderNumber extends React.Component {
                 <Label className="standardLabelFont">نام فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.LocationList}
-                  displayExpr="locationName"
+                  displayExpr="label"
                   placeholder="نام فروشگاه"
                   valueExpr="id"
                   searchEnabled={true}

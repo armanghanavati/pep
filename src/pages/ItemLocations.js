@@ -1,6 +1,6 @@
 import React from "react";
 import ItemLocation from "../components/itemLocation/ItemLocation";
-class OrdersInventory extends React.Component {
+class ItemLocations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};

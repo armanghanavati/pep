@@ -34,7 +34,7 @@ export async function locationPositionOrderNumberList(companyId, Token) {
     return null;
   }
   
-  export async function updatePepObject(Object, Token) {
+  export async function updateLocationPositionOrderNumber(Object, Token) {
     const url = window.apiAddress + "/LocationPositionOrderNumber/updateLocationPositionOrderNumber";
     const response = await fetch(url, {
       method: "PATCH",
@@ -52,7 +52,7 @@ export async function locationPositionOrderNumberList(companyId, Token) {
     return 0;
   }
   
-  export async function deletLocationPositionOrderNumber(locationId, positionId, Token) {
+  export async function deleteLocationPositionOrderNumber(locationId, positionId, Token) {
     const url = window.apiAddress + "/LocationPositionOrderNumber/deleteLocationPositionOrderNumber?locationId=" + locationId + "&positionId=" + positionId;
     const response = await fetch(url, {
       method: "DELETE",
