@@ -347,7 +347,7 @@ class LocationPositionOrderNumber extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام گروه فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.LocationGroupList}
@@ -366,7 +366,7 @@ class LocationPositionOrderNumber extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.LocationList}
@@ -385,7 +385,7 @@ class LocationPositionOrderNumber extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">سمت</Label>
                 <SelectBox
                   dataSource={this.state.PositionList}

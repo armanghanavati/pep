@@ -63,7 +63,8 @@ import {
 } from "../../redux/reducers/user/user-actions";
 import {
   personList,
-  personNoneAsignList,
+  personLocationList,
+  personLocationNoneAsignList,
 } from "../../redux/reducers/person/person-actions";
 import { userActions } from "../../redux/reducers/user/user-slice";
 import { DataGridRoleColumns } from "../role/Role-config";
@@ -110,14 +111,13 @@ class User extends React.Component {
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
-    await this.fn_personNoneAsignList();
+    await this.fn_personLocationNoneAsignList();
     this.fn_roleGrid();
   }
 
-  fn_personNoneAsignList = async () => {
+  fn_personLocationNoneAsignList = async () => {
     this.setState({
-      PersonList: await personNoneAsignList(
-        this.props.Company.currentCompanyId,
+      PersonList: await personLocationNoneAsignList(
         this.props.User.token
       ),
     });
@@ -168,7 +168,7 @@ class User extends React.Component {
   };
 
   grdUser_onClickRow = async (e) => {
-    await this.fn_personNoneAsignList();
+    await this.fn_personLocationNoneAsignList();
     await this.fn_userRoleGrid(e.data.id);
     this.setState({
       txtUserNameValue: e.data.userName,
@@ -177,15 +177,15 @@ class User extends React.Component {
       RowSelected: e.data,
       PersonId: e.data.personId,
     }); 
-    var person=await personList(this.props.Company.currentCompanyId, this.props.User.token);
+    var person=await personLocationList( this.props.User.token);
     var personIdSelected= person.find((element) => {
       return element.id === e.data.personId;
-    })
-      this.setState({ PersonList: [...this.state.PersonList, personIdSelected] })
+    });
+       if(this.state.PersonList != null) this.setState({ PersonList: [...this.state.PersonList, personIdSelected] })
   };
 
   btnNew_onClick = async () => {
-    await this.fn_personNoneAsignList();
+    await this.fn_personLocationNoneAsignList();
     this.setState({
       txtUserNameValue: null,
       chkIsActive: null,
@@ -233,7 +233,7 @@ class User extends React.Component {
           Type: RESULT != null ? "success" : "error",
         },
       });
-      await this.fn_personNoneAsignList();
+      await this.fn_personLocationNoneAsignList();
       this.fn_updateGrid();
     }
   };
@@ -282,7 +282,7 @@ class User extends React.Component {
         Type: "success",
       },
     });
-    await this.fn_personNoneAsignList();
+    await this.fn_personLocationNoneAsignList();
     this.fn_updateGrid();
   };
 
@@ -349,7 +349,7 @@ class User extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col xs={3}>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام کاربری</Label>
                 <TextBox
                   value={this.state.txtUserNameValue}
@@ -366,7 +366,7 @@ class User extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col xs={3}>
+              <Col xs="auto">
                 <Label className="standardLabelFont">شخص</Label>
                 <SelectBox
                   dataSource={this.state.PersonList}
@@ -380,7 +380,7 @@ class User extends React.Component {
                 />
               </Col>
               {this.state.stateUpdateDelete && (
-                <Col xs={3}>
+                <Col xs="auto">
                   <Label className="standardLabelFont">رمز عبور</Label>
                   <TextBox
                     value={this.state.txtPasswordValue}

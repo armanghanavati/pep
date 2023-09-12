@@ -290,7 +290,7 @@ class OrderStoreSupplierDate extends React.Component {
               <Label>روز ویرایش سفارشات هر تامین کننده فروشگاه در هفته</Label>
             </Row>
             <Row className="standardPadding">
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام گروه فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.LocationList}
@@ -302,7 +302,7 @@ class OrderStoreSupplierDate extends React.Component {
                   onValueChange={this.cmbLocationList_onChange}
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.Location}
@@ -318,7 +318,7 @@ class OrderStoreSupplierDate extends React.Component {
                   className="standardLabelFont errMessage"
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام تامین کننده</Label>
                 <SelectBox
                   dataSource={this.state.SupplierList}

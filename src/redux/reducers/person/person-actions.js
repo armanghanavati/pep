@@ -86,3 +86,37 @@ export async function deletePerson(personId, Token) {
   }
   return 0;
 }
+
+export async function personLocationList(Token) {
+  const url = window.apiAddress + "/Person/personLocationList";
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All person" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function personLocationNoneAsignList(Token) {
+  const url = window.apiAddress + "/Person/personLocationNoneAsignList";
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All personLocation" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}

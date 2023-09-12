@@ -294,7 +294,7 @@ class Position extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">کد</Label>
                 <TextBox
                   value={this.state.txtCodeValue}
@@ -307,7 +307,7 @@ class Position extends React.Component {
                 />
                 <Label id="errCode" className="standardLabelFont errMessage" />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">زیر گروه سمت</Label>
                 <SelectBox
                   dataSource={this.state.Position}
@@ -320,7 +320,7 @@ class Position extends React.Component {
                   value={this.state.PositionId}
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام سمت</Label>
                 <TextBox
                   value={this.state.txtPositionNameValue}
@@ -335,7 +335,7 @@ class Position extends React.Component {
                   className="standardLabelFont errMessage"
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">توضیحات</Label>
                 <TextBox
                   value={this.state.txtDescValue}

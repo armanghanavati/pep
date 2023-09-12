@@ -311,7 +311,7 @@ class PepObject extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>آیتم دسترسی</Label>
+              <Label>آبجکت دسترسی</Label>
             </Row>
             {this.state.stateDisable_btnAdd && (
               <Row>
@@ -328,7 +328,7 @@ class PepObject extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col xs={3}>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نقش</Label>
                 <SelectBox
                   dataSource={this.state.RoleList}
@@ -347,7 +347,7 @@ class PepObject extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col xs={3}>
+              <Col xs="auto">
                 <Label className="standardLabelFont">دسترسی</Label>
                 <SelectBox
                   dataSource={this.state.PermissionList}
@@ -366,7 +366,7 @@ class PepObject extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col xs={3}>
+              <Col xs="auto">
                 <Label className="standardLabelFont">آیتم</Label>
                 <SelectBox
                   dataSource={this.state.PepObjectList}
@@ -387,7 +387,7 @@ class PepObject extends React.Component {
               </Col>
 
               {this.state.stateUpdateDelete && (
-                <Col xs={3}>
+                <Col xs="auto">
                   <Row>
                     <Label
                       id="errUserName"
@@ -458,7 +458,7 @@ class PepObject extends React.Component {
           <Row className="standardPadding">
             <Col>
               <Row>
-                <Label className="title">لیست آیتم دسترسی ها</Label>
+                <Label className="title">لیست آبجکت دسترسی ها</Label>
               </Row>
               <Row>
                 <Col xs="auto" className="standardMarginRight">

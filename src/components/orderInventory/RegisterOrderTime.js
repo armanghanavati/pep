@@ -227,7 +227,7 @@ class RegisterOrderTime extends React.Component {
               <Label>زمانبندی فروشگاه</Label>
             </Row>
             <Row className="standardPadding">
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام فروشگاه</Label>
                 <SelectBox
                   dataSource={this.state.LocationList}
@@ -246,7 +246,7 @@ class RegisterOrderTime extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام سمت</Label>
                 <SelectBox
                   dataSource={this.state.PositionList}

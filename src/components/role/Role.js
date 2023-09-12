@@ -229,7 +229,7 @@ class Role extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col xs={3}>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام</Label>
                 <TextBox
                   value={this.state.txtRoleNameValue}

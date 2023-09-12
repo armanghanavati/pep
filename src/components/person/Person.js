@@ -50,7 +50,7 @@ import {
 import {
   updatePerson,
   addPerson,
-  personList,
+  personLocationList,
   deletePerson,
 } from "../../redux/reducers/person/person-actions";
 import { positionActions } from "../../redux/reducers/position/position-slice";
@@ -104,10 +104,7 @@ class Person extends React.Component {
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show)
       this.setState({
-        PersonGridData: await personList(
-          this.props.Company.currentCompanyId,
-          this.props.User.token
-        ),
+        PersonGridData: await personLocationList(this.props.User.token),
       });
   };
 
@@ -347,7 +344,7 @@ class Person extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">کد پرسنلی</Label>
                 <TextBox
                   value={this.state.txtPersonalCodeValue}
@@ -365,7 +362,7 @@ class Person extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">سمت</Label>
                 <SelectBox
                   dataSource={this.state.Position}
@@ -384,7 +381,7 @@ class Person extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">محل</Label>
                 <SelectBox
                   dataSource={this.state.Location}
@@ -403,7 +400,7 @@ class Person extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام</Label>
                 <TextBox
                   value={this.state.txtNameValue}
@@ -414,7 +411,7 @@ class Person extends React.Component {
                   onValueChanged={this.txtName_onChange}
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام خانوادگی</Label>
                 <TextBox
                   value={this.state.txtFamilyValue}
@@ -425,7 +422,7 @@ class Person extends React.Component {
                   onValueChanged={this.txtFamily_onChange}
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">شماره همراه</Label>
                 <TextBox
                   value={this.state.txtMobileValue}
@@ -436,28 +433,30 @@ class Person extends React.Component {
                   onValueChanged={this.txtMobile_onChange}
                 />
               </Col>
-              <Col>
-                <Label className="standardLabelFont">تاریخ قطع همکاری</Label>
-                <TextBox
-                  value={this.state.txtTarikhGhateHamkariValue}
-                  showClearButton={true}
-                  placeholder="تاریخ قطع همکاری"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtTarikhGhateHamkari_onChange}
-                />
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">علت قطع همکاری</Label>
-                <TextBox
-                  value={this.state.txtElateGhateHamkariValue}
-                  showClearButton={true}
-                  placeholder="علت قطع همکاری"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtElateGhateHamkari_onChange}
-                />
-              </Col>
+              <Row>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">تاریخ قطع همکاری</Label>
+                  <TextBox
+                    value={this.state.txtTarikhGhateHamkariValue}
+                    showClearButton={true}
+                    placeholder="تاریخ قطع همکاری"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtTarikhGhateHamkari_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">علت قطع همکاری</Label>
+                  <TextBox
+                    value={this.state.txtElateGhateHamkariValue}
+                    showClearButton={true}
+                    placeholder="علت قطع همکاری"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtElateGhateHamkari_onChange}
+                  />
+                </Col>
+              </Row>
             </Row>
             <Row>
               <Col xs="auto">
