@@ -95,6 +95,6 @@ export const REAL_COMPONENT = [
   {
     strComponent: "ItemLocations",
     orgComponent: <ItemLocations />,
-  },
+  },  
 ];
 

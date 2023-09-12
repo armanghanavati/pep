@@ -4,8 +4,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const userSlice = createSlice({
   name: "users",
   initialState: {    
-    userId: 777,
-    token:"",
+    userId: null,
+    token:null,
     permissions:null,    
   },
   reducers: {
