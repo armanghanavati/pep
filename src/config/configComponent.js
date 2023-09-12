@@ -1,4 +1,3 @@
-
 import Ticket from '../components/ticket/Ticket'
 import PaymentRequest from '../components/payment/PaymentRequest'
 import Company from '../components/company/Company'
@@ -14,9 +13,12 @@ import PepRoleObjectPermission from "../components/pepRoleObjectPermission/PepRo
 import OrderStoreDate from "../components/orderStoreDate/OrderStoreDate";
 import OrdersInventory from "../pages/OrdersInventory";
 import OrderStoreSupplierDate from "../components/orderStoreSupplierDate/OrderStoreSupplierDate";
-import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber";
+import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber"
 import RegisterOrderTimes from "../pages/RegisterOrderTimes";
-import ItemLocations from '../pages/ItemLocations'
+import ItemLocations from '../pages/ItemLocations';
+import OrdersInventoryReports from '../pages/OrdersInventoryReports';
+import OrdersInventoryOutRouteReports from '../pages/OrdersInventoryOutRouteReports';
+import OutRoutsOrdersInventoryConfirms from '../pages/OutRoutsOrdersInventoryConfirms';
 
 
 export const REAL_COMPONENT = [
@@ -96,10 +98,22 @@ export const REAL_COMPONENT = [
   {
     strComponent: "ItemLocations",
     orgComponent: <ItemLocations />,
-  },
+  },  
   {
     strComponent: "RegisterOrderTimes",
     orgComponent: <RegisterOrderTimes />,
+  },
+  {
+    strComponent: "OrdersInventoryReports",
+    orgComponent: <OrdersInventoryReports />,
+  },
+  {
+    strComponent: "OrdersInventoryOutRouteReports",
+    orgComponent: <OrdersInventoryOutRouteReports />,
+  },
+  {
+    strComponent: "OutRoutsOrdersInventoryConfirms",
+    orgComponent: <OutRoutsOrdersInventoryConfirms />,
   },
 ];
 

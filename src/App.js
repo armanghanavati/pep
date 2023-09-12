@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import jwt from 'jwt-decode' 
 import Home from './pages/Home'
 import VersionCO from './components/common/VersionCO'
-import { Login } from './api/UserApi';
+import Login from './pages/Login';
 import { userActions } from './redux/reducers/user/user-slice';
 import { authUser } from './redux/reducers/user/user-actions';
 import { Row } from 'reactstrap';
@@ -16,18 +16,27 @@ class App extends React.Component {
   constructor(props) {
     super(props);    
     this.state={
-      stateRenderComponent:false
+      stateRedirectHome:false,
+      stateRedirectLogin:true,
     }
   }
   componentDidMount= async ()=>{    
-    await this.getParamsFromUrl();    
-    // alert(this.props.user.userId)
-    // this.saveUserData(2121,"pedrammamad")
+    // await this.getParamsFromUrl();   
+    await this.fn_CheckIsLogin();       
   }
 
-
-
-
+  fn_CheckIsLogin= async ()=>{
+    const USER_ID=sessionStorage.getItem('UserId');
+    const TOKEN=sessionStorage.getItem('Token');
+    const PERMISSIONS=JSON.parse(sessionStorage.getItem('Permissions'));
+    if(USER_ID!=null && TOKEN!=null && PERMISSIONS!=null ){
+      await this.saveUserData();
+      this.setState({
+        stateRedirectLogin:false,
+        stateRedirectHome:true,        
+      });
+    }
+  }
 
   getParamsFromUrl = async ()=>{
     // const params = new Proxy(new URLSearchParams(window.location.search), {      
@@ -62,7 +71,19 @@ class App extends React.Component {
     this.setState({stateRenderComponent:true})    
   }
 
-  saveUserData=(userId,token,permissions)=>{    
+  // saveUserData=(userId,token,permissions)=>{      
+  //   this.props.dispatch(userActions.setUser({
+  //     userId,
+  //     token,
+  //     permissions
+  //   }));   
+  // }
+
+  saveUserData=()=>{    
+    const userId=sessionStorage.getItem('UserId');
+    const token=sessionStorage.getItem('Token');
+    const permissions=JSON.parse(sessionStorage.getItem('Permissions'));
+    // alert(userId)   
     this.props.dispatch(userActions.setUser({
       userId,
       token,
@@ -74,8 +95,9 @@ class App extends React.Component {
   render(){
     return (    
       <div className='mainBack'>        
-      {/* <ComThree /> */}       
-        {this.state.stateRenderComponent &&  <Home />   }                             
+        {/* <ComThree /> */}       
+        {this.state.stateRedirectHome &&  <Home />   }                             
+        {this.state.stateRedirectLogin && <Login />  }
       </div>
       
     );
@@ -83,7 +105,7 @@ class App extends React.Component {
 } 
 
 const mapStateToProps=(state)=>({  
-  user:state.users
+  User:state.users
 });
 
 export default connect(mapStateToProps)(App);

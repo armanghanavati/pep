@@ -10,19 +10,21 @@ import SelectBox from "devextreme-react/select-box";
 
 import { companyActions } from "../redux/reducers/company/company-slice";
 import { companyListCombo } from "../redux/reducers/company/company-actions";
+import { userActions } from "../redux/reducers/user/user-slice";
 
 import MainMenu from "../components/common/MainMenu";
 import logo from "../assets/images/LOGO.jpg";
+import LogoutIcon from "../assets/images/icon/logout.svg"
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      arr1Interview: [],      
+      arr1Interview: [],
     };
   }
 
-  async componentDidMount() {       
+  async componentDidMount() {
     await this.fn_SetState();
   }
 
@@ -52,6 +54,25 @@ class Home extends React.Component {
     );
   };
 
+  btnExit_onClick = async () => {
+    // alert("exit");
+    await this.saveUserData(null,null,null);
+    window.location.reload(true);
+  };
+
+  saveUserData = (userId, token, permissions) => {
+    sessionStorage.setItem('UserId',userId);
+    sessionStorage.setItem('Token',token);
+    sessionStorage.setItem('Permissions',JSON.stringify(permissions));
+    this.props.dispatch(
+      userActions.setUser({
+        userId,
+        token,
+        permissions,
+      })
+    );
+  };
+
   render() {
     locale("fa-IR");
     return (
@@ -75,6 +96,18 @@ class Home extends React.Component {
                 />
               </div>
             </Item>
+            <Item location="right">
+              {/* <Button
+                text="خروج"
+                type="success"
+                stylingMode="contained"
+                rtlEnabled={true}
+                onClick={this.btnExit_onClick}
+              /> */}
+     
+              <img src={LogoutIcon} style={{ width: "23px", marginLeft: "20px" ,cursor:'pointer'}}  onClick={this.btnExit_onClick} />
+           
+            </Item>
           </Toolbar>
         </Row>
         <Row className="textCenter">
@@ -82,8 +115,6 @@ class Home extends React.Component {
             <MainMenu />
           </Col>
         </Row>
-
-  
       </div>
     );
   }
