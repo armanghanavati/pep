@@ -34,7 +34,7 @@ import {
   addPositionSupplierApproveOrderTime,
 } from "../../redux/reducers/positionSupplierApproveOrderTime/positionSupplierApproveOrderTime-actions";
 import {
-    supplierOrderInventoryComboList
+    supplierListComboByCompanyId
 } from "../../redux/reducers/supplier/supplier-action";
 import {
   ToastTime,
@@ -111,7 +111,7 @@ class RegisterSupplierOrderTime extends React.Component {
 
   fn_supplierList = async () => {
     this.setState({
-      SupplierList: await supplierOrderInventoryComboList(
+      SupplierList: await supplierListComboByCompanyId(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
@@ -205,10 +205,10 @@ class RegisterSupplierOrderTime extends React.Component {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
+        supplierId:this.state.SupplierId,
         startDate: this.state.FromDate,
         endDate: this.state.ToDate,
       };
-      alert(data);
       const RESULT = await addPositionSupplierApproveOrderTime(
         data,
         this.props.User.token
@@ -305,7 +305,7 @@ class RegisterSupplierOrderTime extends React.Component {
                 />
                 <Row>
                   <Label
-                    id="errPosition"
+                    id="errSupplier"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
