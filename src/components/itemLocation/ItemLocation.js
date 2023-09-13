@@ -19,15 +19,20 @@ import {
 import classnames from "classnames";
 import TextBox from "devextreme-react/text-box";
 import TextArea from "devextreme-react/text-area";
-import RadioGroup from "devextreme-react/radio-group";
+import { locale } from "devextreme/localization";
 import SelectBox from "devextreme-react/select-box";
 import TagBox from "devextreme-react/tag-box";
 import { Button } from "devextreme-react/button";
+import DateBox from "devextreme-react/date-box";
 import { CheckBox } from "devextreme-react/check-box";
-import { confirm } from "devextreme/ui/dialog";
 import notify from "devextreme/ui/notify";
 import { Toast } from "devextreme-react/toast";
 import { Tooltip } from "devextreme-react/tooltip";
+import AdapterJalali from "@date-io/date-fns-jalali";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import TextField from "@mui/material/TextField";
+import { confirm } from "devextreme/ui/dialog";
 import DataGrid, {
   Column,
   Editing,
@@ -43,7 +48,11 @@ import DataGrid, {
   Grouping,
   GroupPanel,
   SearchPanel,
+  Export,
 } from "devextreme-react/data-grid";
+
+import Wait from "../common/Wait";
+
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
@@ -52,29 +61,42 @@ import {
   ToastWidth,
   ALL_MOD,
   CHECK_BOXES_MOD,
+  FILTER_BUILDER_POPUP_POSITION,
 } from "../../config/config";
+
+import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-slice";
+import { locationActions } from "../../redux/reducers/location/location-slice";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import {
   itemLocationList,
   updateItemLocation,
 } from "../../redux/reducers/itemLocation/itemLocation-actions";
-import { DataGridItemLocationColumns } from "./ItemLocation-config";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
-import { location } from "../../redux/reducers/location/location-actions";
-import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
-import { inventoryListByLocationId } from "../../redux/reducers/inventory/inventory-actions";
 import {
   supplierListComboByCompanyId,
   supplierOrderInventoryComboList,
 } from "../../redux/reducers/supplier/supplier-action";
+import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
+import { inventoryListByLocationId } from "../../redux/reducers/inventory/inventory-actions";
+import { DataGridItemLocationColumns } from "./ItemLocation-config";
+
 import {
   Gfn_BuildValueComboMulti,
+  Gfn_ConvertComboForAll,
   Gfn_BuildValueComboSelectAll,
+  Gfn_ExportToExcel,
+  Gfn_DT2StringSql,
 } from "../../utiliy/GlobalMethods";
-import { json } from "react-router";
+import { Template } from "devextreme-react";
+import SearchIcon from "../../assets/images/icon/search.png";
+import PlusNewIcon from "../../assets/images/icon/plus.png";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 
-class OrderStoreDate extends React.Component {
+const dateLabel = { "aria-label": "Date" };
+
+class ItemLocation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -183,15 +205,21 @@ class OrderStoreDate extends React.Component {
   };
 
   cmbLocation_onChange = async (e) => {
+    let tempInventory = [];
+    this.setState({
+      InventoryList: null,
+    });
     const IDS = e.toString().split(",");
     var data = {
       locationId: e,
     };
+
     const TEMP_INVENTORY = await inventoryListByLocationId(
       data,
       this.props.User.token
     );
-    let tempInventory = [];
+    if (TEMP_INVENTORY == null) return;
+
     for (let i = 0; i < IDS.length; i++)
       for (let j = 0; j < TEMP_INVENTORY.length; j++)
         if (IDS[i] == TEMP_INVENTORY[j].locationId)
@@ -244,7 +272,7 @@ class OrderStoreDate extends React.Component {
           Type: RESULT > 0 ? "success" : "error",
         },
       });
-      this.btnFilter_onClick();
+      this.btnSearch_onClick();
     } else alert("کالا(ها) را انتخاب نمائید.");
   };
 
@@ -252,7 +280,7 @@ class OrderStoreDate extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  btnFilter_onClick = async () => {
+  btnSearch_onClick = async () => {
     var data = {
       locationIds: this.state.LocationIds,
       itemId: this.state.ItemId,
@@ -260,9 +288,19 @@ class OrderStoreDate extends React.Component {
       itemGroupId: this.state.ItemGroupId,
       inventoryIds: this.state.InventoryIds,
     };
+    var RESULT = 0;
+    RESULT = await itemLocationList(data, this.props.User.token);
     this.setState({
-      ItemLocationGridData: await itemLocationList(data, this.props.User.token),
+      ItemLocationGridData: RESULT,
     });
+    if (!RESULT > 0)
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: "آیتمی جهت نمایش وجود ندارد",
+          Type: "error",
+        },
+      });
   };
 
   chkDeActiveAll_onChange = async () => {
@@ -349,19 +387,19 @@ class OrderStoreDate extends React.Component {
     });
   };
 
-  grdItemLocation_onClickRow = (params) => {
+  grdItemLocation_onUpdateRow = (params) => {
     let tempItems = [];
     if (!this.state.flagSelectAll) tempItems = this.state.ItemsListUpdated;
     let flagPush = true;
-    for (let i = 0; i < tempItems.length; i++)
-      if (
-        tempItems[i].ItemId === params.data.itemId &&
-        tempItems[i].LocationId === params.data.locationId
+    for (let i = 0; i < tempItems.length; i++){
+      if ( 
+        tempItems[i].itemId === params.data.itemId &&
+        tempItems[i].locationId === params.data.locationId
       ) {
         tempItems[i].isActive = params.data.isActive;
         flagPush = false;
-        break;
       }
+    }
     if (flagPush) {
       let obj = {
         itemId: params.data.itemId,
@@ -369,6 +407,7 @@ class OrderStoreDate extends React.Component {
         isActive: params.data.isActive,
       };
       tempItems.push(obj);
+      alert(JSON.stringify(tempItems))
     }
     this.setState({ ItemsListUpdated: tempItems, flagSelectAll: false });
   };
@@ -416,15 +455,21 @@ class OrderStoreDate extends React.Component {
     } else alert("کالایی برای انتخاب وجود ندارد");
   };
 
-  grdItemLocation_onClickRow = (e) => {
-    this.setState({
-      ItemId: e.data.ItemId,
-      LocationIds: e.data.locationIds,
-      LocationGroupIds: e.data.LocationGroupIds,
-      SupplierId: e.data.supplierId,
-    });
+  // grdItemLocation_onClickRow = (e) => {
+  //   this.setState({
+  //     ItemId: e.data.ItemId,
+  //     LocationIds: e.data.locationIds,
+  //     LocationGroupIds: e.data.LocationGroupIds,
+  //     SupplierId: e.data.supplierId,
+  //   });
+  // };
+
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.OrderInventoryGridData, "OrderInventory");
   };
+
   render() {
+    locale("fa-IR");
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
         <Toast
@@ -436,121 +481,125 @@ class OrderStoreDate extends React.Component {
           width={ToastWidth}
           rtlEnabled={true}
         />
+        {this.state.stateWait && (
+          <Row className="text-center">
+            <Col style={{ textAlign: "center", marginTop: "10px" }}>
+              <Wait />
+            </Col>
+          </Row>
+        )}
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
               <Label>کالا فروشگاه</Label>
             </Row>
-            <Row className="standardPadding">
-              <Col xs="auto">
-                <Label className="standardLabelFont">نام گروه فروشگاه</Label>
+            <Row>
+              <Col xs={3}>
+                <Label className="standardLabelFont">گروه فروشگاه</Label>
                 <TagBox
                   dataSource={this.state.LocationList}
                   searchEnabled={true}
                   displayExpr="label"
-                  placeholder="نام گروه فروشگاه"
+                  placeholder="گروه فروشگاه"
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbLocationList_onChange}
-                  value={this.state.LocationGroupIds}
                 />
               </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">نام فروشگاه</Label>
+              <Col xs={3}>
+                <Label className="standardLabelFont">فروشگاه</Label>
                 <TagBox
                   dataSource={this.state.Location}
                   searchEnabled={true}
                   displayExpr="label"
-                  placeholder="نام فروشگاه"
+                  placeholder="فروشگاه"
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbLocation_onChange}
-                  value={this.state.LocationIds}
                 />
               </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">نام انبار</Label>
+              <Col xs={3}>
+                <Label className="standardLabelFont">انبار</Label>
                 <TagBox
                   dataSource={this.state.InventoryList}
                   searchEnabled={true}
                   displayExpr="inventoryName"
-                  placeholder="نام انبار"
+                  placeholder="انبار"
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbInventory_onChange}
-                  value={this.state.InventoryIds}
                 />
               </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">تامین کننده</Label>
-                <SelectBox
-                  dataSource={this.state.SupplierList}
-                  displayExpr="label"
-                  placeholder="تامین کننده"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbSupplier_onChange}
-                  value={this.state.SupplierId}
-                />
-                <Label
-                  id="errLocationId"
-                  className="standardLabelFont errMessage"
-                />
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">گروه کالا</Label>
-                <SelectBox
-                  dataSource={this.state.ItemGroupList}
-                  displayExpr="label"
-                  placeholder="گروه کالا"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbItemGroup_onChange}
-                  value={this.state.ItemGroupId}
-                />
-                <Label
-                  id="errLocationId"
-                  className="standardLabelFont errMessage"
-                />
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">کالا</Label>
-                <SelectBox
-                  dataSource={this.state.ItemList}
-                  displayExpr="label"
-                  placeholder="کالا"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbItem_onChange}
-                  value={this.state.ItemId}
-                />
-                <Label
-                  id="errLocationId"
-                  className="standardLabelFont errMessage"
-                />
-              </Col>
+              <Row className="standardPadding">
+                <Col xs="auto">
+                  <Label className="standardLabelFont">تامین کننده</Label>
+                  <SelectBox
+                    dataSource={this.state.SupplierList}
+                    displayExpr="label"
+                    placeholder="تامین کننده"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbSupplier_onChange}
+                    value={this.state.SupplierId}
+                  />
+                  <Label
+                    id="errSupplier"
+                    className="standardLabelFont errMessage"
+                  />
+                </Col>
+
+                <Col xs="auto">
+                  <Label className="standardLabelFont">گروه کالا</Label>
+                  <SelectBox
+                    dataSource={this.state.ItemGroupList}
+                    displayExpr="label"
+                    placeholder="گروه کالا"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbItemGroup_onChange}
+                    value={this.state.ItemGroupId}
+                  />
+                  <Label
+                    id="errItemGroup"
+                    className="standardLabelFont errMessage"
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">کالا</Label>
+                  <SelectBox
+                    dataSource={this.state.ItemList}
+                    displayExpr="label"
+                    placeholder="کالا"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbItem_onChange}
+                    value={this.state.ItemId}
+                  />
+                  <Label
+                    id="errItem"
+                    className="standardLabelFont errMessage"
+                  />
+                </Col>
+              </Row>
             </Row>
             <Row className="standardSpaceTop">
-              <Row>
-                <>
-                  <Col xs="auto">
-                    <Button
-                      icon={UpdateIcon}
-                      text="اعمال فیلترها"
-                      type="success"
-                      stylingMode="contained"
-                      rtlEnabled={true}
-                      onClick={this.btnFilter_onClick}
-                    />
-                  </Col>
-                </>
-              </Row>
+                <Col xs="auto">
+                  <Button
+                    icon={SearchIcon}
+                    text="اعمال فیلتر"
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnSearch_onClick}
+                  />
+                </Col>
             </Row>
           </Row>
         </Card>
+
         <p></p>
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
@@ -581,42 +630,46 @@ class OrderStoreDate extends React.Component {
                 <Label>زدن گروهی تیک غیرفعال برای کالاهای فیلتر شده</Label>
               </Col>
             </Row>
+          </Row>
+          <Row className="standardPadding">
             <Row>
-              <Col xs="auto" className="standardPadding">
-                <DataGrid
-                  dataSource={this.state.ItemLocationGridData}
-                  defaultColumns={DataGridItemLocationColumns}
-                  showBorders={true}
-                  onRowUpdated={this.grdItemLocation_onClickRow}
-                  onRowClick={this.grdItemLocation_onClickRow}
-                  rtlEnabled={true}
-                  allowColumnResizing={true}
-                  height={DataGridDefaultHeight}
-                >
-                  <Scrolling
-                    rowRenderingMode="virtual"
-                    showScrollbar="always"
-                    columnRenderingMode="virtual"
-                  />
+              <Label className="title">لیست کالا فروشگاه</Label>
+            </Row>
+            <Col xs="auto" className="standardPadding">
+              <DataGrid
+                dataSource={this.state.ItemLocationGridData}
+                defaultColumns={DataGridItemLocationColumns}
+                showBorders={true}
+                onRowUpdated={this.grdItemLocation_onUpdateRow}
+                rtlEnabled={true}
+                allowColumnResizing={true}
+                height={DataGridDefaultHeight}
+              >
+                <Scrolling
+                  rowRenderingMode="virtual"
+                  showScrollbar="always"
+                  columnRenderingMode="virtual"
+                />
 
-                  <Paging defaultPageSize={DataGridDefaultPageSize} />
-                  <Pager
-                    visible={true}
-                    allowedPageSizes={DataGridPageSizes}
-                    showPageSizeSelector={true}
-                    showNavigationButtons={true}
-                  />
-                  <Selection
-                    mode="multiple"
-                    selectAllMode={ALL_MOD}
-                    showCheckBoxesMode={CHECK_BOXES_MOD}
-                  />
-                  <Editing mode="cell" allowUpdating={true} />
-                  <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
-                </DataGrid>
-              </Col>
-              <Row style={{ paddingRight: "10px", paddingBottom: "10px" }}>
+                <Paging defaultPageSize={DataGridDefaultPageSize} />
+                <Pager
+                  visible={true}
+                  allowedPageSizes={DataGridPageSizes}
+                  showPageSizeSelector={true}
+                  showNavigationButtons={true}
+                />
+                <Selection
+                  mode="multiple"
+                  selectAllMode={ALL_MOD}
+                  showCheckBoxesMode={CHECK_BOXES_MOD}
+                />
+                <Editing mode="cell" allowUpdating={true} />
+                <FilterRow visible={true} />
+                <FilterPanel visible={true} />
+              </DataGrid>
+            </Col>
+            <Row style={{ paddingRight: "10px", paddingBottom: "10px" }}>
+              {this.state.stateDisable_btnUpdate && (
                 <Col xs="auto">
                   <Button
                     icon={UpdateIcon}
@@ -627,7 +680,18 @@ class OrderStoreDate extends React.Component {
                     onClick={this.btnUpdate_onClick}
                   />
                 </Col>
-              </Row>
+              )}
+            </Row>
+            <Row style={{ direction: "ltr" }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
             </Row>
           </Row>
         </Card>
@@ -641,4 +705,4 @@ const mapStateToProps = (state) => ({
   Company: state.companies,
 });
 
-export default connect(mapStateToProps)(OrderStoreDate);
+export default connect(mapStateToProps)(ItemLocation);

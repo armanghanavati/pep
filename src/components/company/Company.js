@@ -191,7 +191,7 @@ class Company extends React.Component {
       this.setState({
         ToastProps: {
           isToastVisible: true,
-          Message: RESULT != null ? "ثبت با موفقیت انجام گردید" : "عدم ثبت",
+          Message: RESULT != null ? "ثبت با موفقیت انجام گردید" : "عدم ثبت به دلیل تکراری بودن کد",
           Type: RESULT != null ? "success" : "error",
         },
       });

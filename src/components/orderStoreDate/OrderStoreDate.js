@@ -93,12 +93,13 @@ class OrderStoreDate extends React.Component {
   }
 
   fn_updateGrid = async (locationId = "") => {
-    if (this.state.stateDisable_show) {
-      var result = await orderStoreDateList(
-        this.props.Company.currentCompanyId,
-        locationId,
-        this.props.User.token
-      );
+    var response=await orderStoreDateList(
+      this.props.Company.currentCompanyId,
+      locationId,
+      this.props.User.token
+    );
+    if (this.state.stateDisable_show && response != null) {
+      var result = response
       this.setState({
         OrderStoreDateGridData: result,
       });

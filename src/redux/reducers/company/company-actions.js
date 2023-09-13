@@ -1,5 +1,5 @@
 export async function companyList(Token){
-    const url=window.apiAddress+"/Company/companyListByUserId"  
+    const url=window.apiAddress+"/Company/companyList"  
     const response = await fetch(
         url,
         {
