@@ -1,7 +1,6 @@
 export async function itemLocationList(object, Token) {
     const url =
       window.apiAddress + "/ItemLocation/itemlocationList";
-      alert(JSON.stringify(object))
     const response = await fetch(url, {
       method: "POST",
       body:JSON.stringify(object),

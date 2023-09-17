@@ -97,13 +97,14 @@ class OrderStoreSupplierDate extends React.Component {
   }
 
   fn_updateGrid = async (locationId = "", supplierId= "") => {
-    if (this.state.stateDisable_show) {
-      var result = await orderStoreSupplierDateList(
-        this.props.Company.currentCompanyId,
-        locationId,
-        supplierId,
-        this.props.User.token
-      );
+    var response=await orderStoreSupplierDateList(
+      this.props.Company.currentCompanyId,
+      locationId,
+      supplierId,
+      this.props.User.token
+    );
+    if (this.state.stateDisable_show && response != null) {
+      var result =response 
       this.setState({
         OrderStoreSupplierDateGridData: result,
       });
