@@ -1,9 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import jwt from "jwt-decode";
+import { BrowserRouter as Router,Routes, Route, Link,Redirect,withRouter,Switch,HashHistory } from 'react-router-dom';
 
 import "../assets/CSS/login.css";
 import { Row, Col, Input } from "reactstrap";
+import Fish from './Fish.js';
 import logo from "../assets/images/LOGO.jpg";
 
 import Home from "./Home";
@@ -19,6 +21,7 @@ class Login extends React.Component {
       txtUserNameValue: null,
       txtPasswordValue: null,
       stateRedirectHome: false,
+      stateRedirectFish:false
     };
   }
 
@@ -82,6 +85,14 @@ class Login extends React.Component {
           <Home />
         </>
       );
+
+    if(this.state.stateRedirectFish){
+      return (
+        <>
+          <Fish />
+        </>
+      );
+    }
     return (
       <div
         style={{ paddingTop: "10%", background: "#0ca3d2", minHeight: "100vh" }}
@@ -141,6 +152,20 @@ class Login extends React.Component {
                   <input type="checkbox" name="remember_me" id="remember_me" />
                   مرا به خاطر بیاور
                 </label>
+              </Col>
+            </Row>
+            <p></p>
+            <Row>
+              <Col>
+                {/* <Link id='lnkRoute' to='Fish'>
+                  
+                  fish
+                </Link>                                
+                <Routes>                                                  
+                  <Route exact path='/Fish' element={<Fish />}></Route>            
+                </Routes>
+                 */}
+                 <input type="submit" name="commit" value="مشاهده فیش حقوقی" onClick={()=>this.setState({stateRedirectFish:true})}/>
               </Col>
             </Row>
             <p></p>
