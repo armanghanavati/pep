@@ -20,6 +20,8 @@ import OrdersInventoryReports from '../pages/OrdersInventoryReports';
 import OrdersInventoryOutRouteReports from '../pages/OrdersInventoryOutRouteReports';
 import OutRoutsOrdersInventoryConfirms from '../pages/OutRoutsOrdersInventoryConfirms';
 import RegisterSupplierOrderTimes from '../pages/RegisterSupplierOrderTimes';
+import UserCompanies from '../pages/UserCompanies';
+import UserLocations from '../pages/UserLocations'
 
 export const REAL_COMPONENT = [
   {
@@ -118,6 +120,14 @@ export const REAL_COMPONENT = [
   {
     strComponent: "RegisterSupplierOrderTimes",
     orgComponent: <RegisterSupplierOrderTimes />,
+  },
+  {
+    strComponent: "UserCompanies",
+    orgComponent: <UserCompanies />,
+  },
+  {
+    strComponent: "UserLocations",
+    orgComponent: <UserLocations />,
   },
 ];
 

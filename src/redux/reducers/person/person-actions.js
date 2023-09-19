@@ -15,9 +15,9 @@ export async function personList(companyId, Token) {
   return null;
 }
 
-export async function personNoneAsignList(companyId, Token) {
+export async function personNoneAsignList(Token) {
   const url =
-    window.apiAddress + "/Person/PersonNoneAsignList?companyId=" + companyId;
+    window.apiAddress + "/Person/PersonNoneAsignList";
   const response = await fetch(url, {
     method: "GET",
     headers: {
