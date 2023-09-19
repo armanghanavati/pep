@@ -1,0 +1,75 @@
+
+
+/* -------------------------------------------------- */
+table {
+  border-collapse: collapse;
+  font-size: 13x;
+  color: black !important;
+  /* margin: 1%;   */
+}
+
+td, th {
+  border: 1px solid #964141;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  /* width: 10%; */
+}
+
+tr:nth-child(even) {
+  background-color: #f5dede;
+}
+/*
+table.table2 td:nth-child(1), table.table2 td:nth-child(2) {
+  border-left: 10px;
+  border-style: solid;
+} */
+
+.css_fish_td{
+  background: white;
+}
+
+.paddr0{
+  padding-right: 0px !important;
+}
+
+.fishHeader{
+  border: 3px solid;
+}
+
+.fishBody{
+  border: 2px solid;
+}
+
+.fishBorderData{
+  width: 100%;
+  border-top: 1px solid;
+}
+
+/* ----------------------------------------------------------- */
+.forest {
+        opacity: 0.3;
+    }
+
+    .opacity {
+        padding-top: 300px;
+        text-align: center;
+    }
+
+    .validateFish {
+        background: url(
+"https://media.geeksforgeeks.org/wp-content/uploads/20211103124244/wind-300x193.jpg")
+                no-repeat;
+        background-size: cover;
+        background-size: 290px 220px;
+    }
+
+    .forest {
+        width: 220px;
+        height: 90px;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        transform: translate(-50%, -50%);
+    }

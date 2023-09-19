@@ -62,3 +62,21 @@
     text-align: right;
     color:rgb(224, 3, 3)
   }
+
+  .farsiFont{
+    font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tablePublic {
+  font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
+  border: 1px solid #313131;  
+}
+
+.tdPublic, .thPublic {
+  border: 1px solid #313131;  
+}
+
+.trPublic:nth-child(even) {  
+  border: 1px solid #313131;
+  width: 100%;
+}

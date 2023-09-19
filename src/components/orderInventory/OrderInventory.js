@@ -46,6 +46,7 @@ import DataGrid, {
 import Wait from "../common/Wait";
 import OrderInventoryNew from "./OrderInventoryNew";
 import OrderInventoryNewGroup from "./OrderInventoryNewGroup";
+import OrderInventoryLogs from './OrderInventoryLogs'
 
 import {
   DataGridPageSizes,
@@ -118,6 +119,7 @@ class OrderInventory extends React.Component {
       stateEnable_show: false,
       stateModal_OrderInventoryNew: false,
       stateModal_OrderInventoryNewGroup: false,
+      stateModal_LogsOfOPI:false,
       isOutRoute:false,
       ToastProps: {
         isToastVisible: false,
@@ -236,63 +238,87 @@ class OrderInventory extends React.Component {
     this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
   };
 
-  btnSearch_onClick = async () => {
-    this.OpenCloseWait();
-    let tempLocationGroupValue = this.state.cmbLocationGroupValue;
-    if (
-      this.state.cmbLocationGroupValue == null ||
-      this.state.cmbLocationGroupValue == ""
-    ) {
-      tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
-        this.props.Location.locationPermission
-      );
-      this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
+  btnSearch_onClick = async () => {    
+    // let tempLocationGroupValue = this.state.cmbLocationGroupValue;
+    // if (
+    //   this.state.cmbLocationGroupValue == null ||
+    //   this.state.cmbLocationGroupValue == ""
+    // ) {
+    //   tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
+    //     this.props.Location.locationPermission
+    //   );
+    //   this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
+    // }
+
+    // let tempLocationValue = this.state.cmbLocationValue;
+    // if (
+    //   this.state.cmbLocationValue == null ||
+    //   this.state.cmbLocationValue == ""
+    // ) {
+    //   tempLocationValue = await Gfn_BuildValueComboSelectAll(
+    //     this.state.cmbLocation
+    //   );
+    //   this.setState({ cmbLocationValue: tempLocationValue });
+    // }
+
+    // let tempSupplierValue = this.state.cmbSupplierValue;
+    // if (
+    //   this.state.cmbSupplierValue == null ||
+    //   this.state.cmbSupplierValue == ""
+    // ) {
+    //   tempSupplierValue = await Gfn_BuildValueComboSelectAll(
+    //     this.state.cmbSupplier
+    //   );
+    //   this.setState({ cmbSupplierValue: tempSupplierValue });
+    // }
+
+    // let tempItemValue = this.state.cmbItemsValue;
+    // if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {
+    //   tempItemValue = await Gfn_BuildValueComboSelectAll(this.state.cmbItems);
+    //   this.setState({ cmbItemsValue: tempItemValue });
+    // }
+
+    let flagSend = true;
+    document.getElementById("errLocation").innerHTML = ""; 
+    document.getElementById("errItem").innerHTML = ""; 
+    document.getElementById("errSupplier").innerHTML = "";     
+    if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
+        const msg= "فروشگاه را انتخاب نمائید.";
+        document.getElementById("errLocation").innerHTML = msg; 
+        flagSend = false;
     }
 
-    let tempLocationValue = this.state.cmbLocationValue;
-    if (
-      this.state.cmbLocationValue == null ||
-      this.state.cmbLocationValue == ""
-    ) {
-      tempLocationValue = await Gfn_BuildValueComboSelectAll(
-        this.state.cmbLocation
-      );
-      this.setState({ cmbLocationValue: tempLocationValue });
+    if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
+      const msg= "کالا را انتخاب نمائید.";
+      document.getElementById("errItem").innerHTML = msg; 
+      flagSend = false;
     }
 
-    let tempSupplierValue = this.state.cmbSupplierValue;
-    if (
-      this.state.cmbSupplierValue == null ||
-      this.state.cmbSupplierValue == ""
-    ) {
-      tempSupplierValue = await Gfn_BuildValueComboSelectAll(
-        this.state.cmbSupplier
-      );
-      this.setState({ cmbSupplierValue: tempSupplierValue });
+    if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
+      const msg= "تامین کننده را انتخاب نمائید.";
+      document.getElementById("errSupplier").innerHTML = msg; 
+      flagSend = false;
     }
 
-    let tempItemValue = this.state.cmbItemsValue;
-    if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {
-      tempItemValue = await Gfn_BuildValueComboSelectAll(this.state.cmbItems);
-      this.setState({ cmbItemsValue: tempItemValue });
+    if(flagSend){
+      this.OpenCloseWait();
+      const OBJ = {
+        locationIds: this.state.cmbLocationValue,
+        supplierIds: this.state.cmbSupplierValue,
+        itemIds: this.state.cmbItemsValue,
+      };
+      // alert(JSON.stringify(OBJ))
+      this.setState({
+        OrderInventoryGridData: await orderPintInventoryListByLSI(
+          OBJ,
+          this.props.User.token
+        ),
+      });
+
+      this.fn_SetLogsOrderPointInventory();
+      this.OpenCloseWait();
     }
-
-    const OBJ = {
-      locationIds: tempLocationGroupValue,
-      supplierIds: tempSupplierValue,
-      itemIds: tempItemValue,
-    };
-    // alert(JSON.stringify(OBJ))
-    this.setState({
-      OrderInventoryGridData: await orderPintInventoryListByLSI(
-        OBJ,
-        this.props.User.token
-      ),
-    });
-
-    this.fn_SetLogsOrderPointInventory();
-
-    this.OpenCloseWait();
+    
   };
 
   fn_SetLogsOrderPointInventory = async () => {
@@ -410,6 +436,7 @@ class OrderInventory extends React.Component {
         LogsOfOPI,
       })
     );
+    this.setState({stateModal_LogsOfOPI:true})
   };
 
   btnUpdateOrders_onClick = async () => {
@@ -443,6 +470,10 @@ class OrderInventory extends React.Component {
   }
   ModalOrderInventoryNew_onClickAway = () => {
     this.setState({ stateModal_OrderInventoryNew: false });
+  };
+
+  ModalOrderInventoryLogs_onClickAway = () => {
+    this.setState({ stateModal_LogsOfOPI: false });
   };
 
 
@@ -508,6 +539,7 @@ class OrderInventory extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStore_onChange}
                 />
+                <Label id="errLocation" className="standardLabelFont errMessage" />
               </Col>
               <Col>
                 <Label className="standardLabelFont">تامین کننده</Label>
@@ -520,6 +552,7 @@ class OrderInventory extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
                 />
+                <Label id="errSupplier" className="standardLabelFont errMessage" />
               </Col>
               <Col>
                 <Label className="standardLabelFont">کالا</Label>
@@ -532,6 +565,7 @@ class OrderInventory extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbItem_onChange}
                 />
+                <Label id="errItem" className="standardLabelFont errMessage" />
               </Col>
             </Row>
             {this.state.stateEnable_show && (
@@ -665,6 +699,36 @@ class OrderInventory extends React.Component {
             )}
           </Row>
         </Card>
+
+
+        {this.state.stateModal_LogsOfOPI && (
+          <Row className="text-center">
+            <Col>
+              <Modal
+                style={{ direction: "rtl" }}
+                isOpen={this.state.stateModal_LogsOfOPI}
+                toggle={this.ModalOrderInventoryLogs_onClickAway}
+                centered={true}
+                size="lg"
+              >
+                <ModalHeader toggle={this.ModalOrderInventoryLogs_onClickAway}>
+                  لیست تغییرات سفارش 
+                </ModalHeader>
+                <ModalBody>
+                  <Row
+                    className="standardPadding"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "450px",                   
+                    }}
+                  >                    
+                    <OrderInventoryLogs />                    
+                  </Row>
+                </ModalBody>
+              </Modal>
+            </Col>
+          </Row>
+        )}
 
         {this.state.stateModal_OrderInventoryNew && (
           <Row className="text-center">
