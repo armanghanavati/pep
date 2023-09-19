@@ -138,4 +138,20 @@ export async function SearchPersonById(personId, Token) {
   return null;
 }
 
+export async function searchPersonByLocationId(locationId, Token) {
+  const url = window.apiAddress + "/Person/searchPersonByLocationId?locationId=" + locationId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("search person by locationId" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
 
