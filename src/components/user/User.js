@@ -42,7 +42,7 @@ import DataGrid, {
   RowDragging,
   Toolbar,
   Item,
-  Texts
+  Texts,
 } from "devextreme-react/data-grid";
 import {
   DataGridPageSizes,
@@ -64,7 +64,8 @@ import {
 import {
   personList,
   personNoneAsignList,
-  personLocationList
+  personLocationList,
+  SearchPersonById,
 } from "../../redux/reducers/person/person-actions";
 import { userActions } from "../../redux/reducers/user/user-slice";
 import { DataGridRoleColumns } from "../role/Role-config";
@@ -117,9 +118,7 @@ class User extends React.Component {
 
   fn_personNoneAsignList = async () => {
     this.setState({
-      PersonList: await personNoneAsignList(
-        this.props.User.token
-      ),
+      PersonList: await personNoneAsignList(this.props.User.token),
     });
   };
 
@@ -176,12 +175,20 @@ class User extends React.Component {
       stateUpdateDelete: true,
       RowSelected: e.data,
       PersonId: e.data.personId,
-    }); 
-    var person=await personLocationList( this.props.User.token);
-    var personIdSelected= person.find((element) => {
-      return element.id === e.data.personId;
     });
-       if(this.state.PersonList != null) this.setState({ PersonList: [...this.state.PersonList, personIdSelected] })
+    // var person=await personLocationList( this.props.User.token);
+    // var personIdSelected= person.find((element) => {
+    //   return element.id === e.data.personId;
+    // });
+    var personIdSelected = await SearchPersonById(
+      e.data.personId,
+      this.props.User.token
+    );
+
+    if (this.state.PersonList != null)
+      this.setState({
+        PersonList: [...this.state.PersonList, personIdSelected],
+      });
   };
 
   btnNew_onClick = async () => {
@@ -573,11 +580,9 @@ class User extends React.Component {
                       columnRenderingMode="virtual"
                     />
                     <Editing mode="cell" allowDeleting={true}>
-                    <Texts
-                        deleteRow="حذف"
-                    />
+                      <Texts deleteRow="حذف" />
                     </Editing>
-                     
+
                     <Toolbar>
                       <Item name="addRowButton" showText="always" />
                       <Item location="after">
@@ -616,9 +621,9 @@ class User extends React.Component {
     this.setState({
       selectedItemKeys: [],
     });
-    var data={
-      roleNames:roles
-    }
+    var data = {
+      roleNames: roles,
+    };
     const RESULT = await removeRoleListFromUser(
       this.state.RowSelected.id,
       data,

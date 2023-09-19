@@ -1,30 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import store from './redux/reducers/store'
-import './index.css';
-import App from './App';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { BrowserRouter } from 'react-router-dom'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import store from "./redux/reducers/store";
+import "./index.css";
+import App from "./App";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import reportWebVitals from "./reportWebVitals";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import { BrowserRouter } from "react-router-dom";
 
 // window.apiAddress="http://coapp:9191/api";
- window.apiAddress="http://172.16.1.40:2884/api"; 
- //window.apiAddress="http://localhost:7142/api"; 
+window.apiAddress = "http://172.16.1.40:2884/api";
+//window.apiAddress="http://localhost:7142/api";
 
 //  window.siteAddress="http://coapp:9191";
- //window.siteAddress="http://localhost:7142";
- window.siteAddress="http://172.16.1.40:2884";
+//window.siteAddress="http://localhost:7142";
+window.siteAddress = "http://172.16.1.40:2884";
 
- window.confirmPayment="http://172.16.1.40:2884/api"
+window.confirmPayment = "http://172.16.1.40:2884/api";
 //  window.confirmPayment="http://localhost:7142/api"
 
 // const store = createStore(rootReducer);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <Provider store={store}>
