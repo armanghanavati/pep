@@ -39,10 +39,9 @@ import DataGrid, {
   Grouping,
   GroupPanel,
   SearchPanel,
-  RowDragging,
+  Texts,
   Toolbar,
   Item,
-  Texts,
 } from "devextreme-react/data-grid";
 import {
   DataGridPageSizes,
@@ -52,39 +51,30 @@ import {
   ToastWidth,
 } from "../../config/config";
 import {
-  addUser,
-  updateUser,
-  deleteUser,
-  userList,
-  roleAsignToUser,
-  userRoleList,
-  removeRoleFromUser,
-  removeRoleListFromUser,
-} from "../../redux/reducers/user/user-actions";
-import {
-  personList,
-  personNoneAsignList,
-  personLocationList,
-  SearchPersonById,
-} from "../../redux/reducers/person/person-actions";
-import { userActions } from "../../redux/reducers/user/user-slice";
-import { DataGridRoleColumns } from "../role/Role-config";
-import { DataGridUserColumns } from "./User-config";
-import { roleList } from "../../redux/reducers/role/role-actions";
+  locationUserAccessList,
+  addUserLocation,
+  deleteUserLocation,
+  removeLocationListFromUser,
+  removeLocationFromUser,
+  updateUserLocation,
+} from "../../redux/reducers/userLocation/userLocation-actions";
+import { DataGridUserColumns } from "../user/User-config";
+import { DataGridLocationColumns } from "../location/Location-config";
+
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
+import { locationList, allLocation } from "../../redux/reducers/location/location-actions";
+import { userList } from "../../redux/reducers/user/user-actions";
 
-class User extends React.Component {
+class UserLocation extends React.Component {
   constructor(props) {
     super(props);
-    this.gridRef = React.createRef();
     this.state = {
-      txtUserNameValue: null,
-      chkIsActive: null,
       RowSelected: null,
       UserGridData: null,
+      LocationGridData: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
@@ -94,58 +84,46 @@ class User extends React.Component {
         Message: "",
         Type: "",
       },
-      userId: null,
-      user: null,
-      stateDisable_txtCode: false,
-      PersonList: null,
-      PersonId: null,
-      txtPasswordValue: null,
-      RoleGridData: null,
-      UserRoleGridData: null,
+      LocationId: null,
+      LocationList: null,
+      UserId: null,
+      UserList: null,
       selectedItemKeys: [],
+      LocationRowSelected:null,
     };
-  }
-
-  get dataGrid() {
-    return this.gridRef.current.instance.getDataSource();
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
-    this.fn_updateGrid();
-    this.fn_roleGrid();
-    this.fn_personNoneAsignList();
+    this.fn_userGrid();
+    this.fn_userList();
+    this.fn_locationList();
   }
 
-  fn_personNoneAsignList = async () => {
+  fn_userGrid = async () => {
     this.setState({
-      PersonList: await personNoneAsignList(this.props.User.token),
+      UserGridData: await userList(this.props.User.token),
     });
   };
 
-  fn_updateGrid = async () => {
-    if (this.state.stateDisable_show)
-      this.setState({
-        UserGridData: await userList(
-          this.props.Company.currentCompanyId,
-          this.props.User.token
-        ),
-      });
+  fn_locationGrid = async (userId) => {
+    this.setState({
+      LocationGridData: await locationUserAccessList(
+        userId,
+        this.props.User.token
+      ),
+    });
   };
 
-  fn_roleGrid = async () => {
-    if (this.state.stateDisable_show) {
-      this.setState({
-        RoleGridData: await roleList(this.props.User.token),
-      });
-    }
+  fn_locationList = async () => {
+    this.setState({
+      LocationList: await allLocation(this.props.User.token),
+    });
   };
 
-  fn_userRoleGrid = async (userId) => {
-    if (this.state.stateDisable_show) {
-      this.setState({
-        UserRoleGridData: await userRoleList(userId, this.props.User.token),
-      });
-    }
+  fn_userList = async () => {
+    this.setState({
+      UserList: await userList(this.props.User.token),
+    });
   };
 
   fn_GetPermissions = () => {
@@ -153,13 +131,13 @@ class User extends React.Component {
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "user.update":
+          case "userLocation.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "user.insert":
+          case "userLocation.insert":
             this.setState({ stateDisable_btnAdd: true });
             break;
-          case "user.show":
+          case "userLocation.show":
             this.setState({ stateDisable_show: true });
             break;
         }
@@ -167,59 +145,27 @@ class User extends React.Component {
   };
 
   grdUser_onClickRow = async (e) => {
-    this.fn_userRoleGrid(e.data.id);
-    await this.fn_personNoneAsignList();
+    this.fn_locationGrid(e.data.id);
     this.setState({
-      txtUserNameValue: e.data.userName,
-      chkIsActive: e.data.isActive,
-      stateUpdateDelete: true,
       RowSelected: e.data,
-      PersonId: e.data.personId,
     });
-    // var person=await personLocationList( this.props.User.token);
-    // var personIdSelected= person.find((element) => {
-    //   return element.id === e.data.personId;
-    // });
-    var personIdSelected = await SearchPersonById(
-      e.data.personId,
-      this.props.User.token
-    );
-
-    if (this.state.PersonList != null)
-      this.setState({
-        PersonList: [...this.state.PersonList, personIdSelected],
-      });
   };
 
-  btnNew_onClick = async () => {
+  btnNew_onClick = () => {
     this.setState({
-      txtUserNameValue: null,
-      chkIsActive: null,
+      LocationId: null,
+      UserId: null,
       stateUpdateDelete: false,
-      stateDisable_txtCode: false,
-      PersonId: null,
-    });
-  };
-
-  chkIsActive_onChange = (e) => {
-    this.setState({
-      chkIsActive: e.value,
     });
   };
 
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
-    document.getElementById("errUserName").innerHTML = "";
-    if (this.state.txtUserNameValue == null) {
-      document.getElementById("errUserName").innerHTML =
-        "نام کاربری را وارد نمائید";
-      flag = false;
-    }
-
-    if (this.state.chkIsActive == null) {
-      document.getElementById("errUserIsActive").innerHTML =
-        "فعال بودن را مشخص نمائید.";
+    document.getElementById("errLocationName").innerHTML = "";
+    if (this.state.LocationId == null) {
+      document.getElementById("errLocationName").innerHTML =
+        "محل شرکت را انتخاب نمائید";
       flag = false;
     }
     return flag;
@@ -227,48 +173,21 @@ class User extends React.Component {
   btnAdd_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
-        userName: this.state.txtUserNameValue,
-        isActive: this.state.chkIsActive,
-        personId: this.state.PersonId,
+        userId: this.state.UserId,
+        locationId: this.state.LocationId,
       };
-      const RESULT = await addUser(data, this.props.User.token);
+      const RESULT = await addUserLocation(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
-          Message: RESULT != null ? "ثبت با موفقیت انجام گردید" : "عدم ثبت",
+          Message:
+            RESULT != null
+              ? "ثبت با موفقیت انجام گردید"
+              : "عدم ثبت به دلیل تکراری بودن کد",
           Type: RESULT != null ? "success" : "error",
         },
       });
-      await this.fn_personNoneAsignList();
-      this.fn_updateGrid();
-    }
-  };
-  txtUserName_onChange = (e) => {
-    this.setState({ txtUserNameValue: e.value });
-  };
-
-  txtPassword_onChange = (e) => {
-    this.setState({ txtPasswordValue: e.value });
-  };
-  btnUpdate_onClick = async () => {
-    if (await this.fn_CheckValidation()) {
-      const data = {
-        id: this.state.RowSelected.id,
-        userName: this.state.txtUserNameValue,
-        isActive: this.state.chkIsActive,
-        password: this.state.txtPasswordValue,
-        personId: this.state.PersonId,
-      };
-
-      const RESULT = await updateUser(data, this.props.User.token);
-      this.setState({
-        ToastProps: {
-          isToastVisible: true,
-          Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
-          Type: RESULT > 0 ? "success" : "error",
-        },
-      });
-      this.fn_updateGrid();
+      this.fn_locationGrid(RESULT.userId);
     }
   };
 
@@ -277,8 +196,9 @@ class User extends React.Component {
   };
 
   btnDelete_onClick = async () => {
-    const MSG = await deleteUser(
+    const MSG = await deleteUserLocation(
       this.state.RowSelected.id,
+      this.state.LocationId,
       this.props.User.token
     );
     this.setState({
@@ -288,39 +208,46 @@ class User extends React.Component {
         Type: "success",
       },
     });
-    await this.fn_personNoneAsignList();
-    this.fn_updateGrid();
+    this.fn_locationGrid();
   };
 
-  cmbPerson_onChange = (e) => {
+  cmbUser_onChange = (e) => {
     this.setState({
-      PersonId: e,
+      UserId: e,
     });
   };
-  onAdd = async (e) => {
-    if (this.state.RowSelected == null) {
-      const MSG = "خطا کاربر را انتخاب کنید";
+
+  cmbLocation_onChange = (e) => {
+    this.setState({
+      LocationId: e,
+    });
+  };
+  grdLocation_onClickRow=(e)=>{
+    this.setState({
+        UserId:this.state.RowSelected.id,
+        LocationId:e.data.id,
+        stateUpdateDelete: true,
+        LocationRowSelected:e.data
+    })
+  }
+
+  btnUpdate_onClick = async () => {
+    if (await this.fn_CheckValidation()) {
+      const data = {
+        userId: this.state.UserId,
+        locationId:this.state.LocationRowSelected.id,
+        newLocationId:this.state.LocationId
+      };
+      const RESULT = await updateUserLocation(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
-          Message: MSG,
-          Type: "error",
+          Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
+          Type: RESULT > 0 ? "success" : "error",
         },
       });
-      return;
+      this.fn_locationGrid(this.state.UserId);
     }
-
-    var items = this.dataGrid._items;
-    if (e.toIndex >= items.length) return;
-    const id = e.itemData.id;
-    const roleName = items[e.toIndex].name;
-    var data = {
-      userId: id,
-      roleName: roleName,
-    };
-    await roleAsignToUser(data, this.props.User.token);
-    this.fn_updateGrid();
-    await this.fn_userRoleGrid(this.state.RowSelected.id);
   };
 
   render() {
@@ -338,7 +265,7 @@ class User extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>کاربر</Label>
+              <Label>دسترسی کاربران به محل  شرکت ها</Label>
             </Row>
             {this.state.stateDisable_btnAdd && (
               <Row>
@@ -356,72 +283,40 @@ class User extends React.Component {
             )}
             <Row className="standardPadding">
               <Col xs="auto">
-                <Label className="standardLabelFont">نام کاربری</Label>
-                <TextBox
-                  value={this.state.txtUserNameValue}
-                  showClearButton={true}
-                  placeholder="نام کاربری"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtUserName_onChange}
-                />
-                <Row>
-                  <Label
-                    id="errUserName"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">شخص</Label>
+                <Label className="standardLabelFont">کاربر</Label>
                 <SelectBox
-                  dataSource={this.state.PersonList}
-                  displayExpr="fullName"
-                  placeholder="شخص"
+                  dataSource={this.state.UserList}
+                  displayExpr="userName"
+                  placeholder="کاربر"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
-                  onValueChange={this.cmbPerson_onChange}
-                  value={this.state.PersonId}
+                  onValueChange={this.cmbUser_onChange}
+                  value={this.state.UserId}
                 />
               </Col>
-              {this.state.stateUpdateDelete && (
-                <Col xs="auto">
-                  <Label className="standardLabelFont">رمز عبور</Label>
-                  <TextBox
-                    value={this.state.txtPasswordValue}
-                    showClearButton={true}
-                    placeholder="رمز عبور"
-                    rtlEnabled={true}
-                    valueChangeEvent="keyup"
-                    onValueChanged={this.txtPassword_onChange}
-                  />
-                  <Row>
-                    <Label
-                      id="errUserName"
-                      className="standardLabelFont errMessage"
-                    />
-                  </Row>
-                </Col>
-              )}
-            </Row>
-            <Row>
               <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsActive}
-                  text="فعال"
+                <Label className="standardLabelFont">محل شرکت</Label>
+                <SelectBox
+                  dataSource={this.state.LocationList}
+                  displayExpr="locationName"
+                  placeholder="محل شرکت"
+                  valueExpr="id"
+                  searchEnabled={true}
                   rtlEnabled={true}
-                  onValueChanged={this.chkIsActive_onChange}
+                  onValueChange={this.cmbLocation_onChange}
+                  value={this.state.LocationId}
                 />
                 <Row>
                   <Label
-                    id="errUserIsActive"
+                    id="errLocationName"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
               </Col>
             </Row>
-            {!this.state.stateUpdateDelete ? (
+            <Row>
+              {!this.state.stateUpdateDelete ? (
               <Row>
                 {this.state.stateDisable_btnAdd && (
                   <Col xs="auto">
@@ -451,41 +346,23 @@ class User extends React.Component {
                           onClick={this.btnUpdate_onClick}
                         />
                       </Col>
-
-                      <Col xs="auto">
-                        <Button
-                          icon={DeleteIcon}
-                          text="حذف"
-                          type="danger"
-                          stylingMode="contained"
-                          rtlEnabled={true}
-                          onClick={this.btnDelete_onClick}
-                        />
-                      </Col>
                     </>
                   )}
                 </Row>
               </Row>
             )}
-            <Row>
-              <Col>
-                <p
-                  id="ErrorUpdateUser"
-                  style={{ textAlign: "right", color: "red" }}
-                ></p>
-              </Col>
             </Row>
           </Row>
         </Card>
         <p></p>
         <Card className="shadow bg-white border pointer">
-          <Row className="standardPadding">
-            <Col xs={4}>
+          <Row>
+            <Col className="standardPadding">
               <Row>
                 <Label className="title">لیست کاربران</Label>
               </Row>
               <Row>
-                <Col xs="auto" className="standardMarginRight">
+                <Col>
                   <DataGrid
                     dataSource={this.state.UserGridData}
                     defaultColumns={DataGridUserColumns}
@@ -495,7 +372,6 @@ class User extends React.Component {
                     onRowClick={this.grdUser_onClickRow}
                     height={DataGridDefaultHeight}
                   >
-                    <RowDragging group="tasksGroup" onAdd={this.onAdd} />
                     <Scrolling
                       rowRenderingMode="virtual"
                       showScrollbar="always"
@@ -515,59 +391,19 @@ class User extends React.Component {
                 </Col>
               </Row>
             </Col>
-            <Col xs={4}>
+            <Col className="standardPadding">
               <Row>
-                <Label className="title">لیست نقش ها</Label>
+                <Label className="title">لیست محل شرکت ها</Label>
               </Row>
               <Row>
-                <Col xs="auto">
+                <Col>
                   <DataGrid
-                    ref={this.gridRef}
-                    dataSource={this.state.RoleGridData}
-                    defaultColumns={DataGridRoleColumns}
+                    dataSource={this.state.LocationGridData}
+                    defaultColumns={DataGridLocationColumns}
                     showBorders={true}
                     rtlEnabled={true}
                     allowColumnResizing={true}
-                    onRowClick={this.grdRole_onClickRow}
-                    height={DataGridDefaultHeight}
-                  >
-                    <RowDragging
-                      data={this.state.RoleGridData}
-                      group="tasksGroup"
-                      onAdd={this.onAdd}
-                    />
-                    <Scrolling
-                      rowRenderingMode="virtual"
-                      showScrollbar="always"
-                      columnRenderingMode="virtual"
-                    />
-
-                    <Paging defaultPageSize={DataGridDefaultPageSize} />
-                    <Pager
-                      visible={true}
-                      allowedPageSizes={DataGridPageSizes}
-                      showPageSizeSelector={true}
-                      showNavigationButtons={true}
-                    />
-                    <FilterRow visible={true} />
-                    <FilterPanel visible={true} />
-                  </DataGrid>
-                </Col>
-              </Row>
-            </Col>
-            <Col>
-              <Row>
-                <Label className="title">نقش کاربر</Label>
-              </Row>
-              <Row>
-                <Col xs="auto">
-                  <DataGrid
-                    dataSource={this.state.UserRoleGridData}
-                    defaultColumns={DataGridRoleColumns}
-                    showBorders={true}
-                    rtlEnabled={true}
-                    allowColumnResizing={true}
-                    onRowClick={this.grdRole_onClickRow}
+                    onRowClick={this.grdLocation_onClickRow}
                     height={DataGridDefaultHeight}
                     selectedRowKeys={this.state.selectedItemKeys}
                     onSelectionChanged={this.selectionChanged}
@@ -613,18 +449,18 @@ class User extends React.Component {
     );
   }
   deleteRecords = async () => {
-    var roles = [];
+    var locations = [];
     this.state.selectedItemKeys.forEach((key) => {
-      roles.push(key.name);
+      locations.push(key.id);
     });
-    //console.log(role[0]);
+    //console.log(locations[0]);
     this.setState({
       selectedItemKeys: [],
     });
     var data = {
-      roleNames: roles,
+      locationId: locations,
     };
-    const RESULT = await removeRoleListFromUser(
+    const RESULT = await removeLocationListFromUser(
       this.state.RowSelected.id,
       data,
       this.props.User.token
@@ -636,7 +472,7 @@ class User extends React.Component {
         Type: RESULT > 0 ? "success" : "error",
       },
     });
-    await this.fn_userRoleGrid(this.state.RowSelected.id);
+    await this.fn_locationGrid(this.state.RowSelected.id);
   };
 
   selectionChanged = (data) => {
@@ -646,9 +482,9 @@ class User extends React.Component {
   };
 
   onRowRemoved = async (e) => {
-    const RESULT = await removeRoleFromUser(
+    const RESULT = await removeLocationFromUser(
       this.state.RowSelected.id,
-      e.data.name,
+      e.data.id,
       this.props.User.token
     );
     this.setState({
@@ -663,7 +499,7 @@ class User extends React.Component {
 
 const mapStateToProps = (state) => ({
   User: state.users,
-  Company: state.companies,
+  Company:state.companies
 });
 
-export default connect(mapStateToProps)(User);
+export default connect(mapStateToProps)(UserLocation);

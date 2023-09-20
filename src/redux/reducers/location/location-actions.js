@@ -178,3 +178,39 @@ export async function location(locationId, Token) {
   }
   return null;
 }
+
+export async function allLocation(Token) {
+  const url =
+    window.apiAddress + "/Location/allLocation";
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All location" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function locationByUserId(userId, Token) {
+  const url =
+    window.apiAddress + "/Location/searchLocationByUserId?userId=" + userId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("location by user Id" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}

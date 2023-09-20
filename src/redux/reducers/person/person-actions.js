@@ -15,9 +15,9 @@ export async function personList(companyId, Token) {
   return null;
 }
 
-export async function personNoneAsignList(companyId, Token) {
+export async function personNoneAsignList(Token) {
   const url =
-    window.apiAddress + "/Person/PersonNoneAsignList?companyId=" + companyId;
+    window.apiAddress + "/Person/PersonNoneAsignList";
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -120,3 +120,38 @@ export async function personLocationNoneAsignList(Token) {
   }
   return null;
 }
+
+export async function SearchPersonById(personId, Token) {
+  const url = window.apiAddress + "/Person/SearchPersonById?personId=" + personId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("search person" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function searchPersonByLocationId(locationId, Token) {
+  const url = window.apiAddress + "/Person/searchPersonByLocationId?locationId=" + locationId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("search person by locationId" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
