@@ -345,7 +345,7 @@ class PepObject extends React.Component {
                 <Label className="standardLabelFont">گروه آیتم</Label>
                 <SelectBox
                   dataSource={this.state.PepObjectGridData}
-                  displayExpr="objectName"
+                  displayExpr="title"
                   placeholder="گروه آیتم"
                   valueExpr="id"
                   searchEnabled={true}
