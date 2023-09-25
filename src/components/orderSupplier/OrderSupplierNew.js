@@ -25,7 +25,8 @@ import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-act
 import { itemListComboByItemGroupId } from "../../redux/reducers/item/item-action";
 import { supplierListComboByItemId } from "../../redux/reducers/supplier/supplier-action";
 import { insertNewDataOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
-import { locationListOrderInventoryComboNew } from "../../redux/reducers/location/location-actions";
+import { locationListOrderSupplierComboNew
+,locationListOrderSupplierComboNewOutRoute } from "../../redux/reducers/location/location-actions";
 import Wait from "../common/Wait";
 
 import { Gfn_BuildValueComboMulti } from "../../utiliy/GlobalMethods";
@@ -61,10 +62,14 @@ class OrderSupplierNew extends React.Component{
     componentDidMount(){
         this.fn_CheckRequireState();
     }
-
+    
     fn_CheckRequireState = async () => {            
         this.setState({      
-            cmbLocationGroups: await locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token),
+            cmbLocationGroups:
+                    this.props.isOutRoute ? 
+                        await locationListOrderSupplierComboNewOutRoute(this.props.Company.currentCompanyId,this.props.User.token)
+                    :
+                        await locationListOrderSupplierComboNew(this.props.Company.currentCompanyId,this.props.User.token)
         });
     };
 

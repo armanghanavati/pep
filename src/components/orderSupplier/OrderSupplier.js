@@ -60,6 +60,8 @@ import {
 import { itemActions } from "../../redux/reducers/item/item-slice";
 import { logsOrderPointSupplierActions } from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-slice";
 import { locationActions } from "../../redux/reducers/location/location-slice";
+import { companyActions } from "../../redux/reducers/company/company-slice";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
 
 import {
   itemListCombo,
@@ -150,6 +152,23 @@ class OrderSupplier extends React.Component {
   }
 
   fn_CheckRequireState = async () => {
+    if(this.props.Company.currentCompanyId==null){
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+
     const locationPermission = await locationOrderSupplierComboListByCompanyId(
       this.props.Company.currentCompanyId,
       this.props.User.token
@@ -405,8 +424,19 @@ class OrderSupplier extends React.Component {
   };
 
   btnNew_onClick = () => {
-    this.setState({ stateModal_OrderSupplierNew: true });
+    this.setState({ 
+      stateModal_OrderSupplierNew: true,
+      isOutRoute:false,
+    });
   };
+
+  btnNewOutRoute_onClick=()=>{
+    this.setState({ 
+      stateModal_OrderSupplierNew: true ,
+      isOutRoute:true,
+    });
+  }
+
   ModalOrderInventoryNew_onClickAway = () => {
     this.setState({ stateModal_OrderSupplierNew: false });
   };
@@ -543,6 +573,16 @@ class OrderSupplier extends React.Component {
                     />
                   </Col>
                 )}
+                <Col xs="auto" className="standardMarginRight">
+                  <Button
+                    icon={PlusNewIcon}
+                    text="سفارش خارج از برنامه"
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnNewOutRoute_onClick}
+                  />
+                </Col>
               </Row>
             )}
             <Row style={{direction:'ltr'}}>
@@ -638,7 +678,7 @@ class OrderSupplier extends React.Component {
                       maxHeight: "450px",                   
                     }}
                   >
-                    <OrderSupplierNew />
+                    <OrderSupplierNew isOutRoute={this.state.isOutRoute}  />
                   </Row>
                 </ModalBody>
               </Modal>

@@ -4,8 +4,7 @@
 table {
   border-collapse: collapse;
   font-size: 13x;
-  color: black !important;
-  /* margin: 1%;   */
+  color: black !important;  
 }
 
 td, th {
@@ -13,18 +12,13 @@ td, th {
   padding-left: 0px !important;
   padding-right: 0px !important;
   padding-top: 0px !important;
-  padding-bottom: 0px !important;
-  /* width: 10%; */
+  padding-bottom: 0px !important;  
 }
 
 tr:nth-child(even) {
   background-color: #f5dede;
 }
-/*
-table.table2 td:nth-child(1), table.table2 td:nth-child(2) {
-  border-left: 10px;
-  border-style: solid;
-} */
+
 
 .css_fish_td{
   background: white;
