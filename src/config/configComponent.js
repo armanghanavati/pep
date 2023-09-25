@@ -24,6 +24,7 @@ import UserCompanies from '../pages/UserCompanies';
 import UserLocations from '../pages/UserLocations'
 import PersonShifts from '../pages/PersonShifts'
 
+
 export const REAL_COMPONENT = [
   {
     strComponent: "Ticket",

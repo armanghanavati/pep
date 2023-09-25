@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react';
 import { connect } from "react-redux";
 import {
   Row,
@@ -15,15 +15,48 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-import classnames from "classnames";
-import TextBox from "devextreme-react/text-box";
-import TextArea from "devextreme-react/text-area";
-import SelectBox from "devextreme-react/select-box";
-import { Button } from "devextreme-react/button";
-import { CheckBox } from "devextreme-react/check-box";
-import notify from "devextreme/ui/notify";
 import { Toast } from "devextreme-react/toast";
-import { Tooltip } from "devextreme-react/tooltip";
+import Paper from '@mui/material/Paper';
+import {
+  styled, darken, alpha, lighten,
+} from '@mui/material/styles';
+import Opacity from '@mui/icons-material/Opacity';
+import WbSunny from '@mui/icons-material/WbSunny';
+import FilterDrama from '@mui/icons-material/FilterDrama';
+import TableCell from '@mui/material/TableCell';
+import ColorLens from '@mui/icons-material/ColorLens';
+import Typography from '@mui/material/Typography';
+import classNames from 'clsx';
+import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler';
+import {
+  Scheduler,
+  DayView,
+  Appointments,
+  AppointmentForm,
+  AppointmentTooltip,
+  ConfirmationDialog,
+  WeekView,
+  MonthView,
+  DateNavigator,
+  Toolbar
+} from '@devexpress/dx-react-scheduler-material-ui';
+import {
+  DataGridPageSizes,
+  DataGridDefaultPageSize,
+  DataGridDefaultHeight,
+  ToastTime,
+  ToastWidth,
+} from "../../config/config";
+import { DataGridPersonColumns } from "./PersonShift-config";
+import { locationByUserId } from "../../redux/reducers/location/location-actions";
+import {
+  updatePerson,
+  addPerson,
+  searchPersonByUserId,
+  searchPersonByLocationId,
+  deletePerson,
+} from "../../redux/reducers/person/person-actions";
+import { Person } from "../../components/person/Person"
 import DataGrid, {
   Column,
   Editing,
@@ -40,58 +73,244 @@ import DataGrid, {
   GroupPanel,
   SearchPanel,
 } from "devextreme-react/data-grid";
-import {
-  DataGridPageSizes,
-  DataGridDefaultPageSize,
-  DataGridDefaultHeight,
-  ToastTime,
-  ToastWidth,
-} from "../../config/config";
-import {
-  updatePerson,
-  addPerson,
-  searchPersonByLocationId,
-  deletePerson,
-} from "../../redux/reducers/person/person-actions";
-import {locationByUserId} from "../../redux/reducers/location/location-actions";
-import { positionActions } from "../../redux/reducers/position/position-slice";
-import { locationList } from "../../redux/reducers/location/location-actions";
-import { locationActions } from "../../redux/reducers/location/location-slice";
-import { positionList } from "../../redux/reducers/position/position-actions";
-import { companyList } from "../../redux/reducers/company/company-actions";
-import { companyActions } from "../../redux/reducers/company/company-slice";
-import { DataGridPersonColumns } from "./Person-config";
+import { locale } from 'devextreme/localization';
+import { TextBox } from 'devextreme-react';
+//import { appointments } from '../../../demo-data/appointments';
+var appointments = [
+  {
+    id: 1,
+    title: "تست برنامه",
+    startDate: "2023-09-19T15:24",
+    endDate: "2023-09-19T15:25",
+    allDay: true
+  },
+]
+const PREFIX = 'Demo';
 
-import PlusNewIcon from "../../assets/images/icon/plus.png";
-import SaveIcon from "../../assets/images/icon/save.png";
-import UpdateIcon from "../../assets/images/icon/update.png";
-import DeleteIcon from "../../assets/images/icon/delete.png";
+const classes = {
+  cell: `${PREFIX}-cell`,
+  content: `${PREFIX}-content`,
+  text: `${PREFIX}-text`,
+  sun: `${PREFIX}-sun`,
+  cloud: `${PREFIX}-cloud`,
+  rain: `${PREFIX}-rain`,
+  sunBack: `${PREFIX}-sunBack`,
+  cloudBack: `${PREFIX}-cloudBack`,
+  rainBack: `${PREFIX}-rainBack`,
+  opacity: `${PREFIX}-opacity`,
+  appointment: `${PREFIX}-appointment`,
+  apptContent: `${PREFIX}-apptContent`,
+  flexibleSpace: `${PREFIX}-flexibleSpace`,
+  flexContainer: `${PREFIX}-flexContainer`,
+  tooltipContent: `${PREFIX}-tooltipContent`,
+  tooltipText: `${PREFIX}-tooltipText`,
+  title: `${PREFIX}-title`,
+  icon: `${PREFIX}-icon`,
+  circle: `${PREFIX}-circle`,
+  textCenter: `${PREFIX}-textCenter`,
+  dateAndTitle: `${PREFIX}-dateAndTitle`,
+  titleContainer: `${PREFIX}-titleContainer`,
+  container: `${PREFIX}-container`,
+};
+
+const getBorder = theme => (`1px solid ${theme.palette.mode === 'light'
+    ? lighten(alpha(theme.palette.divider, 1), 0.88)
+    : darken(alpha(theme.palette.divider, 1), 0.68)
+  }`);
+
+const DayScaleCell = props => (
+  <MonthView.DayScaleCell {...props} style={{ textAlign: 'center', fontWeight: 'bold' }} />
+);
+
+const StyledOpacity = styled(Opacity)(() => ({
+  [`&.${classes.rain}`]: {
+    color: '#4FC3F7',
+  },
+}));
+const StyledWbSunny = styled(WbSunny)(() => ({
+  [`&.${classes.sun}`]: {
+    color: '#FFEE58',
+  },
+}));
+const StyledFilterDrama = styled(FilterDrama)(() => ({
+  [`&.${classes.cloud}`]: {
+    color: '#90A4AE',
+  },
+}));
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${classes.cell}`]: {
+    color: '#78909C!important',
+    position: 'relative',
+    userSelect: 'none',
+    verticalAlign: 'top',
+    padding: 0,
+    height: 100,
+    borderLeft: getBorder(theme),
+    '&:first-of-type': {
+      borderLeft: 'none',
+    },
+    '&:last-child': {
+      paddingRight: 0,
+    },
+    'tr:last-child &': {
+      borderBottom: 'none',
+    },
+    '&:hover': {
+      backgroundColor: 'white',
+    },
+    '&:focus': {
+      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+      outline: 0,
+    },
+  },
+  [`&.${classes.sunBack}`]: {
+    backgroundColor: '#FFFDE7',
+  },
+  [`&.${classes.cloudBack}`]: {
+    backgroundColor: '#ECEFF1',
+  },
+  [`&.${classes.rainBack}`]: {
+    backgroundColor: '#E1F5FE',
+  },
+  [`&.${classes.opacity}`]: {
+    opacity: '0.5',
+  },
+}));
+const StyledDivText = styled('div')(() => ({
+  [`&.${classes.text}`]: {
+    padding: '0.5em',
+    textAlign: 'center',
+  },
+}));
+const StyledDivContent = styled('div')(() => ({
+  [`&.${classes.content}`]: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    alignItems: 'center',
+  },
+}));
+
+const StyledAppointmentsAppointment = styled(Appointments.Appointment)(() => ({
+  [`&.${classes.appointment}`]: {
+    borderRadius: '10px',
+    '&:hover': {
+      opacity: 0.6,
+    },
+  },
+}));
+
+const StyledToolbarFlexibleSpace = styled(Toolbar.FlexibleSpace)(() => ({
+  [`&.${classes.flexibleSpace}`]: {
+    flex: 'none',
+  },
+  [`& .${classes.flexContainer}`]: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+}));
+const StyledAppointmentsAppointmentContent = styled(Appointments.AppointmentContent)(() => ({
+  [`&.${classes.apptContent}`]: {
+    '&>div>div': {
+      whiteSpace: 'normal !important',
+      lineHeight: 1.2,
+    },
+  },
+}));
+
+
+
+// const resources = [{
+//   fieldName: 'ownerId',
+//   title: 'Owners',
+//   instances: owners,
+// }];
+
+const WeatherIcon = ({ id }) => {
+  switch (id) {
+    case 0:
+      return <StyledOpacity className={classes.rain} fontSize="large" />;
+    case 1:
+      return <StyledWbSunny className={classes.sun} fontSize="large" />;
+    case 2:
+      return <StyledFilterDrama className={classes.cloud} fontSize="large" />;
+    default:
+      return null;
+  }
+};
+
+const CellBase = React.memo(({
+  startDate,
+  formatDate,
+  otherMonth,
+}) => {
+  const iconId = Math.abs(Math.floor(Math.sin(startDate.getDate()) * 10) % 3);
+  const isFirstMonthDay = startDate.getDate() === 1;
+  const formatOptions = isFirstMonthDay
+    ? { day: 'numeric', month: 'long' }
+    : { day: 'numeric' };
+  return (
+    <StyledTableCell
+      tabIndex={0}
+      className={classNames({
+        [classes.cell]: true,
+        [classes.rainBack]: iconId === 0,
+        [classes.sunBack]: iconId === 1,
+        [classes.cloudBack]: iconId === 2,
+        [classes.opacity]: otherMonth,
+      })}
+    >
+      <StyledDivContent className={classes.content}>
+        <WeatherIcon classes={classes} id={iconId} />
+      </StyledDivContent>
+      <StyledDivText className={classes.text}>
+        {formatDate(startDate, formatOptions)}
+      </StyledDivText>
+    </StyledTableCell>
+  );
+});
+
+const TimeTableCell = (CellBase);
+
+const Appointment = (({ ...restProps }) => (
+  <StyledAppointmentsAppointment
+    {...restProps}
+    className={classes.appointment}
+  />
+));
+
+const AppointmentContent = (({ ...restProps }) => (
+  <StyledAppointmentsAppointmentContent {...restProps} className={classes.apptContent} />
+));
+
+const FlexibleSpace = (({ ...restProps }) => (
+  <StyledToolbarFlexibleSpace {...restProps} className={classes.flexibleSpace}>
+    {/* <div className={classes.flexContainer}>
+        <ColorLens fontSize="large" htmlColor="#FF7043" /> 
+        <Typography variant="h5" style={{ marginLeft: '10px' }}>Art School</Typography> 
+     </div> */}
+  </StyledToolbarFlexibleSpace>
+));
+
 class PersonShift extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      txtPersonalCodeValue: null,
-      txtNameValue: null,
-      txtFamilyValue: null,
-      txtMobileValue: null,
-      txtTarikhGhateHamkariValue: null,
-      txtElateGhateHamkariValue: null,
-      chkIsActive: null,
-      RowSelected: null,
-      PersonGridData: null,
-      stateUpdateDelete: true,
-      stateDisable_btnAdd: false,
-      stateDisable_btnUpdate: false,
+      data: appointments,
+      currentDate: new Date(),
+      locale: "fa-IR",
       stateDisable_show: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
         Type: "",
       },
-      Location: null,
-      Position: null,
-      PositionId: null,
-      LocationId: null,
+      title: null,
+      startDate: new Date(),
+      endDate: new Date()
     };
   }
 
@@ -99,188 +318,113 @@ class PersonShift extends React.Component {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
   }
-
-  fn_updateGrid = async () => {
-    if (this.state.stateDisable_show){
-    var location=await locationByUserId(this.props.User.userId, this.props.User.token);
-    var t=await searchPersonByLocationId(location.id, this.props.User.token);
-    alert(JSON.stringify(t))
-      this.setState({
-        PersonGridData: await searchPersonByLocationId(location.id, this.props.User.token),
-      });
-    }
-  };
-
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "location.update":
+          case "personShift.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "location.insert":
+          case "personShift.insert":
             this.setState({ stateDisable_btnAdd: true });
             break;
-          case "location.show":
+          case "personShift.show":
             this.setState({ stateDisable_show: true });
             break;
         }
       }
   };
 
-  grdPerson_onClickRow = (e) => {
-    this.setState({
-      txtPersonalCodeValue: e.data.personalCode,
-      txtNameValue: e.data.name,
-      txtFamilyValue: e.data.family,
-      txtMobileValue: e.data.mobile,
-      txtTarikhGhateHamkariValue: e.data.tarikhGhateHamkari,
-      txtElateGhateHamkariValue: e.data.elateGhateHamkari,
-      chkIsActive: e.data.isActive,
-      stateUpdateDelete: true,
-      RowSelected: e.data,
-      PositionId: e.data.positionId,
-      LocationId: e.data.locationId,
+  fn_updateGrid = async () => {
+    if (this.state.stateDisable_show) {
+      var person = await searchPersonByUserId(this.props.User.userId, this.props.User.token);
+      if (person != null)
+        this.setState({
+          PersonGridData: await searchPersonByLocationId(person.locationId, person.positionId, this.props.User.token),
+        });
+    }
+  }
+
+
+
+  commitChanges = ({ added, changed, deleted }) => {
+    this.setState((state) => {
+      let { data } = state;
+      if (added) {
+        const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
+        data = [...data, {
+          id: startingAddedId,
+          title: this.state.title,
+          startDate: this.state.startDate,
+          endDate: this.state.endDate
+        }];
+        //data = [...data, { id: startingAddedId, ...added }];
+      }
+      if (changed) {
+        data = data.map(appointment => (
+          changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+      }
+      if (deleted !== undefined) {
+        data = data.filter(appointment => appointment.id !== deleted);
+      }
+      return { data };
+
     });
-  };
+  }
 
-  btnNew_onClick = () => {
+  BoolEditor = (props) => {
+    return <AppointmentForm.BooleanEditor
+      {...props}
+    />
+  };
+  LabelComponent = (props) => {
+    if (props.text === 'Details') {
+      return <AppointmentForm.Label
+        {...props}
+        text="جزییات"
+      />
+    } else if (props.text === 'More Information') {
+      return <AppointmentForm.Label
+        {...props}
+        text="توضیحات"
+      />
+    } else if (props.text === '-') {
+      return <AppointmentForm.Label
+        {...props}
+      />
+    }
+  };
+  InputComponent = (props) => {
+    if (props.type === 'titleTextEditor') {
+      return <AppointmentForm.TextEditor
+        {...props}
+        type='numberEditor'
+        placeholder='عنوان'
+      />
+    }
+  };
+  handleChange = (e) => {
     this.setState({
-      txtPersonalCodeValue: null,
-      txtNameValue: null,
-      txtFamilyValue: null,
-      txtMobileValue: null,
-      txtTarikhGhateHamkariValue: null,
-      txtElateGhateHamkariValue: null,
-      chkIsActive: null,
-      stateUpdateDelete: false,
-      PositionId: null,
-      LocationId: null,
-    });
-  };
-
-  fn_CheckValidation = () => {
-    let errMsg = "";
-    let flag = true;
-    document.getElementById("errPersonalCode").innerHTML = "";
-    document.getElementById("errPosition").innerHTML = "";
-    document.getElementById("errLocation").innerHTML = "";
-    document.getElementById("errPersonIsActive").innerHTML = "";
-
-    if (this.state.txtPersonalCodeValue == null) {
-      document.getElementById("errPersonalCode").innerHTML =
-        "کد کاربری را وارد نمائید";
-      flag = false;
-    }
-    if (this.state.PositionId == null) {
-      document.getElementById("errPosition").innerHTML = "سمت را مشخص نمائید.";
-      flag = false;
-    }
-    if (this.state.LocationId == null) {
-      document.getElementById("errLocation").innerHTML = "محل را مشخص نمائید.";
-      flag = false;
-    }
-    if (this.state.chkIsActive == null) {
-      document.getElementById("errPersonIsActive").innerHTML =
-        "فعال بودن را مشخص نمائید.";
-      flag = false;
-    }
-    return flag;
-  };
-  btnAdd_onClick = async () => {
-    if (await this.fn_CheckValidation()) {
-      const data = {
-        personalCode: this.state.txtPersonalCodeValue,
-        name: this.state.txtNameValue,
-        family: this.state.txtFamilyValue,
-        mobile: this.state.txtMobileValue,
-        tarikhGhateHamkari: this.state.txtTarikhGhateHamkariValue,
-        elateGhateHamkari: this.state.txtElateGhateHamkariValue,
-        locationId: this.state.LocationId,
-        positionId: this.state.PositionId,
-        isActive: this.state.chkIsActive,
-      };
-      const RESULT = await addPerson(data, this.props.User.token);
-      this.setState({
-        ToastProps: {
-          isToastVisible: true,
-          Message: RESULT != null ? "ثبت با موفقیت انجام گردید" : "عدم ثبت",
-          Type: RESULT != null ? "success" : "error",
-        },
-      });
-      this.fn_updateGrid();
-    }
-  };
-  txtPersonalCode_onChange = (e) => {
-    this.setState({ txtPersonalCodeValue: e.value });
-  };
-  txtName_onChange = (e) => {
-    this.setState({ txtNameValue: e.value });
-  };
-
-  txtFamily_onChange = (e) => {
-    this.setState({ txtFamilyValue: e.value });
-  };
-
-  txtMobile_onChange = (e) => {
-    this.setState({ txtMobileValue: e.value });
-  };
-
-  txtTarikhGhateHamkari_onChange = (e) => {
-    this.setState({ txtTarikhGhateHamkariValue: e.value });
-  };
-
-  txtElateGhateHamkari_onChange = (e) => {
-    this.setState({ txtElateGhateHamkariValue: e.value });
-  };
-
-  btnUpdate_onClick = async () => {
-    if (await this.fn_CheckValidation()) {
-      const data = {
-        id: this.state.RowSelected.id,
-        personalCode: this.state.txtPersonalCodeValue,
-        name: this.state.txtNameValue,
-        family: this.state.txtFamilyValue,
-        mobile: this.state.txtMobileValue,
-        tarikhGhateHamkari: this.state.txtTarikhGhateHamkariValue,
-        elateGhateHamkari: this.state.txtElateGhateHamkariValue,
-        isActive: this.state.chkIsActive,
-        locationId: this.state.LocationId,
-        positionId: this.state.PositionId,
-      };
-      const RESULT = await updatePerson(data, this.props.User.token);
-      this.setState({
-        ToastProps: {
-          isToastVisible: true,
-          Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
-          Type: RESULT > 0 ? "success" : "error",
-        },
-      });
-      this.fn_updateGrid();
-    }
-  };
-
-  onHidingToast = () => {
-    this.setState({ ToastProps: { isToastVisible: false } });
-  };
-
-  btnDelete_onClick = async () => {
-    const MSG = await deletePerson(
-      this.state.RowSelected.id,
-      this.props.User.token
-    );
+      title: e.target.value
+    })
+  }
+  // cambio el layout
+  BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
     this.setState({
-      ToastProps: {
-        isToastVisible: true,
-        Message: MSG,
-        Type: "success",
-      },
-    });
-    this.fn_updateGrid();
+      startDate: appointmentData.startDate,
+      endDate: appointmentData.endDate
+    })
+    return (
+      <textarea onChange={(e) => { this.handleChange(e) }} placeholder='توضیحات' style={{ marginRight: "20px", width: "400px" }} />
+    )
   };
+
+
 
   render() {
+    const { currentDate, data } = this.state;
+
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
         <Toast
@@ -294,251 +438,94 @@ class PersonShift extends React.Component {
         />
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
-            <Row>
-              <Label>اشخاص</Label>
-            </Row>
-            {this.state.stateDisable_btnAdd && (
-              <Row>
-                <Col xs="auto">
-                  <Button
-                    icon={PlusNewIcon}
-                    text="جدید"
-                    type="default"
-                    stylingMode="contained"
-                    rtlEnabled={true}
-                    onClick={this.btnNew_onClick}
-                  />
-                </Col>
-              </Row>
-            )}
-            <Row className="standardPadding">
-              <Col xs="auto">
-                <Label className="standardLabelFont">کد پرسنلی</Label>
-                <TextBox
-                  value={this.state.txtPersonalCodeValue}
-                  showClearButton={true}
-                  placeholder="کد پرسنلی"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtPersonalCode_onChange}
-                  disabled={this.state.stateDisable_txtPersonalCode}
-                />
-                <Row>
-                  <Label
-                    id="errPersonalCode"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">سمت</Label>
-                <SelectBox
-                  dataSource={this.state.Position}
-                  displayExpr="positionName"
-                  placeholder="سمت"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbPosition_onChange}
-                  value={this.state.PositionId}
-                />
-                <Row>
-                  <Label
-                    id="errPosition"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">محل</Label>
-                <SelectBox
-                  dataSource={this.state.Location}
-                  displayExpr="locationName"
-                  placeholder="محل"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbLocation_onChange}
-                  value={this.state.LocationId}
-                />
-                <Row>
-                  <Label
-                    id="errLocation"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">نام</Label>
-                <TextBox
-                  value={this.state.txtNameValue}
-                  showClearButton={true}
-                  placeholder="نام"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtName_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">نام خانوادگی</Label>
-                <TextBox
-                  value={this.state.txtFamilyValue}
-                  showClearButton={true}
-                  placeholder="نام خانوادگی"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtFamily_onChange}
-                />
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">شماره همراه</Label>
-                <TextBox
-                  value={this.state.txtMobileValue}
-                  showClearButton={true}
-                  placeholder="شماره همراه"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtMobile_onChange}
-                />
-              </Col>
-              <Row>
-                <Col xs="auto">
-                  <Label className="standardLabelFont">تاریخ قطع همکاری</Label>
-                  <TextBox
-                    value={this.state.txtTarikhGhateHamkariValue}
-                    showClearButton={true}
-                    placeholder="تاریخ قطع همکاری"
-                    rtlEnabled={true}
-                    valueChangeEvent="keyup"
-                    onValueChanged={this.txtTarikhGhateHamkari_onChange}
-                  />
-                </Col>
-                <Col xs="auto">
-                  <Label className="standardLabelFont">علت قطع همکاری</Label>
-                  <TextBox
-                    value={this.state.txtElateGhateHamkariValue}
-                    showClearButton={true}
-                    placeholder="علت قطع همکاری"
-                    rtlEnabled={true}
-                    valueChangeEvent="keyup"
-                    onValueChanged={this.txtElateGhateHamkari_onChange}
-                  />
-                </Col>
-              </Row>
-            </Row>
-            <Row>
-              <Col xs="auto">
-                <CheckBox
-                  value={this.state.chkIsActive}
-                  text="فعال"
-                  rtlEnabled={true}
-                  onValueChanged={this.chkIsActive_onChange}
-                />
-                <Row>
-                  <Label
-                    id="errPersonIsActive"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-            </Row>
-            {!this.state.stateUpdateDelete ? (
-              <Row>
-                {this.state.stateDisable_btnAdd && (
-                  <Col xs="auto">
-                    <Button
-                      icon={SaveIcon}
-                      text="ثبت"
-                      type="success"
-                      stylingMode="contained"
-                      rtlEnabled={true}
-                      onClick={this.btnAdd_onClick}
-                    />
-                  </Col>
-                )}
-              </Row>
-            ) : (
-              <Row className="standardSpaceTop">
-                <Row>
-                  {this.state.stateDisable_btnUpdate && (
-                    <>
-                      <Col xs="auto">
-                        <Button
-                          icon={UpdateIcon}
-                          text="ذخیره تغییرات"
-                          type="success"
-                          stylingMode="contained"
-                          rtlEnabled={true}
-                          onClick={this.btnUpdate_onClick}
-                        />
-                      </Col>
+            <Col width={6}>
+              <Paper>
+                <Scheduler
+                  data={data}
+                  height={630}
+                  locale={this.state.locale}
 
-                      <Col xs="auto">
-                        <Button
-                          icon={DeleteIcon}
-                          text="حذف"
-                          type="danger"
-                          stylingMode="contained"
-                          rtlEnabled={true}
-                          onClick={this.btnDelete_onClick}
-                        />
-                      </Col>
-                    </>
-                  )}
-                </Row>
-              </Row>
-            )}
-            <Row>
-              <Col>
-                <p
-                  id="ErrorUpdateCompany"
-                  style={{ textAlign: "right", color: "red" }}
-                ></p>
-              </Col>
-            </Row>
-          </Row>
-        </Card>
-        <p></p>
-        <Card className="shadow bg-white border pointer">
-          <Row className="standardPadding">
-            <Row>
-              <Label className="title">لیست اشخاص</Label>
-            </Row>
-            <Row>
-              <Col xs="auto" className="standardMarginRight">
-                <DataGrid
-                  dataSource={this.state.PersonGridData}
-                  defaultColumns={DataGridPersonColumns}
-                  showBorders={true}
-                  rtlEnabled={true}
-                  allowColumnResizing={true}
-                  onRowClick={this.grdPerson_onClickRow}
-                  height={DataGridDefaultHeight}
                 >
-                  <Scrolling
-                    rowRenderingMode="virtual"
-                    showScrollbar="always"
-                    columnRenderingMode="virtual"
+                  <ViewState
+                    currentDate={currentDate}
                   />
 
-                  <Paging defaultPageSize={DataGridDefaultPageSize} />
-                  <Pager
-                    visible={true}
-                    allowedPageSizes={DataGridPageSizes}
-                    showPageSizeSelector={true}
-                    showNavigationButtons={true}
+                  {/* <WeekView startDayHour={9} endDayHour={19} />  */}
+                  <MonthView
+                    dayScaleCellComponent={DayScaleCell}
                   />
-                  <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
-                </DataGrid>
-              </Col>
-            </Row>
+                  <EditingState
+                    onCommitChanges={this.commitChanges}
+                  />
+                  <IntegratedEditing />
+                  {/* <DayView
+                        startDayHour={9}
+                        endDayHour={19}
+                    /> */}
+                  <Toolbar
+                    flexibleSpaceComponent={FlexibleSpace}
+                  />
+                  <DateNavigator />
+                  <ConfirmationDialog />
+                  <Appointments
+                    appointmentComponent={Appointment}
+                    appointmentContentComponent={AppointmentContent} />
+                  <AppointmentTooltip
+                    showCloseButton
+                    //showOpenButton
+                    showDeleteButton
+                  />
+                  <AppointmentForm
+                    // readOnly={this.isNormalUser}
+                    basicLayoutComponent={this.BasicLayout}
+                  // booleanEditorComponent={this.BoolEditor}
+                  //  labelComponent={this.LabelComponent}
+                  //  textEditorComponent={this.InputComponent}               
+                  />
+                </Scheduler>
+              </Paper>
+            </Col>
+            <Col xs={5}>
+              <Row>
+                <Label className="title">لیست اشخاص</Label>
+              </Row>
+              <Row>
+                <Col xs="auto" className="standardMarginRight">
+                  <DataGrid
+                    dataSource={this.state.PersonGridData}
+                    defaultColumns={DataGridPersonColumns}
+                    showBorders={true}
+                    rtlEnabled={true}
+                    allowColumnResizing={true}
+                    onRowClick={this.grdPerson_onClickRow}
+                    height={DataGridDefaultHeight}
+                  >
+                    <Scrolling
+                      rowRenderingMode="virtual"
+                      showScrollbar="always"
+                      columnRenderingMode="virtual"
+                    />
+
+                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                    <Pager
+                      visible={true}
+                      allowedPageSizes={DataGridPageSizes}
+                      showPageSizeSelector={true}
+                      showNavigationButtons={true}
+                    />
+                    <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
+                  </DataGrid>
+                </Col>
+              </Row>
+            </Col>
           </Row>
         </Card>
       </div>
     );
   }
 }
+
 const mapStateToProps = (state) => ({
   User: state.users,
   Position: state.positions,

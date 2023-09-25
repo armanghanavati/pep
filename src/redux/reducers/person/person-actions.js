@@ -138,8 +138,8 @@ export async function SearchPersonById(personId, Token) {
   return null;
 }
 
-export async function searchPersonByLocationId(locationId, Token) {
-  const url = window.apiAddress + "/Person/searchPersonByLocationId?locationId=" + locationId;
+export async function searchPersonByLocationId(locationId, positionId, Token) {
+  const url = window.apiAddress + "/Person/searchPersonByLocationId?locationId=" + locationId + "&positionId=" + positionId;
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -150,6 +150,23 @@ export async function searchPersonByLocationId(locationId, Token) {
   const result = await response.json();
   if (result.status == "Success") {
     console.log("search person by locationId" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function searchPersonByUserId(userId, Token) {
+  const url = window.apiAddress + "/Person/searchPersonByUserId?userId=" + userId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("search person by userId" + JSON.stringify(result.data));
     return result.data;
   }
   return null;

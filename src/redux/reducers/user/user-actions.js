@@ -129,6 +129,7 @@ export async function roleAsignToUser(Object, Token) {
     body: JSON.stringify(Object),
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
     },
   });
   const result = await response.json();

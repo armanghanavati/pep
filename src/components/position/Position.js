@@ -99,7 +99,7 @@ class Position extends React.Component {
     this.setState({
       Position: await positionList(
         this.props.Company.currentCompanyId,
-        this.props.token
+        this.props.User.token
       ),
     });
   };
