@@ -21,6 +21,7 @@ import TextArea from "devextreme-react/text-area";
 import SelectBox from "devextreme-react/select-box";
 import { Button } from "devextreme-react/button";
 import AdapterJalali from "@date-io/date-fns-jalali";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import TextField from "@mui/material/TextField";
@@ -332,7 +333,7 @@ class RegisterSupplierOrderTime extends React.Component {
             <Row className="standardSpaceTop">
               <Col xs="auto">
                 <LocalizationProvider dateAdapter={AdapterJalali}>
-                  <DesktopDatePicker
+                  <DateTimePicker
                     label="از تاریخ"
                     value={this.state.FromDate}
                     onChange={this.DatePickerFrom_onChange}
@@ -348,7 +349,7 @@ class RegisterSupplierOrderTime extends React.Component {
               </Col>
               <Col xs="auto">
                 <LocalizationProvider dateAdapter={AdapterJalali}>
-                  <DesktopDatePicker
+                  <DateTimePicker
                     label="تا تاریخ"
                     value={this.state.ToDate}
                     onChange={this.DatePickerTo_onChange}
