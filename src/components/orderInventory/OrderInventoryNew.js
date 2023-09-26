@@ -39,6 +39,8 @@ class OrderInventoryNew extends React.Component{
             cmbLocationGroups:null,
             cmbLocation:null,
             cmbLocationValue:null,
+            cmbInventory:null,
+            cmbInventoryvalue:null,
             cmbItemGroup:null,
             cmbItemGroupValue:null,
             cmbItems:null,
@@ -63,6 +65,7 @@ class OrderInventoryNew extends React.Component{
 
     fn_CheckRequireState = async () => {            
         this.setState({      
+            cmbInventory:this.props.Inventory.inventoryCombo,
             cmbLocationGroups:
                     this.props.isOutRoute ? 
                         await locationListOrderInventoryComboNewOutRoute(this.props.Company.currentCompanyId,this.props.User.token)
@@ -92,6 +95,10 @@ class OrderInventoryNew extends React.Component{
             cmbSupplierValue:null,
             cmbItemGroup:await itemGroupListCombo(this.props.User.token)
         })        
+    }
+
+    cmbInventory_onChange=async(e)=>{
+        this.setState({cmbInventoryvalue:e})
     }
 
     cmbItemGroup_onChange=async(e)=>{
@@ -145,11 +152,17 @@ class OrderInventoryNew extends React.Component{
         document.getElementById("errItem").innerHTML = ""; 
         document.getElementById("errSupplier").innerHTML = ""; 
         document.getElementById("errOrderNumber").innerHTML = ""; 
+        document.getElementById("errInventory").innerHTML = "";  
         if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
             const msg= "فروشگاه را انتخاب نمائید.";
             document.getElementById("errLocation").innerHTML = msg; 
             flagSend = false;
         }
+        if (this.state.cmbInventoryvalue === null  || this.state.cmbInventoryvalue == "") {
+            const msg= " انبار را انتخاب نمائید.";
+            document.getElementById("errInventory").innerHTML = msg; 
+            flagSend = false;
+          }
         if (this.state.cmbItemValue == null  || this.state.cmbItemValue == "") {
             const msg= "کالا را انتخاب نمائید.";
             document.getElementById("errItem").innerHTML = msg; 
@@ -184,12 +197,13 @@ class OrderInventoryNew extends React.Component{
         if(flag_insert){
             let data = {
                 locationId: this.state.cmbLocationValue,
+                inventoryId:this.state.cmbInventoryvalue,
                 supplierId: this.state.cmbSupplierValue,
                 itemId: this.state.cmbItemValue,
                 numberOrder: this.state.txtOrderNumberValue,
                 userId: this.props.User.userId
             }
-            alert(JSON.stringify(await insertNewDataOrderPointInventory(data,this.props.User.userId)))
+            alert(JSON.stringify(await insertNewDataOrderPointInventory(data,this.props.User.token)))
         }        
     }
 
@@ -222,6 +236,19 @@ class OrderInventoryNew extends React.Component{
                             onValueChange={this.cmbLocation_onChange}
                         />
                         <Label id="errLocation" className="standardLabelFont errMessage" />
+                    </Col>
+                    <Col>
+                        <Label className="standardLabelFont">انبار</Label>
+                        <SelectBox
+                        dataSource={this.state.cmbInventory}
+                        searchEnabled={true}
+                        displayExpr="label"
+                        placeholder="انبار"
+                        valueExpr="id"
+                        rtlEnabled={true}
+                        onValueChange={this.cmbInventory_onChange}
+                        />
+                        <Label id="errInventory" className="standardLabelFont errMessage" />
                     </Col>
                 </Row>      
                 <Row>
@@ -319,7 +346,8 @@ const mapStateToProps = (state) => ({
     Supplier: state.suppliers,
     Item: state.items,
     ItemGroup:state.itemGroups,
-    Company: state.companies,    
+    Company: state.companies,   
+    Inventory: state.inventories, 
   });
   
 export default connect(mapStateToProps)(OrderInventoryNew);

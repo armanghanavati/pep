@@ -1,5 +1,6 @@
-import React from "react";
+import React,{ Suspense } from "react";
 import { connect } from "react-redux";
+import DataSource from "devextreme/data/data_source";
 import {
   Row,
   Col,
@@ -63,6 +64,7 @@ import { itemActions } from "../../redux/reducers/item/item-slice";
 import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-slice";
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
+import { inventoryActions } from "../../redux/reducers/inventory/inventory-slice";
 
 import {
   itemListCombo,
@@ -79,6 +81,7 @@ import {
   logsOPITodayListByUserId,
   logsOPIByOPIid,
 } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
+import { inventoryComboListByCompanyId } from "../../redux/reducers/inventory/inventory-actions";
 
 import {
   Gfn_BuildValueComboMulti,
@@ -105,8 +108,11 @@ class OrderInventory extends React.Component {
       cmbLocation: null,
       cmbLocationValue: null,
       cmbSupplier: null,
+      cmbInventory:null,
+      cmbInventoryvalue:null,
       cmbSupplierValue: null,
       cmbItems: null,
+      cmItemsOrg:null,
       cmbItemsValue: null,
       OrderInventoryGridData: null,
       OrderPointInventoryEdited: [],
@@ -120,7 +126,7 @@ class OrderInventory extends React.Component {
       stateModal_OrderInventoryNew: false,
       stateModal_OrderInventoryNewGroup: false,
       stateModal_LogsOfOPI:false,
-      isOutRoute:false,
+      isOutRoute:false,      
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -189,11 +195,19 @@ class OrderInventory extends React.Component {
       })
     );
 
+    const INV_REQ_OBJ={
+      companyId:this.props.Company.currentCompanyId,
+      inventoryTypeCode:'01'
+    }
+    const inventoryCombo= await inventoryComboListByCompanyId(INV_REQ_OBJ,this.props.User.token);
+    this.props.dispatch(inventoryActions.setInventoryCombo({inventoryCombo}));
+
     this.setState({      
       cmbSupplier: await supplierOrderInventoryComboList(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
+      cmbInventory:inventoryCombo
     });
   };
 
@@ -223,65 +237,41 @@ class OrderInventory extends React.Component {
     this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(data) });
   };
 
+  cmbInventory_onChange=async(e)=>{
+    this.setState({cmbInventoryvalue:e});
+  }
+
   cmbSupplier_onChange = async (e) => {
     let data=await Gfn_ConvertComboForAll(e,this.state.cmbSupplier)  
     const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data)
     
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
-      cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),
+      // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      
     });
+    const ITEMS=TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token);
+    const LAZY=new DataSource({
+      store: ITEMS,
+      paginate:true,
+      pageSize:10
+    })
+    this.setState({
+      cmbItems:LAZY,
+      cmbItemsOrg:ITEMS
+    })
   };
 
   cmbItem_onChange = async (e) => {   
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItems)
+    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
     this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
   };
 
-  btnSearch_onClick = async () => {    
-    // let tempLocationGroupValue = this.state.cmbLocationGroupValue;
-    // if (
-    //   this.state.cmbLocationGroupValue == null ||
-    //   this.state.cmbLocationGroupValue == ""
-    // ) {
-    //   tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
-    //     this.props.Location.locationPermission
-    //   );
-    //   this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
-    // }
-
-    // let tempLocationValue = this.state.cmbLocationValue;
-    // if (
-    //   this.state.cmbLocationValue == null ||
-    //   this.state.cmbLocationValue == ""
-    // ) {
-    //   tempLocationValue = await Gfn_BuildValueComboSelectAll(
-    //     this.state.cmbLocation
-    //   );
-    //   this.setState({ cmbLocationValue: tempLocationValue });
-    // }
-
-    // let tempSupplierValue = this.state.cmbSupplierValue;
-    // if (
-    //   this.state.cmbSupplierValue == null ||
-    //   this.state.cmbSupplierValue == ""
-    // ) {
-    //   tempSupplierValue = await Gfn_BuildValueComboSelectAll(
-    //     this.state.cmbSupplier
-    //   );
-    //   this.setState({ cmbSupplierValue: tempSupplierValue });
-    // }
-
-    // let tempItemValue = this.state.cmbItemsValue;
-    // if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {
-    //   tempItemValue = await Gfn_BuildValueComboSelectAll(this.state.cmbItems);
-    //   this.setState({ cmbItemsValue: tempItemValue });
-    // }
-
+  btnSearch_onClick = async () => {        
     let flagSend = true;
     document.getElementById("errLocation").innerHTML = ""; 
     document.getElementById("errItem").innerHTML = ""; 
     document.getElementById("errSupplier").innerHTML = "";     
+    document.getElementById("errInventory").innerHTML = "";     
     if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
         const msg= "فروشگاه را انتخاب نمائید.";
         document.getElementById("errLocation").innerHTML = msg; 
@@ -300,12 +290,19 @@ class OrderInventory extends React.Component {
       flagSend = false;
     }
 
+    if (this.state.cmbInventoryvalue === null  || this.state.cmbInventoryvalue == "") {
+      const msg= " انبار را انتخاب نمائید.";
+      document.getElementById("errInventory").innerHTML = msg; 
+      flagSend = false;
+    }
+
     if(flagSend){
       this.OpenCloseWait();
       const OBJ = {
         locationIds: this.state.cmbLocationValue,
         supplierIds: this.state.cmbSupplierValue,
         itemIds: this.state.cmbItemsValue,
+        inventoryId:this.state.cmbInventoryvalue,
       };
       // alert(JSON.stringify(OBJ))
       this.setState({
@@ -542,6 +539,19 @@ class OrderInventory extends React.Component {
                 <Label id="errLocation" className="standardLabelFont errMessage" />
               </Col>
               <Col>
+                <Label className="standardLabelFont">انبار</Label>
+                <SelectBox
+                  dataSource={this.state.cmbInventory}
+                  searchEnabled={true}
+                  displayExpr="label"
+                  placeholder="انبار"
+                  valueExpr="id"
+                  rtlEnabled={true}
+                  onValueChange={this.cmbInventory_onChange}
+                />
+                <Label id="errInventory" className="standardLabelFont errMessage" />
+              </Col>
+              <Col>
                 <Label className="standardLabelFont">تامین کننده</Label>
                 <TagBox
                   dataSource={this.state.cmbSupplier}
@@ -556,15 +566,18 @@ class OrderInventory extends React.Component {
               </Col>
               <Col>
                 <Label className="standardLabelFont">کالا</Label>
+                <Suspense fallback={<div>Loading</div>}>
                 <TagBox
                   dataSource={this.state.cmbItems}
                   searchEnabled={true}
                   displayExpr="label"
                   placeholder="کالا"
                   valueExpr="id"
+                  
                   rtlEnabled={true}
                   onValueChange={this.cmbItem_onChange}
                 />
+                </Suspense>
                 <Label id="errItem" className="standardLabelFont errMessage" />
               </Col>
             </Row>

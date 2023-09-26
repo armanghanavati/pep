@@ -14,7 +14,7 @@ export async function authUser(Object, Token) {
   }
   return null;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function checkPermission(permissions, permissionValue) {
   // permissions=this.props.User.permissions!=null && this.props.User.permissions.find(({ value }) => value === permissionValue)
   console.log(JSON.stringify(permissions));
@@ -28,7 +28,7 @@ export async function checkPermission(permissions, permissionValue) {
   const rtn = result == null ? false : true;
   return rtn;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function userList(Token) {
   const url = window.apiAddress + "/User/userList";
   const response = await fetch(url, {
@@ -45,7 +45,7 @@ export async function userList(Token) {
   }
   return null;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function addUser(Object, Token) {
   const url = window.apiAddress + "/User/addUser";
   const response = await fetch(url, {
@@ -64,7 +64,7 @@ export async function addUser(Object, Token) {
   }
   return null;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function updateUser(Object, Token) {
   const url = window.apiAddress + "/User/updateUser";
   const response = await fetch(url, {
@@ -82,7 +82,7 @@ export async function updateUser(Object, Token) {
   }
   return 0;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function deleteUser(userId, Token) {
   const url = window.apiAddress + "/User/deleteUser?userId=" + userId;
   const response = await fetch(url, {
@@ -99,7 +99,7 @@ export async function deleteUser(userId, Token) {
   }
   return 0;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function userLocationList(userId, companyId, Token) {
   const url =
     window.apiAddress +
@@ -121,6 +121,7 @@ export async function userLocationList(userId, companyId, Token) {
   }
   return null;
 }
+// --------------------------------------------------------------------------------------------
 
 export async function roleAsignToUser(Object, Token) {
   const url = window.apiAddress + "/User/roleAsignToUser";
@@ -139,7 +140,7 @@ export async function roleAsignToUser(Object, Token) {
   }
   return null;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function userRoleList(userId, Token) {
   const url = window.apiAddress + "/User/userRoleList?userId=" + userId;
   const response = await fetch(url, {
@@ -156,7 +157,7 @@ export async function userRoleList(userId, Token) {
   }
   return null;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function removeRoleFromUser(userId, roleName, Token) {
   const url =
     window.apiAddress +
@@ -178,7 +179,7 @@ export async function removeRoleFromUser(userId, roleName, Token) {
   }
   return 0;
 }
-
+// --------------------------------------------------------------------------------------------
 export async function removeRoleListFromUser(userId, object, Token) {
   const url =
     window.apiAddress + "/User/removeRoleListFromUser?userId=" + userId;

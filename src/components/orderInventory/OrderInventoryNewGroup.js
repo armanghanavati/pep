@@ -65,6 +65,8 @@ class OrderInventoryNewGroup extends React.Component {
       cmbLocationGroups:null,
       cmbSuppliers: null,
       cmbSupplierValue: null,
+      cmbInventory:null,
+      cmbInventoryvalue:null,
       cmbLocation: null,
       cmbLocationValue: null,
       ItemsGridData: null,
@@ -82,8 +84,7 @@ class OrderInventoryNewGroup extends React.Component {
   }
 
   fn_CheckRequireState = async () => {
-    this.setState({
-      cmbSuppliers: await activeSupplierComboList(this.props.User.token),
+    this.setState({      
       cmbLocationGroups:  locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token),
     });
   };
@@ -102,6 +103,13 @@ class OrderInventoryNewGroup extends React.Component {
   cmbLocation_onChange = async (e) => {
     this.setState({ cmbLocationValue: e, cmbSupplierValue: null });
   };
+
+  cmbInventory_onChange=async(e)=>{
+    this.setState({
+      cmbInventoryvalue:e,
+      cmbSuppliers: await activeSupplierComboList(this.props.User.token),
+    })
+  }
 
   cmbSupplier_onChange = async (e) => {
     const OBJ = {
@@ -142,6 +150,7 @@ class OrderInventoryNewGroup extends React.Component {
     if (flagPush) {
       let temp = {
         LocationId: this.state.cmbLocationValue,
+        InventoryId: this .state.cmbInventoryvalue,
         SupplierId: this.state.cmbSupplierValue,
         ItemId: params.oldData.id,
         NumberOrder: parseInt(params.newData.order),
@@ -189,6 +198,19 @@ class OrderInventoryNewGroup extends React.Component {
               onValueChange={this.cmbLocation_onChange}
             />
             <Label id="errLocation" className="standardLabelFont errMessage" />
+          </Col>
+          <Col>
+              <Label className="standardLabelFont">انبار</Label>
+              <SelectBox
+              dataSource={this.state.cmbInventory}
+              searchEnabled={true}
+              displayExpr="label"
+              placeholder="انبار"
+              valueExpr="id"
+              rtlEnabled={true}
+              onValueChange={this.cmbInventory_onChange}
+              />
+              <Label id="errInventory" className="standardLabelFont errMessage" />
           </Col>
           <Col>
             <Label className="standardLabelFont">تامین کننده</Label>

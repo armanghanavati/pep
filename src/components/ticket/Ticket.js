@@ -115,7 +115,7 @@ class Ticket extends React.Component {
 
 
     fn_LoadAllTickets=async()=>{        
-        const rtn=await getAllUserInsertTicket(this.props.User.userId,"ffd");
+        const rtn=await getAllUserInsertTicket(this.props.User.userId,this.props.User.token);
         this.setState({
             AllTickets:rtn
         })        
@@ -123,13 +123,13 @@ class Ticket extends React.Component {
     }
 
     fn_TicketPriorityData= async () =>{
-        const ticketPriority=await fetchTicketPriorityData();
+        const ticketPriority=await fetchTicketPriorityData(this.props.User.token);
         this.props.dispatch(ticketPriorityActions.setTicketPriority({
             ticketPriority
         }))
     }
     fn_TicketSubjectData= async () =>{
-        const allTicketSubjects=await fetchTicketSubjectData();
+        const allTicketSubjects=await fetchTicketSubjectData(this.props.User.token);
         let parentTicketSubjects=[];   
         allTicketSubjects.forEach((item)=>{
             if(item.parentId==null)
@@ -220,7 +220,7 @@ class Ticket extends React.Component {
                 applicationUserId: this.props.User.userId
             }
             // alert(JSON.stringify(obj))
-            var result=await RegisterNewTicket(obj,"kjhkjh");
+            var result=await RegisterNewTicket(obj,this.props.User.token);
             const rtnAllTicket=await this.fn_LoadAllTickets();        
             this.setState({
                 stateModalNewTicket:false,
@@ -253,7 +253,7 @@ class Ticket extends React.Component {
             ticketId: e.data.id,
             ticketStatusId :5             
         }  
-        const ticketExecuters= await getTicketExecuters(e.data.id);
+        const ticketExecuters= await getTicketExecuters(e.data.id,this.props.User.token);
         // const test=ticketExecuters.find(field=>field.userIdExec==this.props.User.userId).userIdExec;
         let tempUserNameExec=null;
         let tempUserIdExec=null;
@@ -266,11 +266,11 @@ class Ticket extends React.Component {
 
         
         if(this.props.User.userId == tempUserIdExec && e.data.ticketStatusId == 1){
-            await updateTicket(objStatus,"sd");
+            await updateTicket(objStatus,this.props.User.token);
             const rtnAllTicket= await this.fn_LoadAllTickets();                               
         }
              
-        const tickectDetail=await getTicketDetail(e.data.id);        
+        const tickectDetail=await getTicketDetail(e.data.id,this.props.User.token);        
         
         const obj={
             AttachmentId:e.data.id
@@ -338,7 +338,7 @@ class Ticket extends React.Component {
             applicationUserId: this.props.User.userId
         }
         // alert(JSON.stringify(obj))
-        const NewCommnet=await RegisterNewTicket(obj,"kjhkjh");
+        const NewCommnet=await RegisterNewTicket(obj,this.props.User.token);
 
         const tempTicketDetial=this.state.TicketDetail;
         tempTicketDetial.push(NewCommnet);
@@ -396,7 +396,7 @@ class Ticket extends React.Component {
                 Type:"success",
             }
         })
-        await updateTicket(obj,"sd");
+        await updateTicket(obj,this.props.User.token);
         const rtnAllTicket=await this.fn_LoadAllTickets();                   
         this.tabTickets_onChange('2',rtnAllTicket)
     }
@@ -414,7 +414,7 @@ class Ticket extends React.Component {
                 Type:"success",
             }
         })
-        await updateTicket(obj,"sd");
+        await updateTicket(obj,this.props.User.token);
         const rtnAllTicket=await this.fn_LoadAllTickets();                   
         this.tabTickets_onChange('4',rtnAllTicket)
     }
