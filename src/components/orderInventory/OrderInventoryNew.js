@@ -203,7 +203,7 @@ class OrderInventoryNew extends React.Component{
                 numberOrder: this.state.txtOrderNumberValue,
                 userId: this.props.User.userId
             }
-            alert(JSON.stringify(await insertNewDataOrderPointInventory(data,this.props.User.userId)))
+            alert(JSON.stringify(await insertNewDataOrderPointInventory(data,this.props.User.token)))
         }        
     }
 

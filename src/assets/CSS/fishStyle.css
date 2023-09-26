@@ -7,13 +7,13 @@ table {
   color: black !important;  
 }
 
-td, th {
+/* td, th {
   border: 1px solid #964141;
   padding-left: 0px !important;
   padding-right: 0px !important;
   padding-top: 0px !important;
   padding-bottom: 0px !important;  
-}
+} */
 
 tr:nth-child(even) {
   background-color: #f5dede;

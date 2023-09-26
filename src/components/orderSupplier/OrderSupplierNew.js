@@ -195,7 +195,7 @@ class OrderSupplierNew extends React.Component{
                 giftQTYOrder:this.state.txtGiftNumberValue,
                 userId: this.props.User.userId
             }
-            alert(JSON.stringify(await insertNewDataOrderPointSupplier(data,this.props.User.userId)))
+            alert(JSON.stringify(await insertNewDataOrderPointSupplier(data,this.props.User.token)))
         }        
     }
 

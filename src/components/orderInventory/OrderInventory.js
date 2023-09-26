@@ -112,6 +112,7 @@ class OrderInventory extends React.Component {
       cmbInventoryvalue:null,
       cmbSupplierValue: null,
       cmbItems: null,
+      cmItemsOrg:null,
       cmbItemsValue: null,
       OrderInventoryGridData: null,
       OrderPointInventoryEdited: [],
@@ -248,17 +249,20 @@ class OrderInventory extends React.Component {
       cmbSupplierValue: TEMP_cmbSupplier,
       // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      
     });
-
+    const ITEMS=TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token);
     const LAZY=new DataSource({
-      store: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),
+      store: ITEMS,
       paginate:true,
       pageSize:10
     })
-    this.setState({cmbItems:LAZY})
+    this.setState({
+      cmbItems:LAZY,
+      cmbItemsOrg:ITEMS
+    })
   };
 
   cmbItem_onChange = async (e) => {   
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItems)
+    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
     this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
   };
 
