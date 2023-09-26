@@ -675,9 +675,8 @@ class PersonShift extends React.PureComponent {
   };
 
   commitChanges = ({ added, changed, deleted }) => {
-    alert(deleted)
     this.setState((state) => {
-      let { data } = state.data;
+      let { data } = state;
       if (added) {
         if (this.state.RowSelected == null) {
           alert("لطفا شخص را انتخاب نمایید")
