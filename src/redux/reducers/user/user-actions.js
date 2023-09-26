@@ -29,8 +29,8 @@ export async function checkPermission(permissions, permissionValue) {
   return rtn;
 }
 
-export async function userList(companyId, Token) {
-  const url = window.apiAddress + "/User/userList?companyId=" + companyId;
+export async function userList(Token) {
+  const url = window.apiAddress + "/User/userList";
   const response = await fetch(url, {
     method: "GET",
     headers: {

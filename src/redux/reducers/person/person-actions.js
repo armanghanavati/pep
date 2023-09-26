@@ -172,3 +172,56 @@ export async function searchPersonByUserId(userId, Token) {
   return null;
 }
 
+export async function addShift(Object, Token) {
+  const url = window.apiAddress + "/Shift/addShift";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(Object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("RESULT OF ADD NEW shift=" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function shiftList(personId, Token) {
+  const url = window.apiAddress + "/Shift/shiftList?personId=" + personId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("shift list" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function deleteShift(shiftId, Token) {
+  const url = window.apiAddress + "/Shift/deleteShift?shiftId=" + shiftId;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("Shift delete result=" + JSON.stringify(result.data));
+    return result.message;
+  }
+  return 0;
+}
+

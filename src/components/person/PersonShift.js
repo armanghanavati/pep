@@ -55,6 +55,9 @@ import {
   searchPersonByUserId,
   searchPersonByLocationId,
   deletePerson,
+  shiftList,
+  addShift,
+  deleteShift,
 } from "../../redux/reducers/person/person-actions";
 import { Person } from "../../components/person/Person"
 import DataGrid, {
@@ -76,15 +79,14 @@ import DataGrid, {
 import { locale } from 'devextreme/localization';
 import { TextBox } from 'devextreme-react';
 //import { appointments } from '../../../demo-data/appointments';
-var appointments = [
-  {
-    id: 1,
-    title: "تست برنامه",
-    startDate: "2023-09-19T15:24",
-    endDate: "2023-09-19T15:25",
-    allDay: true
-  },
-]
+// var appointments = [
+//   {
+//     id: 1,
+//     title: "تست برنامه",
+//     startDate: "2023-09-24T15:24",
+//     endDate: "2023-09-24T15:25",
+//   },
+// ]
 const PREFIX = 'Demo';
 
 const classes = {
@@ -114,8 +116,8 @@ const classes = {
 };
 
 const getBorder = theme => (`1px solid ${theme.palette.mode === 'light'
-    ? lighten(alpha(theme.palette.divider, 1), 0.88)
-    : darken(alpha(theme.palette.divider, 1), 0.68)
+  ? lighten(alpha(theme.palette.divider, 1), 0.88)
+  : darken(alpha(theme.palette.divider, 1), 0.68)
   }`);
 
 const DayScaleCell = props => (
@@ -299,7 +301,7 @@ class PersonShift extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: appointments,
+      data: [],
       currentDate: new Date(),
       locale: "fa-IR",
       stateDisable_show: false,
@@ -352,7 +354,11 @@ class PersonShift extends React.Component {
     this.setState((state) => {
       let { data } = state;
       if (added) {
-        const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
+        if (this.state.RowSelected == null) {
+          alert("لطفا شخص را انتخاب نمایید")
+          return;
+        }
+        const startingAddedId = data.id; //data.length > 0 ? data[data.length - 1].id + 1 : 0;
         data = [...data, {
           id: startingAddedId,
           title: this.state.title,
@@ -360,6 +366,12 @@ class PersonShift extends React.Component {
           endDate: this.state.endDate
         }];
         //data = [...data, { id: startingAddedId, ...added }];
+        var object = {
+          personId: this.state.RowSelected.id,
+          shift: this.state.title,
+          Date: this.state.endDate,
+        }
+        addShift(object, this.props.User.token)
       }
       if (changed) {
         data = data.map(appointment => (
@@ -367,6 +379,7 @@ class PersonShift extends React.Component {
       }
       if (deleted !== undefined) {
         data = data.filter(appointment => appointment.id !== deleted);
+        deleteShift(deleted, this.props.User.token);
       }
       return { data };
 
@@ -416,11 +429,21 @@ class PersonShift extends React.Component {
       endDate: appointmentData.endDate
     })
     return (
-      <textarea onChange={(e) => { this.handleChange(e) }} placeholder='توضیحات' style={{ marginRight: "20px", width: "400px" }} />
+      <>
+        <label>برای شیفت صبح عدد 1 و برای شیفت بعداز</label>
+        <textarea onChange={(e) => { this.handleChange(e) }} placeholder='توضیحات' style={{ marginRight: "20px", width: "400px", marginTop: "40px" }} />
+      </>
     )
   };
 
-
+  grdPerson_onClickRow = async (e) => {
+    var shifts = await shiftList(e.data.id, this.props.User.token)
+    this.setState({
+      data: shifts,
+      stateUpdateDelete: true,
+      RowSelected: e.data,
+    });
+  }
 
   render() {
     const { currentDate, data } = this.state;

@@ -126,7 +126,6 @@ class User extends React.Component {
     if (this.state.stateDisable_show)
       this.setState({
         UserGridData: await userList(
-          this.props.Company.currentCompanyId,
           this.props.User.token
         ),
       });
