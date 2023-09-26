@@ -15,6 +15,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
+import { locale } from "devextreme/localization";
 import classnames from "classnames";
 import TextBox from "devextreme-react/text-box";
 import TextArea from "devextreme-react/text-area";
@@ -33,6 +34,7 @@ import {
   positionApproveOrderTime,
   addPositionApproveOrderTime,
 } from "../../redux/reducers/positionApproveOrderTime/positionApproveOrderTime-actions";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import {
   ToastTime,
   ToastWidth,
@@ -56,6 +58,7 @@ import DeleteIcon from "../../assets/images/icon/delete.png";
 class RegisterOrderTime extends React.Component {
   constructor(props) {
     super(props);
+    locale(navigator.language);
     this.state = {
       LocationList: null,
       LocationId: null,
@@ -156,7 +159,7 @@ class RegisterOrderTime extends React.Component {
     }
     if (this.state.PositionId == null) {
       document.getElementById("errPosition").innerHTML =
-        "سمت را وارد انتخاب نمایید";
+        "سمت را انتخاب نمایید";
       flag = false;
     }
 
@@ -168,21 +171,20 @@ class RegisterOrderTime extends React.Component {
 
     if (this.state.ToDate == null) {
       document.getElementById("errEndDate").innerHTML =
-      "تا تاریخ را وارد  نمایید";
+        "تا تاریخ را وارد  نمایید";
       flag = false;
     }
     return flag;
   };
 
-  btnAdd_onClick = async () => {
+  btnAdd_onClick = async () =>  {
     if (await this.fn_CheckValidation()) {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
-        startDate: this.state.FromDate,
-        endDate: this.state.ToDate,
+        startDate: this.addHours(this.state.FromDate, 3, 30),
+        endDate:  this.addHours(this.state.ToDate, 3, 30),
       };
-      alert(data)
       const RESULT = await addPositionApproveOrderTime(
         data,
         this.props.User.token
@@ -197,12 +199,18 @@ class RegisterOrderTime extends React.Component {
     }
   };
 
+   addHours=(date, hours, minutes)=> {
+    date.setHours(date.getHours() + hours);
+    date.setMinutes(date.getMinutes() + minutes);
+    return date;
+  }
+
   DatePickerFrom_onChange = (params) => {
-    this.setState({ FromDate: params, FromDateapi: Gfn_DT2StringSql(params) });
+    this.setState({ FromDate: params});
   };
 
   DatePickerTo_onChange = (params) => {
-    this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) });
+    this.setState({ ToDate: params });
   };
 
   onHidingToast = () => {
@@ -281,7 +289,7 @@ class RegisterOrderTime extends React.Component {
             <Row className="standardSpaceTop">
               <Col xs="auto">
                 <LocalizationProvider dateAdapter={AdapterJalali}>
-                  <DesktopDatePicker
+                  <DateTimePicker
                     label="از تاریخ"
                     value={this.state.FromDate}
                     onChange={this.DatePickerFrom_onChange}
@@ -297,7 +305,7 @@ class RegisterOrderTime extends React.Component {
               </Col>
               <Col xs="auto">
                 <LocalizationProvider dateAdapter={AdapterJalali}>
-                  <DesktopDatePicker
+                  <DateTimePicker
                     label="تا تاریخ"
                     value={this.state.ToDate}
                     onChange={this.DatePickerTo_onChange}

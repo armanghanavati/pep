@@ -206,8 +206,8 @@ class RegisterSupplierOrderTime extends React.Component {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
         supplierId:this.state.SupplierId,
-        startDate: this.state.FromDate,
-        endDate: this.state.ToDate,
+        startDate: this.addHours(this.state.FromDate, 3, 30),
+        endDate: this.addHours(this.state.ToDate, 3, 30)
       };
       const RESULT = await addPositionSupplierApproveOrderTime(
         data,
@@ -223,12 +223,18 @@ class RegisterSupplierOrderTime extends React.Component {
     }
   };
 
+  addHours=(date, hours, minutes)=> {
+    date.setHours(date.getHours() + hours);
+    date.setMinutes(date.getMinutes() + minutes);
+    return date;
+  }
+
   DatePickerFrom_onChange = (params) => {
-    this.setState({ FromDate: params, FromDateapi: Gfn_DT2StringSql(params) });
+    this.setState({ FromDate: params});
   };
 
   DatePickerTo_onChange = (params) => {
-    this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) });
+    this.setState({ ToDate: params });
   };
 
   onHidingToast = () => {
