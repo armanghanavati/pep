@@ -19,7 +19,6 @@ window.apiAddress="http://172.16.1.186/api";
 //  window.siteAddress="http://coapp:9191";
 // window.siteAddress="http://localhost:7142";
 window.siteAddress = "http://172.16.1.40:2884";
-// window.siteAddress="http://172.16.1.186/api"; 
 
 window.confirmPayment = "http://172.16.1.40:2884/api";
 //  window.confirmPayment="http://localhost:7142/api"
