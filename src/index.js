@@ -12,14 +12,17 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
 // window.apiAddress="http://coapp:9191/api";
-window.apiAddress="http://172.16.1.40:2884/api"; 
+// window.apiAddress="http://172.16.1.40:2884/api"; 
+window.apiAddress="http://172.16.1.186/api"; 
 //  window.apiAddress="http://localhost:7142/api"; 
 
 //  window.siteAddress="http://coapp:9191";
 // window.siteAddress="http://localhost:7142";
-window.siteAddress = "http://172.16.1.40:2884";
+// window.siteAddress = "http://172.16.1.40:2884";
+window.siteAddress="http://172.16.1.186/api"; 
 
-window.confirmPayment = "http://172.16.1.40:2884/api";
+// window.confirmPayment = "http://172.16.1.40:2884/api";
+window.confirmPayment="http://172.16.1.186/api"; 
 //  window.confirmPayment="http://localhost:7142/api"
 
 // const store = createStore(rootReducer);
