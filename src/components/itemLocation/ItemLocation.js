@@ -73,6 +73,7 @@ import {
 } from "../../redux/reducers/itemLocation/itemLocation-actions";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
+import { inventoryComboListByCompanyId } from "../../redux/reducers/inventory/inventory-actions";
 import {
   supplierListComboByCompanyId,
   supplierOrderInventoryComboList,
@@ -133,6 +134,8 @@ class ItemLocation extends React.Component {
       ItemsListUpdated: [],
       InventoryList: null,
       InventoryIds: null,
+      cmbInventory:null,
+      cmbInventoryvalue:null,
     };
   }
 
@@ -141,6 +144,7 @@ class ItemLocation extends React.Component {
     this.fn_locationList();
     await this.fn_supplierList();
     this.fn_itemGroupList();
+    this.fn_inventoryList();
   }
 
   fn_locationList = async () => {
@@ -161,6 +165,16 @@ class ItemLocation extends React.Component {
       ),
     });
   };
+ 
+  fn_inventoryList=async()=>{
+    const INV_REQ_OBJ={
+      companyId:this.props.Company.currentCompanyId,
+      inventoryTypeCode:'01'
+    }
+    this.setState({
+      cmbInventory: await inventoryComboListByCompanyId(INV_REQ_OBJ,this.props.User.token)
+    })
+  }
 
   fn_itemGroupList = async () => {
     this.setState({
@@ -205,30 +219,15 @@ class ItemLocation extends React.Component {
   };
 
   cmbLocation_onChange = async (e) => {
-    let tempInventory = [];
-    this.setState({
-      InventoryList: null,
-    });
-    const IDS = e.toString().split(",");
-    var data = {
-      locationId: e,
-    };
-
-    const TEMP_INVENTORY = await inventoryListByLocationId(
-      data,
-      this.props.User.token
-    );
-    if (TEMP_INVENTORY == null) return;
-
-    for (let i = 0; i < IDS.length; i++)
-      for (let j = 0; j < TEMP_INVENTORY.length; j++)
-        if (IDS[i] == TEMP_INVENTORY[j].locationId)
-          tempInventory.push(TEMP_INVENTORY[j]);
     this.setState({
       LocationIds: e,
-      InventoryList: tempInventory,
-    });
+    })
+      
   };
+
+  cmbInventory_onChange=async(e)=>{
+    this.setState({cmbInventoryvalue:e});
+  }
 
   cmbSupplier_onChange = async (e) => {
     var data = await Gfn_BuildValueComboMulti(e);
@@ -286,7 +285,7 @@ class ItemLocation extends React.Component {
       itemId: this.state.ItemId,
       supplierId: this.state.SupplierId,
       itemGroupId: this.state.ItemGroupId,
-      inventoryIds: this.state.InventoryIds,
+      inventoryId:this.state.cmbInventoryvalue,
     };
     var RESULT = 0;
     RESULT = await itemLocationList(data, this.props.User.token);
@@ -381,12 +380,6 @@ class ItemLocation extends React.Component {
     console.log(JSON.stringify(tempItems));
   }
 
-  cmbInventory_onChange = (e) => {
-    this.setState({
-      InventoryIds: e,
-    });
-  };
-
   grdItemLocation_onUpdateRow = (params) => {
     let tempItems = [];
     if (!this.state.flagSelectAll) tempItems = this.state.ItemsListUpdated;
@@ -468,6 +461,7 @@ class ItemLocation extends React.Component {
     Gfn_ExportToExcel(this.state.OrderInventoryGridData, "OrderInventory");
   };
 
+ 
   render() {
     locale("fa-IR");
     return (
@@ -520,15 +514,16 @@ class ItemLocation extends React.Component {
               </Col>
               <Col xs={3}>
                 <Label className="standardLabelFont">انبار</Label>
-                <TagBox
-                  dataSource={this.state.InventoryList}
+                <SelectBox
+                  dataSource={this.state.cmbInventory}
                   searchEnabled={true}
-                  displayExpr="inventoryName"
+                  displayExpr="label"
                   placeholder="انبار"
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbInventory_onChange}
                 />
+                <Label id="errInventory" className="standardLabelFont errMessage" />
               </Col>
               <Row className="standardPadding">
                 <Col xs="auto">
