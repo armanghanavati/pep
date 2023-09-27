@@ -64,6 +64,7 @@ import {
   addPepRoleObjectPermission,
   deletePepRoleObjectPermission,
   pepRoleObjectPermissionList,
+  updatePepRoleObjectPermission
 } from "../../redux/reducers/pepRoleObjectPermission/pepRoleObjectpermission-actions";
 import { roleList } from "../../redux/reducers/role/role-actions";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -239,14 +240,12 @@ class PepObject extends React.Component {
     }
     if (await this.fn_CheckValidation()) {
       const data = {
-        id: this.state.RowSelected.id,
-        userName: this.state.txtUserNameValue,
-        isActive: this.state.chkIsActive,
-        password: this.state.txtPasswordValue,
-        personId: this.state.PersonId,
+        roleid:this.state.RoleId,
+        objectId:this.state.ObjectId,
+        permissionId:this.state.PermissionId
       };
 
-      const RESULT = await updateUser(data, this.props.User.token);
+      const RESULT = await updatePepRoleObjectPermission(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
