@@ -13,8 +13,9 @@ import { BrowserRouter } from "react-router-dom";
 
 // window.apiAddress="http://coapp:9191/api";
 // window.apiAddress="http://172.16.1.40:2884/api"; 
-window.apiAddress="http://172.16.1.186/api"; 
-//  window.apiAddress="http://localhost:7142/api"; 
+// window.apiAddress="http://172.16.1.186/api"; 
+ window.apiAddress="http://localhost:7142/api"; 
+// window.apiAddress="http://172.16.2.22:8182/api"; 
 
 //  window.siteAddress="http://coapp:9191";
 // window.siteAddress="http://localhost:7142";
