@@ -142,7 +142,7 @@ class Fish extends React.Component {
     // }
 
     api_ShowFish = async () => {
-        let url = window.apiAddress + '/Person/showFish'
+        let url = window.confirmPayment + '/Person/showFish'
         let flagShow = true;
         if (this.state.YearValue == null || this.state.MonthValue == null) {
             flagShow = false;
@@ -190,7 +190,7 @@ class Fish extends React.Component {
     }
 
     async api_SendAuthCode() {
-        let url = window.apiAddress + '/AuthCode/sendFishAuthCode';
+        let url = window.confirmPayment + '/AuthCode/sendFishAuthCode';
         let data = {
             Mobile: this.state.MobileValue,
             Message: ''
