@@ -23,6 +23,7 @@ import RegisterSupplierOrderTimes from '../pages/RegisterSupplierOrderTimes';
 import UserCompanies from '../pages/UserCompanies';
 import UserLocations from '../pages/UserLocations'
 import PersonShifts from '../pages/PersonShifts'
+import ItemSuppliers from '../pages/ItemSuppliers'
 
 
 export const REAL_COMPONENT = [
@@ -134,6 +135,10 @@ export const REAL_COMPONENT = [
   {
     strComponent: "PersonShifts",
     orgComponent: <PersonShifts />,
+  },
+  {
+    strComponent: "ItemSuppliers",
+    orgComponent: <ItemSuppliers />,
   },
 ];
 

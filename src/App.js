@@ -90,7 +90,11 @@ class App extends React.Component {
       })
     );
   };
-
+  fn_testApi = async () => {
+    for (var i = 0; i < 5000; i++) {
+      await this.checkServer(i);
+    }
+  };
   render() {
     return (
       <div className="mainBack">
