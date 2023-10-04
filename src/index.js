@@ -22,10 +22,10 @@ import { BrowserRouter } from "react-router-dom";
 window.siteAddress = "http://172.16.1.40:2884";
 
 // window.confirmPayment = "http://172.16.1.40:2884/api";
- window.confirmPayment="http://localhost:7142/api"
+//  window.confirmPayment="http://localhost:7142/api"
 
- window.fishAddress="https://localhost:44304/api"
-
+//  window.fishAddress = "http://172.16.1.40:2884/api";
+ window.fishAddress="http://localhost:7142/api"; 
 // const store = createStore(rootReducer);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

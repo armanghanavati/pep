@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import DataSource from "devextreme/data/data_source";
 import {
   Row,
   Col,
@@ -114,9 +115,19 @@ class OrderInventoryNew extends React.Component{
                 LocationId:this.state.cmbLocationValue
             }
             this.setState({
-                cmbItemGroupValue:e,
-                cmbItems:await itemListComboByItemGroupId(OBJ,this.props.User.token)
+                cmbItemGroupValue:e,            
             });
+
+            const ITEMS=await itemListComboByItemGroupId(OBJ,this.props.User.token)
+            const LAZY=new DataSource({
+                store: ITEMS,
+                paginate:true,
+                pageSize:10
+            })
+            this.setState({
+                cmbItems:LAZY,
+                cmbItemsOrg:ITEMS
+            })
         }
     }
 
