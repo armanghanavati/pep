@@ -47,7 +47,7 @@ import { DataGridOrderPointInventoryColumns } from "./OrderInventory-config";
 
 import Wait from "../common/Wait";
 
-import { orderIventoryOutRouteList,updateGroupsOrderPointInventory } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import { orderIventoryOutRouteList,updateGroupsOrderPointInventory,confirmRejectOrderInventoryOutRoute} from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 import { logsOPITodayListByUserId } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
 
 import UpdateIcon from "../../assets/images/icon/update.png";
@@ -214,6 +214,23 @@ class OutRouteOrderInventoryConfirm extends React.Component {
         temp.push(obj)
     }        
     this.setState({ OutRouteSelected: temp})
+  }
+
+  btnConfirmOutRoute_onClick=async () =>{    
+    const OBJ={
+      values: JSON.stringify(this.state.OutRouteSelected),
+      status:true      
+    }    
+    alert(JSON.stringify(OBJ))
+    await confirmRejectOrderInventoryOutRoute(OBJ,this.props.User.token)
+  }
+
+  btnRejectOutRoute_onClick=async()=>{
+    const OBJ={
+      values: JSON.stringify(this.state.OutRouteSelected),
+      status:false
+    }
+    await confirmRejectOrderInventoryOutRoute(OBJ,this.props.User.token)
   }
 
   render() {

@@ -98,6 +98,7 @@ class OrderInventoryNew extends React.Component{
     }
 
     cmbInventory_onChange=async(e)=>{
+        // alert(e)
         this.setState({cmbInventoryvalue:e})
     }
 
@@ -199,7 +200,7 @@ class OrderInventoryNew extends React.Component{
                 locationId: this.state.cmbLocationValue,
                 inventoryId:this.state.cmbInventoryvalue,
                 supplierId: this.state.cmbSupplierValue,
-                itemId: this.state.cmbItemValue,
+                productId: this.state.cmbItemValue,
                 numberOrder: this.state.txtOrderNumberValue,
                 userId: this.props.User.userId
             }
@@ -246,6 +247,7 @@ class OrderInventoryNew extends React.Component{
                         placeholder="انبار"
                         valueExpr="id"
                         rtlEnabled={true}
+                        value={this.state.cmbInventoryvalue}  
                         onValueChange={this.cmbInventory_onChange}
                         />
                         <Label id="errInventory" className="standardLabelFont errMessage" />

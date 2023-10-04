@@ -278,13 +278,13 @@ class OrderInventory extends React.Component {
         flagSend = false;
     }
 
-    if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
+    if (this.state.cmbItemsValue === null  || this.state.cmbItemsValue == "") {
       const msg= "کالا را انتخاب نمائید.";
       document.getElementById("errItem").innerHTML = msg; 
       flagSend = false;
     }
 
-    if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
+    if (this.state.cmbSupplierValue === null  || this.state.cmbSupplierValue == "") {
       const msg= "تامین کننده را انتخاب نمائید.";
       document.getElementById("errSupplier").innerHTML = msg; 
       flagSend = false;
