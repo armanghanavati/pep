@@ -134,8 +134,8 @@ class ItemLocation extends React.Component {
       ItemsListUpdated: [],
       InventoryList: null,
       InventoryIds: null,
-      cmbInventory:null,
-      cmbInventoryvalue:null,
+      cmbInventory: null,
+      cmbInventoryvalue: null,
     };
   }
 
@@ -165,14 +165,14 @@ class ItemLocation extends React.Component {
       ),
     });
   };
- 
-  fn_inventoryList=async()=>{
-    const INV_REQ_OBJ={
-      companyId:this.props.Company.currentCompanyId,
-      inventoryTypeCode:'01'
+
+  fn_inventoryList = async () => {
+    const INV_REQ_OBJ = {
+      companyId: this.props.Company.currentCompanyId,
+      inventoryTypeCode: '01'
     }
     this.setState({
-      cmbInventory: await inventoryComboListByCompanyId(INV_REQ_OBJ,this.props.User.token)
+      cmbInventory: await inventoryComboListByCompanyId(INV_REQ_OBJ, this.props.User.token)
     })
   }
 
@@ -222,11 +222,11 @@ class ItemLocation extends React.Component {
     this.setState({
       LocationIds: e,
     })
-      
+
   };
 
-  cmbInventory_onChange=async(e)=>{
-    this.setState({cmbInventoryvalue:e});
+  cmbInventory_onChange = async (e) => {
+    this.setState({ cmbInventoryvalue: e });
   }
 
   cmbSupplier_onChange = async (e) => {
@@ -285,7 +285,7 @@ class ItemLocation extends React.Component {
       itemId: this.state.ItemId,
       supplierId: this.state.SupplierId,
       itemGroupId: this.state.ItemGroupId,
-      inventoryId:this.state.cmbInventoryvalue,
+      inventoryId: this.state.cmbInventoryvalue,
     };
     var RESULT = 0;
     RESULT = await itemLocationList(data, this.props.User.token);
@@ -300,48 +300,6 @@ class ItemLocation extends React.Component {
           Type: "error",
         },
       });
-  };
-
-  chkDeActiveAll_onChange = async () => {
-    let result = confirm(
-      "<i>آیا از غیرفعال کردن تمام کالاها و فروشگاه های انتخاب شده، اطمینان دارید؟؟</i>",
-      ""
-    );
-    result.then((dialogResult) => {
-      if (dialogResult) {
-        this.setState({
-          DeActiveAll: true,
-          ActiveAll: false,
-          flagSelectAll: true,
-        });
-        this.fn_ActiveDeactiveAll(false);
-      } else {
-        this.setState({ DeActiveAll: false });
-      }
-    });
-  };
-  chkActiveAll_onChange = () => {
-    if (
-      this.state.ItemLocationGridData != null &&
-      this.state.ItemLocationGridData != []
-    ) {
-      let result = confirm(
-        "<i>آیا از فعال کردن تمام کالاها و فروشگاه های انتخاب شده، اطمینان دارید؟؟</i>",
-        ""
-      );
-      result.then((dialogResult) => {
-        if (dialogResult) {
-          this.setState({
-            DeActiveAll: false,
-            ActiveAll: true,
-            flagSelectAll: true,
-          });
-          this.fn_ActiveDeactiveAll(true);
-        } else {
-          this.setState({ ActiveAll: false });
-        }
-      });
-    } else alert("کالایی برای انتخاب وجود ندارد");
   };
 
   fn_ActiveDeactiveAll(Status) {
@@ -384,8 +342,8 @@ class ItemLocation extends React.Component {
     let tempItems = [];
     if (!this.state.flagSelectAll) tempItems = this.state.ItemsListUpdated;
     let flagPush = true;
-    for (let i = 0; i < tempItems.length; i++){
-      if ( 
+    for (let i = 0; i < tempItems.length; i++) {
+      if (
         tempItems[i].itemId === params.data.itemId &&
         tempItems[i].locationId === params.data.locationId
       ) {
@@ -400,7 +358,6 @@ class ItemLocation extends React.Component {
         isActive: params.data.isActive,
       };
       tempItems.push(obj);
-      alert(JSON.stringify(tempItems))
     }
     this.setState({ ItemsListUpdated: tempItems, flagSelectAll: false });
   };
@@ -461,7 +418,7 @@ class ItemLocation extends React.Component {
     Gfn_ExportToExcel(this.state.OrderInventoryGridData, "OrderInventory");
   };
 
- 
+
   render() {
     locale("fa-IR");
     return (
@@ -581,16 +538,16 @@ class ItemLocation extends React.Component {
               </Row>
             </Row>
             <Row className="standardSpaceTop">
-                <Col xs="auto">
-                  <Button
-                    icon={SearchIcon}
-                    text="اعمال فیلتر"
-                    type="default"
-                    stylingMode="contained"
-                    rtlEnabled={true}
-                    onClick={this.btnSearch_onClick}
-                  />
-                </Col>
+              <Col xs="auto">
+                <Button
+                  icon={SearchIcon}
+                  text="اعمال فیلتر"
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnSearch_onClick}
+                />
+              </Col>
             </Row>
           </Row>
         </Card>

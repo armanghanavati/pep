@@ -175,9 +175,9 @@ class PersonShift extends React.PureComponent {
   grdPerson_onClickRow = async (e) => {
     var shifts = await shiftList(e.data.id, this.props.User.token)
     this.setState({
-      data: shifts,
       stateUpdateDelete: true,
       RowSelected: e.data,
+      data: (shifts == null ? [] : shifts)
     });
   }
 
