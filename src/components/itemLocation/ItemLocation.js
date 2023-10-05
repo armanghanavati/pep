@@ -71,9 +71,10 @@ import {
   itemLocationList,
   updateItemLocation,
 } from "../../redux/reducers/itemLocation/itemLocation-actions";
-import { userLocationList } from "../../redux/reducers/user/user-actions";
+import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
 import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
 import { inventoryComboListByCompanyId } from "../../redux/reducers/inventory/inventory-actions";
+import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
 import {
   supplierListComboByCompanyId,
   supplierOrderInventoryComboList,
@@ -136,12 +137,13 @@ class ItemLocation extends React.Component {
       InventoryIds: null,
       cmbInventory: null,
       cmbInventoryvalue: null,
+      stateWait: false,
     };
   }
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    this.fn_locationList();
+    await this.fn_locationList();
     await this.fn_supplierList();
     this.fn_itemGroupList();
     this.fn_inventoryList();
@@ -149,7 +151,7 @@ class ItemLocation extends React.Component {
 
   fn_locationList = async () => {
     this.setState({
-      LocationList: await userLocationList(
+      LocationList: await userLocationListCombo(
         this.props.User.userId,
         this.props.Company.currentCompanyId,
         this.props.User.token
@@ -186,6 +188,10 @@ class ItemLocation extends React.Component {
     this.setState({});
   };
 
+  OpenCloseWait() {
+    this.setState({ stateWait: !this.state.stateWait });
+  }
+
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
@@ -203,11 +209,12 @@ class ItemLocation extends React.Component {
 
   cmbLocationList_onChange = async (e) => {
     const IDS = e.toString().split(",");
-    const TEMP_LOCATION = await userLocationList(
+    const TEMP_LOCATION = await userLocationListCombo(
       this.props.User.userId,
       this.props.Company.currentCompanyId,
       this.props.User.token
     );
+
     let tempLocation = [];
     for (let i = 0; i < IDS.length; i++)
       for (let j = 0; j < TEMP_LOCATION.length; j++)
@@ -219,9 +226,21 @@ class ItemLocation extends React.Component {
   };
 
   cmbLocation_onChange = async (e) => {
-    this.setState({
-      LocationIds: e,
-    })
+    const IDS = e.toString().split(",");
+    if (IDS.includes('0')) {
+      const TEMP_LOCATION = await userLocationListCombo(
+        this.props.User.userId,
+        this.props.Company.currentCompanyId,
+        this.props.User.token
+      );
+      let data = await Gfn_ConvertComboForAll(e, TEMP_LOCATION)
+      this.setState({ LocationIds: data });
+    }
+    else {
+      this.setState({
+        LocationIds: e,
+      })
+    }
 
   };
 
@@ -287,11 +306,14 @@ class ItemLocation extends React.Component {
       itemGroupId: this.state.ItemGroupId,
       inventoryId: this.state.cmbInventoryvalue,
     };
+    //alert(JSON.stringify(data))
     var RESULT = 0;
+    this.OpenCloseWait();
     RESULT = await itemLocationList(data, this.props.User.token);
     this.setState({
       ItemLocationGridData: RESULT,
     });
+    this.OpenCloseWait();
     if (!RESULT > 0)
       this.setState({
         ToastProps: {
@@ -300,6 +322,7 @@ class ItemLocation extends React.Component {
           Type: "error",
         },
       });
+
   };
 
   fn_ActiveDeactiveAll(Status) {
