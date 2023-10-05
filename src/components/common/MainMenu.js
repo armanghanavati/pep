@@ -130,7 +130,7 @@ class MainMenu extends React.Component {
     return (
         <>
           <Row>
-            <Col xs='auto' style={{backgroundColor:'#0d62cb',color:'white',height:'94vh'}}>
+            <Col xs='auto' style={{backgroundColor:'#0d62cb',color:'white',minHeight:'100vh'}}>
               <div style={{padding:'10px'}}>
                 <TreeView id="simple-treeview"
                     items={this.state.MainMenuData}

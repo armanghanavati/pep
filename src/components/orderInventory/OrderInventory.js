@@ -137,7 +137,7 @@ class OrderInventory extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    //await this.fn_CheckRequireState();
+    await this.fn_CheckRequireState();
     // alert('CompanyId='+this.props.Company.currentCompanyId)
   }
 

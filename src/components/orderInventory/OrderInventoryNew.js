@@ -45,6 +45,7 @@ class OrderInventoryNew extends React.Component{
             cmbItemGroup:null,
             cmbItemGroupValue:null,
             cmbItems:null,
+            cmbItemsOrg:null,
             cmbItemValue:null,
             cmbSuppliers:null,
             cmbSupplierValue:null,
@@ -136,17 +137,23 @@ class OrderInventoryNew extends React.Component{
     }
 
     cmbItem_onChange=async(e)=>{
+       
         const data={
             ItemId:e
         }
-        const tempItems=this.state.cmbItems;
-        for(let i=0;i<tempItems.length;i++)
-            if(tempItems[i].id==e)
+        const tempItems=this.state.cmbItemsOrg;
+        // console.log(JSON.stringify(tempItems))
+        for(let i=0;i<tempItems.length;i++){
+            
+            if(tempItems[i].id==e){
+                
                 this.setState({
                     lblQtyPerPack:tempItems[i].qtyPerPack,
                     lblRetailStoreMojoodi:tempItems[i].mojoodi,
                     lblSetadMojoodi:tempItems[i].mojoodiSetad
                 })
+            }
+        }
         this.setState({
             cmbItemValue:e,
             cmbSuppliers:await supplierListComboByItemId(data,this.props.User.token)
