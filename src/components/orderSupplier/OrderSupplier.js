@@ -20,6 +20,7 @@ import TextBox from "devextreme-react/text-box";
 import TextArea from "devextreme-react/text-area";
 import SelectBox from "devextreme-react/select-box";
 import TagBox from "devextreme-react/tag-box";
+import DataSource from "devextreme/data/data_source";
 import { Button } from "devextreme-react/button";
 import { CheckBox } from "devextreme-react/check-box";
 import notify from "devextreme/ui/notify";
@@ -81,6 +82,7 @@ import {
   Gfn_BuildValueComboMulti,
   Gfn_BuildValueComboSelectAll,
   Gfn_ExportToExcel,
+  Gfn_ConvertComboForAll,
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
@@ -189,94 +191,124 @@ class OrderSupplier extends React.Component {
   };
 
   cmbRetailStoreGroup_onChange = async (e) => {
-    const IDS = e.toString().split(",");
+    const IDS = e.toString().split(",");    
     const TEMP_LocationGroup = this.props.Location.locationPermission;
-    let tempLocation = [];
-    for (let i = 0; i < IDS.length; i++)
-      for (let j = 0; j < TEMP_LocationGroup.length; j++)
-        if (IDS[i] == TEMP_LocationGroup[j].id)
-          tempLocation.push(TEMP_LocationGroup[j]);
-    this.setState({
-      cmbLocation: tempLocation,
-      cmbLocationGroupValue: await Gfn_BuildValueComboMulti(e),
-    });
+    if(IDS.includes('0'))
+      this.setState({
+        cmbLocation:  TEMP_LocationGroup,
+        cmbLocationGroupValue: 0,
+      });
+    else{
+      let tempLocation = [];
+      for (let i = 0; i < IDS.length; i++)
+        for (let j = 0; j < TEMP_LocationGroup.length; j++)
+          if (IDS[i] == TEMP_LocationGroup[j].id)
+            tempLocation.push(TEMP_LocationGroup[j]);
+      this.setState({
+        cmbLocation:  tempLocation,
+        cmbLocationGroupValue: await Gfn_BuildValueComboMulti(e),
+      });
+    }
+   
   };
 
-  cmbRetailStore_onChange = async (e) => {
-    this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(e) });
+  cmbRetailStore_onChange = async (e) => {    
+    let data=await Gfn_ConvertComboForAll(e,this.state.cmbLocation)  
+    // alert(JSON.stringify(data))
+    this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(data) });
   };
 
   cmbSupplier_onChange = async (e) => {
-    const TEMP_cmbSupplier =
-      e == null || e == "" ? null : await Gfn_BuildValueComboMulti(e);
-    // alert(TEMP_cmbSupplier);
+    let data=await Gfn_ConvertComboForAll(e,this.state.cmbSupplier)  
+    const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data)
+    
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
-      cmbItems:
-        TEMP_cmbSupplier == null
-          ? null
-          : await itemListComboBySupplierId(
-              TEMP_cmbSupplier,
-              this.props.User.token
-            ),
+      // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      
     });
+    const ITEMS=TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token);
+    const LAZY=new DataSource({
+      store: ITEMS,
+      paginate:true,
+      pageSize:10
+    })
+    this.setState({
+      cmbItems:LAZY,
+      cmbItemsOrg:ITEMS
+    })
+
+    // const TEMP_cmbSupplier =
+    //   e == null || e == "" ? null : await Gfn_BuildValueComboMulti(e);
+    // // alert(TEMP_cmbSupplier);
+    // this.setState({
+    //   cmbSupplierValue: TEMP_cmbSupplier,
+    //   cmbItems:
+    //     TEMP_cmbSupplier == null
+    //       ? null
+    //       : await itemListComboBySupplierId(
+    //           TEMP_cmbSupplier,
+    //           this.props.User.token
+    //         ),
+    // });
   };
 
   btnExportExcel_onClick=()=>{
-    Gfn_ExportToExcel(this.state.OrderInventoryGridData,"OrderSupplier")
+    Gfn_ExportToExcel(this.state.OrderSupplierGridData,"OrderSupplier")
   }
 
   cmbItem_onChange = async (e) => {
-    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(e) });
+    // this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(e) });
+    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
+    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
   };
 
   btnSearch_onClick = async () => {
     this.OpenCloseWait();
-    let tempLocationGroupValue = this.state.cmbLocationGroupValue;
-    if (
-      this.state.cmbLocationGroupValue == null ||
-      this.state.cmbLocationGroupValue == ""
-    ) {
-      tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
-        this.props.Location.locationPermission
-      );
-      this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
-    }
+    // let tempLocationGroupValue = this.state.cmbLocationGroupValue;
+    // if (
+    //   this.state.cmbLocationGroupValue == null ||
+    //   this.state.cmbLocationGroupValue == ""
+    // ) {
+    //   tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
+    //     this.props.Location.locationPermission
+    //   );
+    //   this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
+    // }
 
-    let tempLocationValue = this.state.cmbLocationValue;
-    if (
-      this.state.cmbLocationValue == null ||
-      this.state.cmbLocationValue == ""
-    ) {
-      tempLocationValue = await Gfn_BuildValueComboSelectAll(
-        this.state.cmbLocation
-      );
-      this.setState({ cmbLocationValue: tempLocationValue });
-    }
+    // let tempLocationValue = this.state.cmbLocationValue;
+    // if (
+    //   this.state.cmbLocationValue == null ||
+    //   this.state.cmbLocationValue == ""
+    // ) {
+    //   tempLocationValue = await Gfn_BuildValueComboSelectAll(
+    //     this.state.cmbLocation
+    //   );
+    //   this.setState({ cmbLocationValue: tempLocationValue });
+    // }
 
-    let tempSupplierValue = this.state.cmbSupplierValue;
-    if (
-      this.state.cmbSupplierValue == null ||
-      this.state.cmbSupplierValue == ""
-    ) {
-      tempSupplierValue = await Gfn_BuildValueComboSelectAll(
-        this.state.cmbSupplier
-      );
-      this.setState({ cmbSupplierValue: tempSupplierValue });
-    }
+    // let tempSupplierValue = this.state.cmbSupplierValue;
+    // if (
+    //   this.state.cmbSupplierValue == null ||
+    //   this.state.cmbSupplierValue == ""
+    // ) {
+    //   tempSupplierValue = await Gfn_BuildValueComboSelectAll(
+    //     this.state.cmbSupplier
+    //   );
+    //   this.setState({ cmbSupplierValue: tempSupplierValue });
+    // }
 
-    let tempItemValue = this.state.cmbItemsValue;
-    if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {
-      tempItemValue = await Gfn_BuildValueComboSelectAll(this.state.cmbItems);
-      this.setState({ cmbItemsValue: tempItemValue });
-    }
+    // let tempItemValue = this.state.cmbItemsValue;
+    // if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {
+    //   tempItemValue = await Gfn_BuildValueComboSelectAll(this.state.cmbItems);
+    //   this.setState({ cmbItemsValue: tempItemValue });
+    // }
 
     const OBJ = {
-      locationIds: tempLocationGroupValue,
-      supplierIds: tempSupplierValue,
-      itemIds: tempItemValue,
+      locationIds: this.state.cmbLocationValue,
+      supplierIds: this.state.cmbSupplierValue,
+      itemIds: this.state.cmbItemsValue,
     };
-    // alert(JSON.stringify(OBJ))
+    alert(JSON.stringify(OBJ))
     this.setState({
       OrderSupplierGridData: await orderPointSupplierListByLSI(
         OBJ,
