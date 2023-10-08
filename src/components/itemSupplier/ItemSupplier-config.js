@@ -49,4 +49,24 @@ export const DataGridItemSupplierColumns = [
     caption: "تعداد در کارتن 2",
     allowEditing: true,
   },
+  {
+    dataField: "minOrderWeight",
+    caption: "حد اقل وزن",
+    allowEditing: true,
+  },
+  {
+    dataField: "maxOrderWeight",
+    caption: "حداکثر وزن",
+    allowEditing: true,
+  },
+  {
+    dataField: "minOrderRiali",
+    caption: "حداقل ریالی",
+    allowEditing: true,
+  },
+  {
+    dataField: "maxOrderRiali",
+    caption: "حداکثر ریالی",
+    allowEditing: true,
+  },
 ];

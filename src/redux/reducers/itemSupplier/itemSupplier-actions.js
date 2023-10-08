@@ -1,6 +1,6 @@
-export async function itemSupplierList(itemGroupId, suuplierId,Token) {
+export async function itemSupplierList(itemGroupId, supplierId,Token) {
     const url =
-      window.apiAddress + "/ItemSupplier/itemSupplierList?itemGroupId=" + itemGroupId + "&supplierId=" + suuplierId;
+      window.apiAddress + "/ItemSupplier/itemSupplierList?itemGroupId=" + itemGroupId + "&supplierId=" + supplierId;
     const response = await fetch(url, {
       method: "GET",
       headers: {

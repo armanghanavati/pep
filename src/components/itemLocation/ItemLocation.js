@@ -219,13 +219,22 @@ class ItemLocation extends React.Component {
     for (let i = 0; i < IDS.length; i++)
       for (let j = 0; j < TEMP_LOCATION.length; j++)
         if (IDS[i] == TEMP_LOCATION[j].id) tempLocation.push(TEMP_LOCATION[j]);
-    this.setState({
-      LocationGroupIds: e,
-      Location: tempLocation,
-    });
+    if (IDS.includes('0')) {
+      this.setState({
+        LocationGroupIds: e,
+        Location: TEMP_LOCATION,
+      })
+    }
+    else {
+      this.setState({
+        LocationGroupIds: e,
+        Location: tempLocation,
+      });
+    }
   };
 
   cmbLocation_onChange = async (e) => {
+    alert(JSON.stringify(e))
     const IDS = e.toString().split(",");
     if (IDS.includes('0')) {
       const TEMP_LOCATION = await userLocationListCombo(
@@ -241,7 +250,6 @@ class ItemLocation extends React.Component {
         LocationIds: e,
       })
     }
-
   };
 
   cmbInventory_onChange = async (e) => {

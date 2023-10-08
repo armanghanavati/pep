@@ -29,6 +29,8 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
+import SelectBox from 'devextreme-react/select-box';
+import { Button } from 'devextreme-react/button';
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
@@ -44,9 +46,9 @@ import {
   searchPersonByUserId,
   searchPersonByLocationId,
   deletePerson,
-  shiftList,
-  addShift,
-  deleteShift,
+  personShiftList,
+  addPersonShift,
+  deletePersonShift,
 } from "../../redux/reducers/person/person-actions";
 import { Person } from "../../components/person/Person"
 import DataGrid, {
@@ -68,19 +70,24 @@ import DataGrid, {
 import { locale } from 'devextreme/localization';
 import { TextBox } from 'devextreme-react';
 import { Toast } from "devextreme-react/toast";
-
+import { Backdrop, Hidden } from '@mui/material';
+import { Margin } from 'devextreme-react/bullet';
+import SaveIcon from "../../assets/images/icon/save.png";
+import Calendar from './Calendar';
+const data = [];
 class PersonShift extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: [],
       locale: "fa-IR",
       ToastProps: {
         isToastVisible: false,
         Message: "",
         Type: "",
       },
+      RowSelected: null,
+      stateShowCalendar: false
     };
   }
 
@@ -106,79 +113,19 @@ class PersonShift extends React.PureComponent {
       }
   };
 
-  commitChanges = ({ added, changed, deleted }) => {
-    this.setState((state) => {
-      let { data } = state;
-      if (added) {
-        if (this.state.RowSelected == null) {
-          alert("لطفا شخص را انتخاب نمایید")
-          return;
-        }
-        if (this.state.title == null) {
-          alert("لطفا شیفت را انتخاب نمایید")
-        }
-        else {
-          const startingAddedId = data.id; //data.length > 0 ? data[data.length - 1].id + 1 : 0;
-          data = [...data, {
-            id: startingAddedId,
-            title: this.state.title,
-            startDate: this.state.startDate,
-            endDate: this.state.endDate
-          }];
-          //data = [...data, { id: startingAddedId, ...added }];
-          var object = {
-            personId: this.state.RowSelected.id,
-            shift: this.state.title == "شیفت صبح" ? 1 : 2,
-            Date: this.state.endDate,
-          }
-          addShift(object, this.props.User.token)
-        }
-      }
-      if (changed) {
-        data = data.map(appointment => (
-          changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
-      }
-      if (deleted !== undefined) {
-        data = data.filter(appointment => appointment.id !== deleted);
-        deleteShift(deleted, this.props.User.token);
-      }
-      return { data };
 
 
-    });
-  }
-
-  handleChange = (e) => {
+  handelClick = (e) => {
     this.setState({
       title: e.target.value
     })
   }
 
-  BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
-    this.setState({
-      startDate: appointmentData.startDate,
-      endDate: appointmentData.endDate
-    })
-    return (
-      <div style={{ padding: "10px" }}>
-        <label>شیفت را از لیست انتخاب نمایید</label>
-        <select style={{ marginRight: "20px", width: "400px", marginTop: "40px", height: "40px" }} onChange={(e) => { this.handleChange(e) }}>
-          <option>انتخاب شیفت...</option>
-          <option>شیفت صبح</option>
-          <option>شیفت بعدازظهر</option>
-        </select>
-
-      </div>
-    )
-  };
-
   grdPerson_onClickRow = async (e) => {
-    var shifts = await shiftList(e.data.id, this.props.User.token)
     this.setState({
-      stateUpdateDelete: true,
-      RowSelected: e.data,
-      data: (shifts == null ? [] : shifts)
-    });
+      stateShowCalendar: true,
+      RowSelected:e.data
+    })
   }
 
   fn_updateGrid = async () => {
@@ -192,8 +139,6 @@ class PersonShift extends React.PureComponent {
   }
 
   render() {
-    const { data } = this.state;
-
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
         <Toast
@@ -208,43 +153,7 @@ class PersonShift extends React.PureComponent {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Col width={6}>
-              <Paper>
-                <Scheduler
-                  data={data}
-                  locale={this.state.locale}
-                >
-                  <ViewState
-                    defaultCurrentDate={new Date()}
-                  />
-                  <MonthView />
-                  {/* <WeekView startDayHour={9} endDayHour={19} /> */}
-                  <Toolbar />
-                  <DateNavigator />
-                  <EditingState
-                    onCommitChanges={this.commitChanges}
-                  />
-                  <IntegratedEditing />
-                  {/* <DayView
-                         startDayHour={9}
-                         endDayHour={19}
-                     />  */}
-                  <ConfirmationDialog />
-                  <TodayButton />
-                  <Appointments />
-                  <AppointmentTooltip
-                    showCloseButton
-                    //showOpenButton
-                    showDeleteButton
-                  />
-                  <AppointmentForm
-                    //readOnly={this.isNormalUser}
-                    basicLayoutComponent={this.BasicLayout}
-                  //booleanEditorComponent={this.BoolEditor}
-                  //labelComponent={this.LabelComponent}
-                  //textEditorComponent={this.InputComponent}               
-                  />
-                </Scheduler>
-              </Paper>
+              {this.state.stateShowCalendar == true && <Calendar personId={this.state.RowSelected.id}/>}
             </Col>
             <Col xs={5}>
               <Row>

@@ -200,9 +200,9 @@ class ItemSupplier extends React.Component {
     } else alert("کالا(ها) را انتخاب نمائید.");
   };
 
-  itemsSupplierDateGrd_onUpdateRow = (params) => {
+  itemsSupplierDataGrd_onUpdateRow = (params) => {
     // alert(JSON.stringify(params.newData))
-    // alert(JSON.stringify(params.data))
+    //alert(JSON.stringify(params.data))
     let tempItems = this.state.ItemListUpdated;
     let flagPush = true;
     for (let i = 0; i < tempItems.length; i++)
@@ -211,6 +211,11 @@ class ItemSupplier extends React.Component {
         tempItems[i].UnitWeight = params.data.unitWeight;
         tempItems[i].QtyPerPack = params.data.qtyPerPack;
         tempItems[i].QtyPerPack2 = params.data.qtyPerPack2;
+        tempItems[i].MaxOrderWeight=params.data.maxOrderWeight;
+        tempItems[i].MaxOrderRiali=params.data.maxOrderRiali;
+        tempItems[i].MinOrderWeight=params.data.minOrderWeight;
+        tempItems[i].MinOrderRiali=params.data.minOrderRiali;
+        tempItems[i].SupplierId=this.state.SupplierId;
         flagPush = false;
         break;
       }
@@ -221,6 +226,11 @@ class ItemSupplier extends React.Component {
         UnitWeight: params.data.unitWeight,
         QtyPerPack: params.data.qtyPerPack,
         QtyPerPack2: params.data.qtyPerPack2,
+        MaxOrderRiali: params.data.maxOrderRiali,
+        MaxOrderWeight:params.data.maxOrderWeight,
+        MinOrderRiali:params.data.minOrderRiali,
+        MinOrderWeight:params.data.minOrderWeight,
+        SupplierId:this.state.SupplierId,
       };
       tempItems.push(obj);
     }
@@ -433,7 +443,7 @@ class ItemSupplier extends React.Component {
                   showBorders={true}
                   rtlEnabled={true}
                   allowColumnResizing={true}
-                  onRowUpdated={this.itemsSupplierDateGrd_onUpdateRow}
+                  onRowUpdated={this.itemsSupplierDataGrd_onUpdateRow}
                   height={DataGridDefaultHeight}
                 >
                   <Scrolling
