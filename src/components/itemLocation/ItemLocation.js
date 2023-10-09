@@ -234,7 +234,6 @@ class ItemLocation extends React.Component {
   };
 
   cmbLocation_onChange = async (e) => {
-    alert(JSON.stringify(e))
     const IDS = e.toString().split(",");
     if (IDS.includes('0')) {
       const TEMP_LOCATION = await userLocationListCombo(
