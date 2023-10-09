@@ -87,13 +87,20 @@ class PersonShift extends React.PureComponent {
         Type: "",
       },
       RowSelected: null,
-      stateShowCalendar: false
+      stateShowCalendar: false,
+      stateDisable_show:false
     };
   }
 
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
+  }
+
+  componentDidUpdate() {
+    if (this.state.stateShowCalendar == true) {
+      this.state.stateShowCalendar=false;
+    }
   }
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;

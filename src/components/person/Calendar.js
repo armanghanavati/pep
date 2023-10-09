@@ -73,9 +73,11 @@ import { Toast } from "devextreme-react/toast";
 import { Backdrop, Hidden } from '@mui/material';
 import { Margin } from 'devextreme-react/bullet';
 import SaveIcon from "../../assets/images/icon/save.png";
-var data=[];
+var data = [];
 var today = new Date().toLocaleDateString('fa-IR-u-nu-latn');
-
+var year = today.split("/")[0];
+var month = today.split("/")[1];
+var day = today.split("/")[2];
 class PersonShift extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -93,29 +95,25 @@ class PersonShift extends React.PureComponent {
             ShiftList: [{ id: 1, title: "شیفت صبح" }, {
                 id: 2, title: "شیفت عصر"
             }],
-            ShiftId:null,
+            ShiftId: null,
+            dd: false
         };
     }
 
     async componentDidMount() {
-        this.loadData();
+        await this.loadData();
     }
 
     loadData = async () => {
-        let year = today.split('/')[0];
-        let month = today.split('/')[1];
-        data = await personShiftList(this.props.personId, year, month, this.props.User.token)
-        this.setState({
-            stateUpdateDelete: true,
-        });
-        if (data[0].day == "یکشنبه") {
+        data = await personShiftList(this.props.personId, year, month, this.props.User.token);
+        if (data[0].day == "يکشنبه") {
             data = [{ "day": "شنبه", dayOfMonth: "" }, ...data]
         }
         else if (data[0].day == "دوشنبه") {
             data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
             data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
         }
-        else if (data[0].day == "سه شنبه") {
+        else if (data[0].day == "سه‌شنبه") {
             data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
             data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
             data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
@@ -141,13 +139,16 @@ class PersonShift extends React.PureComponent {
             data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
             data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
         }
+        this.setState({
+            dd: true
+        })
     }
 
     handleCalendar_onclick = (e) => {
         this.setState({
             stateModalShift: true,
-            Date: e.currentTarget.getAttribute('date'), 
-            ShiftId:e.currentTarget.getAttribute('shiftId')
+            Date: e.currentTarget.getAttribute('date'),
+            ShiftId: e.currentTarget.getAttribute('shiftId')
         })
     }
 
@@ -178,46 +179,82 @@ class PersonShift extends React.PureComponent {
         await addPersonShift(object, this.props.User.token)
         await this.loadData();
         this.setState({
-            stateModalShift:false,
+            stateModalShift: false,
         })
     }
 
-    btnDelete_onClick=async()=>{
+    btnDelete_onClick = async () => {
         await deletePersonShift(this.state.ShiftId, this.props.User.token)
         await this.loadData();
         this.setState({
-            stateModalShift:false,
+            stateModalShift: false,
         })
     }
+    nextMonth_onClick = async (e) => {
+        month = parseInt(month) + 1;
+        if (month > 12)
+            month = 12
+        await this.loadData();
+        if (this.state.dd == true)
+            this.setState({
+                dd: false,
+            })
+        else
+            this.setState({
+                dd: true
+            })
+    }
+    previousMonth_onClick = async (e) => {
+        month = parseInt(month) - 1;
+        if (month < 1)
+            month = 1;
+        await this.loadData();
+        if (this.state.dd == true)
+            this.setState({
+                dd: false,
+            })
+        else
+            this.setState({
+                dd: true
+            })
+    }
     render() {
+        var backgroundColor;
         return (
-            <><p>{this.state.month}</p>
+            <>
+                <div style={{ marginRight: "10px" }}><i onClick={(event) => this.nextMonth_onClick(event)} style={{ marginLeft: "60px", cursor: "pointer" }} title="ماه بعدی">&#60;</i>{month + " - " + year}<i onClick={(event) => this.previousMonth_onClick(event)} style={{ marginRight: "60px", cursor: "pointer" }} title='ماه قبلی'>&#62;</i></div>
                 {
                     data.map((element, index) => {
                         index++;
+                        if (day == element.dayOfMonth && month==today.split('/')[1])
+                            backgroundColor = "lightgreen"
+                        else if(element.dayOfMonth == "")
+                            backgroundColor = ""
+                        else
+                            backgroundColor="lightblue"
                         if (element.dayOfMonth == "") {
-                            return <i style={{ backgroundColor: "", margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", overflow: "Hidden", textAlign: "center" }} >
+                            return <i style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", overflow: "Hidden", textAlign: "center" }} >
                                 {element.day}
                             </i>
                         }
                         if (index % 7 == 0)
                             return <>
-                                <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: "", margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
+                                <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
                                     <p>{element.day}</p><p>{element.dayOfMonth}</p>
-                                    <p style={{ color: "gray", fontSize: "14px" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
+                                    <p style={{ color: "red", fontSize: "14px", fontWeight: "600" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
                                 </i>
                                 <br />
                             </>
                         if (index < 7)
-                            return <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: "lightblue", margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
+                            return <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
                                 <p>{element.day}</p>
                                 <p style={{ color: "#fff", fontWeight: "700" }}>{element.dayOfMonth}</p>
-                                <p style={{ color: "gray", fontSize: "14px" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
+                                <p style={{ color: "red", fontSize: "14px", fontWeight: "600" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
                             </i>
                         else
-                            return <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: "lightblue", margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
+                            return <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
                                 <p style={{ marginTop: "35%", color: "#fff", fontWeight: "700" }}>{element.dayOfMonth}</p>
-                                <p style={{ color: "gray", fontSize: "14px" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
+                                <p style={{ color: "red", fontSize: "14px", fontWeight: "600" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
                             </i>
                     })
                 }
