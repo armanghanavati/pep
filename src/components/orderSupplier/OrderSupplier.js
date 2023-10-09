@@ -308,7 +308,7 @@ class OrderSupplier extends React.Component {
       supplierIds: this.state.cmbSupplierValue,
       itemIds: this.state.cmbItemsValue,
     };
-    alert(JSON.stringify(OBJ))
+    // alert(JSON.stringify(OBJ))
     this.setState({
       OrderSupplierGridData: await orderPointSupplierListByLSI(
         OBJ,
