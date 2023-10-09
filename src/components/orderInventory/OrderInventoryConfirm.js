@@ -3,7 +3,7 @@ import { Toast } from "devextreme-react/toast";
 import { connect } from "react-redux";
 import { Button } from "devextreme-react/button";
 import TagBox from "devextreme-react/tag-box";
-import { confirm } from 'devextreme/ui/dialog';
+import { confirm } from "devextreme/ui/dialog";
 import {
   Row,
   Col,
@@ -53,11 +53,11 @@ import { locationActions } from "../../redux/reducers/location/location-slice";
 import { orderPintInventoryListByLocation } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 import { confirmOrderInventorySpecificRetailStore } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 import {
-    Gfn_BuildValueComboMulti,
-    Gfn_ConvertComboForAll,
-    Gfn_BuildValueComboSelectAll,
-    Gfn_ExportToExcel,
-  } from "../../utiliy/GlobalMethods";
+  Gfn_BuildValueComboMulti,
+  Gfn_ConvertComboForAll,
+  Gfn_BuildValueComboSelectAll,
+  Gfn_ExportToExcel,
+} from "../../utiliy/GlobalMethods";
 import Wait from "../common/Wait";
 import SearchIcon from "../../assets/images/icon/search.png";
 
@@ -146,28 +146,28 @@ class OrderInventoryConfirm extends React.Component {
   };
 
   cmbRetailStoreGroup_onChange = async (e) => {
-    const IDS = e.toString().split(",");    
+    const IDS = e.toString().split(",");
     const TEMP_LocationGroup = this.props.Location.locationPermission;
-    if(IDS.includes('0'))
+    if (IDS.includes("0"))
       this.setState({
-        cmbLocation:  TEMP_LocationGroup,
+        cmbLocation: TEMP_LocationGroup,
         cmbLocationGroupValue: 0,
       });
-    else{
+    else {
       let tempLocation = [];
       for (let i = 0; i < IDS.length; i++)
         for (let j = 0; j < TEMP_LocationGroup.length; j++)
           if (IDS[i] == TEMP_LocationGroup[j].id)
             tempLocation.push(TEMP_LocationGroup[j]);
       this.setState({
-        cmbLocation:  tempLocation,
+        cmbLocation: tempLocation,
         cmbLocationGroupValue: await Gfn_BuildValueComboMulti(e),
       });
     }
   };
 
   cmbRetailStore_onChange = async (e) => {
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbLocation)  
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbLocation);
     this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(data) });
   };
 
@@ -219,26 +219,50 @@ class OrderInventoryConfirm extends React.Component {
   btnConfirm_onClick = async () => {
     // alert(JSON.stringify(this.state.OrderSelected))
     if (this.state.OrderSelected.length > 0) {
-        this.OpenCloseWait();
       let result = confirm(
         "<i>از انتقال سفارشات  فروشگاه مورد نظر، به انبار مرکزی اطمینان دارید؟</i>",
         "Confirm changes"
       );
-      result.then((dialogResult) => {
-        if (dialogResult){ 
-            let data = {
-                values: JSON.stringify(this.state.OrderSelected),          
-            }
-            confirmOrderInventorySpecificRetailStore(data,this.props.User.token)
+      result.then(async(dialogResult) => {
+        if (dialogResult) {
+          this.OpenCloseWait();
+          let data = {
+            values: JSON.stringify(this.state.OrderSelected),
+          };
+          let RTN = false;
+          RTN = await confirmOrderInventorySpecificRetailStore(
+            data,
+            this.props.User.token
+          );
+          this.setState({
+            ToastProps: {
+              isToastVisible: true,
+              Message:RTN ? "انتقال با موفقیت انجام شد." : "عدم انتقال",
+              Type:RTN ? "success" : "error",
+            },
+          });
+          this.OpenCloseWait();
         }
       });
-      this.OpenCloseWait();
     } else alert("سفارشی انتخاب نشده است.");
+  };
+
+  onHidingToast = () => {
+    this.setState({ ToastProps: { isToastVisible: false } });
   };
 
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
+        <Toast
+          visible={this.state.ToastProps.isToastVisible}
+          message={this.state.ToastProps.Message}
+          type={this.state.ToastProps.Type}
+          onHiding={this.onHidingToast}
+          displayTime={ToastTime}
+          width={ToastWidth}
+          rtlEnabled={true}
+        />
         {this.state.stateWait && (
           <Row className="text-center">
             <Col style={{ textAlign: "center", marginTop: "10px" }}>
@@ -334,10 +358,10 @@ class OrderInventoryConfirm extends React.Component {
                     showNavigationButtons={true}
                   />
                   <Selection
-                      mode="multiple"
-                      selectAllMode={ALL_MOD}
-                      showCheckBoxesMode={CHECK_BOXES_MOD}
-                    />
+                    mode="multiple"
+                    selectAllMode={ALL_MOD}
+                    showCheckBoxesMode={CHECK_BOXES_MOD}
+                  />
                   <Editing mode="cell" allowUpdating={true} />
                   <FilterRow visible={true} />
                   {/* <FilterPanel visible={true} />                   */}
@@ -367,9 +391,9 @@ class OrderInventoryConfirm extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    User: state.users,
-    Location: state.locations,    
-    Company: state.companies,    
-  });
-  
-  export default connect(mapStateToProps)(OrderInventoryConfirm);
+  User: state.users,
+  Location: state.locations,
+  Company: state.companies,
+});
+
+export default connect(mapStateToProps)(OrderInventoryConfirm);

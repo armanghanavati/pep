@@ -55,7 +55,14 @@
   .mainMenuStyle{
     font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;    
-    color: rgb(179, 248, 188);
+    color: #00345c;
+  }
+
+  .rootMenuStyle{
+    background-color: #e4e4e4;
+    color: white;
+    min-height: 100vh;
+    box-shadow: inset 0px 5px 20px -5px rgba(0, 0, 0, 0.5);
   }
 
   .errMessage{
