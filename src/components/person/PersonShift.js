@@ -87,7 +87,8 @@ class PersonShift extends React.PureComponent {
         Type: "",
       },
       RowSelected: null,
-      stateShowCalendar: false
+      stateShowCalendar: false,
+      stateDisable_show:false
     };
   }
 
