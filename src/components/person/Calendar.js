@@ -287,7 +287,7 @@ class PersonShift extends React.PureComponent {
                     isOpen={this.state.stateModalShift}
                     toggle={this.ModalShift_onClickAway}
                     centered={true}
-                    size="lg"
+                    size="sm"
                 >
                     <ModalHeader toggle={this.ModalNewTicket_onClickAway} >
                         شیفت کاری

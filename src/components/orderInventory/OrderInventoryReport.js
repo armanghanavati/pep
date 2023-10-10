@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import DataSource from "devextreme/data/data_source";
 import {
   Row,
   Col,
@@ -93,6 +94,7 @@ import { Template } from "devextreme-react";
 
 import { DataGridOrderPointInventoryColumns } from "./OrderInventory-config";
 import { orderPointInventoryActions } from "../../redux/reducers/OrderPointInventory/orderPointInventory-slice";
+import { transferOrderPointSupplierToKyan } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 
 import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -198,67 +200,39 @@ class OrderInventoryReport extends React.Component {
     this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(data) });
   };
 
-  cmbSupplier_onChange = async (e) => {
+  cmbSupplier_onChange = async (e) => {    
+
     let data=await Gfn_ConvertComboForAll(e,this.state.cmbSupplier)  
     const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data)
     
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
-      cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),
+      // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      
     });
+    const ITEMS=TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token);
+    const LAZY=new DataSource({
+      store: ITEMS,
+      paginate:true,
+      pageSize:10
+    })
+    this.setState({
+      cmbItems:LAZY,
+      cmbItemsOrg:ITEMS
+    })
+
   };
 
   cmbItem_onChange = async (e) => {   
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItems)
+    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
     this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
   };
 
   btnSearch_onClick = async () => {
-    this.OpenCloseWait();
-    let tempLocationGroupValue = this.state.cmbLocationGroupValue;
-    if (
-      this.state.cmbLocationGroupValue == null ||
-      this.state.cmbLocationGroupValue == ""
-    ) {
-      tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
-        this.props.Location.locationPermission
-      );
-      this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
-    }
-
-    let tempLocationValue = this.state.cmbLocationValue;
-    if (
-      this.state.cmbLocationValue == null ||
-      this.state.cmbLocationValue == ""
-    ) {
-      tempLocationValue = await Gfn_BuildValueComboSelectAll(
-        this.state.cmbLocation
-      );
-      this.setState({ cmbLocationValue: tempLocationValue });
-    }
-
-    let tempSupplierValue = this.state.cmbSupplierValue;
-    if (
-      this.state.cmbSupplierValue == null ||
-      this.state.cmbSupplierValue == ""
-    ) {     
-      tempSupplierValue = await Gfn_BuildValueComboSelectAll(
-        this.state.cmbSupplier
-      );
-      this.setState({ cmbSupplierValue: tempSupplierValue });
-    }
-
-    let tempItemValue = this.state.cmbItemsValue;
-    if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {  
-      const tempItem=await itemListComboBySupplierId(tempSupplierValue,this.props.User.token)    
-      tempItemValue = await Gfn_BuildValueComboSelectAll(tempItem);
-      this.setState({ cmbItemsValue: tempItemValue });
-    }
-
+    this.OpenCloseWait();    
     const OBJ = {
-      locationIds: tempLocationGroupValue,
-      supplierIds: tempSupplierValue,
-      itemIds: tempItemValue,
+      locationIds: this.state.cmbLocationValue,
+      supplierIds: this.state.cmbSupplierValue,
+      itemIds: this.state.cmbItemsValue,
       fromDate: this.state.FromDate,
       toDate: this.state.ToDate
     };   
