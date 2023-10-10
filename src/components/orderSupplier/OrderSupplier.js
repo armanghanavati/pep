@@ -236,20 +236,6 @@ class OrderSupplier extends React.Component {
       cmbItems:LAZY,
       cmbItemsOrg:ITEMS
     })
-
-    // const TEMP_cmbSupplier =
-    //   e == null || e == "" ? null : await Gfn_BuildValueComboMulti(e);
-    // // alert(TEMP_cmbSupplier);
-    // this.setState({
-    //   cmbSupplierValue: TEMP_cmbSupplier,
-    //   cmbItems:
-    //     TEMP_cmbSupplier == null
-    //       ? null
-    //       : await itemListComboBySupplierId(
-    //           TEMP_cmbSupplier,
-    //           this.props.User.token
-    //         ),
-    // });
   };
 
   btnExportExcel_onClick=()=>{
@@ -263,45 +249,7 @@ class OrderSupplier extends React.Component {
   };
 
   btnSearch_onClick = async () => {
-    this.OpenCloseWait();
-    // let tempLocationGroupValue = this.state.cmbLocationGroupValue;
-    // if (
-    //   this.state.cmbLocationGroupValue == null ||
-    //   this.state.cmbLocationGroupValue == ""
-    // ) {
-    //   tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
-    //     this.props.Location.locationPermission
-    //   );
-    //   this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
-    // }
-
-    // let tempLocationValue = this.state.cmbLocationValue;
-    // if (
-    //   this.state.cmbLocationValue == null ||
-    //   this.state.cmbLocationValue == ""
-    // ) {
-    //   tempLocationValue = await Gfn_BuildValueComboSelectAll(
-    //     this.state.cmbLocation
-    //   );
-    //   this.setState({ cmbLocationValue: tempLocationValue });
-    // }
-
-    // let tempSupplierValue = this.state.cmbSupplierValue;
-    // if (
-    //   this.state.cmbSupplierValue == null ||
-    //   this.state.cmbSupplierValue == ""
-    // ) {
-    //   tempSupplierValue = await Gfn_BuildValueComboSelectAll(
-    //     this.state.cmbSupplier
-    //   );
-    //   this.setState({ cmbSupplierValue: tempSupplierValue });
-    // }
-
-    // let tempItemValue = this.state.cmbItemsValue;
-    // if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {
-    //   tempItemValue = await Gfn_BuildValueComboSelectAll(this.state.cmbItems);
-    //   this.setState({ cmbItemsValue: tempItemValue });
-    // }
+    this.OpenCloseWait();  
 
     const OBJ = {
       locationIds: this.state.cmbLocationValue,
