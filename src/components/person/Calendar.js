@@ -73,11 +73,11 @@ import { Toast } from "devextreme-react/toast";
 import { Backdrop, Hidden } from '@mui/material';
 import { Margin } from 'devextreme-react/bullet';
 import SaveIcon from "../../assets/images/icon/save.png";
-var data = [];
 var today = new Date().toLocaleDateString('fa-IR-u-nu-latn');
 var year = today.split("/")[0];
 var month = today.split("/")[1];
 var day = today.split("/")[2];
+var oldId=0;
 class PersonShift extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -96,52 +96,72 @@ class PersonShift extends React.PureComponent {
                 id: 2, title: "شیفت عصر"
             }],
             ShiftId: null,
-            dd: false
-        };
+            dd: false, 
+            dataNew:[],           
+        };   
+        oldId=0;     
     }
 
-    async componentDidMount() {
-        await this.loadData();
-    }
+    // async componentDidMount() {
+    //     //alert(this.state.PersonId)
+    //     if(this.props.personId != null)
+    //       await this.loadData(this.props.personId);
+    // }
 
-    loadData = async () => {
-        data = await personShiftList(this.props.personId, year, month, this.props.User.token);
-        if (data[0].day == "يکشنبه") {
-            data = [{ "day": "شنبه", dayOfMonth: "" }, ...data]
+    // async componentDidUpdate() {
+    //     // alert(this.props.personId)
+    //     if(this.props.personId!=null)
+    //         await this.loadData(this.props.personId);
+    // }
+
+    loadData = async () => {  
+        var data = [];             
+        const PERSON_ID=this.props.personId
+        //alert(PERSON_ID)
+        if(oldId!=PERSON_ID){
+            console.log(PERSON_ID);
+            data = await personShiftList(PERSON_ID, year, month, this.props.User.token);
+            
+            // alert(JSON.stringify(data));
+            if (data[0].day == "يکشنبه") {
+                data = [{ "day": "شنبه", dayOfMonth: "" }, ...data]
+            }
+            else if (data[0].day == "دوشنبه") {
+                data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
+            }
+            else if (data[0].day == "سه‌شنبه") {
+                data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
+            }
+            else if (data[0].day == "چهارشنبه") {
+                data = [{ "day": "سه شنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
+            }
+            else if (data[0].day == "پنجشنبه") {
+                data = [{ "day": "چهارشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "سه شنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
+            }
+            else if (data[0].day == "جمعه") {
+                data = [{ "day": "پنج شنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "چهارشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "سه شنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
+                data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
+            }
+            this.setState({
+                dd: true,
+                dataNew:data,                
+            })
+            oldId=PERSON_ID
         }
-        else if (data[0].day == "دوشنبه") {
-            data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
-        }
-        else if (data[0].day == "سه‌شنبه") {
-            data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
-        }
-        else if (data[0].day == "چهارشنبه") {
-            data = [{ "day": "سه شنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
-        }
-        else if (data[0].day == "پنجشنبه") {
-            data = [{ "day": "چهارشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "سه شنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
-        }
-        else if (data[0].day == "جمعه") {
-            data = [{ "day": "پنج شنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "چهارشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "سه شنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "دوشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "یکشنبه", dayOfMonth: "" }, ...data];
-            data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
-        }
-        this.setState({
-            dd: true
-        })
     }
 
     handleCalendar_onclick = (e) => {
@@ -163,6 +183,7 @@ class PersonShift extends React.PureComponent {
     }
 
     btnAdd_onClick = async () => {
+        oldId=0;
         if (this.props.personId == null) {
             alert("لطفا شخص را انتخاب نمایید")
             return;
@@ -184,6 +205,7 @@ class PersonShift extends React.PureComponent {
     }
 
     btnDelete_onClick = async () => {
+        oldId=0;
         await deletePersonShift(this.state.ShiftId, this.props.User.token)
         await this.loadData();
         this.setState({
@@ -191,6 +213,7 @@ class PersonShift extends React.PureComponent {
         })
     }
     nextMonth_onClick = async (e) => {
+        oldId=0;
         month = parseInt(month) + 1;
         if (month > 12)
             month = 12
@@ -201,10 +224,11 @@ class PersonShift extends React.PureComponent {
             })
         else
             this.setState({
-                dd: true
+                dd: true,
             })
     }
     previousMonth_onClick = async (e) => {
+        oldId=0;
         month = parseInt(month) - 1;
         if (month < 1)
             month = 1;
@@ -220,18 +244,19 @@ class PersonShift extends React.PureComponent {
     }
     render() {
         var backgroundColor;
+        this.loadData()
         return (
             <>
-                <div style={{ marginRight: "10px" }}><i onClick={(event) => this.nextMonth_onClick(event)} style={{ marginLeft: "60px", cursor: "pointer" }} title="ماه بعدی">&#60;</i>{month + " - " + year}<i onClick={(event) => this.previousMonth_onClick(event)} style={{ marginRight: "60px", cursor: "pointer" }} title='ماه قبلی'>&#62;</i></div>
+                <div style={{ marginRight: "10px" }}><i onClick={(event) => this.nextMonth_onClick(event)} style={{ marginLeft: "60px", cursor: "pointer" }} title="ماه بعدی">&#60;</i>{month + " - " + year}<i onClick={(event) => this.previousMonth_onClick(event)} style={{ marginRight: "60px", cursor: "pointer" }} title='ماه قبلی'>&#62;</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.props.personName}</div>                
                 {
-                    data.map((element, index) => {
+                    this.state.dataNew.map((element, index) => {
                         index++;
-                        if (day == element.dayOfMonth && month==today.split('/')[1])
+                        if (day == element.dayOfMonth && month == today.split('/')[1])
                             backgroundColor = "lightgreen"
-                        else if(element.dayOfMonth == "")
+                        else if (element.dayOfMonth == "")
                             backgroundColor = ""
                         else
-                            backgroundColor="lightblue"
+                            backgroundColor = "lightblue"
                         if (element.dayOfMonth == "") {
                             return <i style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", overflow: "Hidden", textAlign: "center" }} >
                                 {element.day}

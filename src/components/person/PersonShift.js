@@ -74,6 +74,7 @@ import { Backdrop, Hidden } from '@mui/material';
 import { Margin } from 'devextreme-react/bullet';
 import SaveIcon from "../../assets/images/icon/save.png";
 import Calendar from './Calendar';
+import TestProps from './test';
 const data = [];
 class PersonShift extends React.PureComponent {
   constructor(props) {
@@ -88,7 +89,9 @@ class PersonShift extends React.PureComponent {
       },
       RowSelected: null,
       stateShowCalendar: false,
-      stateDisable_show:false
+      stateDisable_show: false,
+      PersonId:null, 
+      PersonName:null,
     };
   }
 
@@ -97,11 +100,13 @@ class PersonShift extends React.PureComponent {
     this.fn_updateGrid();
   }
 
-  componentDidUpdate() {
-    if (this.state.stateShowCalendar == true) {
-      this.state.stateShowCalendar=false;
-    }
-  }
+  // componentDidUpdate() {
+  //   if (this.state.stateShowCalendar == true) {
+  //     this.setState({
+  //       stateShowCalendar: false
+  //     })
+  //   }
+  // }
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
@@ -131,8 +136,10 @@ class PersonShift extends React.PureComponent {
   grdPerson_onClickRow = async (e) => {
     this.setState({
       stateShowCalendar: true,
-      RowSelected:e.data
-    })
+      RowSelected: e.data,
+      PersonId:e.data.id,
+      PersonName:e.data.fullName
+    });
   }
 
   fn_updateGrid = async () => {
@@ -144,6 +151,7 @@ class PersonShift extends React.PureComponent {
         });
     }
   }
+
 
   render() {
     return (
@@ -160,7 +168,8 @@ class PersonShift extends React.PureComponent {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Col width={6}>
-              {this.state.stateShowCalendar == true && <Calendar personId={this.state.RowSelected.id}/>}
+               {this.state.PersonId !=null && <Calendar personId={this.state.PersonId } personName={this.state.PersonName} />}
+               {/* <TestProps p1={this.state.PersonId} />                */}
             </Col>
             <Col xs={5}>
               <Row>
@@ -175,7 +184,7 @@ class PersonShift extends React.PureComponent {
                     rtlEnabled={true}
                     allowColumnResizing={true}
                     onRowClick={this.grdPerson_onClickRow}
-                    height={DataGridDefaultHeight}
+                    height={DataGridDefaultHeight}  
                   >
                     <Scrolling
                       rowRenderingMode="virtual"

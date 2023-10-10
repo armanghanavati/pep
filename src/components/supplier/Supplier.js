@@ -80,6 +80,10 @@ class Supplier extends React.Component {
         Message: "",
         Type: "",
       },
+      txtSupplierMinOrderWeightValue:null,
+      txtSupplierMaxOrderWeightValue:null,
+      txtSupplierMinOrderRialiValue:null,
+      txtSupplierMaxOrderRialiValue:null
     };
   }
 
@@ -128,18 +132,30 @@ class Supplier extends React.Component {
       stateUpdateDelete: false,
     });
   };
-
-  txtSupplierName_onChanege = (e) => {
+  txtSupplierName_onChanege=(e)=>{
     this.setState({ txtSupplierNameValue: e.value });
-  };
-
-  txtSupplierNamePersian_onChanege = (e) => {
+  }
+  txtSupplierNamePersian_onChanege=(e)=>{
     this.setState({ txtSupplierNamePersianValue: e.value });
+  }
+  txtSupplierDesc_onChanege=(e)=>{
+    this.setState({ txtSupplierDescValue: e.value });
+  }
+  txtSupplierMinOrderWeight_onChanege = (e) => {
+    this.setState({ txtSupplierMinOrderWeightValue: e.value });
   };
 
-  txtSupplierDesc_onChanege = (e) => {
-    this.setState({ txtSupplierDescValue: e.value });
+  txtSupplierMaxOrderWeight_onChanege = (e) => {
+    this.setState({ txtSupplierMaxOrderWeightValue: e.value });
   };
+
+  txtSupplierMinOrderRiali_onChanege = (e) => {
+    this.setState({ txtSupplierMinOrderRialiValue: e.value });
+  };
+
+  txtSupplierMaxOrderRiali_onChanege=(e)=>{
+    this.setState({txtSupplierMaxOrderRialiValue:e.value })
+  }
 
   chkIsActive_onChange = (e) => {
     this.setState({
@@ -187,6 +203,10 @@ class Supplier extends React.Component {
         desc: this.state.txtSupplierDescValue,
         isActive: this.state.chkIsActive,
         isDirect: this.state.chkIsDirect,
+        minOrderWeight:this.state.txtSupplierMinOrderWeightValue,
+        maxOrderWeight:this.state.txtSupplierMaxOrderWeightValue,
+        minOrderRiali:this.state.txtSupplierMinOrderRialiValue,
+        maxOrderRiali:this.state.txtSupplierMaxOrderRialiValue
       };
       await addSupplier(data, this.props.User.token);
       this.setState({
@@ -210,18 +230,23 @@ class Supplier extends React.Component {
         desc: this.state.txtSupplierDescValue,
         isActive: this.state.chkIsActive,
         isDirect: this.state.chkIsDirect,
-      };            
-      const RESULT= await updateSupplier(data,this.props.User.token);
+        minOrderWeight:this.state.txtSupplierMinOrderWeightValue,
+        maxOrderWeight:this.state.txtSupplierMaxOrderWeightValue,
+        minOrderRiali:this.state.txtSupplierMinOrderRialiValue,
+        maxOrderRiali:this.state.txtSupplierMaxOrderRialiValue
+      };
+      const RESULT = await updateSupplier(data, this.props.User.token);
       this.setState({
         SupplierGridData: RESULT
       });
       this.setState({
         ToastProps: {
           isToastVisible: true,
-          Message: RESULT!=null ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش" ,
-          Type: RESULT!=null ? "success" : "error",
+          Message: RESULT != null ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
+          Type: RESULT != null ? "success" : "error",
         },
       });
+      this.fn_updateGrid();
     }
   };
 
@@ -231,31 +256,35 @@ class Supplier extends React.Component {
       txtSupplierNamePersianValue: e.data.persianName,
       txtSupplierDescValue: e.data.desc,
       chkIsActive: e.data.isActive,
-      chkIsDirect: e.data.isDirect,
+      chkIsDirect: e.data.isDirect == null && false,
       stateUpdateDelete: true,
       RowSelected: e.data,
+      txtSupplierMinOrderWeightValue:e.data.minOrderWeight,
+      txtSupplierMaxOrderWeightValue:e.data.maxOrderWeight,
+      txtSupplierMinOrderRialiValue:e.data.minOrderRiali,
+      txtSupplierMaxOrderRialiValue:e.data.maxOrderRiali
     });
   };
 
-  btnDelete_onClick=async()=>{
+  btnDelete_onClick = async () => {
     const data = {
-        id: this.state.RowSelected.id,
-        supplierName: this.state.txtSupplierNameValue,
-        persianName: this.state.txtSupplierNamePersianValue,
-        extSupplierId: null,
-        desc: this.state.txtSupplierDescValue,
-        isActive: this.state.chkIsActive,
-        isDirect: this.state.chkIsDirect,
-      };
-      const MSG=await deleteSupplier(data, this.props.User.token);
-      this.setState({
-        ToastProps: {
-          isToastVisible: true,
-          Message: MSG,
-          Type: "success",
-        },
-      });
-      this.fn_updateGrid();
+      id: this.state.RowSelected.id,
+      supplierName: this.state.txtSupplierNameValue,
+      persianName: this.state.txtSupplierNamePersianValue,
+      extSupplierId: null,
+      desc: this.state.txtSupplierDescValue,
+      isActive: this.state.chkIsActive,
+      isDirect: this.state.chkIsDirect,
+    };
+    const MSG = await deleteSupplier(data, this.props.User.token);
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: MSG,
+        Type: "success",
+      },
+    });
+    this.fn_updateGrid();
   }
 
   render() {
@@ -290,7 +319,7 @@ class Supplier extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام تامین کننده</Label>
                 <TextBox
                   value={this.state.txtSupplierNameValue}
@@ -307,7 +336,7 @@ class Supplier extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نام فارسی</Label>
                 <TextBox
                   value={this.state.txtSupplierNamePersianValue}
@@ -324,7 +353,7 @@ class Supplier extends React.Component {
                   />
                 </Row>
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">توضیحات</Label>
                 <TextBox
                   value={this.state.txtSupplierDescValue}
@@ -341,6 +370,52 @@ class Supplier extends React.Component {
                   />
                 </Row>
               </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">حداقل وزنی</Label>
+                <TextBox
+                  value={this.state.txtSupplierMinOrderWeightValue}
+                  showClearButton={true}
+                  placeholder="حداقل وزنی"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtSupplierMinOrderWeight_onChanege}
+                />
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">حداکثر وزنی</Label>
+                <TextBox
+                  value={this.state.txtSupplierMaxOrderWeightValue}
+                  showClearButton={true}
+                  placeholder="حداکثر وزنی"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtSupplierMaxOrderWeight_onChanege}
+                />
+              </Col>
+              <Row>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">حداقل ریالی</Label>
+                  <TextBox
+                    value={this.state.txtSupplierMinOrderRialiValue}
+                    showClearButton={true}
+                    placeholder="حداقل ریالی"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtSupplierMinOrderRiali_onChanege}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">حداکثر ریالی</Label>
+                  <TextBox
+                    value={this.state.txtSupplierMaxOrderRialiValue}
+                    showClearButton={true}
+                    placeholder="حداکثر ریالی"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtSupplierMaxOrderRiali_onChanege}
+                  />
+                </Col>
+              </Row>
             </Row>
             <Row>
               <Col xs="auto">
