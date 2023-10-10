@@ -20,6 +20,11 @@ export const DataGridItemSupplierColumns = [
     allowEditing: false,
   },
   {
+    dataField: "extItemId",
+    caption: "کد کالا",
+    allowEditing: false,
+  },
+  {
     dataField: "barcode1",
     caption: "بارکد 1",
     allowEditing: false,
