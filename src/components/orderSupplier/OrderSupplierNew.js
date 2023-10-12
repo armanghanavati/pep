@@ -22,7 +22,7 @@ import notify from "devextreme/ui/notify";
 import { Toast } from "devextreme-react/toast";
 
 import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
-import { itemListComboByItemGroupId } from "../../redux/reducers/item/item-action";
+import { itemListComboByItemGroupIdToSupplier } from "../../redux/reducers/item/item-action";
 import { supplierListComboByItemId } from "../../redux/reducers/supplier/supplier-action";
 import { insertNewDataOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 import { locationListOrderSupplierComboNew
@@ -108,7 +108,7 @@ class OrderSupplierNew extends React.Component{
             }
             this.setState({
                 cmbItemGroupValue:e,
-                cmbItems:await itemListComboByItemGroupId(OBJ,this.props.User.token)
+                cmbItems:await itemListComboByItemGroupIdToSupplier(OBJ,this.props.User.token)
             });
         }
     }

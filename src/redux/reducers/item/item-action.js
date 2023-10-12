@@ -86,3 +86,20 @@ export async function itemListComboByItemGroupId(Object,Token) {
   }
   return null;
 }
+
+//-------------ItemListCombo By ItemGroupToSupplier----------------------
+export async function itemListComboByItemGroupIdToSupplier(Object,Token) {
+  const url = window.apiAddress + "/Item/itemListComboByItemGroupIdToSupplier?itemGroupId="+Object.ItemGroupId+"&locationId="+Object.LocationId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All Items for combo" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
