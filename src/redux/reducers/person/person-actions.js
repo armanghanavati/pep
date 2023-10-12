@@ -213,7 +213,6 @@ export async function deletePersonShift(shiftId, Token) {
   const response = await fetch(url, {
     method: "DELETE",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${Token}`,
     },
   });
