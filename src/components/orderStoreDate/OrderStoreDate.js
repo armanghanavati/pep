@@ -51,11 +51,19 @@ import {
   addOrderStoreDate,
   orderStoreDateList,
 } from "../../redux/reducers/orderStoreDate/orderStoreDate-actions";
+import {
+  Gfn_BuildValueComboMulti,
+  Gfn_ConvertComboForAll,
+  Gfn_BuildValueComboSelectAll,
+  Gfn_ExportToExcel,
+  Gfn_DT2StringSql,
+} from "../../utiliy/GlobalMethods";
 import { DataGridOrderStoreDateColumns } from "./OrderStoreDate-config";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { location } from "../../redux/reducers/location/location-actions";
 import { json } from "react-router";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 
 class OrderStoreDate extends React.Component {
   constructor(props) {
@@ -93,7 +101,7 @@ class OrderStoreDate extends React.Component {
   }
 
   fn_updateGrid = async (locationId = "") => {
-    var response=await orderStoreDateList(
+    var response = await orderStoreDateList(
       this.props.Company.currentCompanyId,
       locationId,
       this.props.User.token
@@ -252,6 +260,10 @@ class OrderStoreDate extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.OrderStoreDateGridData, "OrderStoreDate")
+  }
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -384,7 +396,17 @@ class OrderStoreDate extends React.Component {
             <Row>
               <Label className="title">لیست زمانبندی فروشگاه ها</Label>
             </Row>
-
+            <Row style={{ direction: 'ltr' }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
+            </Row>
             <Row>
               <Col xs="auto" className="standardPadding">
                 <DataGrid

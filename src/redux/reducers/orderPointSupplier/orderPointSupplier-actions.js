@@ -133,3 +133,25 @@ export async function insertNewDataGroupOrderPointSupplier(Object, Token){
   }
   return null; 
 }
+
+//-------------OrderPointSupplier report----------------------
+export async function orderSupplierReport(Object, Token){
+  const url=window.apiAddress+"/orderPointSupplier/orderPointSupplierReport"              
+  const response = await fetch(
+      url,
+      {
+          method: "POST",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('new OrderPointSupplier='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null; 
+}

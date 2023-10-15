@@ -26,6 +26,7 @@ import PersonShifts from '../pages/PersonShifts'
 import ItemSuppliers from '../pages/ItemSuppliers'
 import OrderInventoryConfirms from '../pages/OrderInventoryConfirms'
 import OrderSupplierConfirms from '../pages/OrderSupplierConfirms';
+import OrderPointSupplierReports from '../pages/OrderPointSupplierReports';
 
 
 export const REAL_COMPONENT = [
@@ -147,8 +148,8 @@ export const REAL_COMPONENT = [
     orgComponent: <OrderInventoryConfirms />,
   },
   {
-    strComponent: "OrderSupplierConfirms",
-    orgComponent: <OrderSupplierConfirms />,
-  },  
+    strComponent: "OrderPointSupplierReports",
+    orgComponent: <OrderPointSupplierReports />,
+  }, 
 ];
 
