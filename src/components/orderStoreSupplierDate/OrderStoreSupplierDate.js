@@ -55,7 +55,7 @@ import { DataGridOrderStoreSupplierDateColumns } from "./OrderStoreSupplierDate-
 import UpdateIcon from "../../assets/images/icon/update.png";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { location } from "../../redux/reducers/location/location-actions";
-import {supplierList} from "../../redux/reducers/supplier/supplier-action";
+import { supplierList } from "../../redux/reducers/supplier/supplier-action";
 import { json } from "react-router";
 
 class OrderStoreSupplierDate extends React.Component {
@@ -84,8 +84,8 @@ class OrderStoreSupplierDate extends React.Component {
       chkIsWednsday: false,
       chkIsThursday: false,
       chkIsFriday: false,
-      SupplierList:null,
-      SupplierId:null,
+      SupplierList: null,
+      SupplierId: null,
     };
   }
 
@@ -96,15 +96,15 @@ class OrderStoreSupplierDate extends React.Component {
     this.fn_supplierList();
   }
 
-  fn_updateGrid = async (locationId = "", supplierId= "") => {
-    var response=await orderStoreSupplierDateList(
+  fn_updateGrid = async (locationId = "", supplierId = "") => {
+    var response = await orderStoreSupplierDateList(
       this.props.Company.currentCompanyId,
       locationId,
       supplierId,
       this.props.User.token
     );
     if (this.state.stateDisable_show && response != null) {
-      var result =response 
+      var result = response
       this.setState({
         OrderStoreSupplierDateGridData: result,
       });
@@ -179,6 +179,7 @@ class OrderStoreSupplierDate extends React.Component {
 
   cmbLocation_onChange = async (e) => {
     this.setState({
+      LocationId: e,
       chkIsSunday: false,
       chkIsMonday: false,
       chkIsTuesday: false,
@@ -186,15 +187,25 @@ class OrderStoreSupplierDate extends React.Component {
       chkIsThursday: false,
       chkIsFriday: false,
       chkIsSaturday: false,
-      LocationId:e,
+      OrderStoreSupplierDateGridData: null
     });
+    if(this.state.SupplierId != null)
+      await this.fn_updateGrid(this.state.LocationId, this.state.SupplierId)
   };
 
-  cmbSupplier_onChange= async (e)=>{
+  cmbSupplier_onChange = async (e) => {
     this.setState({
-      SupplierId:e
+      SupplierId: e,
+      chkIsSunday: false,
+      chkIsMonday: false,
+      chkIsTuesday: false,
+      chkIsWednsday: false,
+      chkIsThursday: false,
+      chkIsFriday: false,
+      chkIsSaturday: false,
+      OrderStoreSupplierDateGridData: null
     })
-      await this.fn_updateGrid(this.state.LocationId, e)
+    await this.fn_updateGrid(this.state.LocationId, e)
   }
   chkIsSaturday_onChange = (e) => {
     this.setState({
@@ -248,7 +259,7 @@ class OrderStoreSupplierDate extends React.Component {
     if (await this.fn_CheckValidation()) {
       const data = {
         locationId: this.state.LocationId,
-        supplierId:this.state.SupplierId,
+        supplierId: this.state.SupplierId,
         sunday: this.state.chkIsSunday,
         monday: this.state.chkIsMonday,
         tuesday: this.state.chkIsTuesday,

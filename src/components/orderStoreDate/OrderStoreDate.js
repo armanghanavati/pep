@@ -181,6 +181,7 @@ class OrderStoreDate extends React.Component {
       chkIsThursday: false,
       chkIsFriday: false,
       chkIsSaturday: false,
+      OrderStoreDateGridData:null
     });
     await this.fn_updateGrid(e);
   };
