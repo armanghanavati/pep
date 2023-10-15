@@ -263,7 +263,9 @@ class OrderInventory extends React.Component {
 
   cmbItem_onChange = async (e) => {   
     let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
-    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
+    this.setState({ 
+      cmbItemsValue: await Gfn_BuildValueComboMulti(data),      
+    });
   };
 
   btnSearch_onClick = async () => {        
@@ -438,15 +440,19 @@ class OrderInventory extends React.Component {
 
   btnUpdateOrders_onClick = async () => {
     this.OpenCloseWait();
-    await updateGroupsOrderPointInventory(
+    const RTN=await updateGroupsOrderPointInventory(
       this.state.OrderPointInventoryEdited,
       this.props.User.token
     );
+    if(RTN==1)
+      this.setState({
+        OrderPointInventoryEdited:[]
+      });
     this.setState({
       ToastProps: {
         isToastVisible: true,
-        Message: ",ویرایش با موفقیت انجام گردید.",
-        Type: "success",
+        Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+        Type:RTN==1 ? "success" : "error",
       },
     });
     this.OpenCloseWait();

@@ -20,6 +20,7 @@ import TextBox from "devextreme-react/text-box";
 import { Button } from "devextreme-react/button";
 import notify from "devextreme/ui/notify";
 import { Toast } from "devextreme-react/toast";
+import DataSource from "devextreme/data/data_source";
 
 import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { itemListComboByItemGroupIdToSupplier } from "../../redux/reducers/item/item-action";
@@ -107,9 +108,20 @@ class OrderSupplierNew extends React.Component{
                 LocationId:this.state.cmbLocationValue
             }
             this.setState({
-                cmbItemGroupValue:e,
-                cmbItems:await itemListComboByItemGroupIdToSupplier(OBJ,this.props.User.token)
+                cmbItemGroupValue:e,                
             });
+
+
+            const ITEMS=await itemListComboByItemGroupIdToSupplier(OBJ,this.props.User.token)
+            const LAZY=new DataSource({
+                store: ITEMS,
+                paginate:true,
+                pageSize:10
+            })
+            this.setState({
+                cmbItems:LAZY,
+                cmbItemsOrg:ITEMS
+            })
         }
     }
 
@@ -125,7 +137,7 @@ class OrderSupplierNew extends React.Component{
         const data={
             ItemId:e
         }
-        const tempItems=this.state.cmbItems;
+        const tempItems=this.state.cmbItemsOrg;
         for(let i=0;i<tempItems.length;i++)
             if(tempItems[i].id==e)
                 this.setState({
@@ -135,6 +147,8 @@ class OrderSupplierNew extends React.Component{
                 })
         this.setState({
             cmbItemValue:e,
+            cmbSupplierValue:null,
+            txtOrderNumberValue:null,
             cmbSuppliers:await supplierListComboByItemId(data,this.props.User.token)
         })
     }
@@ -172,10 +186,10 @@ class OrderSupplierNew extends React.Component{
         }
 
         let errMSG = '';        
-        if (this.state.txtOrderNumberValue > this.state.lblSetadMojoodi) {
-            errMSG += "تعداد سفارش از موجودی ستاد بیشتر است." + "<br>";
-            flagSend = false;
-        }
+        // if (this.state.txtOrderNumberValue > this.state.lblSetadMojoodi) {
+        //     errMSG += "تعداد سفارش از موجودی ستاد بیشتر است." + "<br>";
+        //     flagSend = false;
+        // }
         if(this.state.txtOrderNumberValue%this.state.lblQtyPerPack!==0 || this.state.txtOrderNumberValue<=0){
             errMSG+='تعداد سفارش باید ضریبی از واحد بسته بندی باشد.'
             flagSend=false;
@@ -192,9 +206,10 @@ class OrderSupplierNew extends React.Component{
                 supplierId: this.state.cmbSupplierValue,
                 productId: this.state.cmbItemValue,
                 numberOrder: this.state.txtOrderNumberValue,
-                giftQTYOrder:this.state.txtGiftNumberValue,
+                giftQTYOrder:(this.state.txtGiftNumberValue==null) && 0,
                 userId: this.props.User.userId
             }
+            alert(JSON.stringify(data))
             alert(JSON.stringify(await insertNewDataOrderPointSupplier(data,this.props.User.token)))
         }        
     }
