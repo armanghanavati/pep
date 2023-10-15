@@ -391,6 +391,7 @@ class Ticket extends React.Component {
             ticketStatusId: 3
 
         }
+
         this.setState({
             ToastProps: {
                 isToastVisible: true,
@@ -399,7 +400,7 @@ class Ticket extends React.Component {
             }
         })
 
-        await updateTicket(obj, "sd");
+        await updateTicket(obj, this.props.User.token);
         const rtnAllTicket = await this.fn_LoadAllTickets();
         this.tabTickets_onChange('3', rtnAllTicket)
     }
