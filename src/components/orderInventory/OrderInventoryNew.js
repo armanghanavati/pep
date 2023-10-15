@@ -156,6 +156,8 @@ class OrderInventoryNew extends React.Component{
         }
         this.setState({
             cmbItemValue:e,
+            cmbSupplierValue:null,
+            txtOrderNumberValue:null,
             cmbSuppliers:await supplierListComboByItemId(data,this.props.User.token)
         })
     }

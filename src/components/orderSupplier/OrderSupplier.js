@@ -394,6 +394,7 @@ class OrderSupplier extends React.Component {
       this.props.User.token
     );
     this.setState({
+      OrderPointSupplierEdited:[],
       ToastProps: {
         isToastVisible: true,
         Message: ",ویرایش با موفقیت انجام گردید.",
