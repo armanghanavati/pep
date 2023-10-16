@@ -106,9 +106,9 @@ class OrderInventoryNew extends React.Component{
 
     cmbItemGroup_onChange=async(e)=>{
         
-        document.getElementById("errLocation").innerHTML = "";        
+        document.getElementById("errLocationNew").innerHTML = "";        
         if (this.state.cmbLocationValue == null || this.state.cmbLocationValue =="")
-            document.getElementById("errLocation").innerHTML = "فروشگاه را انتخاب نمائید.";                            
+            document.getElementById("errLocationNew").innerHTML = "فروشگاه را انتخاب نمائید.";                            
     
         else{
             const OBJ={
@@ -169,34 +169,34 @@ class OrderInventoryNew extends React.Component{
 
     fn_CheckFinalValidation=()=>{        
         let flagSend = true;
-        document.getElementById("errLocation").innerHTML = ""; 
-        document.getElementById("errItem").innerHTML = ""; 
-        document.getElementById("errSupplier").innerHTML = ""; 
-        document.getElementById("errOrderNumber").innerHTML = ""; 
-        document.getElementById("errInventory").innerHTML = "";  
+        document.getElementById("errLocationNew").innerHTML = ""; 
+        document.getElementById("errItemNew").innerHTML = ""; 
+        document.getElementById("errSupplierNew").innerHTML = ""; 
+        document.getElementById("errOrderNumberNew").innerHTML = ""; 
+        document.getElementById("errInventoryNew").innerHTML = "";  
         if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
             const msg= "فروشگاه را انتخاب نمائید.";
-            document.getElementById("errLocation").innerHTML = msg; 
+            document.getElementById("errLocationNew").innerHTML = msg; 
             flagSend = false;
         }
         if (this.state.cmbInventoryvalue === null  || this.state.cmbInventoryvalue == "") {
             const msg= " انبار را انتخاب نمائید.";
-            document.getElementById("errInventory").innerHTML = msg; 
+            document.getElementById("errInventoryNew").innerHTML = msg; 
             flagSend = false;
           }
         if (this.state.cmbItemValue == null  || this.state.cmbItemValue == "") {
             const msg= "کالا را انتخاب نمائید.";
-            document.getElementById("errItem").innerHTML = msg; 
+            document.getElementById("errItemNew").innerHTML = msg; 
             flagSend = false;
         }
         if (this.state.cmbSupplierValue == null || this.state.cmbSupplierValue == "") {
             const msg= "تامین کننده را انتخاب نمائید."
-            document.getElementById("errSupplier").innerHTML = msg; 
+            document.getElementById("errSupplierNew").innerHTML = msg; 
             flagSend = false;
         }
         if (this.state.txtOrderNumberValue == null || this.state.cmbSupplierValue == "") {
             const msg= "تعداد سفارش را وارد نمائید." 
-            document.getElementById("errOrderNumber").innerHTML = msg; 
+            document.getElementById("errOrderNumberNew").innerHTML = msg; 
             flagSend = false;
         }
 
@@ -256,7 +256,7 @@ class OrderInventoryNew extends React.Component{
                             value={this.state.cmbLocationValue}                                   
                             onValueChange={this.cmbLocation_onChange}
                         />
-                        <Label id="errLocation" className="standardLabelFont errMessage" />
+                        <Label id="errLocationNew" className="standardLabelFont errMessage" />
                     </Col>
                     <Col>
                         <Label className="standardLabelFont">انبار</Label>
@@ -270,7 +270,7 @@ class OrderInventoryNew extends React.Component{
                         value={this.state.cmbInventoryvalue}  
                         onValueChange={this.cmbInventory_onChange}
                         />
-                        <Label id="errInventory" className="standardLabelFont errMessage" />
+                        <Label id="errInventoryNew" className="standardLabelFont errMessage" />
                     </Col>
                 </Row>      
                 <Row>
@@ -299,7 +299,7 @@ class OrderInventoryNew extends React.Component{
                             rtlEnabled={true}                                        
                             onValueChange={this.cmbItem_onChange}
                         />
-                        <Label id="errItem" className="standardLabelFont errMessage" />
+                        <Label id="errItemNew" className="standardLabelFont errMessage" />
                     </Col>                    
                 </Row>
                 <Row>
@@ -326,7 +326,7 @@ class OrderInventoryNew extends React.Component{
                             value={this.state.cmbSupplierValue}                      
                             onValueChange={this.cmbSupplier_onChange}
                         />
-                        <Label id="errSupplier" className="standardLabelFont errMessage" />
+                        <Label id="errSupplierNew" className="standardLabelFont errMessage" />
                     </Col>           
                     <Col xs="auto"> 
                         <Label className="standardLabelFont">تعداد</Label>
@@ -338,7 +338,7 @@ class OrderInventoryNew extends React.Component{
                             valueChangeEvent="keyup"
                             onValueChanged={this.txtOrderNumber_onChanege}
                         />  
-                        <Label id="errOrderNumber" className="standardLabelFont errMessage" />
+                        <Label id="errOrderNumberNew" className="standardLabelFont errMessage" />
                     </Col>                    
                 </Row>
                 
