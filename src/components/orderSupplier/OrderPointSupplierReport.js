@@ -198,10 +198,8 @@ class OrderPointSupplierReport extends React.Component {
   };
 
   cmbSupplier_onChange = async (e) => {    
-
     let data=await Gfn_ConvertComboForAll(e,this.state.cmbSupplier)  
     const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data)
-    
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
       // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      

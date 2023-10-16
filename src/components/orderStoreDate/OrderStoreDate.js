@@ -60,7 +60,7 @@ import {
 } from "../../utiliy/GlobalMethods";
 import { DataGridOrderStoreDateColumns } from "./OrderStoreDate-config";
 import UpdateIcon from "../../assets/images/icon/update.png";
-import { userLocationList } from "../../redux/reducers/user/user-actions";
+import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
 import { location } from "../../redux/reducers/location/location-actions";
 import { json } from "react-router";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
@@ -69,9 +69,8 @@ class OrderStoreDate extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      LocationId: null,
+      cmbLocationValue: null,
       OrderStoreDateGridData: null,
-      Id: null,
       RowSelected: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
@@ -82,8 +81,8 @@ class OrderStoreDate extends React.Component {
         Message: "",
         Type: "",
       },
-      LocationList: null,
-      Location: null,
+      cmbLocationGroup: null,
+      cmbLocation: null,
       chkIsSaturday: false,
       chkIsSunday: false,
       chkIsMonday: false,
@@ -97,7 +96,7 @@ class OrderStoreDate extends React.Component {
   async componentDidMount() {
     await this.fn_GetPermissions();
     this.fn_updateGrid();
-    this.fn_locationList();
+    this.fn_locationGroupList();
   }
 
   fn_updateGrid = async (locationId = "") => {
@@ -106,7 +105,11 @@ class OrderStoreDate extends React.Component {
       locationId,
       this.props.User.token
     );
-    if (this.state.stateDisable_show && response != null) {
+    if (response == null)
+      this.setState({
+        OrderStoreDateGridData: response,
+      });
+    else if (this.state.stateDisable_show && response != null) {
       var result = response
       this.setState({
         OrderStoreDateGridData: result,
@@ -140,9 +143,9 @@ class OrderStoreDate extends React.Component {
     }
   };
 
-  fn_locationList = async () => {
+  fn_locationGroupList = async () => {
     this.setState({
-      LocationList: await userLocationList(
+      cmbLocationGroup: await userLocationListCombo(
         this.props.User.userId,
         this.props.Company.currentCompanyId,
         this.props.User.token
@@ -165,15 +168,41 @@ class OrderStoreDate extends React.Component {
       }
   };
 
-  cmbLocationList_onChange = async (e) => {
-    this.setState({
-      LocationId: e,
-      Location: await location(e, this.props.User.token),
-    });
+  cmbLocationGroup_onChange = async (e) => {
+    const IDS = e.toString().split(",");
+    const TEMP_LOCATION = await userLocationListCombo(
+      this.props.User.userId,
+      this.props.Company.currentCompanyId,
+      this.props.User.token
+    );
+    let tempLocation = [];
+    for (let i = 0; i < IDS.length; i++)
+      for (let j = 0; j < TEMP_LOCATION.length; j++)
+        if (IDS[i] == TEMP_LOCATION[j].id) tempLocation.push(TEMP_LOCATION[j]);
+    if (IDS.includes('0')) {
+      this.setState({
+        cmbLocation: null,
+        cmbLocationValue: null,
+        chkIsSaturday: false,
+        chkIsSunday: false,
+        chkIsMonday: false,
+        chkIsTuesday: false,
+        chkIsWednsday: false,
+        chkIsThursday: false,
+        chkIsFriday: false,
+      })
+      this.fn_updateGrid();
+    }
+    else {
+      this.setState({
+        cmbLocation: tempLocation,
+      });
+    }
   };
 
   cmbLocation_onChange = async (e) => {
     this.setState({
+      cmbLocationValue: e,
       chkIsSunday: false,
       chkIsMonday: false,
       chkIsTuesday: false,
@@ -181,7 +210,7 @@ class OrderStoreDate extends React.Component {
       chkIsThursday: false,
       chkIsFriday: false,
       chkIsSaturday: false,
-      OrderStoreDateGridData:null
+      OrderStoreDateGridData: null
     });
     await this.fn_updateGrid(e);
   };
@@ -225,7 +254,7 @@ class OrderStoreDate extends React.Component {
     let errMsg = "";
     let flag = true;
     document.getElementById("errLocationId").innerHTML = "";
-    if (this.state.LocationId == null) {
+    if (this.state.cmbLocationValue == null) {
       document.getElementById("errLocationId").innerHTML =
         "نام  فروشگاه را انتخاب نمائید";
       flag = false;
@@ -236,7 +265,7 @@ class OrderStoreDate extends React.Component {
   btnUpdate_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
-        locationId: this.state.LocationId,
+        locationId: this.state.cmbLocationValue,
         sunday: this.state.chkIsSunday,
         monday: this.state.chkIsMonday,
         tuesday: this.state.chkIsTuesday,
@@ -253,7 +282,7 @@ class OrderStoreDate extends React.Component {
           Type: RESULT > 0 ? "success" : "error",
         },
       });
-      await this.fn_updateGrid(this.state.LocationId);
+      await this.fn_updateGrid(this.state.cmbLocationValue);
     }
   };
 
@@ -286,25 +315,26 @@ class OrderStoreDate extends React.Component {
               <Col xs="auto">
                 <Label className="standardLabelFont">نام گروه فروشگاه</Label>
                 <SelectBox
-                  dataSource={this.state.LocationList}
+                  dataSource={this.state.cmbLocationGroup}
                   displayExpr="label"
                   placeholder="نام گروه فروشگاه"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
-                  onValueChange={this.cmbLocationList_onChange}
+                  onValueChange={this.cmbLocationGroup_onChange}
                 />
               </Col>
               <Col xs="auto">
                 <Label className="standardLabelFont">نام فروشگاه</Label>
                 <SelectBox
-                  dataSource={this.state.Location}
+                  dataSource={this.state.cmbLocation}
                   displayExpr="label"
                   placeholder="نام فروشگاه"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbLocation_onChange}
+                  value={this.state.cmbLocationValue}
                 />
                 <Label
                   id="errLocationId"
@@ -397,6 +427,7 @@ class OrderStoreDate extends React.Component {
             <Row>
               <Label className="title">لیست زمانبندی فروشگاه ها</Label>
             </Row>
+
             <Row style={{ direction: 'ltr' }}>
               <Col xs="auto">
                 <Button
