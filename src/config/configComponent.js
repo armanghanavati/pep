@@ -29,7 +29,6 @@ import OrderSupplierConfirms from '../pages/OrderSupplierConfirms';
 import OrderPoints from '../pages/OrderPoints'
 import OrderPointSupplierReports from '../pages/OrderPointSupplierReports';
 
-
 export const REAL_COMPONENT = [
   {
     strComponent: "Ticket",
@@ -155,6 +154,10 @@ export const REAL_COMPONENT = [
   {
     strComponent: "OrderPoints",
     orgComponent: <OrderPoints />,
-  },  
+  },
+  {
+    strComponent: "OrderSupplierConfirms",
+    orgComponent: <OrderSupplierConfirms/>,
+  }  
 ];
 
