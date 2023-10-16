@@ -65,6 +65,7 @@ import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
 import { supplierOrderInventoryComboList } from "../../redux/reducers/supplier/supplier-action";
 import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
+import { orderPointListByLSI ,orderPointUpdate} from "../../redux/reducers/orderPoint/orderPoint-actions";
 
 import {
   Gfn_BuildValueComboMulti,
@@ -95,6 +96,8 @@ class OrderPoint extends React.Component {
       stateEnable_btnAdd: false,
       stateEnable_btnUpdate: false,
       stateEnable_show: false,
+      OrderPointGridData:null,
+      OrderPointEdited:[],
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -228,10 +231,10 @@ class OrderPoint extends React.Component {
 
   btnSearch_onClick = async () => {
     let flagSend = true;
+    
     document.getElementById("errLocation").innerHTML = "";
     document.getElementById("errItem").innerHTML = "";
-    document.getElementById("errSupplier").innerHTML = "";
-    document.getElementById("errInventory").innerHTML = "";
+    document.getElementById("errSupplier").innerHTML = "";    
     if (
       this.state.cmbLocationValue === null ||
       this.state.cmbLocationValue == ""
@@ -254,16 +257,7 @@ class OrderPoint extends React.Component {
       const msg = "تامین کننده را انتخاب نمائید.";
       document.getElementById("errSupplier").innerHTML = msg;
       flagSend = false;
-    }
-
-    if (
-      this.state.cmbInventoryvalue === null ||
-      this.state.cmbInventoryvalue == ""
-    ) {
-      const msg = " انبار را انتخاب نمائید.";
-      document.getElementById("errInventory").innerHTML = msg;
-      flagSend = false;
-    }
+    }    
 
     if (flagSend) {
       this.OpenCloseWait();
@@ -273,18 +267,49 @@ class OrderPoint extends React.Component {
         itemIds: this.state.cmbItemsValue,
         inventoryId: this.state.cmbInventoryvalue,
       };
-
-      //   this.setState({
-      //     OrderInventoryGridData: await orderPintInventoryListByLSI(
-      //       OBJ,
-      //       this.props.User.token
-      //     ),
-      //   });
-
-      this.fn_SetLogsOrderPointInventory();
+    //   alert(JSON.stringify(OBJ))
+        this.setState({
+          OrderPointGridData: await orderPointListByLSI(
+            OBJ,
+            this.props.User.token
+          ),
+        });
+      
       this.OpenCloseWait();
     }
   };
+
+  grdOrderPoint_onRowUpdated=(params)=>{        
+    if(this.state.stateEnable_btnUpdate)
+        this.api_UpdateOrderPoint(params.data.id,params.data.maxMojoodiRooz,params.data.minMojoodiRooz,params.data.ledTime)
+    else
+        alert('کاربر گرامی شما دسترسی ویرایش ندارید. لطفا با ادمین تماس بگیرید.')
+
+    }
+
+    async api_UpdateOrderPoint(orderPintId,maxMojoodiRooz,minMojoodiRooz,ledTime) {
+        this.OpenCloseWait();        
+        let data = {
+            orderPointId: orderPintId,
+            maxMojoodiRooz: maxMojoodiRooz,
+            minMojoodiRooz: minMojoodiRooz,
+            ledTime: ledTime
+        }
+        const RTN=await orderPointUpdate(data,this.props.User.token);
+        this.setState({
+            ToastProps: {
+              isToastVisible: true,
+              Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+              Type:RTN==1 ? "success" : "error",
+            },
+          });
+        this.OpenCloseWait();        
+    }
+
+    onHidingToast = () => {
+        this.setState({ ToastProps: { isToastVisible: false } });
+      };
+
 
   render() {
     return (
@@ -408,7 +433,7 @@ class OrderPoint extends React.Component {
               <Col xs="auto" className="standardMarginRight">
                 <DataGrid
                   id="grdOrderPoint"
-                  dataSource={this.state.OrderGridData}
+                  dataSource={this.state.OrderPointGridData}
                   defaultColumns={DataGridOrderPointColumns}
                   keyExpr="id"
                   columnAutoWidth={true}
@@ -417,10 +442,7 @@ class OrderPoint extends React.Component {
                   rtlEnabled={true}
                   allowColumnResizing={true}
                   columnResizingMode="widget"
-                  onRowUpdating={this.grdOrderPoint_onRowUpdating}
-                  onCellDblClick={this.grdOrderPoint_onCellDblClick}
-                  onRowPrepared={this.grdOrderPoint_onRowPrepared}     
-                               
+                  onRowUpdated={this.grdOrderPoint_onRowUpdated}                                              
                 >                                          
                   <Scrolling
                     rowRenderingMode="virtual"
