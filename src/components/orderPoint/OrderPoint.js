@@ -280,8 +280,10 @@ class OrderPoint extends React.Component {
   };
 
   grdOrderPoint_onRowUpdated=(params)=>{        
-    console.log("DATA="+JSON.stringify(params.data));
-    this.api_UpdateOrderPoint(params.data.id,params.data.maxMojoodiRooz,params.data.minMojoodiRooz,params.data.ledTime)
+    if(this.state.stateEnable_btnUpdate)
+        this.api_UpdateOrderPoint(params.data.id,params.data.maxMojoodiRooz,params.data.minMojoodiRooz,params.data.ledTime)
+    else
+        alert('کاربر گرامی شما دسترسی ویرایش ندارید. لطفا با ادمین تماس بگیرید.')
 
     }
 

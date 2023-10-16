@@ -402,6 +402,7 @@ class OrderInventory extends React.Component {
     if (flagPush)
       if (FlagError || flagEditRowCount) {
         let obj = {
+          CompanyId:this.props.Company.currentCompanyId,
           UserId: this.props.User.userId,
           OrderPointInventoryId: params.oldData.id,
           FirstValue:
@@ -413,6 +414,9 @@ class OrderInventory extends React.Component {
             params.oldData.description === null
               ? ""
               : params.oldData.description,
+          OrderSystem: params.oldData.orderSystem,
+          ProductId:params.oldData.productId,
+          RetailStoreId: params.oldData.retailStoreId,          
         };
         tempOrderPointInventoryEdited.push(obj);
       } else {
@@ -444,11 +448,21 @@ class OrderInventory extends React.Component {
       this.state.OrderPointInventoryEdited,
       this.props.User.token
     );
-    if(RTN==1)
-      this.setState({
-        OrderPointInventoryEdited:[]
-      });
+    // if(RTN.length==0)
     this.setState({
+      OrderPointInventoryEdited:[]
+    });
+
+    let tempOrders=[];
+    const ORDER_INV=this.state.OrderInventoryGridData;
+    for (let i=0;i<RTN.length;i++)
+      for(let j=0;j<ORDER_INV.length;j++){
+        if(RTN[i].id==ORDER_INV[j].id)            
+          tempOrders.push(ORDER_INV[j])
+      }
+
+    this.setState({
+      OrderInventoryGridData:tempOrders,
       ToastProps: {
         isToastVisible: true,
         Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
