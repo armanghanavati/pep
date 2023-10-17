@@ -124,7 +124,7 @@ class MainMenu extends React.Component {
   render() {
     const { currentItem } = this.state;
     const MAIN_MENU_ATTR = {  
-      class: 'mainMenuStyle'
+      class: 'mainMenuStyle',     
     }
 
     return (

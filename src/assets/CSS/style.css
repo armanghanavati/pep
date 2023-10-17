@@ -58,11 +58,20 @@
     color: #00345c;
   }
 
+  #simple-treeview li{
+    font-weight: 800;
+  }
+
+  #simple-treeview .dx-treeview-node-is-leaf{
+    font-weight: 100!important;
+  }
+  
   .rootMenuStyle{
     background-color: #e4e4e4;
     color: white;
     min-height: 100vh;
     box-shadow: inset 0px 5px 20px -5px rgba(0, 0, 0, 0.5);
+    font-weight: 800!important;
   }
 
   .errMessage{
