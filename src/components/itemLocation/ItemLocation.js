@@ -347,8 +347,6 @@ class ItemLocation extends React.Component {
         itemId: tempItemLocation[i].itemId,
         locationId: tempItemLocation[i].locationId,
         isActive: Status
-        // maxPercentChange:tempItemLocation[i].maxPercentChange,
-        // minPercentChange:tempItemLocation[i].minPercentChange
       };
       tempItems.push(obj);
 
@@ -380,6 +378,8 @@ class ItemLocation extends React.Component {
         tempItems[i].locationId === params.data.locationId
       ) {
         tempItems[i].isActive = params.data.isActive;
+        tempItems[i].maxPercentChange = params.data.maxPercentChange;
+        tempItems[i].minPercentChange = params.data.minPercentChange;
         flagPush = false;
       }
     }
@@ -388,7 +388,10 @@ class ItemLocation extends React.Component {
         itemId: params.data.itemId,
         locationId: params.data.locationId,
         isActive: params.data.isActive,
+        maxPercentChange:params.data.maxPercentChange,
+        minPercentChange:params.data.minPercentChange
       };
+      alert(JSON.stringify(obj));
       tempItems.push(obj);
     }
     this.setState({ ItemsListUpdated: tempItems, flagSelectAll: false });

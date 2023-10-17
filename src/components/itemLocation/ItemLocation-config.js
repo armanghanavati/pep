@@ -48,16 +48,15 @@ export const DataGridItemLocationColumns = [
     dataField: "isActive",
     caption: "فعال",
     allowEditing: true,
+  },
+  {
+    dataField: "maxPercentChange",
+    caption: "ماکزیمم درصد افزایش",
+    allowEditing: true,
+  },
+  {
+    dataField: "minPercentChange",
+    caption: "مینیمم درصد افزایش",
+    allowEditing: true,
   }
-  // {
-  //   dataField: "maxPercentChange",
-  //   caption: "ماکزیمم درصد افزایش",
-  //   allowEditing: true,
-  // },
-  // {
-  //   dataField: "minPercentChange",
-  //   caption: "مینیمم درصد افزایش",
-  //   allowEditing: true,
-  // }
-  
 ];
