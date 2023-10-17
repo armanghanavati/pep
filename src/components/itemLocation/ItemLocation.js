@@ -391,7 +391,6 @@ class ItemLocation extends React.Component {
         maxPercentChange:params.data.maxPercentChange,
         minPercentChange:params.data.minPercentChange
       };
-      alert(JSON.stringify(obj));
       tempItems.push(obj);
     }
     this.setState({ ItemsListUpdated: tempItems, flagSelectAll: false });
