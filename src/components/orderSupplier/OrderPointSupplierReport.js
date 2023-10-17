@@ -242,14 +242,14 @@ class OrderPointSupplierReport extends React.Component {
   };  
 
   
-  grdOrderPointSupplier_onCellDblClick = async (e) => {
-    const LogsOfOPI = await logsOPIByOPIid(e.data.id, this.props.User.token);
-    this.props.dispatch(
-      logsOrderPointInventoryActions.setLogsOrderPointInventoryByOPIid({
-        LogsOfOPI,
-      })
-    );
-  };
+  // grdOrderPointSupplier_onCellDblClick = async (e) => {
+  //   const LogsOfOPI = await logsOPIByOPIid(e.data.id, this.props.User.token);
+  //   this.props.dispatch(
+  //     logsOrderPointInventoryActions.setLogsOrderPointInventoryByOPIid({
+  //       LogsOfOPI,
+  //     })
+  //   );
+  // };
   
   btnExportExcel_onClick=()=>{
     Gfn_ExportToExcel(this.state.OrderPointSupplierGridData,"OrderPointSupplier")

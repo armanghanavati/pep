@@ -1,4 +1,4 @@
-import React,{ Suspense } from "react";
+import React, { Suspense } from "react";
 import { connect } from "react-redux";
 import DataSource from "devextreme/data/data_source";
 import {
@@ -103,16 +103,16 @@ class OrderInventory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      stateWait: false,      
+      stateWait: false,
       cmbLocationGroupValue: null,
       cmbLocation: null,
       cmbLocationValue: null,
       cmbSupplier: null,
-      cmbInventory:null,
-      cmbInventoryvalue:null,
+      cmbInventory: null,
+      cmbInventoryvalue: null,
       cmbSupplierValue: null,
       cmbItems: null,
-      cmItemsOrg:null,
+      cmItemsOrg: null,
       cmbItemsValue: null,
       OrderInventoryGridData: null,
       OrderPointInventoryEdited: [],
@@ -125,8 +125,8 @@ class OrderInventory extends React.Component {
       stateEnable_show: false,
       stateModal_OrderInventoryNew: false,
       stateModal_OrderInventoryNewGroup: false,
-      stateModal_LogsOfOPI:false,
-      isOutRoute:false,      
+      stateModal_LogsOfOPI: false,
+      isOutRoute: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -167,7 +167,7 @@ class OrderInventory extends React.Component {
   }
 
   fn_CheckRequireState = async () => {
-    if(this.props.Company.currentCompanyId==null){
+    if (this.props.Company.currentCompanyId == null) {
       const companyCombo = await companyListCombo(this.props.User.token);
       if (companyCombo !== null) {
         const currentCompanyId = companyCombo[0].id;
@@ -191,120 +191,120 @@ class OrderInventory extends React.Component {
 
     this.props.dispatch(
       locationActions.setLocationPermission({
-        locationPermission      
+        locationPermission
       })
     );
 
-    const INV_REQ_OBJ={
-      companyId:this.props.Company.currentCompanyId,
-      inventoryTypeCode:'01'
+    const INV_REQ_OBJ = {
+      companyId: this.props.Company.currentCompanyId,
+      inventoryTypeCode: '01'
     }
-    const inventoryCombo= await inventoryComboListByCompanyId(INV_REQ_OBJ,this.props.User.token);
-    this.props.dispatch(inventoryActions.setInventoryCombo({inventoryCombo}));
+    const inventoryCombo = await inventoryComboListByCompanyId(INV_REQ_OBJ, this.props.User.token);
+    this.props.dispatch(inventoryActions.setInventoryCombo({ inventoryCombo }));
 
-    this.setState({      
+    this.setState({
       cmbSupplier: await supplierOrderInventoryComboList(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
-      cmbInventory:inventoryCombo
+      cmbInventory: inventoryCombo
     });
   };
 
   cmbRetailStoreGroup_onChange = async (e) => {
-    const IDS = e.toString().split(",");    
+    const IDS = e.toString().split(",");
     const TEMP_LocationGroup = this.props.Location.locationPermission;
-    if(IDS.includes('0'))
+    if (IDS.includes('0'))
       this.setState({
-        cmbLocation:  TEMP_LocationGroup,
+        cmbLocation: TEMP_LocationGroup,
         cmbLocationGroupValue: 0,
       });
-    else{
+    else {
       let tempLocation = [];
       for (let i = 0; i < IDS.length; i++)
         for (let j = 0; j < TEMP_LocationGroup.length; j++)
           if (IDS[i] == TEMP_LocationGroup[j].id)
             tempLocation.push(TEMP_LocationGroup[j]);
       this.setState({
-        cmbLocation:  tempLocation,
+        cmbLocation: tempLocation,
         cmbLocationGroupValue: await Gfn_BuildValueComboMulti(e),
       });
     }
   };
 
   cmbRetailStore_onChange = async (e) => {
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbLocation)  
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbLocation)
     this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(data) });
   };
 
-  cmbInventory_onChange=async(e)=>{
-    this.setState({cmbInventoryvalue:e});
+  cmbInventory_onChange = async (e) => {
+    this.setState({ cmbInventoryvalue: e });
   }
 
   cmbSupplier_onChange = async (e) => {
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbSupplier)  
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbSupplier)
     const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data)
-    
+
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
       // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      
     });
-    const ITEMS=TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token);
-    const LAZY=new DataSource({
+    const ITEMS = TEMP_cmbSupplier == null ? null : await itemListComboBySupplierId(TEMP_cmbSupplier, this.props.User.token);
+    const LAZY = new DataSource({
       store: ITEMS,
-      paginate:true,
-      pageSize:10
+      paginate: true,
+      pageSize: 10
     })
     this.setState({
-      cmbItems:LAZY,
-      cmbItemsOrg:ITEMS
+      cmbItems: LAZY,
+      cmbItemsOrg: ITEMS
     })
   };
 
-  cmbItem_onChange = async (e) => {   
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
-    this.setState({ 
-      cmbItemsValue: await Gfn_BuildValueComboMulti(data),      
+  cmbItem_onChange = async (e) => {
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbItemsOrg)
+    this.setState({
+      cmbItemsValue: await Gfn_BuildValueComboMulti(data),
     });
   };
 
-  btnSearch_onClick = async () => {        
+  btnSearch_onClick = async () => {
     let flagSend = true;
-    document.getElementById("errLocation").innerHTML = ""; 
-    document.getElementById("errItem").innerHTML = ""; 
-    document.getElementById("errSupplier").innerHTML = "";     
-    document.getElementById("errInventory").innerHTML = "";     
-    if (this.state.cmbLocationValue === null  || this.state.cmbLocationValue == "") {
-        const msg= "فروشگاه را انتخاب نمائید.";
-        document.getElementById("errLocation").innerHTML = msg; 
-        flagSend = false;
-    }
-
-    if (this.state.cmbItemsValue === null  || this.state.cmbItemsValue == "") {
-      const msg= "کالا را انتخاب نمائید.";
-      document.getElementById("errItem").innerHTML = msg; 
+    document.getElementById("errLocation").innerHTML = "";
+    document.getElementById("errItem").innerHTML = "";
+    document.getElementById("errSupplier").innerHTML = "";
+    document.getElementById("errInventory").innerHTML = "";
+    if (this.state.cmbLocationValue === null || this.state.cmbLocationValue == "") {
+      const msg = "فروشگاه را انتخاب نمائید.";
+      document.getElementById("errLocation").innerHTML = msg;
       flagSend = false;
     }
 
-    if (this.state.cmbSupplierValue === null  || this.state.cmbSupplierValue == "") {
-      const msg= "تامین کننده را انتخاب نمائید.";
-      document.getElementById("errSupplier").innerHTML = msg; 
+    if (this.state.cmbItemsValue === null || this.state.cmbItemsValue == "") {
+      const msg = "کالا را انتخاب نمائید.";
+      document.getElementById("errItem").innerHTML = msg;
       flagSend = false;
     }
 
-    if (this.state.cmbInventoryvalue === null  || this.state.cmbInventoryvalue == "") {
-      const msg= " انبار را انتخاب نمائید.";
-      document.getElementById("errInventory").innerHTML = msg; 
+    if (this.state.cmbSupplierValue === null || this.state.cmbSupplierValue == "") {
+      const msg = "تامین کننده را انتخاب نمائید.";
+      document.getElementById("errSupplier").innerHTML = msg;
       flagSend = false;
     }
 
-    if(flagSend){
+    if (this.state.cmbInventoryvalue === null || this.state.cmbInventoryvalue == "") {
+      const msg = " انبار را انتخاب نمائید.";
+      document.getElementById("errInventory").innerHTML = msg;
+      flagSend = false;
+    }
+
+    if (flagSend) {
       this.OpenCloseWait();
       const OBJ = {
         locationIds: this.state.cmbLocationValue,
         supplierIds: this.state.cmbSupplierValue,
         itemIds: this.state.cmbItemsValue,
-        inventoryId:this.state.cmbInventoryvalue,
+        inventoryId: this.state.cmbInventoryvalue,
       };
       // alert(JSON.stringify(OBJ))
       this.setState({
@@ -317,7 +317,7 @@ class OrderInventory extends React.Component {
       this.fn_SetLogsOrderPointInventory();
       this.OpenCloseWait();
     }
-    
+
   };
 
   fn_SetLogsOrderPointInventory = async () => {
@@ -402,7 +402,7 @@ class OrderInventory extends React.Component {
     if (flagPush)
       if (FlagError || flagEditRowCount) {
         let obj = {
-          CompanyId:this.props.Company.currentCompanyId,
+          CompanyId: this.props.Company.currentCompanyId,
           UserId: this.props.User.userId,
           OrderPointInventoryId: params.oldData.id,
           FirstValue:
@@ -415,8 +415,8 @@ class OrderInventory extends React.Component {
               ? ""
               : params.oldData.description,
           OrderSystem: params.oldData.orderSystem,
-          ProductId:params.oldData.productId,
-          RetailStoreId: params.oldData.retailStoreId,          
+          ProductId: params.oldData.productId,
+          RetailStoreId: params.oldData.retailStoreId,
         };
         tempOrderPointInventoryEdited.push(obj);
       } else {
@@ -439,50 +439,56 @@ class OrderInventory extends React.Component {
         LogsOfOPI,
       })
     );
-    this.setState({stateModal_LogsOfOPI:true})
+    this.setState({ stateModal_LogsOfOPI: true })
   };
 
   btnUpdateOrders_onClick = async () => {
     this.OpenCloseWait();
-    const RTN=await updateGroupsOrderPointInventory(
+    const RTN = await updateGroupsOrderPointInventory(
       this.state.OrderPointInventoryEdited,
       this.props.User.token
     );
-    // if(RTN.length==0)
-    this.setState({
-      OrderPointInventoryEdited:[]
-    });
+    let tempOrders = [];
+    if (RTN != null) {
+      this.setState({
+        OrderPointInventoryEdited: []
+      });
 
-    let tempOrders=[];
-    const ORDER_INV=this.state.OrderInventoryGridData;
-    for (let i=0;i<RTN.length;i++)
-      for(let j=0;j<ORDER_INV.length;j++){
-        if(RTN[i].id==ORDER_INV[j].id)            
-          tempOrders.push(ORDER_INV[j])
-      }
 
+      const ORDER_INV = this.state.OrderInventoryGridData;
+      for (let i = 0; i < RTN.length; i++)
+        for (let j = 0; j < ORDER_INV.length; j++) {
+          if (RTN[i].id == ORDER_INV[j].id)
+            tempOrders.push(ORDER_INV[j])
+        }
+    }
+    else {
+      tempOrders = this.state.OrderInventoryGridData;
+    }
     this.setState({
-      OrderInventoryGridData:tempOrders,
+      OrderInventoryGridData: tempOrders,
       ToastProps: {
         isToastVisible: true,
-        Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
-        Type:RTN==1 ? "success" : "error",
+        //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+        //Type:RTN==1 ? "success" : "error",
+        Message: RTN == null ? "خطا در ویرایش" : "ویرایش با موفقیت انجام گردید",
+        Type: RTN != null ? "success" : "error",
       },
     });
     this.OpenCloseWait();
   };
 
   btnNew_onClick = () => {
-    this.setState({ 
-      stateModal_OrderInventoryNew: true ,
-      isOutRoute:false,
+    this.setState({
+      stateModal_OrderInventoryNew: true,
+      isOutRoute: false,
     });
   };
 
-  btnNewOutRoute_onClick=()=>{
-    this.setState({ 
-      stateModal_OrderInventoryNew: true ,
-      isOutRoute:true,
+  btnNewOutRoute_onClick = () => {
+    this.setState({
+      stateModal_OrderInventoryNew: true,
+      isOutRoute: true,
     });
   }
   ModalOrderInventoryNew_onClickAway = () => {
@@ -505,8 +511,8 @@ class OrderInventory extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  btnExportExcel_onClick=()=>{
-    Gfn_ExportToExcel(this.state.OrderInventoryGridData,"OrderInventory")
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.OrderInventoryGridData, "OrderInventory")
   }
   render() {
     return (
@@ -587,16 +593,16 @@ class OrderInventory extends React.Component {
               <Col>
                 <Label className="standardLabelFont">کالا</Label>
                 <Suspense fallback={<div>Loading</div>}>
-                <TagBox
-                  dataSource={this.state.cmbItems}
-                  searchEnabled={true}
-                  displayExpr="label"
-                  placeholder="کالا"
-                  valueExpr="id"
-                  
-                  rtlEnabled={true}
-                  onValueChange={this.cmbItem_onChange}
-                />
+                  <TagBox
+                    dataSource={this.state.cmbItems}
+                    searchEnabled={true}
+                    displayExpr="label"
+                    placeholder="کالا"
+                    valueExpr="id"
+
+                    rtlEnabled={true}
+                    onValueChange={this.cmbItem_onChange}
+                  />
                 </Suspense>
                 <Label id="errItem" className="standardLabelFont errMessage" />
               </Col>
@@ -645,7 +651,7 @@ class OrderInventory extends React.Component {
                       rtlEnabled={true}
                       onClick={this.btnNewGroup_onClick}
                     />
-                  </Col>                  
+                  </Col>
                 )}
                 <Col xs="auto" className="standardMarginRight">
                   <Button
@@ -659,10 +665,10 @@ class OrderInventory extends React.Component {
                 </Col>
               </Row>
             )}
-            <Row style={{direction:'ltr'}}>
+            <Row style={{ direction: 'ltr' }}>
               <Col xs="auto">
                 <Button
-                  icon={ExportExcelIcon}                  
+                  icon={ExportExcelIcon}
                   type="default"
                   stylingMode="contained"
                   rtlEnabled={true}
@@ -685,11 +691,11 @@ class OrderInventory extends React.Component {
                   columnResizingMode="widget"
                   onRowUpdating={this.grdOrderPointInventory_onRowUpdating}
                   onCellDblClick={this.grdOrderPointInventory_onCellDblClick}
-                  onRowPrepared={this.grdOrderPointInventory_onRowPrepared}                  
-                  //   onSelectionChanged={
-                  //     this.grdOrderPointInventory_onSelectionChanged
-                  //   }
-                >                                          
+                  onRowPrepared={this.grdOrderPointInventory_onRowPrepared}
+                //   onSelectionChanged={
+                //     this.grdOrderPointInventory_onSelectionChanged
+                //   }
+                >
                   <Scrolling
                     rowRenderingMode="virtual"
                     showScrollbar="always"
@@ -711,8 +717,8 @@ class OrderInventory extends React.Component {
                     />
                   )}
                   <Editing mode="cell" allowUpdating={true} />
-                  <FilterRow visible={true} />                  
-                  <HeaderFilter visible={true} />                  
+                  <FilterRow visible={true} />
+                  <HeaderFilter visible={true} />
                 </DataGrid>
               </Col>
             </Row>
@@ -745,17 +751,17 @@ class OrderInventory extends React.Component {
                 size="lg"
               >
                 <ModalHeader toggle={this.ModalOrderInventoryLogs_onClickAway}>
-                  لیست تغییرات سفارش 
+                  لیست تغییرات سفارش
                 </ModalHeader>
                 <ModalBody>
                   <Row
                     className="standardPadding"
                     style={{
                       overflowY: "scroll",
-                      maxHeight: "450px",                   
+                      maxHeight: "450px",
                     }}
-                  >                    
-                    <OrderInventoryLogs />                    
+                  >
+                    <OrderInventoryLogs />
                   </Row>
                 </ModalBody>
               </Modal>
@@ -781,7 +787,7 @@ class OrderInventory extends React.Component {
                     className="standardPadding"
                     style={{
                       // overflowY: "scroll",
-                      maxHeight: "450px",                   
+                      maxHeight: "450px",
                     }}
                   >
                     <OrderInventoryNew isOutRoute={this.state.isOutRoute} />
@@ -795,11 +801,11 @@ class OrderInventory extends React.Component {
         {this.state.stateModal_OrderInventoryNewGroup && (
           <Row className="text-center">
             <Col>
-              <Modal                
+              <Modal
                 isOpen={this.state.stateModal_OrderInventoryNewGroup}
                 toggle={this.ModalOrderInventoryNewGroup_onClickAway}
-                centered={true}    
-                dir="rtl"                            
+                centered={true}
+                dir="rtl"
                 size="xl"
               >
                 <ModalHeader toggle={this.ModalOrderInventoryNewGroup_onClickAway} >
@@ -810,7 +816,7 @@ class OrderInventory extends React.Component {
                     className="standardPadding"
                     style={{
                       // overflowY: "scroll",
-                      maxHeight: "750px",                                         
+                      maxHeight: "750px",
                     }}
                   >
                     <OrderInventoryNewGroup />
