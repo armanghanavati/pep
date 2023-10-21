@@ -61,7 +61,7 @@ class OrderInventoryNew extends React.Component{
         }
     }
 
-    componentDidMount(){        
+    componentDidMount(){      
         this.fn_CheckRequireState();
     }
 
