@@ -220,3 +220,24 @@ export async function confirmRejectOrderInventoryOutRoute(Object, Token){
   }
   return null; 
 }
+
+export async function insertNewOrder(Object, Token){
+  const url=window.apiAddress+"/OrderPointInventory/insertNewOrderFromFile"              
+  const response = await fetch(
+      url,
+      {
+          method: "POST",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('Insert new order from file='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null; 
+}

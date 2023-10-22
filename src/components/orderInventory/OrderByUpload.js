@@ -1,19 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-  Row,
-  Col,
-  Card,
-  Label,
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
+    Row,
+    Col,
+    Card,
+    Label,
+    TabContent,
+    TabPane,
+    Nav,
+    NavItem,
+    NavLink,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
 } from "reactstrap";
 import classnames from "classnames";
 import TextBox from "devextreme-react/text-box";
@@ -31,21 +31,21 @@ import { CheckBox } from "devextreme-react/check-box";
 import notify from "devextreme/ui/notify";
 import { Toast } from "devextreme-react/toast";
 import {
-    supplierListComboByCompanyId
-} from "../../redux/reducers/supplier/supplier-action";
+    insertNewOrder
+} from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 import {
-  ToastTime,
-  ToastWidth,
-  ALL_MOD,
-  CHECK_BOXES_MOD,
+    ToastTime,
+    ToastWidth,
+    ALL_MOD,
+    CHECK_BOXES_MOD,
 } from "../../config/config";
 import { Tooltip } from "devextreme-react/tooltip";
 import {
-  Gfn_BuildValueComboMulti,
-  Gfn_ConvertComboForAll,
-  Gfn_BuildValueComboSelectAll,
-  Gfn_ExportToExcel,
-  Gfn_DT2StringSql,
+    Gfn_BuildValueComboMulti,
+    Gfn_ConvertComboForAll,
+    Gfn_BuildValueComboSelectAll,
+    Gfn_ExportToExcel,
+    Gfn_DT2StringSql,
 } from "../../utiliy/GlobalMethods";
 import Wait from "../common/Wait";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -101,12 +101,12 @@ class OrderByUpload extends React.Component {
             }
     };
 
-    cmbSourceLocation_onChange = (params) => {
-        this.setState({ cmbSrcLocationValue: params });
+    cmbSourceLocation_onChange = (e) => {
+        this.setState({ cmbSrcLocationValue: e });
     };
 
-    cmbDestLocation_onChange = (params) => {
-        this.setState({ cmbDestLocationValue: params });
+    cmbDestLocation_onChange = (e) => {
+        this.setState({ cmbDestLocationValue: e });
     };
 
     async fn_locationList() {
@@ -127,22 +127,68 @@ class OrderByUpload extends React.Component {
         reader.readAsText(e.target.files[0]);
     };
 
-    btnAdd_onClick = () => {
-        let tempContent = this.state.FileContent;
-        let ProductsJSON = [];
-        for (let i = 0; i < tempContent.length; i++) {
-            let tempSplit = tempContent[i].split(",");
-            if (parseInt(tempSplit[1]) > 0) {
-                let obj = {
-                    Bar: tempSplit[0],
-                    Num: parseInt(tempSplit[1]),
-                };
-                ProductsJSON.push(obj);
-            }
+    fn_CheckValidation = () => {
+        let errMsg = "";
+        let flag = true;
+        document.getElementById("errSourceLocation").innerHTML = "";
+        if (this.state.cmbSrcLocationValue == null) {
+            document.getElementById("errSourceLocation").innerHTML =
+                "انبار را انتخاب نمائید";
+            flag = false;
         }
-        this.setState({ FinalProducts: ProductsJSON });
-        console.log(JSON.stringify(ProductsJSON));
-        //this.api_InsertNewOrder(ProductsJSON);
+        document.getElementById("errDestLocation").innerHTML = "";
+        if (this.state.cmbDestLocationValue == null) {
+            document.getElementById("errDestLocation").innerHTML =
+                "فروشگاه را انتخاب نمائید";
+            flag = false;
+        }
+        document.getElementById("errFile").innerHTML = "";
+        if (this.state.FileContent == null) {
+            document.getElementById("errFile").innerHTML =
+                "فایل را انتخاب نمائید";
+            flag = false;
+        }
+        
+        return flag;
+    };
+    onHidingToast = () => {
+        this.setState({ ToastProps: { isToastVisible: false } });
+    };
+    btnAdd_onClick = async () => {
+        if (this.fn_CheckValidation()) {
+            this.OpenCloseWait();
+            let tempContent = this.state.FileContent;
+            let ProductsJSON = [];
+            for (let i = 0; i < tempContent.length; i++) {
+                let tempSplit = tempContent[i].split(",");
+                if (parseInt(tempSplit[1]) > 0) {
+                    let obj = {
+                        Bar: tempSplit[0],
+                        Num: parseInt(tempSplit[1]),
+                    };
+                    ProductsJSON.push(obj);
+                }
+            }
+            this.setState({ FinalProducts: ProductsJSON });
+            console.log(JSON.stringify(ProductsJSON));
+            let data = {
+                userId: this.props.User.userId,
+                retailStoreId: this.state.cmbDestLocationValue,
+                sourceInventoryId: this.state.cmbSrcLocationValue,
+                orderType: 1,
+                jsonProducts: JSON.stringify(ProductsJSON),
+            };
+            //alert(JSON.stringify(data));
+            const RESULT = await insertNewOrder(data, this.props.User.token);
+            this.setState({
+                ToastProps: {
+                    isToastVisible: true,
+                    Message: RESULT != null || RESULT != "" ? "ثبت با موفقیت انجام گردید" : "عدم ثبت به دلیل تکراری بودن کد",
+                    Type: RESULT != null || RESULT != "" ? "success" : "error",
+                },
+            });
+            this.OpenCloseWait();
+        }
     };
 
     render() {
@@ -171,12 +217,12 @@ class OrderByUpload extends React.Component {
                         </Row>
                         <Row className="standardPadding">
                             <Col xs="auto">
-                                <Label className="standardLabelFont">فروشگاه مبدا</Label>
+                                <Label className="standardLabelFont">انبار مبدا</Label>
                                 <SelectBox
                                     dataSource={this.state.cmbSourceLocation}
                                     searchEnabled={true}
                                     displayExpr="label"
-                                    placeholder="فروشگاه مبدا"
+                                    placeholder="انبار مبدا"
                                     valueExpr="id"
                                     rtlEnabled={true}
                                     onValueChange={this.cmbSourceLocation_onChange}
@@ -203,6 +249,9 @@ class OrderByUpload extends React.Component {
                             <Row>
                                 <Col xs="auto">
                                     <input type="file" onChange={(e) => this.UploadFile(e)} />
+                                    <Row>
+                                        <Label id="errFile" className="standardLabelFont errMessage" />
+                                    </Row>
                                 </Col>
                             </Row>
                             {this.state.stateDisable_btnAdd && (
