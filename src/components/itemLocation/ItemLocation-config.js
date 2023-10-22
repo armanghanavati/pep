@@ -51,12 +51,12 @@ export const DataGridItemLocationColumns = [
   },
   {
     dataField: "maxPercentChange",
-    caption: "ماکزیمم درصد افزایش",
+    caption: "حداکثر درصد افزایش",
     allowEditing: true,
   },
   {
     dataField: "minPercentChange",
-    caption: "مینیمم درصد افزایش",
+    caption: "حداقل درصد افزایش",
     allowEditing: true,
   }
 ];

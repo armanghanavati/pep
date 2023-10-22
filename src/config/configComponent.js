@@ -28,6 +28,9 @@ import OrderInventoryConfirms from '../pages/OrderInventoryConfirms'
 import OrderSupplierConfirms from '../pages/OrderSupplierConfirms';
 import OrderPoints from '../pages/OrderPoints'
 import OrderPointSupplierReports from '../pages/OrderPointSupplierReports';
+import TicketSubjectUsers from '../pages/TicketSubjectUsers';
+import TicketSubjects from '../pages/TicketSubjects'
+import OrdersByUpload from '../pages/OrdersByUpload'
 
 export const REAL_COMPONENT = [
   {
@@ -158,6 +161,18 @@ export const REAL_COMPONENT = [
   {
     strComponent: "OrderSupplierConfirms",
     orgComponent: <OrderSupplierConfirms/>,
+  },
+  {
+    strComponent: "TicketSubjectUsers",
+    orgComponent: <TicketSubjectUsers/>,
+  },
+  {
+    strComponent: "TicketSubjects",
+    orgComponent: <TicketSubjects/>,
+  } ,
+  {
+    strComponent: "OrdersByUpload",
+    orgComponent: <OrdersByUpload/>,
   }  
 ];
 
