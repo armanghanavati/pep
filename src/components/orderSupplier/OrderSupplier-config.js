@@ -106,32 +106,42 @@ export const DataGridOrderPointSupplierColumns = [
 // ------------------------------------------------------------------------------------------------------------------
 export const DataGridOrderPointSumOrdersColumns = [    
     {
-        dataField:"MinWeight" ,
+        dataField:"id" ,
+        caption:"کد تامین کننده",
+        allowEditing:false    
+    },  
+    {
+        dataField:"supplierName" ,
+        caption:"نام تامین کننده",
+        allowEditing:false    
+    },
+    {
+        dataField:"minWeight" ,
         caption:"حداقل وزن",
         allowEditing:false    
     },
     {
-        dataField:"MaxWeight" ,
+        dataField:"maxWeight" ,
         caption:"حداکثر وزن",
         allowEditing:false    
     },
     {
-        dataField:"SumItemsWeight" ,
+        dataField:"sumItemsWeight" ,
         caption:"جمع کل وزن کالا",
         allowEditing:false    
     },
     {
-        dataField:"MinPrice" ,
+        dataField:"minPrice" ,
         caption:"حداقل ریال",
         allowEditing:false    
     },
     {
-        dataField:"MaxPrice" ,
+        dataField:"maxPrice" ,
         caption:"حداکثر ریال",
         allowEditing:true    
     },
     {
-        dataField:"SumItemsPrice" ,
+        dataField:"sumItemsPrice" ,
         caption:"جمع کل زیال کالاها",
         allowEditing:false    
     },    

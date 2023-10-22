@@ -65,6 +65,7 @@ import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { supplierListByExtIds } from "../../redux/reducers/supplier/supplier-action";
+import { calcSumWeightPriceOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 
 import {
   itemListCombo,
@@ -118,6 +119,7 @@ class OrderSupplier extends React.Component {
       cmbItemsValue: null,
       SupplierListMaxMinParam:null,
       OrderSupplierGridData: null,
+      SupplierListSumMaxMinGridData:[],
       OrderPointSupplierEdited: [],
       stateShowRoute: false,
       stateUpdateDelete: true,
@@ -137,7 +139,7 @@ class OrderSupplier extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    await this.fn_CheckRequireState();
+    await this.fn_CheckRequireState();    
   }
 
   fn_GetPermissions = () => {
@@ -320,7 +322,7 @@ class OrderSupplier extends React.Component {
       e.rowElement.style.backgroundColor = "#60c77f";
   };
 
-  grdOrderPointSupplier_onRowUpdating = (params) => {
+  grdOrderPointSupplier_onRowUpdating = async (params) => {
     let FirstVal = 1;
     console.log("Old Data=" + JSON.stringify(params.oldData));
     console.log("New Data=" + JSON.stringify(params.newData));
@@ -399,12 +401,20 @@ class OrderSupplier extends React.Component {
             params.oldData.description === null
               ? ""
               : params.oldData.description,
+          SupplierId:params.oldData.supplierId,
+          ProductId: params.oldData.productId,
+          RetailStoreId: params.oldData.retailStoreId,
         };
         tempOrderPointSupplierEdited.push(obj);
       } else {
         params.cancel = true;
         alert(errMsg);
       }
+
+      let SupplierSummMaxMin=await this.fn_CalculateSumWeightPrice(params.oldData.supplierId,params.oldData.supplierName,params.oldData.retailStoreId);      
+      this.setState({
+        SupplierListSumMaxMinGridData:SupplierSummMaxMin,
+      });         
 
     console.log(
       "Edited Params=" + JSON.stringify(tempOrderPointSupplierEdited)
@@ -413,6 +423,48 @@ class OrderSupplier extends React.Component {
       OrderPointSupplierEdited: tempOrderPointSupplierEdited,
     });
   };
+
+  fn_CalculateSumWeightPrice=async(extSupplierId,supplierName,retailStoreId)=>{    
+    
+    const OBJ={
+      ExtSupplierId:extSupplierId,
+      RetailStoreId:retailStoreId
+    }
+    const SUM_MAXMIN=await calcSumWeightPriceOrderPointSupplier(OBJ,this.props.User.token);
+    const SUPP_LIST=this.state.SupplierListMaxMinParam     
+
+    let tempSup=this.state.SupplierListSumMaxMinGridData;      
+
+    for(let i=0;i<SUPP_LIST.length;i++)
+      if(SUPP_LIST[i].extSupplierId==extSupplierId){
+        // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i]));
+        if(
+            SUM_MAXMIN.sumPrice<SUPP_LIST[i].minOrderRiali || SUM_MAXMIN.sumPrice>SUPP_LIST[i].maxOrderRiali            
+            || SUM_MAXMIN.sumWeight<SUPP_LIST[i].minOrderWeight || SUM_MAXMIN.sumWeight>SUPP_LIST[i].maxOrderWeight
+          ){
+            const SUPOBJ={
+              id:extSupplierId,
+              extSupplierId:extSupplierId,
+              supplierName:supplierName,
+              minWeight:SUPP_LIST[i].minOrderWeight,
+              maxWeight:SUPP_LIST[i].maxOrderWeight,
+              sumItemsWeight:SUM_MAXMIN.sumWeight,
+              minPrice:SUPP_LIST[i].minOrderRiali,
+              maxPrice:SUPP_LIST[i].maxOrderRiali ,
+              sumItemsPrice:SUM_MAXMIN.sumPrice
+            }
+            tempSup.push(SUPOBJ);
+          }            
+          else{
+            if(tempSup.length>0)
+              tempSup.splice(i,1);
+          }            
+          
+          return tempSup;
+        
+      }        
+      return null;
+  }
 
   grdOrderPointSupplier_onCellDblClick = async (e) => {
     const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);
@@ -683,11 +735,39 @@ class OrderSupplier extends React.Component {
                 <Label className="title">
                   لیست تامین کنندگان، نیاز به حد نصاب سفارش
                 </Label>
+                
+                  <div>
+                    <table>
+                      <tr>
+                        <th>کد تامین کننده</th>
+                        <th>نام تامین کننده</th>
+                        <th>حداقل وزن</th>
+                        <th>حداکثر وزن</th>
+                        <th>جمع کل وزن کالا</th>
+                        <th>حداقل ریال</th>
+                        <th>حداکثر ریال</th>
+                        <th>جمع کل ریال کالاها</th>
+                      </tr>
+                      {this.state.SupplierListSumMaxMinGridData.map((item)=>
+                        <tr>
+                          <td>{item.extSupplierId}</td>
+                          <td>{item.supplierName}</td>
+                          <td>{item.minWeight}</td>
+                          <td>{item.maxWeight}</td>
+                          <td>{item.sumItemsWeight}</td>
+                          <td>{item.minPrice}</td>
+                          <td>{item.maxPrice}</td>
+                          <td>{item.sumItemsPrice}</td>
+                        </tr>
+                      )}
+                    </table>                  
+                  </div>                  
+                
               </Row>
-              <Row className="standardPadding">
+              {/* <Row className="standardPadding">
                 <DataGrid
-                  id="grdOrderPointInventory"
-                  dataSource={this.state.OrderSupplierGridData}
+                  id="grdOrderPointSumSupplier"
+                  dataSource={this.state.SupplierListSumMaxMinGridData}
                   defaultColumns={DataGridOrderPointSumOrdersColumns}
                   keyExpr="id"
                   columnAutoWidth={true}
@@ -695,7 +775,7 @@ class OrderSupplier extends React.Component {
                   showBorders={true}
                   rtlEnabled={true}
                   allowColumnResizing={true}
-                  columnResizingMode="widget"
+                  columnResizingMode="widget"                  
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
@@ -709,19 +789,11 @@ class OrderSupplier extends React.Component {
                     allowedPageSizes={DataGridPageSizes}
                     showPageSizeSelector={true}
                     showNavigationButtons={true}
-                  />
-                  {this.state.stateShowRoute && (
-                    <Selection
-                      mode="multiple"
-                      selectAllMode={ALL_MOD}
-                      showCheckBoxesMode={CHECK_BOXES_MOD}
-                    />
-                  )}
-                  <Editing mode="cell" allowUpdating={true} />
+                  />                                 
                   <FilterRow visible={true} />
                   <HeaderFilter visible={true} />
                 </DataGrid>
-              </Row>
+              </Row> */}
             </Card>
           </Col>
         </Row>
