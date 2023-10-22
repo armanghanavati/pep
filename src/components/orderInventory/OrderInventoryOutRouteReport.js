@@ -90,7 +90,7 @@ import {
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
-import { DataGridOrderPointInventoryColumns } from "./OrderInventory-config";
+import { DataGridOrderPointInventoryReportColumns } from "./OrderInventory-config";
 import { orderPointInventoryActions } from "../../redux/reducers/OrderPointInventory/orderPointInventory-slice";
 
 import SearchIcon from "../../assets/images/icon/search.png";
@@ -226,45 +226,7 @@ class OrderInventoryOutRouteReport extends React.Component {
 
   btnSearch_onClick = async () => {
     this.OpenCloseWait();
-    let tempLocationGroupValue = this.state.cmbLocationGroupValue;
-    // if (
-    //   this.state.cmbLocationGroupValue == null ||
-    //   this.state.cmbLocationGroupValue == ""
-    // ) {
-    //   tempLocationGroupValue = await Gfn_BuildValueComboSelectAll(
-    //     this.props.Location.locationPermission
-    //   );
-    //   this.setState({ cmbLocationGroupValue: tempLocationGroupValue });
-    // }
-
-    // let tempLocationValue = this.state.cmbLocationValue;
-    // if (
-    //   this.state.cmbLocationValue == null ||
-    //   this.state.cmbLocationValue == ""
-    // ) {
-    //   tempLocationValue = await Gfn_BuildValueComboSelectAll(
-    //     this.state.cmbLocation
-    //   );
-    //   this.setState({ cmbLocationValue: tempLocationValue });
-    // }
-
-    // let tempSupplierValue = this.state.cmbSupplierValue;
-    // if (
-    //   this.state.cmbSupplierValue == null ||
-    //   this.state.cmbSupplierValue == ""
-    // ) {     
-    //   tempSupplierValue = await Gfn_BuildValueComboSelectAll(
-    //     this.state.cmbSupplier
-    //   );
-    //   this.setState({ cmbSupplierValue: tempSupplierValue });
-    // }
-
-    // let tempItemValue = this.state.cmbItemsValue;
-    // if (this.state.cmbItemsValue == null || this.state.cmbItemsValue == "") {  
-    //   const tempItem=await itemListComboBySupplierId(tempSupplierValue,this.props.User.token)    
-    //   tempItemValue = await Gfn_BuildValueComboSelectAll(tempItem);
-    //   this.setState({ cmbItemsValue: tempItemValue });
-    // }
+    let tempLocationGroupValue = this.state.cmbLocationGroupValue;    
 
     const OBJ = {
       locationIds: this.state.cmbLocationValue,
@@ -441,7 +403,7 @@ class OrderInventoryOutRouteReport extends React.Component {
                 <DataGrid
                   id="grdOrderPointInventory"
                   dataSource={this.state.OrderInventoryGridData}
-                  defaultColumns={DataGridOrderPointInventoryColumns}
+                  defaultColumns={DataGridOrderPointInventoryReportColumns}
                   keyExpr="id"
                   columnAutoWidth={true}
                   allowColumnReordering={true}

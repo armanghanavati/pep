@@ -208,8 +208,7 @@ class OrderSupplierNew extends React.Component{
                 numberOrder: this.state.txtOrderNumberValue,
                 giftQTYOrder:(this.state.txtGiftNumberValue==null) && 0,
                 userId: this.props.User.userId
-            }
-            alert(JSON.stringify(data))
+            }            
             alert(JSON.stringify(await insertNewDataOrderPointSupplier(data,this.props.User.token)))
         }        
     }

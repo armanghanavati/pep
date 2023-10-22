@@ -106,7 +106,8 @@ class OrderInventoryNew extends React.Component{
 
     cmbItemGroup_onChange=async(e)=>{
         
-        document.getElementById("errLocationNew").innerHTML = "";        
+        document.getElementById("errLocationNew").innerHTML = "";  
+          
         if (this.state.cmbLocationValue == null || this.state.cmbLocationValue =="")
             document.getElementById("errLocationNew").innerHTML = "فروشگاه را انتخاب نمائید.";                            
     
@@ -115,6 +116,7 @@ class OrderInventoryNew extends React.Component{
                 ItemGroupId:e,                
                 LocationId:this.state.cmbLocationValue
             }
+          
             this.setState({
                 cmbItemGroupValue:e,            
             });

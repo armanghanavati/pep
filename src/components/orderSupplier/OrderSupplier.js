@@ -38,6 +38,7 @@ import DataGrid, {
   FilterBuilderPopup,
   Pager,
   Selection,
+  ColumnFixing,
   Grouping,
   GroupPanel,
   SearchPanel,
@@ -63,20 +64,27 @@ import { logsOrderPointSupplierActions } from "../../redux/reducers/logsOrderPoi
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { supplierListByExtIds } from "../../redux/reducers/supplier/supplier-action";
 
 import {
   itemListCombo,
   itemListComboBySupplierId,
 } from "../../redux/reducers/item/item-action";
-import { supplierOrderInventoryComboList,
-  supplierOrderSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
+import {
+  supplierOrderInventoryComboList,
+  supplierOrderSupplierComboList,
+} from "../../redux/reducers/supplier/supplier-action";
 import { locationOrderSupplierComboListByCompanyId } from "../../redux/reducers/location/location-actions";
 
-import { orderPointSupplierListByLSI,
-  updateGroupsOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
+import {
+  orderPointSupplierListByLSI,
+  updateGroupsOrderPointSupplier,
+} from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 
-import { logsOPSTodayListByUserId,
-  logsOPSByOPSid } from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-actions";
+import {
+  logsOPSTodayListByUserId,
+  logsOPSByOPSid,
+} from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-actions";
 
 import {
   Gfn_BuildValueComboMulti,
@@ -86,7 +94,10 @@ import {
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
-import {DataGridOrderPointSupplierColumns} from "./OrderSupplier-config"
+import {
+  DataGridOrderPointSupplierColumns,
+  DataGridOrderPointSumOrdersColumns,
+} from "./OrderSupplier-config";
 
 import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -97,7 +108,7 @@ class OrderSupplier extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      stateWait: false,      
+      stateWait: false,
       cmbLocationGroupValue: null,
       cmbLocation: null,
       cmbLocationValue: null,
@@ -105,8 +116,9 @@ class OrderSupplier extends React.Component {
       cmbSupplierValue: null,
       cmbItems: null,
       cmbItemsValue: null,
+      SupplierListMaxMinParam:null,
       OrderSupplierGridData: null,
-      OrderPointSupplierEdited: [],      
+      OrderPointSupplierEdited: [],
       stateShowRoute: false,
       stateUpdateDelete: true,
       stateEnable_btnAdd: false,
@@ -125,7 +137,7 @@ class OrderSupplier extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    await this.fn_CheckRequireState();    
+    await this.fn_CheckRequireState();
   }
 
   fn_GetPermissions = () => {
@@ -154,7 +166,7 @@ class OrderSupplier extends React.Component {
   }
 
   fn_CheckRequireState = async () => {
-    if(this.props.Company.currentCompanyId==null){
+    if (this.props.Company.currentCompanyId == null) {
       const companyCombo = await companyListCombo(this.props.User.token);
       if (companyCombo !== null) {
         const currentCompanyId = companyCombo[0].id;
@@ -178,11 +190,11 @@ class OrderSupplier extends React.Component {
 
     this.props.dispatch(
       locationActions.setLocationPermission({
-        locationPermission      
+        locationPermission,
       })
     );
 
-    this.setState({      
+    this.setState({
       cmbSupplier: await supplierOrderSupplierComboList(
         this.props.Company.currentCompanyId,
         this.props.User.token
@@ -191,65 +203,70 @@ class OrderSupplier extends React.Component {
   };
 
   cmbRetailStoreGroup_onChange = async (e) => {
-    const IDS = e.toString().split(",");    
+    const IDS = e.toString().split(",");
     const TEMP_LocationGroup = this.props.Location.locationPermission;
-    if(IDS.includes('0'))
+    if (IDS.includes("0"))
       this.setState({
-        cmbLocation:  TEMP_LocationGroup,
+        cmbLocation: TEMP_LocationGroup,
         cmbLocationGroupValue: 0,
       });
-    else{
+    else {
       let tempLocation = [];
       for (let i = 0; i < IDS.length; i++)
         for (let j = 0; j < TEMP_LocationGroup.length; j++)
           if (IDS[i] == TEMP_LocationGroup[j].id)
             tempLocation.push(TEMP_LocationGroup[j]);
       this.setState({
-        cmbLocation:  tempLocation,
+        cmbLocation: tempLocation,
         cmbLocationGroupValue: await Gfn_BuildValueComboMulti(e),
       });
     }
-   
   };
 
-  cmbRetailStore_onChange = async (e) => {    
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbLocation)  
+  cmbRetailStore_onChange = async (e) => {
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbLocation);
     // alert(JSON.stringify(data))
     this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(data) });
   };
 
   cmbSupplier_onChange = async (e) => {
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbSupplier)  
-    const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data)
-    
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbSupplier);
+    const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data);
+
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
-      // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      
+      // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),
     });
-    const ITEMS=TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token);
-    const LAZY=new DataSource({
+    const ITEMS =
+      TEMP_cmbSupplier == null
+        ? null
+        : await itemListComboBySupplierId(
+            TEMP_cmbSupplier,
+            this.props.User.token
+          );
+    const LAZY = new DataSource({
       store: ITEMS,
-      paginate:true,
-      pageSize:10
-    })
+      paginate: true,
+      pageSize: 10,
+    });
     this.setState({
-      cmbItems:LAZY,
-      cmbItemsOrg:ITEMS
-    })
+      cmbItems: LAZY,
+      cmbItemsOrg: ITEMS,
+    });
   };
 
-  btnExportExcel_onClick=()=>{
-    Gfn_ExportToExcel(this.state.OrderSupplierGridData,"OrderSupplier")
-  }
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.OrderSupplierGridData, "OrderSupplier");
+  };
 
   cmbItem_onChange = async (e) => {
     // this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(e) });
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
-    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbItemsOrg);
+    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data) });
   };
 
   btnSearch_onClick = async () => {
-    this.OpenCloseWait();  
+    this.OpenCloseWait();
 
     const OBJ = {
       locationIds: this.state.cmbLocationValue,
@@ -257,11 +274,28 @@ class OrderSupplier extends React.Component {
       itemIds: this.state.cmbItemsValue,
     };
     // alert(JSON.stringify(OBJ))
+    const ORDER_SUPPLIER = await orderPointSupplierListByLSI(
+      OBJ,
+      this.props.User.token
+    );
+
+    let tempSupplierId=[];
+    for(let i=0;i<ORDER_SUPPLIER.length;i++){
+      let flag=true;
+      for(let j=0;j<tempSupplierId.length;j++)
+        if(ORDER_SUPPLIER[i].supplierId==tempSupplierId[j].Id)
+          flag=false;
+      if(flag){
+        const SUP_OBJ={
+          extSupplierId:ORDER_SUPPLIER[i].supplierId
+        }
+        tempSupplierId.push(SUP_OBJ);
+      }        
+    }    
+
     this.setState({
-      OrderSupplierGridData: await orderPointSupplierListByLSI(
-        OBJ,
-        this.props.User.token
-      ),
+      OrderSupplierGridData: ORDER_SUPPLIER,
+      SupplierListMaxMinParam:await supplierListByExtIds(tempSupplierId,this.props.User.token),
     });
 
     this.fn_SetLogsOrderPointSupplier();
@@ -304,7 +338,10 @@ class OrderSupplier extends React.Component {
 
     let flagPush = true;
     for (let i = 0; i < tempOrderPointSupplierEdited.length; i++)
-      if (tempOrderPointSupplierEdited[i].OrderPointSupplierId === params.oldData.id) {
+      if (
+        tempOrderPointSupplierEdited[i].OrderPointSupplierId ===
+        params.oldData.id
+      ) {
         tempOrderPointSupplierEdited[i].OrderValue =
           params.newData.orderUser === undefined
             ? params.oldData.orderUser
@@ -394,7 +431,7 @@ class OrderSupplier extends React.Component {
       this.props.User.token
     );
     this.setState({
-      OrderPointSupplierEdited:[],
+      OrderPointSupplierEdited: [],
       ToastProps: {
         isToastVisible: true,
         Message: ",ویرایش با موفقیت انجام گردید.",
@@ -405,23 +442,22 @@ class OrderSupplier extends React.Component {
   };
 
   btnNew_onClick = () => {
-    this.setState({ 
+    this.setState({
       stateModal_OrderSupplierNew: true,
-      isOutRoute:false,
+      isOutRoute: false,
     });
   };
 
-  btnNewOutRoute_onClick=()=>{
-    this.setState({ 
-      stateModal_OrderSupplierNew: true ,
-      isOutRoute:true,
+  btnNewOutRoute_onClick = () => {
+    this.setState({
+      stateModal_OrderSupplierNew: true,
+      isOutRoute: true,
     });
-  }
+  };
 
   ModalOrderInventoryNew_onClickAway = () => {
     this.setState({ stateModal_OrderSupplierNew: false });
   };
-
 
   btnNewGroup_onClick = () => {
     this.setState({ stateModal_OrderSupplierNewGroup: true });
@@ -525,64 +561,134 @@ class OrderSupplier extends React.Component {
           </Row>
         </Card>
         <p></p>
-        <Card className="shadow bg-white border pointer">
-          <Row className="standardPadding">
-            <Row>
-              <Label className="title">لیست سفارشات از تامین کننده</Label>
-            </Row>
-            {this.state.stateEnable_btnAdd && (
-              <Row>
-                <Col xs="auto" className="standardMarginRight">
-                  <Button
-                    icon={PlusNewIcon}
-                    text="سفارش جدید"
-                    type="default"
-                    stylingMode="contained"
-                    rtlEnabled={true}
-                    onClick={this.btnNew_onClick}
-                  />
-                </Col>
-                {this.state.stateEnable_btnAddGroup && (
-                  <Col xs="auto" className="standardMarginRight">
+
+        <Row>
+          <Col xs="6">
+            <Card className="shadow bg-white border pointer">
+              <Row className="standardPadding">
+                <Row>
+                  <Label className="title">لیست سفارشات از تامین کننده</Label>
+                </Row>
+                {this.state.stateEnable_btnAdd && (
+                  <Row>
+                    <Col xs="auto" className="standardMarginRight">
+                      <Button
+                        icon={PlusNewIcon}
+                        text="سفارش جدید"
+                        type="default"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnNew_onClick}
+                      />
+                    </Col>
+                    {this.state.stateEnable_btnAddGroup && (
+                      <Col xs="auto" className="standardMarginRight">
+                        <Button
+                          icon={PlusNewIcon}
+                          text="سفارش جدید گروهی"
+                          type="default"
+                          stylingMode="contained"
+                          rtlEnabled={true}
+                          onClick={this.btnNewGroup_onClick}
+                        />
+                      </Col>
+                    )}
+                    <Col xs="auto" className="standardMarginRight">
+                      <Button
+                        icon={PlusNewIcon}
+                        text="سفارش خارج از برنامه"
+                        type="default"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnNewOutRoute_onClick}
+                      />
+                    </Col>
+                  </Row>
+                )}
+                <Row style={{ direction: "ltr" }}>
+                  <Col xs="auto">
                     <Button
-                      icon={PlusNewIcon}
-                      text="سفارش جدید گروهی"
+                      icon={ExportExcelIcon}
                       type="default"
                       stylingMode="contained"
                       rtlEnabled={true}
-                      onClick={this.btnNewGroup_onClick}
+                      onClick={this.btnExportExcel_onClick}
                     />
                   </Col>
+                </Row>
+                <Row className="standardSpaceTop">
+                  <Col className="standardMarginRight">
+                    <DataGrid
+                      id="grdOrderPointInventory"
+                      dataSource={this.state.OrderSupplierGridData}
+                      defaultColumns={DataGridOrderPointSupplierColumns}
+                      keyExpr="id"
+                      columnAutoWidth={true}
+                      allowColumnReordering={true}
+                      showBorders={true}
+                      rtlEnabled={true}
+                      allowColumnResizing={true}
+                      columnResizingMode="widget"
+                      onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}
+                      onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
+                      onRowPrepared={this.grdOrderPointSupplier_onRowPrepared}
+                    >
+                      <Scrolling
+                        rowRenderingMode="virtual"
+                        showScrollbar="always"
+                        columnRenderingMode="virtual"
+                      />
+
+                      <Paging defaultPageSize={DataGridDefaultPageSize} />
+                      <Pager
+                        visible={true}
+                        allowedPageSizes={DataGridPageSizes}
+                        showPageSizeSelector={true}
+                        showNavigationButtons={true}
+                      />
+                      {this.state.stateShowRoute && (
+                        <Selection
+                          mode="multiple"
+                          selectAllMode={ALL_MOD}
+                          showCheckBoxesMode={CHECK_BOXES_MOD}
+                        />
+                      )}
+                      <Editing mode="cell" allowUpdating={true} />
+                      <FilterRow visible={true} />
+                      {/* <FilterPanel visible={true} />                   */}
+                      <HeaderFilter visible={true} />
+                    </DataGrid>
+                  </Col>
+                </Row>
+                {this.state.stateEnable_btnUpdate && (
+                  <Row>
+                    <Col xs="auto" className="standardMarginRight">
+                      <Button
+                        icon={UpdateIcon}
+                        text="ذخیره تغییرات"
+                        type="success"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnUpdateOrders_onClick}
+                      />
+                    </Col>
+                  </Row>
                 )}
-                <Col xs="auto" className="standardMarginRight">
-                  <Button
-                    icon={PlusNewIcon}
-                    text="سفارش خارج از برنامه"
-                    type="default"
-                    stylingMode="contained"
-                    rtlEnabled={true}
-                    onClick={this.btnNewOutRoute_onClick}
-                  />
-                </Col>
               </Row>
-            )}
-            <Row style={{direction:'ltr'}}>
-              <Col xs="auto">
-                <Button
-                  icon={ExportExcelIcon}                  
-                  type="default"
-                  stylingMode="contained"
-                  rtlEnabled={true}
-                  onClick={this.btnExportExcel_onClick}
-                />
-              </Col>
-            </Row>
-            <Row className="standardSpaceTop">
-              <Col xs="auto" className="standardMarginRight">
+            </Card>
+          </Col>
+          <Col xs="6">
+            <Card className="shadow bg-white border pointer">
+              <Row className="standardPadding">
+                <Label className="title">
+                  لیست تامین کنندگان، نیاز به حد نصاب سفارش
+                </Label>
+              </Row>
+              <Row className="standardPadding">
                 <DataGrid
                   id="grdOrderPointInventory"
                   dataSource={this.state.OrderSupplierGridData}
-                  defaultColumns={DataGridOrderPointSupplierColumns}
+                  defaultColumns={DataGridOrderPointSumOrdersColumns}
                   keyExpr="id"
                   columnAutoWidth={true}
                   allowColumnReordering={true}
@@ -590,9 +696,6 @@ class OrderSupplier extends React.Component {
                   rtlEnabled={true}
                   allowColumnResizing={true}
                   columnResizingMode="widget"
-                  onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}
-                  onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
-                  onRowPrepared={this.grdOrderPointSupplier_onRowPrepared}                 
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
@@ -616,27 +719,12 @@ class OrderSupplier extends React.Component {
                   )}
                   <Editing mode="cell" allowUpdating={true} />
                   <FilterRow visible={true} />
-                  {/* <FilterPanel visible={true} />                   */}
                   <HeaderFilter visible={true} />
                 </DataGrid>
-              </Col>
-            </Row>
-            {this.state.stateEnable_btnUpdate && (
-              <Row>
-                <Col xs="auto" className="standardMarginRight">
-                  <Button
-                    icon={UpdateIcon}
-                    text="ذخیره تغییرات"
-                    type="success"
-                    stylingMode="contained"
-                    rtlEnabled={true}
-                    onClick={this.btnUpdateOrders_onClick}
-                  />
-                </Col>
               </Row>
-            )}
-          </Row>
-        </Card>
+            </Card>
+          </Col>
+        </Row>
 
         {this.state.stateModal_OrderSupplierNew && (
           <Row className="text-center">
@@ -656,10 +744,10 @@ class OrderSupplier extends React.Component {
                     className="standardPadding"
                     style={{
                       // overflowY: "scroll",
-                      maxHeight: "450px",                   
+                      maxHeight: "450px",
                     }}
                   >
-                    <OrderSupplierNew isOutRoute={this.state.isOutRoute}  />
+                    <OrderSupplierNew isOutRoute={this.state.isOutRoute} />
                   </Row>
                 </ModalBody>
               </Modal>
@@ -670,14 +758,16 @@ class OrderSupplier extends React.Component {
         {this.state.stateModal_OrderSupplierNewGroup && (
           <Row className="text-center">
             <Col>
-              <Modal                
+              <Modal
                 isOpen={this.state.stateModal_OrderSupplierNewGroup}
                 toggle={this.ModalOrderInventoryNewGroup_onClickAway}
-                centered={true}    
-                dir="rtl"                            
+                centered={true}
+                dir="rtl"
                 size="xl"
               >
-                <ModalHeader toggle={this.ModalOrderInventoryNewGroup_onClickAway} >
+                <ModalHeader
+                  toggle={this.ModalOrderInventoryNewGroup_onClickAway}
+                >
                   ثبت سفارش گروهی
                 </ModalHeader>
                 <ModalBody>
@@ -685,7 +775,7 @@ class OrderSupplier extends React.Component {
                     className="standardPadding"
                     style={{
                       // overflowY: "scroll",
-                      maxHeight: "750px",                                         
+                      maxHeight: "750px",
                     }}
                   >
                     <OrderSupplierNewGroup />

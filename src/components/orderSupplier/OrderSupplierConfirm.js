@@ -366,7 +366,7 @@ class OrderSupplierConfirm extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label className="title">تائید سفارشات خارج از مسیر</Label>
+              <Label className="title">تائید سفارشات تامین کننده</Label>
             </Row>
             <Row className="standardSpaceTop">
               <Col xs="auto" className="standardMarginRight">

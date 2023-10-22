@@ -55,7 +55,11 @@
   .mainMenuStyle{
     font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;    
-    color: #00345c;
+    color: #00345c;            
+  }
+
+  .mainMenuStyle:target{
+    background-color: #ff0000;
   }
 
   #simple-treeview li{

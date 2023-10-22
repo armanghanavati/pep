@@ -87,6 +87,110 @@ export const DataGridOrderPointInventoryColumns = [
 ]
 
 
+export const DataGridOrderPointInventoryReportColumns = [    
+    {
+        dataField:"id" ,
+        caption:"شماره سفارش",
+        allowEditing:false    
+    },
+    {
+        dataField:"retailStoreName" ,
+        caption:"نام فروشگاه",
+        allowEditing:false    
+    },
+    {
+        dataField:"productName" ,
+        caption:"نام کالا",
+        allowEditing:false    
+    },
+    {
+        dataField:"barcode" ,
+        caption:"بارکد",
+        allowEditing:false    
+    },
+    {
+        dataField:"orderSystem" ,
+        caption:"پیشنهاد سیستم",
+        allowEditing:false    
+    },
+    {
+        dataField:"orderUser" ,
+        caption:"پیشنهاد کاربر",
+        allowEditing:true    
+    },
+    {
+        dataField:"productId" ,
+        caption:"کد کالا",
+        allowEditing:false    
+    },
+    {
+        dataField:"supplierName" ,
+        caption:"نام تامین کننده",
+        allowEditing:false    
+    },
+    {
+        dataField:"status" ,
+        caption:"وضعیت",
+        allowEditing:true
+    },
+    {
+        dataField:"extDocumentCode" ,
+        caption:"کد سند کیان",
+        allowEditing:true
+    },
+    {
+        dataField:"persianDate" ,
+        caption:"تاریخ ثبت سند",
+        allowEditing:true
+    },
+    {
+        dataField:"itemsPerPack" ,
+        caption:"تعداد در بسته",
+        allowEditing:false    
+    },
+    {
+        dataField:"mojoodi" ,
+        caption:"موجودی",
+        allowEditing:false    
+    },
+    {
+        dataField:"mojoodiAccessable" ,
+        caption:"موجودی در دسترس",
+        allowEditing:false    
+    },
+    {
+        dataField:"description" ,
+        caption:"توضیحات",
+        allowEditing:true
+    },
+    {
+        dataField:"mojoodiSetad" ,
+        caption:"موجودی ستاد",
+        allowEditing:false    
+    },
+    {
+        dataField:"fooshAvg" ,
+        caption:"میانگین فروش",
+        allowEditing:false    
+    },
+    {
+        dataField:"orderPoint" ,
+        caption:"نقطه سفارش",
+        allowEditing:false    
+    },
+    {
+        dataField:"openOrders" ,
+        caption:"سفارشات باز",
+        allowEditing:false    
+    },
+    {
+        dataField:"orderInWay" ,
+        caption:"سفارشات در راه",
+        allowEditing:false    
+    },  
+      
+]
+
 export const DataGridOrderPointInventoryNewGroupColumns = [    
     {
         dataField:"id" ,
