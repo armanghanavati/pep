@@ -52,7 +52,7 @@ import SendTimerIcon from '../../assets/images/icon/sandtimer.png'
 import RegisterCommentIcon from '../../assets/images/icon/register_comment.png'
 import AttachmentIcon from '../../assets/images/icon/attachment.png'
 import CommentAttachmentIcon from '../../assets/images/icon/comment_attachment.png'
-import { userLocationList } from '../../redux/reducers/user/user-actions';
+import { locationList } from '../../redux/reducers/location/location-actions';
 
 const notesLabel = { 'aria-label': 'Notes' };
 
@@ -109,8 +109,7 @@ class Ticket extends React.Component {
 
     fn_locationList=async()=>{
         this.setState({
-            cmbLocation:await userLocationList(
-                this.props.User.userId,
+            cmbLocation:await locationList(
                 this.props.Company.currentCompanyId,
                 this.props.User.token)
         })
@@ -749,7 +748,7 @@ class Ticket extends React.Component {
                                         <Label className="standardLabelFont">فروشگاه</Label>
                                         <SelectBox
                                             dataSource={this.state.cmbLocation}
-                                            displayExpr="label"
+                                            displayExpr="locationName"
                                             placeholder="انتخاب فروشگاه"
                                             valueExpr="id"
                                             searchEnabled={true}
