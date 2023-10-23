@@ -56,7 +56,10 @@ import UpdateIcon from "../../assets/images/icon/update.png";
 import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
 import { location } from "../../redux/reducers/location/location-actions";
 import { supplierList, supplierListComboByCompanyId } from "../../redux/reducers/supplier/supplier-action";
+import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 import { json } from "react-router";
+
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 
 class OrderStoreSupplierDate extends React.Component {
   constructor(props) {
@@ -316,6 +319,10 @@ class OrderStoreSupplierDate extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.OrderStoreSupplierDateGridData, "OrderRetailStoreSupplierDate");
+  };
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -466,7 +473,17 @@ class OrderStoreSupplierDate extends React.Component {
             <Row>
               <Label className="title">لیست زمانبندی تامین کننده ها</Label>
             </Row>
-
+            <Row style={{ direction: "ltr" }}>
+                  <Col xs="auto">
+                    <Button
+                      icon={ExportExcelIcon}
+                      type="default"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnExportExcel_onClick}
+                    />
+                  </Col>
+                </Row>
             <Row>
               <Col xs="auto" className="standardPadding">
                 <DataGrid

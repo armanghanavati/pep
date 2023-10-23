@@ -384,11 +384,11 @@ class OrderInventory extends React.Component {
     //   FlagError = false;
     //   errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
     // }
-    // ------------------------------------------------
+    // ------------------------------------------------    
     if (
       params.newData.orderUser > 0 &&
-      params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
-      params.newData.orderUser % params.oldData.itemsPerPack2 !== 0
+      // params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&      
+      params.newData.orderUser % (params.oldData.itemsPerPack2==0 ? params.oldData.itemsPerPack : params.oldData.itemsPerPack2) !== 0
     ) {
       FlagError = false;
       flagEditRowCount = false;
@@ -471,8 +471,8 @@ class OrderInventory extends React.Component {
         isToastVisible: true,
         //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
         //Type:RTN==1 ? "success" : "error",
-        Message: RTN == null ? "خطا در ویرایش" : "ویرایش با موفقیت انجام گردید",
-        Type: RTN != null ? "success" : "error",
+        Message: RTN.length==0  ? "success" : "ویرایش با موفقیت انجام گردید",
+        Type: RTN.length>0 ? "error" : "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.",
       },
     });
     this.OpenCloseWait();

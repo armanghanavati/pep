@@ -2,91 +2,152 @@ export const DataGridOrderPointSupplierColumns = [
     {
         dataField:"id" ,
         caption:"شماره سفارش",
-        allowEditing:false    
+        allowEditing:false,   
+            
     },
     {
         dataField:"retailStoreName" ,
         caption:"نام فروشگاه",
-        allowEditing:false    
+        allowEditing:false,
+               
     },
     {
         dataField:"productName" ,
         caption:"نام کالا",
-        allowEditing:false    
+        allowEditing:false,
+                
     },
     {
         dataField:"barcode" ,
         caption:"بارکد",
-        allowEditing:false    
+        allowEditing:false,
+            
     },
     {
         dataField:"orderSystem" ,
         caption:"پیشنهاد سیستم",
-        allowEditing:false    
+        allowEditing:false,
+            
     },
     {
         dataField:"orderUser" ,
         caption:"پیشنهاد کاربر",
-        allowEditing:true    
+        allowEditing:true,
+            
     },
     {
         dataField:"productId" ,
         caption:"کد کالا",
-        allowEditing:false    
+        allowEditing:false,
+                
     },
+    {
+        dataField:"supplierName" ,
+        caption:"نام تامین کننده",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"itemsPerPack" ,
+        caption:"تعداد در بسته",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"mojoodi" ,
+        caption:"موجودی",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"mojoodiAccessable" ,
+        caption:"موجودی در دسترس",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"description" ,
+        caption:"توضیحات",
+        allowEditing:true,
+            
+    },
+    {
+        dataField:"mojoodiSetad" ,
+        caption:"موجودی ستاد",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"fooshAvg" ,
+        caption:"میانگین فروش",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"orderPoint" ,
+        caption:"نقطه سفارش",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"openOrders" ,
+        caption:"سفارشات باز",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"orderInWay" ,
+        caption:"سفارشات در راه",
+        allowEditing:false,
+                
+    },    
+]
+
+// ------------------------------------------------------------------------------------------------------------------
+export const DataGridOrderPointSumOrdersColumns = [    
+    {
+        dataField:"id" ,
+        caption:"کد تامین کننده",
+        allowEditing:false    
+    },  
     {
         dataField:"supplierName" ,
         caption:"نام تامین کننده",
         allowEditing:false    
     },
     {
-        dataField:"itemsPerPack" ,
-        caption:"تعداد در بسته",
+        dataField:"minWeight" ,
+        caption:"حداقل وزن",
         allowEditing:false    
     },
     {
-        dataField:"mojoodi" ,
-        caption:"موجودی",
+        dataField:"maxWeight" ,
+        caption:"حداکثر وزن",
         allowEditing:false    
     },
     {
-        dataField:"mojoodiAccessable" ,
-        caption:"موجودی در دسترس",
+        dataField:"sumItemsWeight" ,
+        caption:"جمع کل وزن کالا",
         allowEditing:false    
     },
     {
-        dataField:"description" ,
-        caption:"توضیحات",
-        allowEditing:true
-    },
-    {
-        dataField:"mojoodiSetad" ,
-        caption:"موجودی ستاد",
+        dataField:"minPrice" ,
+        caption:"حداقل ریال",
         allowEditing:false    
     },
     {
-        dataField:"fooshAvg" ,
-        caption:"میانگین فروش",
-        allowEditing:false    
+        dataField:"maxPrice" ,
+        caption:"حداکثر ریال",
+        allowEditing:true    
     },
     {
-        dataField:"orderPoint" ,
-        caption:"نقطه سفارش",
-        allowEditing:false    
-    },
-    {
-        dataField:"openOrders" ,
-        caption:"سفارشات باز",
-        allowEditing:false    
-    },
-    {
-        dataField:"orderInWay" ,
-        caption:"سفارشات در راه",
+        dataField:"sumItemsPrice" ,
+        caption:"جمع کل زیال کالاها",
         allowEditing:false    
     },    
 ]
 
-
+// ------------------------------------------------------------------------------------------------------------------
 export const DataGridOrderPointSupplierNewGroupColumns = [    
     {
         dataField:"id" ,

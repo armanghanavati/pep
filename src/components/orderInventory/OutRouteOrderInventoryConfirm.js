@@ -181,22 +181,6 @@ class OutRouteOrderInventoryConfirm extends React.Component {
   };
 
 
-  btnUpdateOrders_onClick = async () => {
-    this.OpenCloseWait();
-    alert(JSON.stringify(this.state.OrderPointInventoryEdited))
-    await updateGroupsOrderPointInventory(
-      this.state.OrderPointInventoryEdited,
-      this.props.User.token
-    );
-    this.setState({
-      ToastProps: {
-        isToastVisible: true,
-        Message: ",ویرایش با موفقیت انجام گردید.",
-        Type: "success",
-      },
-    });
-    this.OpenCloseWait();
-  };
 
   OpenCloseWait() {
     this.setState({ stateWait: !this.state.stateWait });
@@ -302,19 +286,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                 </DataGrid>
               </Col>
             </Row>            
-            <Row className="standardSpaceTop">
-              {this.state.stateEnable_btnUpdate && (
-                <Col xs="auto" className="standardMarginRight">
-                  <Button
-                    icon={UpdateIcon}
-                    text="ذخیره تغییرات"
-                    type="success"
-                    stylingMode="contained"
-                    rtlEnabled={true}
-                    onClick={this.btnUpdateOrders_onClick}
-                  />
-                </Col>
-              )}
+            <Row className="standardSpaceTop">            
               {this.state.stateEnable_btnConfirm && (
                 <Col xs="auto" className="standardMarginRight">
                   <Button

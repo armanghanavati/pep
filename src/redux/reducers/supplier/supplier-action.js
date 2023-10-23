@@ -98,6 +98,25 @@ export async function addSupplier(Object, Token) {
   return null;
 }
 
+// ------------------------------------------------------------------------------------------------
+export async function supplierListByExtIds(Object, Token) {
+  const url = window.apiAddress + "/Supplier/supplierListByExtIds";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(Object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("Supplier List By ExtIds=" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
 export async function updateSupplier(Object, Token) {
   const url = window.apiAddress + "/Supplier/updateSupplier";
   console.log(JSON.stringify(Object))

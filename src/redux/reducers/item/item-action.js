@@ -72,7 +72,7 @@ export async function itemListRemainBySupplierId(Object,Token) {
 
 //-------------ItemListCombo By ItemGroup----------------------
 export async function itemListComboByItemGroupId(Object,Token) {
-  const url = window.apiAddress + "/Item/itemListComboByItemGroupId?itemGroupId="+Object.ItemGroupId+"&locationId="+Object.LocationId;
+  const url = window.apiAddress + "/Item/itemListComboByItemGroupId?itemGroupId="+Object.ItemGroupId+"&locationId="+Object.LocationId;  
   const response = await fetch(url, {
     method: "GET",
     headers: {

@@ -92,7 +92,7 @@ import {
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
-import { DataGridOrderPointInventoryColumns } from "./OrderInventory-config";
+import { DataGridOrderPointInventoryReportColumns } from "./OrderInventory-config";
 import { orderPointInventoryActions } from "../../redux/reducers/OrderPointInventory/orderPointInventory-slice";
 import { transferOrderPointSupplierToKyan } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 
@@ -404,7 +404,7 @@ class OrderInventoryReport extends React.Component {
                 <DataGrid
                   id="grdOrderPointInventory"
                   dataSource={this.state.OrderInventoryGridData}
-                  defaultColumns={DataGridOrderPointInventoryColumns}
+                  defaultColumns={DataGridOrderPointInventoryReportColumns}
                   keyExpr="id"
                   columnAutoWidth={true}
                   allowColumnReordering={true}
