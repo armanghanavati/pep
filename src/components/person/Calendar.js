@@ -77,7 +77,7 @@ var today = new Date().toLocaleDateString('fa-IR-u-nu-latn');
 var year = today.split("/")[0];
 var month = today.split("/")[1];
 var day = today.split("/")[2];
-var oldId=0;
+var oldId = 0;
 class PersonShift extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -96,10 +96,10 @@ class PersonShift extends React.PureComponent {
                 id: 2, title: "شیفت عصر"
             }],
             ShiftId: null,
-            dd: false, 
-            dataNew:[],           
-        };   
-        oldId=0;     
+            dd: false,
+            dataNew: [],
+        };
+        oldId = 0;
     }
 
     // async componentDidMount() {
@@ -114,14 +114,14 @@ class PersonShift extends React.PureComponent {
     //         await this.loadData(this.props.personId);
     // }
 
-    loadData = async () => {  
-        var data = [];             
-        const PERSON_ID=this.props.personId
+    loadData = async () => {
+        var data = [];
+        const PERSON_ID = this.props.personId
         //alert(PERSON_ID)
-        if(oldId!=PERSON_ID){
+        if (oldId != PERSON_ID) {
             console.log(PERSON_ID);
             data = await personShiftList(PERSON_ID, year, month, this.props.User.token);
-            
+
             // alert(JSON.stringify(data));
             if (data[0].day == "يکشنبه") {
                 data = [{ "day": "شنبه", dayOfMonth: "" }, ...data]
@@ -158,9 +158,9 @@ class PersonShift extends React.PureComponent {
             }
             this.setState({
                 dd: true,
-                dataNew:data,                
+                dataNew: data,
             })
-            oldId=PERSON_ID
+            oldId = PERSON_ID
         }
     }
 
@@ -183,7 +183,7 @@ class PersonShift extends React.PureComponent {
     }
 
     btnAdd_onClick = async () => {
-        oldId=0;
+        oldId = 0;
         if (this.props.personId == null) {
             alert("لطفا شخص را انتخاب نمایید")
             return;
@@ -205,7 +205,7 @@ class PersonShift extends React.PureComponent {
     }
 
     btnDelete_onClick = async () => {
-        oldId=0;
+        oldId = 0;
         await deletePersonShift(this.state.ShiftId, this.props.User.token)
         await this.loadData();
         this.setState({
@@ -213,10 +213,13 @@ class PersonShift extends React.PureComponent {
         })
     }
     nextMonth_onClick = async (e) => {
-        oldId=0;
+        oldId = 0;
         month = parseInt(month) + 1;
-        if (month > 12)
-            month = 12
+        if (month > 12) {
+            year++;
+            month = 1;
+            day = 1
+        }
         await this.loadData();
         if (this.state.dd == true)
             this.setState({
@@ -228,10 +231,13 @@ class PersonShift extends React.PureComponent {
             })
     }
     previousMonth_onClick = async (e) => {
-        oldId=0;
+        oldId = 0;
         month = parseInt(month) - 1;
-        if (month < 1)
-            month = 1;
+        if (month < 1) {
+            year--;
+            month = 12;
+            day = 1;
+        }
         await this.loadData();
         if (this.state.dd == true)
             this.setState({
@@ -247,11 +253,11 @@ class PersonShift extends React.PureComponent {
         this.loadData()
         return (
             <>
-                <div style={{ marginRight: "10px" }}><i onClick={(event) => this.nextMonth_onClick(event)} style={{ marginLeft: "60px", cursor: "pointer" }} title="ماه بعدی">&#60;</i>{month + " - " + year}<i onClick={(event) => this.previousMonth_onClick(event)} style={{ marginRight: "60px", cursor: "pointer" }} title='ماه قبلی'>&#62;</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.props.personName}</div>                
+                <div style={{ marginRight: "10px" }}><i onClick={(event) => this.nextMonth_onClick(event)} style={{ marginLeft: "60px", cursor: "pointer" }} title="ماه بعدی">&#60;</i>{month + " - " + year}<i onClick={(event) => this.previousMonth_onClick(event)} style={{ marginRight: "60px", cursor: "pointer" }} title='ماه قبلی'>&#62;</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.props.personName}</div>
                 {
                     this.state.dataNew.map((element, index) => {
                         index++;
-                        if (day == element.dayOfMonth && month == today.split('/')[1])
+                        if (day == element.dayOfMonth && month == today.split('/')[1] && year == today.split('/')[0])
                             backgroundColor = "lightgreen"
                         else if (element.dayOfMonth == "")
                             backgroundColor = ""

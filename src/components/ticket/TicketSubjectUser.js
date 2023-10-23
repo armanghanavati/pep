@@ -54,8 +54,8 @@ import {
     updateTicketSubjectUser,
     deleteTicketSubjectUser
 } from "../../redux/reducers/ticketSubjectUser/ticketSubjectUser-actions";
-import { userList } from "../../redux/reducers/user/user-actions";
-import { fetchTicketSubjectData } from "../../redux/reducers/ticketSubject/ticketSubject-actions";
+import { userList} from "../../redux/reducers/user/user-actions";
+import { fetchTicketSubjectData, ticketSubjectWithGroupList} from "../../redux/reducers/ticketSubject/ticketSubject-actions";
 import { DataGridTicketSubjectUserColumns } from "./TicketSubjectUser-config";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
@@ -105,7 +105,7 @@ class PepObject extends React.Component {
 
     fn_ticketSubjectList = async () => {
         this.setState({
-            cmbTicketSubject: await fetchTicketSubjectData(this.props.User.token)
+            cmbTicketSubject: await ticketSubjectWithGroupList(this.props.User.token)
         })
     }
 

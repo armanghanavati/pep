@@ -52,6 +52,7 @@ import SendTimerIcon from '../../assets/images/icon/sandtimer.png'
 import RegisterCommentIcon from '../../assets/images/icon/register_comment.png'
 import AttachmentIcon from '../../assets/images/icon/attachment.png'
 import CommentAttachmentIcon from '../../assets/images/icon/comment_attachment.png'
+import { userLocationList } from '../../redux/reducers/user/user-actions';
 
 const notesLabel = { 'aria-label': 'Notes' };
 
@@ -89,6 +90,8 @@ class Ticket extends React.Component {
             stateModalCommentAttachment: false,
             errTicketCommentAttached: '',
             stateWait: false,
+            cmbLocation:null,
+            cmbLocationValue:null,
         }
     }
 
@@ -96,11 +99,21 @@ class Ticket extends React.Component {
         const rtnAllTicket = await this.fn_LoadAllTickets();
         await this.fn_TicketPriorityData();
         await this.fn_TicketSubjectData();
+        this.fn_locationList();
         this.tabTickets_onChange('1', rtnAllTicket)
     }
 
     OpenCloseWait() {
         this.setState({ stateWait: !this.state.stateWait });
+    }
+
+    fn_locationList=async()=>{
+        this.setState({
+            cmbLocation:await userLocationList(
+                this.props.User.userId,
+                this.props.Company.currentCompanyId,
+                this.props.User.token)
+        })
     }
 
     fn_showNotifyMessage = (msg, typeNotify) => {
@@ -189,13 +202,13 @@ class Ticket extends React.Component {
     }
 
     btnRgisterTicket_onClick = async (e) => {
-        this.OpenCloseWait();
         let errMsg = "";
         let flag = true;
         document.getElementById("errTicketTitle").innerHTML = "";
         document.getElementById("errTicketSubject").innerHTML = "";
         document.getElementById("errTicketPriority").innerHTML = "";
         document.getElementById("errTicketDesc").innerHTML = "";
+        document.getElementById("errLocation").innerHTML = "";
         if (this.state.txtTilteValue == null) {
             document.getElementById("errTicketTitle").innerHTML = "عنوان تیکت را مشخص نمائید.";
             flag = false;
@@ -216,8 +229,13 @@ class Ticket extends React.Component {
             flag = false;
         }
 
-        if (flag) {
+        if (this.state.cmbLocationValue == null) {
+            document.getElementById("errLocation").innerHTML = "فروشگاه را انتخاب نمائید.";
+            flag = false;
+        }
 
+        if (flag) {
+            this.OpenCloseWait();
             const obj = {
                 parentId: null,
                 title: this.state.txtTilteValue,
@@ -226,7 +244,8 @@ class Ticket extends React.Component {
                 ticketPriorityId: this.state.cmbTicketPriorityValue,
                 // insertDate:null,
                 desc: this.state.txtDescValue,
-                applicationUserId: this.props.User.userId
+                applicationUserId: this.props.User.userId,
+                locationId:this.state.cmbLocationValue
             }
             // alert(JSON.stringify(obj))
             var result = await RegisterNewTicket(obj, this.props.User.token);
@@ -234,7 +253,8 @@ class Ticket extends React.Component {
                 txtTilteValue: null,
                 cmbTicketSubjectValue: null,
                 cmbTicketPriorityValue: null,
-                txtDescValue: null
+                txtDescValue: null,
+                cmbLocationValue:null
             })
             const rtnAllTicket = await this.fn_LoadAllTickets();
             this.setState({
@@ -257,8 +277,9 @@ class Ticket extends React.Component {
             }
 
             await this.fn_UpdateGrids(rtnAllTicket, '1');
+            this.OpenCloseWait();
         }
-        this.OpenCloseWait();
+        
     }
 
 
@@ -491,6 +512,11 @@ class Ticket extends React.Component {
         })
     }
 
+    cmbLocation_onChange=(e)=>{
+        this.setState({
+            cmbLocationValue:e
+        })
+    }
     render() {
         // const  fileName=[];
         // if(this.state.file != null)  {
@@ -696,7 +722,7 @@ class Ticket extends React.Component {
                         </Modal>
                     </Col>
                     <Col style={{ textAlign: 'center', marginTop: '10px' }}>
-                        <Modal style={{ direction: 'rtl' }}
+                        <Modal style={{ direction: 'rtl', maxWidth: '1100px', width: '100%' }}
                             isOpen={this.state.stateModalNewTicket}
                             toggle={this.ModalNewTicket_onClickAway}
                             centered={true}
@@ -718,6 +744,20 @@ class Ticket extends React.Component {
                                             onValueChanged={this.txtSubject_onChanege}
                                         />
                                         <Label id="errTicketTitle" className="standardLabelFont errMessage" />
+                                    </Col>
+                                    <Col>
+                                        <Label className="standardLabelFont">فروشگاه</Label>
+                                        <SelectBox
+                                            dataSource={this.state.cmbLocation}
+                                            displayExpr="label"
+                                            placeholder="انتخاب فروشگاه"
+                                            valueExpr="id"
+                                            searchEnabled={true}
+                                            rtlEnabled={true}
+                                            onValueChange={this.cmbLocation_onChange}
+                                            value={this.state.cmbLocationValue}
+                                        />
+                                        <Label id="errLocation" className="standardLabelFont errMessage" />
                                     </Col>
                                     <Col>
                                         <Label className="standardLabelFont">بخش</Label>
@@ -991,6 +1031,7 @@ const mapStateToProps = (state) => ({
     Ticket: state.ticket,
     TicketSubject: state.ticketSubjects,
     TicketPriority: state.ticketPriority,
+    Company: state.companies
 });
 
 export default connect(mapStateToProps)(Ticket);
