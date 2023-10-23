@@ -377,7 +377,7 @@ class OrderSupplier extends React.Component {
       params.newData.orderUser > 0 &&
       params.oldData.itemsPerPack >0 &&
       // params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
-      params.newData.orderUser % (params.oldData.itemsPerPack2==0 ? params.oldData.itemsPerPack1 : params.oldData.itemsPerPack2) !== 0
+      params.newData.orderUser % (params.oldData.itemsPerPack2==0 ? params.oldData.itemsPerPack : params.oldData.itemsPerPack2) !== 0
     ) {
       FlagError = false;
       flagEditRowCount = false;
