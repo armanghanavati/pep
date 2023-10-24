@@ -51,6 +51,7 @@ class OrderInventoryNew extends React.Component{
             cmbSupplierValue:null,
             txtOrderNumberValue:null,
             lblQtyPerPack:null,
+            lblQtyPerPack2:null,
             lblRetailStoreMojoodi:null,
             lblSetadMojoodi:null,
             ToastProps: {
@@ -151,6 +152,7 @@ class OrderInventoryNew extends React.Component{
                 
                 this.setState({
                     lblQtyPerPack:tempItems[i].qtyPerPack,
+                    lblQtyPerPack2:tempItems[i].qtyPerPack2,
                     lblRetailStoreMojoodi:tempItems[i].mojoodi,
                     lblSetadMojoodi:tempItems[i].mojoodiSetad
                 })
@@ -207,7 +209,9 @@ class OrderInventoryNew extends React.Component{
             errMSG += "تعداد سفارش از موجودی ستاد بیشتر است." + "<br>";
             flagSend = false;
         }
-        if(this.state.txtOrderNumberValue%this.state.lblQtyPerPack!==0 || this.state.txtOrderNumberValue<=0){
+        // if(this.state.txtOrderNumberValue%this.state.lblQtyPerPack!==0 || this.state.txtOrderNumberValue<=0){
+        if(this.state.txtOrderNumberValue%(this.state.lblQtyPerPack2==0 ? this.state.lblQtyPerPack : this.state.lblQtyPerPack2)!==0 
+            || this.state.txtOrderNumberValue<=0){
             errMSG+='تعداد سفارش باید ضریبی از واحد بسته بندی باشد.'
             flagSend=false;
         }     
@@ -304,10 +308,15 @@ class OrderInventoryNew extends React.Component{
                         <Label id="errItemNew" className="standardLabelFont errMessage" />
                     </Col>                    
                 </Row>
-                <Row>
+                <Row>                    
                     <Col>
                         <Label className="standardLabelFont">تعداد در کارتن: {this.state.lblQtyPerPack}</Label>      
                     </Col>                    
+                    {this.state.lblQtyPerPack2!=0 &&
+                        <Col>
+                            <Label className="standardLabelFont">تعداد در کارتن 2: {this.state.lblQtyPerPack}</Label>      
+                        </Col>                  
+                    }
                     <Col>
                         <Label className="standardLabelFont">موجودی فروشگاه: {this.state.lblRetailStoreMojoodi}</Label>      
                     </Col>                    
