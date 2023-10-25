@@ -90,8 +90,10 @@ class Ticket extends React.Component {
             stateModalCommentAttachment: false,
             errTicketCommentAttached: '',
             stateWait: false,
-            cmbLocation:null,
-            cmbLocationValue:null,
+            cmbLocation: null,
+            cmbLocationValue: null,
+            Mobile: null,
+            FullName: null,
         }
     }
 
@@ -107,9 +109,9 @@ class Ticket extends React.Component {
         this.setState({ stateWait: !this.state.stateWait });
     }
 
-    fn_locationList=async()=>{
+    fn_locationList = async () => {
         this.setState({
-            cmbLocation:await locationList(
+            cmbLocation: await locationList(
                 this.props.Company.currentCompanyId,
                 this.props.User.token)
         })
@@ -244,7 +246,7 @@ class Ticket extends React.Component {
                 // insertDate:null,
                 desc: this.state.txtDescValue,
                 applicationUserId: this.props.User.userId,
-                locationId:this.state.cmbLocationValue
+                locationId: this.state.cmbLocationValue
             }
             // alert(JSON.stringify(obj))
             var result = await RegisterNewTicket(obj, this.props.User.token);
@@ -253,7 +255,7 @@ class Ticket extends React.Component {
                 cmbTicketSubjectValue: null,
                 cmbTicketPriorityValue: null,
                 txtDescValue: null,
-                cmbLocationValue:null
+                cmbLocationValue: null
             })
             const rtnAllTicket = await this.fn_LoadAllTickets();
             this.setState({
@@ -278,13 +280,13 @@ class Ticket extends React.Component {
             await this.fn_UpdateGrids(rtnAllTicket, '1');
             this.OpenCloseWait();
         }
-        
+
     }
 
 
     grdTicket_onClick = async (e) => {
         // alert(e.data.id)    
-        // alert(JSON.stringify(e.data))   
+        //alert(JSON.stringify(e.data))   
         const objStatus = {
             ticketId: e.data.id,
             ticketStatusId: 5
@@ -320,6 +322,8 @@ class Ticket extends React.Component {
             UserIdInsertd: e.data.applicationUserId,
             UserNameExec: tempUserNameExec,
             UserIdExec: tempUserIdExec,
+            Mobile: e.data.mobile,
+            FullName: e.data.fullName
         })
     }
 
@@ -400,7 +404,7 @@ class Ticket extends React.Component {
 
         await this.fn_LoadAllTickets();
         this.setState({
-            txtCommnetValue:null
+            txtCommnetValue: null
         })
         this.OpenCloseWait();
     }
@@ -511,9 +515,9 @@ class Ticket extends React.Component {
         })
     }
 
-    cmbLocation_onChange=(e)=>{
+    cmbLocation_onChange = (e) => {
         this.setState({
-            cmbLocationValue:e
+            cmbLocationValue: e
         })
     }
     render() {
@@ -588,6 +592,8 @@ class Ticket extends React.Component {
                                         <Row className="standardPadding">
                                             <Col xs='auto'>شماره تیکت : {this.state.TicketData.id}</Col>
                                             <Col xs='auto'>کاربر درخواست دهنده : {this.state.TicketData.userNameInserted}</Col>
+                                            <Col xs="auto">نام و نام خانوادگی: {this.state.FullName}</Col>
+                                            <Col xs="auto">شماره همراه: {this.state.Mobile}</Col>
                                             <Col xs='auto'>تاریخ ثبت : {this.state.TicketData.persianDate}</Col>
                                         </Row>
                                         <Row className="standardPadding">
