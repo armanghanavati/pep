@@ -617,7 +617,7 @@ class OrderSupplier extends React.Component {
         <p></p>
 
         <Row>
-          <Col xs="6">
+          <Col xs="9">
             <Card className="shadow bg-white border pointer">
               <Row className="standardPadding">
                 <Row>
@@ -731,7 +731,7 @@ class OrderSupplier extends React.Component {
               </Row>
             </Card>
           </Col>
-          <Col xs="6">
+          <Col xs="3">
             <Card className="shadow bg-white border pointer">
               <Row className="standardPadding">
                 <Label className="title">
@@ -741,25 +741,25 @@ class OrderSupplier extends React.Component {
                   <div>
                     <table>
                       <tr>
-                        <th>کد تامین کننده</th>
+                        {/* <th>کد تامین کننده</th> */}
                         <th>نام تامین کننده</th>
-                        <th>حداقل وزن</th>
+                        {/* <th>حداقل وزن</th>
                         <th>حداکثر وزن</th>
                         <th>جمع کل وزن کالا</th>
                         <th>حداقل ریال</th>
                         <th>حداکثر ریال</th>
-                        <th>جمع کل ریال کالاها</th>
+                        <th>جمع کل ریال کالاها</th> */}
                       </tr>
                       {this.state.SupplierListSumMaxMinGridData.map((item)=>
                         <tr>
-                          <td>{item.extSupplierId}</td>
+                          {/* <td>{item.extSupplierId}</td> */}
                           <td>{item.supplierName}</td>
-                          <td>{item.minWeight}</td>
+                          {/* <td>{item.minWeight}</td>
                           <td>{item.maxWeight}</td>
                           <td>{item.sumItemsWeight}</td>
                           <td>{item.minPrice}</td>
                           <td>{item.maxPrice}</td>
-                          <td>{item.sumItemsPrice}</td>
+                          <td>{item.sumItemsPrice}</td> */}
                         </tr>
                       )}
                     </table>                  
