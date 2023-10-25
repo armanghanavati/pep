@@ -751,11 +751,11 @@ class Ticket extends React.Component {
                                         <Label id="errTicketTitle" className="standardLabelFont errMessage" />
                                     </Col>
                                     <Col>
-                                        <Label className="standardLabelFont">فروشگاه</Label>
+                                        <Label className="standardLabelFont">محل</Label>
                                         <SelectBox
                                             dataSource={this.state.cmbLocation}
                                             displayExpr="locationName"
-                                            placeholder="انتخاب فروشگاه"
+                                            placeholder="انتخاب محل"
                                             valueExpr="id"
                                             searchEnabled={true}
                                             rtlEnabled={true}

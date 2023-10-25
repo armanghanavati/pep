@@ -16,7 +16,7 @@ export const DataGridTicketcolumns = [
     },
     {
         dataField:"locationName" ,
-        caption:"فروشگاه",
+        caption:"محل",
         allowEditing:false
     },
     {
