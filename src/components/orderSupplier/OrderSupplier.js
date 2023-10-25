@@ -275,12 +275,13 @@ class OrderSupplier extends React.Component {
       supplierIds: this.state.cmbSupplierValue,
       itemIds: this.state.cmbItemsValue,
     };
-    // alert(JSON.stringify(OBJ))
-    const ORDER_SUPPLIER = await orderPointSupplierListByLSI(
+    // console.log(JSON.stringify(OBJ))
+    let ORDER_SUPPLIER = await orderPointSupplierListByLSI(
       OBJ,
       this.props.User.token
     );
 
+    ORDER_SUPPLIER=ORDER_SUPPLIER==null ? [] : ORDER_SUPPLIER;
     let tempSupplierId=[];
     for(let i=0;i<ORDER_SUPPLIER.length;i++){
       let flag=true;
@@ -293,7 +294,7 @@ class OrderSupplier extends React.Component {
         }
         tempSupplierId.push(SUP_OBJ);
       }        
-    }    
+    }        
 
     this.setState({
       OrderSupplierGridData: ORDER_SUPPLIER,
