@@ -644,14 +644,10 @@ class ItemLocation extends React.Component {
                   showPageSizeSelector={true}
                   showNavigationButtons={true}
                 />
-                <Selection
-                  mode="multiple"
-                  selectAllMode={ALL_MOD}
-                  showCheckBoxesMode={CHECK_BOXES_MOD}
-                />
                 <Editing mode="cell" allowUpdating={true} />
                 <FilterRow visible={true} />
                 <FilterPanel visible={true} />
+                <HeaderFilter visible={true} />
               </DataGrid>
             </Col>
             <Row style={{ paddingRight: "10px", paddingBottom: "10px" }}>
