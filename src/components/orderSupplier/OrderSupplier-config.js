@@ -1,22 +1,4 @@
-export const DataGridOrderPointSupplierColumns = [    
-    {
-        dataField:"id" ,
-        caption:"شماره سفارش",
-        allowEditing:false,   
-            
-    },
-    {
-        dataField:"retailStoreName" ,
-        caption:"نام فروشگاه",
-        allowEditing:false,
-               
-    },
-    {
-        dataField:"productName" ,
-        caption:"نام کالا",
-        allowEditing:false,
-                
-    },
+export const DataGridOrderPointSupplierColumns = [            
     {
         dataField:"barcode" ,
         caption:"بارکد",
@@ -36,6 +18,18 @@ export const DataGridOrderPointSupplierColumns = [
             
     },
     {
+        dataField:"retailStoreName" ,
+        caption:"نام فروشگاه",
+        allowEditing:false,
+               
+    },
+    {
+        dataField:"productName" ,
+        caption:"نام کالا",
+        allowEditing:false,
+                
+    },
+    {
         dataField:"productId" ,
         caption:"کد کالا",
         allowEditing:false,
@@ -52,6 +46,12 @@ export const DataGridOrderPointSupplierColumns = [
         caption:"تعداد در بسته",
         allowEditing:false,
                 
+    },
+    {
+        dataField:"id" ,
+        caption:"شماره سفارش",
+        allowEditing:false,   
+            
     },
     {
         dataField:"mojoodi" ,
@@ -100,7 +100,19 @@ export const DataGridOrderPointSupplierColumns = [
         caption:"سفارشات در راه",
         allowEditing:false,
                 
-    },    
+    }, 
+    {
+        dataField:"extDocumentCode" ,
+        caption:"کد سند کیان",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"status" ,
+        caption:"وضعیت",
+        allowEditing:false,
+                
+    },   
 ]
 
 // ------------------------------------------------------------------------------------------------------------------
