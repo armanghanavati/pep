@@ -73,10 +73,10 @@ import { Toast } from "devextreme-react/toast";
 import { Backdrop, Hidden } from '@mui/material';
 import { Margin } from 'devextreme-react/bullet';
 import SaveIcon from "../../assets/images/icon/save.png";
-var today = new Date().toLocaleDateString('fa-IR-u-nu-latn');
-var year = today.split("/")[0];
-var month = today.split("/")[1];
-var day = today.split("/")[2];
+//var today = new Date().toLocaleDateString('fa-IR-u-nu-latn');
+// var year = today.split("/")[0];
+// var month = today.split("/")[1];
+// var day = today.split("/")[2];
 var oldId = 0;
 class PersonShift extends React.PureComponent {
     constructor(props) {
@@ -96,7 +96,10 @@ class PersonShift extends React.PureComponent {
                 id: 2, title: "شیفت عصر"
             }],
             ShiftId: null,
-            dd: false,
+            today: new Date().toLocaleDateString('fa-IR-u-nu-latn'),
+            year: new Date().toLocaleDateString('fa-IR-u-nu-latn').split("/")[0],
+            month: new Date().toLocaleDateString('fa-IR-u-nu-latn').split("/")[1],
+            day: new Date().toLocaleDateString('fa-IR-u-nu-latn').split("/")[2],
             dataNew: [],
         };
         oldId = 0;
@@ -120,7 +123,14 @@ class PersonShift extends React.PureComponent {
         //alert(PERSON_ID)
         if (oldId != PERSON_ID) {
             console.log(PERSON_ID);
-            data = await personShiftList(PERSON_ID, year, month, this.props.User.token);
+            var year=this.state.year;
+            if (year == "1401") {
+                this.setState({
+                    year:"1402"
+                })
+                year="1402"
+            }
+            data = await personShiftList(PERSON_ID, year, this.state.month, this.props.User.token);
 
             // alert(JSON.stringify(data));
             if (data[0].day == "يکشنبه") {
@@ -157,7 +167,6 @@ class PersonShift extends React.PureComponent {
                 data = [{ "day": "شنبه", dayOfMonth: "" }, ...data];
             }
             this.setState({
-                dd: true,
                 dataNew: data,
             })
             oldId = PERSON_ID
@@ -214,50 +223,42 @@ class PersonShift extends React.PureComponent {
     }
     nextMonth_onClick = async (e) => {
         oldId = 0;
-        month = parseInt(month) + 1;
-        if (month > 12) {
-            year++;
-            month = 1;
-            day = 1
+        const correctMonth = parseInt(this.state.month) + 1;
+        this.setState({
+            month: correctMonth
+        })
+        if (correctMonth > 12) {
+            this.setState({
+                year: parseInt(this.state.year) + 1,
+                month: 1,
+                day: 1
+            });
         }
-        await this.loadData();
-        if (this.state.dd == true)
-            this.setState({
-                dd: false,
-            })
-        else
-            this.setState({
-                dd: true,
-            })
     }
     previousMonth_onClick = async (e) => {
         oldId = 0;
-        month = parseInt(month) - 1;
-        if (month < 1) {
-            year--;
-            month = 12;
-            day = 1;
+        const correctMonth = parseInt(this.state.month) - 1;
+        this.setState({
+            month: correctMonth
+        })
+        if (correctMonth < 1) {
+            this.setState({
+                year: parseInt(this.state.year) - 1,
+                month: 12,
+                day: 1
+            })
         }
-        await this.loadData();
-        if (this.state.dd == true)
-            this.setState({
-                dd: false,
-            })
-        else
-            this.setState({
-                dd: true
-            })
     }
     render() {
         var backgroundColor;
-        this.loadData()
+        this.loadData();
         return (
             <>
-                <div style={{ marginRight: "10px" }}><i onClick={(event) => this.nextMonth_onClick(event)} style={{ marginLeft: "60px", cursor: "pointer" }} title="ماه بعدی">&#60;</i>{month + " - " + year}<i onClick={(event) => this.previousMonth_onClick(event)} style={{ marginRight: "60px", cursor: "pointer" }} title='ماه قبلی'>&#62;</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.props.personName}</div>
+                <div style={{ marginRight: "10px" }}><i onClick={(event) => this.nextMonth_onClick(event)} style={{ marginLeft: "60px", cursor: "pointer" }} title="ماه بعدی">&#60;</i>{this.state.month + " - " + this.state.year}<i onClick={(event) => this.previousMonth_onClick(event)} style={{ marginRight: "60px", cursor: "pointer" }} title='ماه قبلی'>&#62;</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.props.personName}</div>
                 {
                     this.state.dataNew.map((element, index) => {
                         index++;
-                        if (day == element.dayOfMonth && month == today.split('/')[1] && year == today.split('/')[0])
+                        if (this.state.today.split('/')[2] == element.dayOfMonth && this.state.month == this.state.today.split('/')[1] && this.state.year == this.state.today.split('/')[0])
                             backgroundColor = "lightgreen"
                         else if (element.dayOfMonth == "")
                             backgroundColor = ""
