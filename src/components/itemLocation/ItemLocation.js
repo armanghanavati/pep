@@ -91,6 +91,7 @@ import {
   Gfn_DT2StringSql,
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
+import DataSource from "devextreme/data/data_source";
 import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
@@ -106,7 +107,7 @@ class ItemLocation extends React.Component {
       LocationIds: null,
       SupplierId: null,
       ItemGroupId: null,
-      ItemId: null,
+      cmbItemValue: null,
       ItemLocationGridData: null,
 
       Id: null,
@@ -126,7 +127,7 @@ class ItemLocation extends React.Component {
       ItemLocationList: null,
       ItemLocation: null,
       ItemGroupList: null,
-      ItemList: null,
+      cmbItem: null,
       ItemLocationGroupId: null,
       ItemLocationId: null,
       ActiveAll: false,
@@ -257,9 +258,16 @@ class ItemLocation extends React.Component {
 
   cmbSupplier_onChange = async (e) => {
     var data = await Gfn_BuildValueComboMulti(e);
+    const ITEMS=await itemListComboBySupplierId(data, this.props.User.token);
+
+    const LAZY = new DataSource({
+      store: ITEMS,
+      paginate: true,
+      pageSize: 10,
+    });
     this.setState({
+      cmbItem: LAZY,
       SupplierId: e,
-      ItemList: await itemListComboBySupplierId(data, this.props.User.token),
     });
   };
 
@@ -270,7 +278,7 @@ class ItemLocation extends React.Component {
   };
   cmbItem_onChange = async (e) => {
     this.setState({
-      ItemId: e,
+      cmbItemValue: e,
     });
   };
 
@@ -308,7 +316,7 @@ class ItemLocation extends React.Component {
   btnSearch_onClick = async () => {
     var data = {
       locationIds: this.state.LocationIds,
-      itemId: this.state.ItemId,
+      itemId: this.state.cmbItemValue,
       supplierId: this.state.SupplierId,
       itemGroupId: this.state.ItemGroupId,
       inventoryId: this.state.cmbInventoryvalue,
@@ -388,8 +396,8 @@ class ItemLocation extends React.Component {
         itemId: params.data.itemId,
         locationId: params.data.locationId,
         isActive: params.data.isActive,
-        maxPercentChange:params.data.maxPercentChange,
-        minPercentChange:params.data.minPercentChange
+        maxPercentChange: params.data.maxPercentChange,
+        minPercentChange: params.data.minPercentChange
       };
       tempItems.push(obj);
     }
@@ -449,7 +457,7 @@ class ItemLocation extends React.Component {
   // };
 
   btnExportExcel_onClick = () => {
-    Gfn_ExportToExcel(this.state.OrderInventoryGridData, "OrderInventory");
+    Gfn_ExportToExcel(this.state.ItemLocationGridData, "ItemLocation");
   };
 
 
@@ -479,7 +487,7 @@ class ItemLocation extends React.Component {
               <Label>کالا فروشگاه</Label>
             </Row>
             <Row>
-              <Col xs={3}>
+              <Col>
                 <Label className="standardLabelFont">گروه فروشگاه</Label>
                 <TagBox
                   dataSource={this.state.LocationList}
@@ -491,7 +499,7 @@ class ItemLocation extends React.Component {
                   onValueChange={this.cmbLocationList_onChange}
                 />
               </Col>
-              <Col xs={3}>
+              <Col>
                 <Label className="standardLabelFont">فروشگاه</Label>
                 <TagBox
                   dataSource={this.state.Location}
@@ -503,7 +511,7 @@ class ItemLocation extends React.Component {
                   onValueChange={this.cmbLocation_onChange}
                 />
               </Col>
-              <Col xs={3}>
+              <Col>
                 <Label className="standardLabelFont">انبار</Label>
                 <SelectBox
                   dataSource={this.state.cmbInventory}
@@ -516,26 +524,26 @@ class ItemLocation extends React.Component {
                 />
                 <Label id="errInventory" className="standardLabelFont errMessage" />
               </Col>
-              <Row className="standardPadding">
-                <Col xs="auto">
-                  <Label className="standardLabelFont">تامین کننده</Label>
-                  <SelectBox
-                    dataSource={this.state.SupplierList}
-                    displayExpr="label"
-                    placeholder="تامین کننده"
-                    valueExpr="id"
-                    searchEnabled={true}
-                    rtlEnabled={true}
-                    onValueChange={this.cmbSupplier_onChange}
-                    value={this.state.SupplierId}
-                  />
-                  <Label
-                    id="errSupplier"
-                    className="standardLabelFont errMessage"
-                  />
-                </Col>
 
-                <Col xs="auto">
+              <Col>
+                <Label className="standardLabelFont">تامین کننده</Label>
+                <SelectBox
+                  dataSource={this.state.SupplierList}
+                  displayExpr="label"
+                  placeholder="تامین کننده"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbSupplier_onChange}
+                  value={this.state.SupplierId}
+                />
+                <Label
+                  id="errSupplier"
+                  className="standardLabelFont errMessage"
+                />
+              </Col>
+              <Row className="standardPadding">
+                <Col xs={3}>
                   <Label className="standardLabelFont">گروه کالا</Label>
                   <SelectBox
                     dataSource={this.state.ItemGroupList}
@@ -552,17 +560,17 @@ class ItemLocation extends React.Component {
                     className="standardLabelFont errMessage"
                   />
                 </Col>
-                <Col xs="auto">
+                <Col xs={4}>
                   <Label className="standardLabelFont">کالا</Label>
                   <SelectBox
-                    dataSource={this.state.ItemList}
+                    dataSource={this.state.cmbItem}
                     displayExpr="label"
                     placeholder="کالا"
                     valueExpr="id"
                     searchEnabled={true}
                     rtlEnabled={true}
                     onValueChange={this.cmbItem_onChange}
-                    value={this.state.ItemId}
+                    value={this.state.cmbItemValue}
                   />
                   <Label
                     id="errItem"
@@ -621,6 +629,17 @@ class ItemLocation extends React.Component {
             <Row>
               <Label className="title">لیست کالا فروشگاه</Label>
             </Row>
+            <Row style={{ direction: 'ltr' }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
+            </Row>
             <Col xs="auto" className="standardPadding">
               <DataGrid
                 dataSource={this.state.ItemLocationGridData}
@@ -663,17 +682,6 @@ class ItemLocation extends React.Component {
                   />
                 </Col>
               )}
-            </Row>
-            <Row style={{ direction: "ltr" }}>
-              <Col xs="auto">
-                <Button
-                  icon={ExportExcelIcon}
-                  type="default"
-                  stylingMode="contained"
-                  rtlEnabled={true}
-                  onClick={this.btnExportExcel_onClick}
-                />
-              </Col>
             </Row>
           </Row>
         </Card>
