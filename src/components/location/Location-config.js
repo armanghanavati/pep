@@ -20,6 +20,16 @@ export const DataGridLocationColumns = [
     allowEditing: false,
   },
   {
+    dataField: "stateName",
+    caption: "استان",
+    allowEditing: false,
+  },
+  {
+    dataField: "cityName",
+    caption: "شهر",
+    allowEditing: false,
+  },
+  {
     dataField: "desc",
     caption: "توضیحات",
     allowEditing: false,

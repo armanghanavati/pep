@@ -53,6 +53,12 @@ import {
   locationList,
   deleteLocation,
 } from "../../redux/reducers/location/location-actions";
+import {
+  stateList
+} from "../../redux/reducers/state/state-actions";
+import {
+  cityList
+} from "../../redux/reducers/city/city-actions";
 import { locationTypeList } from "../../redux/reducers/locationType/locationType-action";
 import companySlice, {
   companyActions,
@@ -65,6 +71,7 @@ import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
+import { th } from "date-fns-jalali/locale";
 
 class Location extends React.Component {
   constructor(props) {
@@ -93,11 +100,16 @@ class Location extends React.Component {
       LocationType: null,
       stateDisable_txtCode: false,
       RowSelected: null,
+      cmbState: null,
+      cmbStateValue: null,
+      cmbCity: null,
+      cmbCityValue: null,
     };
   }
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_stateList();
     this.fn_updateGrid();
     await this.locationTypes();
     await this.fn_locationList();
@@ -122,6 +134,12 @@ class Location extends React.Component {
     }
   };
 
+  fn_stateList = async () => {
+    this.setState({
+      cmbState: await stateList(this.props.User.token)
+    })
+  }
+
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
@@ -140,7 +158,11 @@ class Location extends React.Component {
       }
   };
 
-  grdLocation_onClickRow = (e) => {
+  grdLocation_onClickRow = async (e) => {
+    this.setState({
+      cmbCity:await cityList(e.data.stateId,this.props.User.token)
+    })
+    
     this.setState({
       Id: e.data.id,
       txtCodeValue: e.data.code,
@@ -153,6 +175,8 @@ class Location extends React.Component {
       stateUpdateDelete: true,
       stateDisable_txtCode: true,
       RowSelected: e.data,
+      cmbStateValue: e.data.stateId,
+      cmbCityValue: e.data.cityId
     });
   };
 
@@ -166,6 +190,9 @@ class Location extends React.Component {
       LocationTypeId: null,
       LocationId: null,
       chkIsActive: null,
+      cmbStateValue: null,
+      cmbCityValue: null,
+      txtCodeValue:null
     });
   };
 
@@ -180,6 +207,8 @@ class Location extends React.Component {
     let flag = true;
     document.getElementById("errLocationName").innerHTML = "";
     document.getElementById("errPersianName").innerHTML = "";
+    document.getElementById("errCity").innerHTML = "";
+    document.getElementById("errCode").innerHTML = "";
     if (this.state.txtLocationNameValue == null) {
       document.getElementById("errLocationName").innerHTML =
         "نام  محل را وارد نمائید";
@@ -196,6 +225,16 @@ class Location extends React.Component {
         "فعال بودن را مشخص نمائید.";
       flag = false;
     }
+    if (this.state.cmbCityValue == null) {
+      document.getElementById("errCity").innerHTML =
+        "شهر را مشخص نمائید";
+      flag = false;
+    }
+    if (this.state.txtCodeValue == null) {
+      document.getElementById("errCode").innerHTML =
+        "کد را وارد نمائید";
+      flag = false;
+    }
     return flag;
   };
 
@@ -210,6 +249,7 @@ class Location extends React.Component {
         locationId: this.state.LocationId,
         companyId: this.props.Company.currentCompanyId,
         isActive: this.state.chkIsActive,
+        cityId: this.state.cmbCityValue
       };
       const RESULT = await addLocation(data, this.props.User.token);
       this.setState({
@@ -248,6 +288,7 @@ class Location extends React.Component {
         locationId: this.state.LocationId,
         companyId: this.props.Company.currentCompanyId,
         isActive: this.state.chkIsActive,
+        cityId: this.state.cmbCityValue
       };
       const RESULT = await updateLocation(data, this.props.User.token);
       this.setState({
@@ -276,6 +317,19 @@ class Location extends React.Component {
       LocationId: e,
     });
   };
+
+  cmbCity_onChange = (e) => {
+    this.setState({
+      cmbCityValue: e
+    });
+  }
+
+  cmbState_onChange = async (e) => {
+    this.setState({
+      cmbStateValue: e,
+      cmbCity: await cityList(e, this.props.User.token)
+    })
+  }
 
   locationTypes = async () => {
     this.setState({
@@ -367,6 +421,33 @@ class Location extends React.Component {
                   onValueChange={this.cmbLocation_onChange}
                   value={this.state.LocationId}
                 />
+              </Col>
+              <Col>
+                <Label className="standardLabelFont">استان</Label>
+                <SelectBox
+                  dataSource={this.state.cmbState}
+                  displayExpr="name"
+                  placeholder="استان"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbState_onChange}
+                  value={this.state.cmbStateValue}
+                />
+              </Col>
+              <Col>
+                <Label className="standardLabelFont">شهر</Label>
+                <SelectBox
+                  dataSource={this.state.cmbCity}
+                  displayExpr="name"
+                  placeholder="شهر"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbCity_onChange}
+                  value={this.state.cmbCityValue}
+                />
+                <Label id="errCity" className="standardLabelFont errMessage" />
               </Col>
               <Col>
                 <Label className="standardLabelFont">نام محل</Label>

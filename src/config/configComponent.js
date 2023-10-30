@@ -31,6 +31,7 @@ import OrderPointSupplierReports from '../pages/OrderPointSupplierReports';
 import TicketSubjectUsers from '../pages/TicketSubjectUsers';
 import TicketSubjects from '../pages/TicketSubjects'
 import OrdersByUpload from '../pages/OrdersByUpload'
+import SupplierLocationContacts from '../pages/SupplierLocationContacts'
 
 export const REAL_COMPONENT = [
   {
@@ -169,10 +170,14 @@ export const REAL_COMPONENT = [
   {
     strComponent: "TicketSubjects",
     orgComponent: <TicketSubjects/>,
-  } ,
+  },
   {
     strComponent: "OrdersByUpload",
     orgComponent: <OrdersByUpload/>,
+  },
+  {
+    strComponent: "SupplierLocationContacts",
+    orgComponent: <SupplierLocationContacts/>,
   }  
 ];
 
