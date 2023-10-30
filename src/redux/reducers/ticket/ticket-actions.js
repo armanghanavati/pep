@@ -40,7 +40,7 @@ export async function RegisterNewTicket(Object,Token){
 
 export async function getAllUserInsertTicket(UserId,Token){
   // UserId=2
-  const url=window.apiAddress+"/Ticket/userTicketList?userId="+UserId  
+  const url=window.apiAddress+"/Ticket/userTicketList" 
   const response = await fetch(
       url,
       {

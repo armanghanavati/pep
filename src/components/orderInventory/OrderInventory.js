@@ -65,6 +65,7 @@ import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPo
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import { inventoryActions } from "../../redux/reducers/inventory/inventory-slice";
+import { remainOfEditInsertByLocationUser } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 
 import {
   itemListCombo,
@@ -337,7 +338,7 @@ class OrderInventory extends React.Component {
       e.rowElement.style.backgroundColor = "#60c77f";
   };
 
-  grdOrderPointInventory_onRowUpdating = (params) => {
+  grdOrderPointInventory_onRowUpdating = async (params) => {
     let FirstVal = 1;
     console.log("Old Data=" + JSON.stringify(params.oldData));
     console.log("New Data=" + JSON.stringify(params.newData));
@@ -352,38 +353,23 @@ class OrderInventory extends React.Component {
         flagEditRowCount = true;
         // alert('edit row cont permited')
       }
-
-    let flagPush = true;
-    for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
-      if (tempOrderPointInventoryEdited[i].OrderPointInventoryId === params.oldData.id) {
-        tempOrderPointInventoryEdited[i].OrderValue =
-          params.newData.orderUser === undefined
-            ? params.oldData.orderUser
-            : params.newData.orderUser;
-        tempOrderPointInventoryEdited[i].Description =
-          params.newData.description === undefined
-            ? params.oldData.description
-            : params.newData.description;
-        flagPush = false;
-        break;
-      }
+   
     // alert('edited='+tempOrderPointInventoryEdited.length+
     //         '\nMaxEdit='+AuthOBJ.orderInventoryEditRowCount+
     //         '\nRelaLogs='+(this.state.RealLogs).length)
 
     let FlagError = true;
+    let flagCount=true;
     let errMsg = "";
-    // ------------------------------------------------
-    // let tempLocations = this.state.Locations;
-    // let tempRemainMaxOrder = 0;
-    // for (let i = 0; i < tempLocations.length; i++)
-    //   if (tempLocations[i].kyLocationId == params.oldData.retailStoreId)
-    //     tempRemainMaxOrder = tempLocations[i].editOrder;
-
-    // if (tempOrderPointInventoryEdited.length >= tempRemainMaxOrder) {
-    //   FlagError = false;
-    //   errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
-    // }
+    // ------------------------------------------------    
+    const OBJ_COUNT={
+      LocationId:params.oldData.locationId
+    }
+    const REMAIN_ORDER = await remainOfEditInsertByLocationUser(OBJ_COUNT,this.props.User.token);            
+    if (tempOrderPointInventoryEdited.length >= REMAIN_ORDER && !flagEditRowCount) {
+      flagCount = false;
+      errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
+    }
     // ------------------------------------------------    
     if (
       params.newData.orderUser > 0 &&
@@ -391,16 +377,34 @@ class OrderInventory extends React.Component {
       params.newData.orderUser % (params.oldData.itemsPerPack2==0 ? params.oldData.itemsPerPack : params.oldData.itemsPerPack2) !== 0
     ) {
       FlagError = false;
-      flagEditRowCount = false;
+      // flagEditRowCount = false;
       errMsg += "\nکاربر گرامی عدد سفارش باید مضربی از تعداد در بسته باشد.";
     }
     if (params.newData.orderUser < 0) {
       FlagError = false;
-      flagEditRowCount = false;
+      // flagEditRowCount = false;
       errMsg += "\n کاربر گرامی عدد سفارش باید بزرگتر یا مساوی با 0 باشد.";
     }
+    
+    let flagPush = true;
+    if(FlagError)
+      for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
+        if (tempOrderPointInventoryEdited[i].OrderPointInventoryId === params.oldData.id) {
+          tempOrderPointInventoryEdited[i].OrderValue =
+            params.newData.orderUser === undefined
+              ? params.oldData.orderUser
+              : params.newData.orderUser;
+          tempOrderPointInventoryEdited[i].Description =
+            params.newData.description === undefined
+              ? params.oldData.description
+              : params.newData.description;
+          flagPush = false;
+          break;
+        }
+
+
     if (flagPush)
-      if (FlagError || flagEditRowCount) {
+      if(FlagError && (flagCount || flagEditRowCount)){
         let obj = {
           CompanyId: this.props.Company.currentCompanyId,
           UserId: this.props.User.userId,

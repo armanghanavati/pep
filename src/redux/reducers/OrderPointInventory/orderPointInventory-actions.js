@@ -241,3 +241,24 @@ export async function insertNewOrder(Object, Token){
   }
   return null; 
 }
+
+//-------------Count Of Edit and Insert by user and location----------------------
+export async function remainOfEditInsertByLocationUser(Object, Token){
+  const url=window.apiAddress+"/OrderPointInventory/remainOfEditInsertByLocationUser?locationId="+Object.LocationId
+  const response = await fetch(
+      url,
+      {
+          method: "GET",                        
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('count of edit insert='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null; 
+}

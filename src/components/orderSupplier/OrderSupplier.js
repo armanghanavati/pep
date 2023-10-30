@@ -117,9 +117,9 @@ class OrderSupplier extends React.Component {
       cmbSupplierValue: null,
       cmbItems: null,
       cmbItemsValue: null,
-      SupplierListMaxMinParam:null,
+      SupplierListMaxMinParam: null,
       OrderSupplierGridData: null,
-      SupplierListSumMaxMinGridData:[],
+      SupplierListSumMaxMinGridData: [],
       OrderPointSupplierEdited: [],
       stateShowRoute: false,
       stateUpdateDelete: true,
@@ -139,7 +139,7 @@ class OrderSupplier extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    await this.fn_CheckRequireState();    
+    await this.fn_CheckRequireState();
   }
 
   fn_GetPermissions = () => {
@@ -281,24 +281,26 @@ class OrderSupplier extends React.Component {
       this.props.User.token
     );
 
-    ORDER_SUPPLIER=ORDER_SUPPLIER==null ? [] : ORDER_SUPPLIER;
-    let tempSupplierId=[];
-    for(let i=0;i<ORDER_SUPPLIER.length;i++){
-      let flag=true;
-      for(let j=0;j<tempSupplierId.length;j++)
-        if(ORDER_SUPPLIER[i].supplierId==tempSupplierId[j].Id)
-          flag=false;
-      if(flag){
-        const SUP_OBJ={
-          extSupplierId:ORDER_SUPPLIER[i].supplierId
-        }
+    ORDER_SUPPLIER = ORDER_SUPPLIER == null ? [] : ORDER_SUPPLIER;
+    let tempSupplierId = [];
+    for (let i = 0; i < ORDER_SUPPLIER.length; i++) {
+      let flag = true;
+      for (let j = 0; j < tempSupplierId.length; j++)
+        if (ORDER_SUPPLIER[i].supplierId == tempSupplierId[j].Id) flag = false;
+      if (flag) {
+        const SUP_OBJ = {
+          extSupplierId: ORDER_SUPPLIER[i].supplierId,
+        };
         tempSupplierId.push(SUP_OBJ);
-      }        
-    }        
+      }
+    }
 
     this.setState({
       OrderSupplierGridData: ORDER_SUPPLIER,
-      SupplierListMaxMinParam:await supplierListByExtIds(tempSupplierId,this.props.User.token),
+      SupplierListMaxMinParam: await supplierListByExtIds(
+        tempSupplierId,
+        this.props.User.token
+      ),
     });
 
     this.fn_SetLogsOrderPointSupplier();
@@ -376,9 +378,13 @@ class OrderSupplier extends React.Component {
     // ------------------------------------------------
     if (
       params.newData.orderUser > 0 &&
-      params.oldData.itemsPerPack >0 &&
+      params.oldData.itemsPerPack > 0 &&
       // params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
-      params.newData.orderUser % (params.oldData.itemsPerPack2==0 ? params.oldData.itemsPerPack : params.oldData.itemsPerPack2) !== 0
+      params.newData.orderUser %
+        (params.oldData.itemsPerPack2 == 0
+          ? params.oldData.itemsPerPack
+          : params.oldData.itemsPerPack2) !==
+        0
     ) {
       FlagError = false;
       flagEditRowCount = false;
@@ -403,7 +409,7 @@ class OrderSupplier extends React.Component {
             params.oldData.description === null
               ? ""
               : params.oldData.description,
-          SupplierId:params.oldData.supplierId,
+          SupplierId: params.oldData.supplierId,
           ProductId: params.oldData.productId,
           RetailStoreId: params.oldData.retailStoreId,
         };
@@ -413,10 +419,14 @@ class OrderSupplier extends React.Component {
         alert(errMsg);
       }
 
-      let SupplierSummMaxMin=await this.fn_CalculateSumWeightPrice(params.oldData.supplierId,params.oldData.supplierName,params.oldData.retailStoreId);      
-      this.setState({
-        SupplierListSumMaxMinGridData:SupplierSummMaxMin,
-      });         
+    let SupplierSummMaxMin = await this.fn_CalculateSumWeightPrice(
+      params.oldData.supplierId,
+      params.oldData.supplierName,
+      params.oldData.retailStoreId
+    );
+    this.setState({
+      SupplierListSumMaxMinGridData: SupplierSummMaxMin,
+    });
 
     console.log(
       "Edited Params=" + JSON.stringify(tempOrderPointSupplierEdited)
@@ -426,47 +436,69 @@ class OrderSupplier extends React.Component {
     });
   };
 
-  fn_CalculateSumWeightPrice=async(extSupplierId,supplierName,retailStoreId)=>{    
-    
-    const OBJ={
-      ExtSupplierId:extSupplierId,
-      RetailStoreId:retailStoreId
-    }
-    const SUM_MAXMIN=await calcSumWeightPriceOrderPointSupplier(OBJ,this.props.User.token);
-    const SUPP_LIST=this.state.SupplierListMaxMinParam     
+  fn_CalculateSumWeightPrice = async (
+    extSupplierId,
+    supplierName,
+    retailStoreId
+  ) => {
+    const OBJ = {
+      ExtSupplierId: extSupplierId,
+      RetailStoreId: retailStoreId,
+    };
+    const SUM_MAXMIN = await calcSumWeightPriceOrderPointSupplier(
+      OBJ,
+      this.props.User.token
+    );
+    const SUPP_LIST = this.state.SupplierListMaxMinParam;
 
-    let tempSup=this.state.SupplierListSumMaxMinGridData;      
+    let tempSup = this.state.SupplierListSumMaxMinGridData;
 
-    for(let i=0;i<SUPP_LIST.length;i++)
-      if(SUPP_LIST[i].extSupplierId==extSupplierId){
-        // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i]));
-        if(
-            SUM_MAXMIN.sumPrice<SUPP_LIST[i].minOrderRiali || SUM_MAXMIN.sumPrice>SUPP_LIST[i].maxOrderRiali            
-            || SUM_MAXMIN.sumWeight<SUPP_LIST[i].minOrderWeight || SUM_MAXMIN.sumWeight>SUPP_LIST[i].maxOrderWeight
-          ){
-            const SUPOBJ={
-              id:extSupplierId,
-              extSupplierId:extSupplierId,
-              supplierName:supplierName,
-              minWeight:SUPP_LIST[i].minOrderWeight,
-              maxWeight:SUPP_LIST[i].maxOrderWeight,
-              sumItemsWeight:SUM_MAXMIN.sumWeight,
-              minPrice:SUPP_LIST[i].minOrderRiali,
-              maxPrice:SUPP_LIST[i].maxOrderRiali ,
-              sumItemsPrice:SUM_MAXMIN.sumPrice
-            }
+    for (let i = 0; i < SUPP_LIST.length; i++)
+      if (SUPP_LIST[i].extSupplierId == extSupplierId) {
+        // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i])+'\n'+JSON.stringify(SUM_MAXMIN));
+        if (
+          SUM_MAXMIN.sumPrice < SUPP_LIST[i].minOrderRiali ||
+          SUM_MAXMIN.sumPrice > SUPP_LIST[i].maxOrderRiali ||
+          SUM_MAXMIN.sumWeight < SUPP_LIST[i].minOrderWeight ||
+          SUM_MAXMIN.sumWeight > SUPP_LIST[i].maxOrderWeight
+        ) {
+          let flagNew = true;
+          let indexSup=0
+          for (let j = 0; j < tempSup.length; j++)
+            if (tempSup[j].extSupplierId == extSupplierId) {
+              flagNew = false;
+              indexSup=j;
+              break;
+            }              
+          if (flagNew) {
+            const SUPOBJ = {
+              id: extSupplierId,
+              extSupplierId: extSupplierId,
+              supplierName: supplierName,
+              minWeight: SUPP_LIST[i].minOrderWeight,
+              maxWeight: SUPP_LIST[i].maxOrderWeight,
+              sumItemsWeight: SUM_MAXMIN.sumWeight,
+              minPrice: SUPP_LIST[i].minOrderRiali,
+              maxPrice: SUPP_LIST[i].maxOrderRiali,
+              sumItemsPrice: SUM_MAXMIN.sumPrice,
+            };
             tempSup.push(SUPOBJ);
-          }            
-          else{
-            if(tempSup.length>0)
-              tempSup.splice(i,1);
-          }            
-          
-          return tempSup;
-        
-      }        
-      return null;
-  }
+          } 
+          else {
+            tempSup[indexSup].sumItemsWeight = SUM_MAXMIN.sumWeight;
+            tempSup[indexSup].sumItemsPrice = SUM_MAXMIN.sumPrice;
+          }
+        } 
+        else {
+          for (let j = 0; j < tempSup.length; j++)
+            if (tempSup[j].extSupplierId == extSupplierId) 
+              tempSup.splice(j, 1);
+        }
+
+        return tempSup;
+      }
+    return null;
+  };
 
   grdOrderPointSupplier_onCellDblClick = async (e) => {
     const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);
@@ -734,37 +766,36 @@ class OrderSupplier extends React.Component {
           <Col xs="3">
             <Card className="shadow bg-white border pointer">
               <Row className="standardPadding">
-                <Label className="title">
+                {/* <Label className="title">
                   لیست تامین کنندگان، نیاز به حد نصاب سفارش
-                </Label>
-                
-                  <div>
-                    <table>
-                      <tr>
-                        {/* <th>کد تامین کننده</th> */}
-                        <th>نام تامین کننده</th>
-                        {/* <th>حداقل وزن</th>
+                </Label> */}
+
+                <div>
+                  <table>
+                    <tr>
+                      {/* <th>کد تامین کننده</th> */}
+                      <th>نام تامین کننده</th>
+                      {/* <th>حداقل وزن</th>
                         <th>حداکثر وزن</th>
                         <th>جمع کل وزن کالا</th>
                         <th>حداقل ریال</th>
                         <th>حداکثر ریال</th>
                         <th>جمع کل ریال کالاها</th> */}
-                      </tr>
-                      {this.state.SupplierListSumMaxMinGridData.map((item)=>
-                        <tr>
-                          {/* <td>{item.extSupplierId}</td> */}
-                          <td>{item.supplierName}</td>
-                          {/* <td>{item.minWeight}</td>
+                    </tr>
+                    {this.state.SupplierListSumMaxMinGridData.map((item) => (
+                      <tr>
+                        {/* <td>{item.extSupplierId}</td> */}
+                        <td>{item.supplierName}</td>
+                        {/* <td>{item.minWeight}</td>
                           <td>{item.maxWeight}</td>
                           <td>{item.sumItemsWeight}</td>
                           <td>{item.minPrice}</td>
                           <td>{item.maxPrice}</td>
                           <td>{item.sumItemsPrice}</td> */}
-                        </tr>
-                      )}
-                    </table>                  
-                  </div>                  
-                
+                      </tr>
+                    ))}
+                  </table>
+                </div>
               </Row>
               {/* <Row className="standardPadding">
                 <DataGrid
