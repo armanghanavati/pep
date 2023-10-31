@@ -92,9 +92,7 @@ class PersonShift extends React.PureComponent {
             Shift: null,
             RowSelected: null,
             stateModalShift: false,
-            ShiftList: [{ id: 1, title: "شیفت صبح" }, {
-                id: 2, title: "شیفت عصر"
-            }],
+            ShiftList: [{ id: 1, title: "شیفت صبح" }, {id: 2, title: "شیفت عصر"}, {id:3, title:"شیفت صبح مخصوص"}, {id:4, title:"شیفت عصر مخصوص"}, {id:5, title:"تعطیل شیفت"}],
             ShiftId: null,
             today: new Date().toLocaleDateString('fa-IR-u-nu-latn'),
             year: new Date().toLocaleDateString('fa-IR-u-nu-latn').split("/")[0],
@@ -123,12 +121,12 @@ class PersonShift extends React.PureComponent {
         //alert(PERSON_ID)
         if (oldId != PERSON_ID) {
             console.log(PERSON_ID);
-            var year=this.state.year;
+            var year = this.state.year;
             if (year == "1401") {
                 this.setState({
-                    year:"1402"
+                    year: "1402"
                 })
-                year="1402"
+                year = "1402"
             }
             data = await personShiftList(PERSON_ID, year, this.state.month, this.props.User.token);
 
@@ -262,6 +260,8 @@ class PersonShift extends React.PureComponent {
                             backgroundColor = "lightgreen"
                         else if (element.dayOfMonth == "")
                             backgroundColor = ""
+                        else if (element.dayOff == true)
+                            backgroundColor = "#6da6cf"
                         else
                             backgroundColor = "lightblue"
                         if (element.dayOfMonth == "") {
@@ -269,25 +269,32 @@ class PersonShift extends React.PureComponent {
                                 {element.day}
                             </i>
                         }
-                        if (index % 7 == 0)
+                        if (index % 7 == 0) {
+                            backgroundColor = "#6da6cf"
+                            if(element.title==5) backgroundColor="#ef0b0b"
                             return <>
                                 <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
                                     <p>{element.day}</p><p>{element.dayOfMonth}</p>
-                                    <p style={{ color: "red", fontSize: "14px", fontWeight: "600" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
+                                    <p style={{ color: "red", fontSize: "12px", fontWeight: "700" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}{element.title == 3 && "شیفت صبح م"}{element.title == 4 && "شیفت عصر م"}{element.title == 5 && "تعطیل شیفت"}</p>
                                 </i>
                                 <br />
                             </>
-                        if (index < 7)
+                        }
+                        if (index < 7){
+                            if(element.title==5) backgroundColor="#ef0b0b"
                             return <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
                                 <p>{element.day}</p>
                                 <p style={{ color: "#fff", fontWeight: "700" }}>{element.dayOfMonth}</p>
-                                <p style={{ color: "red", fontSize: "14px", fontWeight: "600" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
+                                <p style={{ color: "red", fontSize: "12px", fontWeight: "700" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}{element.title == 3 && "شیفت صبح م"}{element.title == 4 && "شیفت عصر م"}{element.title == 5 && "تعطیل شیفت"}</p>
                             </i>
-                        else
+                        }
+                        else{
+                            if(element.title==5) backgroundColor="#ef0b0b"
                             return <i id={element.id} shiftId={element.shiftId} date={element.date} style={{ backgroundColor: backgroundColor, margin: "5px", width: "100px", height: "100px", maxWidth: "100px", maxHeight: "100px", display: "inline-block", textAlign: "center", overflow: "Hidden" }} onClick={(event) => this.handleCalendar_onclick(event)}>
                                 <p style={{ marginTop: "35%", color: "#fff", fontWeight: "700" }}>{element.dayOfMonth}</p>
-                                <p style={{ color: "red", fontSize: "14px", fontWeight: "600" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}</p>
+                                <p style={{ color: "red", fontSize: "12px", fontWeight: "700" }}>{element.title == 1 && "شیفت صبح"}{element.title == 2 && "شیفت عصر"}{element.title == 3 && "شیفت صبح م"}{element.title == 4 && "شیفت عصر م"}{element.title == 5 && "تعطیل شیفت"}</p>
                             </i>
+                        }
                     })
                 }
                 <Modal style={{ direction: 'rtl' }}
