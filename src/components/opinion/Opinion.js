@@ -48,6 +48,10 @@ class Opinion extends React.Component {
     };
   }
 
+  OpenCloseWait() {
+    this.setState({ stateWait: !this.state.stateWait });
+  }
+  
   txtOpinion_onChange=(e)=>{
     this.setState({txtOpinionValue:e.value})
   }

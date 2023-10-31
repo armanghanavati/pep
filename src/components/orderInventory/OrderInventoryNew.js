@@ -205,10 +205,10 @@ class OrderInventoryNew extends React.Component{
         }
 
         let errMSG = '';        
-        if (this.state.txtOrderNumberValue > this.state.lblSetadMojoodi) {
-            errMSG += "تعداد سفارش از موجودی ستاد بیشتر است." + "<br>";
-            flagSend = false;
-        }
+        // if (this.state.txtOrderNumberValue > this.state.lblSetadMojoodi) {
+        //     errMSG += "تعداد سفارش از موجودی ستاد بیشتر است." + "<br>";
+        //     flagSend = false;
+        // }
         // if(this.state.txtOrderNumberValue%this.state.lblQtyPerPack!==0 || this.state.txtOrderNumberValue<=0){
         if(this.state.txtOrderNumberValue%(this.state.lblQtyPerPack2==0 ? this.state.lblQtyPerPack : this.state.lblQtyPerPack2)!==0 
             || this.state.txtOrderNumberValue<=0){

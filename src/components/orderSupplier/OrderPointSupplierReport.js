@@ -71,7 +71,8 @@ import { companyActions } from "../../redux/reducers/company/company-slice";
 import {
   itemListComboBySupplierId,
 } from "../../redux/reducers/item/item-action";
-import { supplierOrderInventoryComboList } from "../../redux/reducers/supplier/supplier-action";
+import { supplierOrderSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
+import { locationOrderSupplierComboListByCompanyId } from "../../redux/reducers/location/location-actions";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import {
@@ -152,7 +153,7 @@ class OrderPointSupplierReport extends React.Component {
       );
     }
 
-    const locationPermission = await locationListOrderInventoryCombo(
+    const locationPermission = await locationOrderSupplierComboListByCompanyId(
       this.props.Company.currentCompanyId,
       this.props.User.token
     );
@@ -164,7 +165,7 @@ class OrderPointSupplierReport extends React.Component {
     );
 
     this.setState({      
-      cmbSupplier: await supplierOrderInventoryComboList(
+      cmbSupplier: await supplierOrderSupplierComboList(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),

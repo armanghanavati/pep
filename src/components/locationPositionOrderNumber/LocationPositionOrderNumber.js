@@ -65,6 +65,8 @@ import {
   deleteLocationPositionOrderNumber,
 } from "../../redux/reducers/locationPositionOrderNumber/locationPositionOrderNumber-actions";
 import { DataGridLocationPositionOrderNumberColumns } from "./LocationPositionOrderNumber-config";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import { location } from "../../redux/reducers/location/location-actions";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
@@ -101,6 +103,7 @@ class LocationPositionOrderNumber extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     await this.fn_locationGroupList(this.props.Company.currentCompanyId);
     await this.fn_positionList(this.props.Company.currentCompanyId);
     this.fn_updateGrid();
@@ -123,6 +126,25 @@ class LocationPositionOrderNumber extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   fn_locationGroupList = async (companyId) => {
     this.setState({
@@ -154,9 +176,18 @@ class LocationPositionOrderNumber extends React.Component {
   };
 
   cmbLocationGroup_onChange = async (e) => {
+    // const LOCATION=await location(e, this.props.User.token)      
+    let tempLocationGroups=this.state.LocationGroupList;
+    let tempLocations=[];
+    for(let i=0;i<tempLocationGroups.length;i++)
+      if(tempLocationGroups[i].id==e){
+        tempLocations.push(tempLocationGroups[i]);
+        break;
+      }
+
     this.setState({
       LocationGroupId:e,
-      LocationList: await location(e, this.props.User.token),
+      LocationList:tempLocations ,
     });
 
   };
@@ -173,12 +204,14 @@ class LocationPositionOrderNumber extends React.Component {
   };
 
   grdLocationPositionOrderNumber_onClickRow = async(e) => {
+
+    const LOCATIONS=[{id:e.data.locationId,label:e.data.locationName}]    
     this.setState({
-      LocationList: await location(e.data.locationId, this.props.User.token),
-    })
+      LocationList:LOCATIONS, //await location(e.data.locationId, this.props.User.token),      
+    })        
     
-    this.fn_positionList(this.props.Company.currentCompanyId);
-    this.fn_locationGroupList(this.props.Company.currentCompanyId);
+    // this.fn_positionList(this.props.Company.currentCompanyId);
+    // this.fn_locationGroupList(this.props.Company.currentCompanyId);
 
     this.setState({
       txtMaxOrderNumberValue: e.data.maxOrderNumber,
