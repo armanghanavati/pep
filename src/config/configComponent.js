@@ -32,6 +32,7 @@ import TicketSubjectUsers from '../pages/TicketSubjectUsers';
 import TicketSubjects from '../pages/TicketSubjects'
 import OrdersByUpload from '../pages/OrdersByUpload'
 import SupplierLocationContacts from '../pages/SupplierLocationContacts'
+import Opinions from '../pages/Opinions'
 
 export const REAL_COMPONENT = [
   {
@@ -178,6 +179,10 @@ export const REAL_COMPONENT = [
   {
     strComponent: "SupplierLocationContacts",
     orgComponent: <SupplierLocationContacts/>,
-  }  
+  },
+  {
+    strComponent: "Opinions",
+    orgComponent: <Opinions/>,
+  }    
 ];
 
