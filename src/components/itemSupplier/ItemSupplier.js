@@ -68,6 +68,7 @@ import {
 import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-slice";
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import {
   itemLocationList,
   updateItemLocation,
@@ -150,6 +151,25 @@ class ItemSupplier extends React.Component {
       ItemGroupList: await itemGroupListCombo(this.props.User.token),
     });
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;

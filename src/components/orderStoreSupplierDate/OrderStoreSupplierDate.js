@@ -56,6 +56,8 @@ import UpdateIcon from "../../assets/images/icon/update.png";
 import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
 import { location } from "../../redux/reducers/location/location-actions";
 import { supplierList, supplierListComboByCompanyId } from "../../redux/reducers/supplier/supplier-action";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 import { json } from "react-router";
 
@@ -94,6 +96,7 @@ class OrderStoreSupplierDate extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_updateGrid();
     this.fn_locationGroup();
     this.fn_supplierList();
@@ -177,6 +180,25 @@ class OrderStoreSupplierDate extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   cmbLocationGroup_onChange = async (e) => {
     const IDS = e.toString().split(",");

@@ -54,7 +54,8 @@ import {
   deleteCompany,
 } from "../../redux/reducers/company/company-actions";
 import { DataGridCompanyColumns } from "./Company-config";
-
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
@@ -89,6 +90,7 @@ class Company extends React.Component {
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_updateGrid();
   }
 
@@ -116,6 +118,25 @@ class Company extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   grdCompany_onClickRow = (e) => {
     this.setState({
@@ -496,6 +517,7 @@ class Company extends React.Component {
 }
 const mapStateToProps = (state) => ({
   User: state.users,
+  Company: state.companies,
 });
 
 export default connect(mapStateToProps)(Company);

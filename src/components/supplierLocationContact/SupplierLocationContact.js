@@ -65,6 +65,10 @@ import {
     deleteSupplierLocationContact,
     supplierLocationContactList,
 } from "../../redux/reducers/supplierLocationContact/SupplierLocationContact-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import companySlice, {
+    companyActions,
+  } from "../../redux/reducers/company/company-slice";
 import { supplierList } from "../../redux/reducers/supplier/supplier-action";
 import { contactList } from "../../redux/reducers/contact/contact-actions";
 import { locationList } from "../../redux/reducers/location/location-actions";
@@ -101,6 +105,7 @@ class SupplierLocationContact extends React.Component {
     }
     async componentDidMount() {
         await this.fn_GetPermissions();
+        await this.fn_CheckRequireState();
         this.fn_updateGrid();
         this.fn_supplierList();
         this.fn_locationList();
@@ -137,6 +142,25 @@ class SupplierLocationContact extends React.Component {
                 }
             }
     };
+
+    fn_CheckRequireState = async () => {
+        if (this.props.Company.currentCompanyId == null) {
+          const companyCombo = await companyListCombo(this.props.User.token);
+          if (companyCombo !== null) {
+            const currentCompanyId = companyCombo[0].id;
+            this.props.dispatch(
+              companyActions.setCurrentCompanyId({
+                currentCompanyId,
+              })
+            );
+          }
+          this.props.dispatch(
+            companyActions.setCompanyCombo({
+              companyCombo,
+            })
+          );
+        }
+      }
 
     fn_supplierList = async () => {
         this.setState({

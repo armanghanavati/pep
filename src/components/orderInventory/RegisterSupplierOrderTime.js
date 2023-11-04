@@ -37,6 +37,8 @@ import {
 import {
     supplierListComboByCompanyId
 } from "../../redux/reducers/supplier/supplier-action";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import {
   ToastTime,
   ToastWidth,
@@ -86,6 +88,7 @@ class RegisterSupplierOrderTime extends React.Component {
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_locationList();
     this.fn_positionList();
     this.fn_supplierList();
@@ -130,6 +133,25 @@ class RegisterSupplierOrderTime extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   cmbLocation_onChange = (e) => {
     this.setState({ LocationId: e });

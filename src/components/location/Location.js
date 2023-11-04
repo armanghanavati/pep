@@ -63,8 +63,7 @@ import { locationTypeList } from "../../redux/reducers/locationType/locationType
 import companySlice, {
   companyActions,
 } from "../../redux/reducers/company/company-slice";
-import { locationActions } from "../../redux/reducers/location/location-slice";
-import { companyList } from "../../redux/reducers/company/company-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { DataGridLocationColumns } from "./Location-config";
 
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -109,6 +108,7 @@ class Location extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     await this.fn_stateList();
     this.fn_updateGrid();
     await this.locationTypes();
@@ -138,6 +138,25 @@ class Location extends React.Component {
     this.setState({
       cmbState: await stateList(this.props.User.token)
     })
+  }
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
   }
 
   fn_GetPermissions = () => {

@@ -58,6 +58,7 @@ import companySlice, {
 } from "../../redux/reducers/company/company-slice";
 import { positionActions } from "../../redux/reducers/position/position-slice";
 import { companyList } from "../../redux/reducers/company/company-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { DataGridPositionColumns } from "./Position-config";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
@@ -91,6 +92,7 @@ class Position extends React.Component {
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_updateGrid();
     await this.fn_positionList();
   }
@@ -132,6 +134,25 @@ class Position extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   grdPosition_onClickRow = (e) => {
     this.setState({

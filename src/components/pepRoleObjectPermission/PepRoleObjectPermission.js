@@ -57,6 +57,8 @@ import {
 } from "../../redux/reducers/user/user-actions";
 import { pepObjectList } from "../../redux/reducers/pepObject/pepObject-actions";
 import { permissionList } from "../../redux/reducers/permission/permission-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import { userActions } from "../../redux/reducers/user/user-slice";
 import { DataGridRoleColumns } from "../role/Role-config";
 import { DataGridPepRoleObjectPermissionColumns } from "../pepRoleObjectPermission/PepRoleObjectPermission-config";
@@ -102,6 +104,7 @@ class PepObject extends React.Component {
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_updateGrid();
     this.fn_roleList();
     this.fn_permissionList();
@@ -152,6 +155,25 @@ class PepObject extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   grdPepRoleObjectPermission_onClickRow = async (e) => {
     this.setState({

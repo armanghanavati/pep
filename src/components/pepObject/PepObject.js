@@ -55,6 +55,8 @@ import {
   updatePepObject,
 } from "../../redux/reducers/pepObject/pepObject-actions";
 import { treeTypeList } from "../../redux/reducers/treeType/treeType-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import { DataGridPepObjectColumns } from "../pepObject/PepObject-config";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
@@ -90,6 +92,7 @@ class PepObject extends React.Component {
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_updateGrid();
     this.fn_TreeTypeList();
   }
@@ -123,6 +126,25 @@ class PepObject extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   grdPepObject_onClickRow = (e) => {
     this.setState({

@@ -59,6 +59,7 @@ import { locationActions } from "../../redux/reducers/location/location-slice";
 import { positionList } from "../../redux/reducers/position/position-actions";
 import { companyList } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { DataGridPersonColumns } from "./Person-config";
 
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -96,6 +97,7 @@ class Person extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_updateGrid();
     await this.fn_locationList(this.state.CompanyId);
     await this.fn_positionList(this.state.CompanyId);
@@ -143,6 +145,25 @@ class Person extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   grdPerson_onClickRow = (e) => {
     this.setState({

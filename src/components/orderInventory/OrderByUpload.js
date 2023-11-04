@@ -33,6 +33,8 @@ import { Toast } from "devextreme-react/toast";
 import {
     insertNewOrder
 } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import {
     ToastTime,
     ToastWidth,
@@ -80,6 +82,7 @@ class OrderByUpload extends React.Component {
 
     async componentDidMount() {
         await this.fn_GetPermissions();
+        await this.fn_CheckRequireState();
         this.fn_locationList();
     }
 
@@ -100,6 +103,25 @@ class OrderByUpload extends React.Component {
                 }
             }
     };
+
+    fn_CheckRequireState = async () => {
+        if (this.props.Company.currentCompanyId == null) {
+          const companyCombo = await companyListCombo(this.props.User.token);
+          if (companyCombo !== null) {
+            const currentCompanyId = companyCombo[0].id;
+            this.props.dispatch(
+              companyActions.setCurrentCompanyId({
+                currentCompanyId,
+              })
+            );
+          }
+          this.props.dispatch(
+            companyActions.setCompanyCombo({
+              companyCombo,
+            })
+          );
+        }
+      }
 
     cmbSourceLocation_onChange = (e) => {
         this.setState({ cmbSrcLocationValue: e });

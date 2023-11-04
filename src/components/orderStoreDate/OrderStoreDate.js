@@ -51,6 +51,8 @@ import {
   addOrderStoreDate,
   orderStoreDateList,
 } from "../../redux/reducers/orderStoreDate/orderStoreDate-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import {
   Gfn_BuildValueComboMulti,
   Gfn_ConvertComboForAll,
@@ -95,6 +97,7 @@ class OrderStoreDate extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_updateGrid();
     this.fn_locationGroupList();
   }
@@ -167,6 +170,25 @@ class OrderStoreDate extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   cmbLocationGroup_onChange = async (e) => {
     const IDS = e.toString().split(",");

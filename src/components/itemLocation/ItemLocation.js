@@ -72,6 +72,7 @@ import {
   updateItemLocation,
 } from "../../redux/reducers/itemLocation/itemLocation-actions";
 import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
 import { inventoryComboListByCompanyId } from "../../redux/reducers/inventory/inventory-actions";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
@@ -144,6 +145,7 @@ class ItemLocation extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState
     await this.fn_locationList();
     await this.fn_supplierList();
     this.fn_itemGroupList();
@@ -193,6 +195,24 @@ class ItemLocation extends React.Component {
     this.setState({ stateWait: !this.state.stateWait });
   }
 
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)

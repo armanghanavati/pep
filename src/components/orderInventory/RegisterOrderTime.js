@@ -34,6 +34,8 @@ import {
   positionApproveOrderTime,
   addPositionApproveOrderTime,
 } from "../../redux/reducers/positionApproveOrderTime/positionApproveOrderTime-actions";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
+import { companyActions } from "../../redux/reducers/company/company-slice";
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import {
   ToastTime,
@@ -83,6 +85,7 @@ class RegisterOrderTime extends React.Component {
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_locationList();
     this.fn_positionList();
   }
@@ -117,6 +120,25 @@ class RegisterOrderTime extends React.Component {
         }
       }
   };
+
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
   cmbLocation_onChange = (e) => {
     this.setState({ LocationId: e });
