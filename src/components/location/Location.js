@@ -87,6 +87,7 @@ class Location extends React.Component {
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
+      stateDisable_btnDelete:false,
       stateDisable_show: false,
       ToastProps: {
         isToastVisible: false,
@@ -173,15 +174,18 @@ class Location extends React.Component {
           case "location.show":
             this.setState({ stateDisable_show: true });
             break;
+          case "location.delete":
+            this.setState({ stateDisable_btnDelete: true });
+            break;
         }
       }
   };
 
   grdLocation_onClickRow = async (e) => {
     this.setState({
-      cmbCity:await cityList(e.data.stateId,this.props.User.token)
+      cmbCity: await cityList(e.data.stateId, this.props.User.token)
     })
-    
+
     this.setState({
       Id: e.data.id,
       txtCodeValue: e.data.code,
@@ -211,7 +215,7 @@ class Location extends React.Component {
       chkIsActive: null,
       cmbStateValue: null,
       cmbCityValue: null,
-      txtCodeValue:null
+      txtCodeValue: null
     });
   };
 
@@ -549,28 +553,28 @@ class Location extends React.Component {
               <Row className="standardSpaceTop">
                 <Row>
                   {this.state.stateDisable_btnUpdate && (
-                    <>
-                      <Col xs="auto">
-                        <Button
-                          icon={UpdateIcon}
-                          text="ذخیره تغییرات"
-                          type="success"
-                          stylingMode="contained"
-                          rtlEnabled={true}
-                          onClick={this.btnUpdate_onClick}
-                        />
-                      </Col>
-                      <Col xs="auto">
-                        <Button
-                          icon={DeleteIcon}
-                          text="حذف"
-                          type="danger"
-                          stylingMode="contained"
-                          rtlEnabled={true}
-                          onClick={this.btnDelete_onClick}
-                        />
-                      </Col>
-                    </>
+                    <Col xs="auto">
+                      <Button
+                        icon={UpdateIcon}
+                        text="ذخیره تغییرات"
+                        type="success"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnUpdate_onClick}
+                      />
+                    </Col>
+                  )}
+                  {this.state.stateDisable_btnDelete&& (
+                    <Col xs="auto">
+                      <Button
+                        icon={DeleteIcon}
+                        text="حذف"
+                        type="danger"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnDelete_onClick}
+                      />
+                    </Col>
                   )}
                 </Row>
               </Row>

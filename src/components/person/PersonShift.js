@@ -39,7 +39,7 @@ import {
   ToastWidth,
 } from "../../config/config";
 import { DataGridPersonColumns } from "./PersonShift-config";
-import { locationByUserId } from "../../redux/reducers/location/location-actions";
+import { locationByUserId, locationList } from "../../redux/reducers/location/location-actions";
 import {
   updatePerson,
   addPerson,
@@ -51,6 +51,7 @@ import {
   deletePersonShift,
 } from "../../redux/reducers/person/person-actions";
 import { Person } from "../../components/person/Person"
+import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
 import DataGrid, {
   Column,
   Editing,
@@ -69,6 +70,10 @@ import DataGrid, {
 } from "devextreme-react/data-grid";
 import { locale } from 'devextreme/localization';
 import { TextBox } from 'devextreme-react';
+import companySlice, {
+  companyActions,
+} from "../../redux/reducers/company/company-slice";
+import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { Toast } from "devextreme-react/toast";
 import { Backdrop, Hidden } from '@mui/material';
 import { Margin } from 'devextreme-react/bullet';
@@ -90,14 +95,19 @@ class PersonShift extends React.PureComponent {
       RowSelected: null,
       stateShowCalendar: false,
       stateDisable_show: false,
-      PersonId:null, 
-      PersonName:null,
+      PersonId: null,
+      PersonName: null,
+      cmbLocation: null,
+      cmbLocationValue: null,
+      stateDisable_showLocation: false,
     };
   }
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    this.fn_updateGrid();
+    await this.fn_CheckRequireState();
+    await this.fn_locationList();
+    this.fn_updateGrid(0);
   }
 
   // componentDidUpdate() {
@@ -121,11 +131,41 @@ class PersonShift extends React.PureComponent {
           case "personShift.show":
             this.setState({ stateDisable_show: true });
             break;
+          case "personShift.show_location":
+            this.setState({ stateDisable_showLocation: true });
+            break;
         }
       }
   };
 
+  fn_CheckRequireState = async () => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(this.props.User.token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
 
+  fn_locationList = async () => {
+    this.setState({
+      cmbLocation: await userLocationList(
+        this.props.User.userId,
+        this.props.Company.currentCompanyId,
+        this.props.User.token
+      ),
+    });
+  };
 
   handelClick = (e) => {
     this.setState({
@@ -137,21 +177,28 @@ class PersonShift extends React.PureComponent {
     this.setState({
       stateShowCalendar: true,
       RowSelected: e.data,
-      PersonId:e.data.id,
-      PersonName:e.data.fullName
+      PersonId: e.data.id,
+      PersonName: e.data.fullName
     });
   }
 
-  fn_updateGrid = async () => {
+  fn_updateGrid = async (permission) => {
     if (this.state.stateDisable_show) {
       var person = await searchPersonByUserId(this.props.User.userId, this.props.User.token);
       if (person != null)
         this.setState({
-          PersonGridData: await searchPersonByLocationId(person.locationId, person.positionId, this.props.User.token),
+          PersonGridData: await searchPersonByLocationId(this.state.cmbLocationValue == null ? person.locationId : this.state.cmbLocationValue, person.positionId, permission == 0 ? 0 : 1, this.props.User.token),
         });
     }
   }
 
+  cmbLocation_onChange = (e) => {
+    this.setState({
+      cmbLocationValue: e,
+      PersonId:null
+    })
+    this.fn_updateGrid(1);
+  }
 
   render() {
     return (
@@ -168,10 +215,26 @@ class PersonShift extends React.PureComponent {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Col width={6}>
-               {this.state.PersonId !=null && <Calendar personId={this.state.PersonId } personName={this.state.PersonName} />}
-               {/* <TestProps p1={this.state.PersonId} />                */}
+              {this.state.PersonId != null && <Calendar personId={this.state.PersonId} personName={this.state.PersonName} />}
+              {/* <TestProps p1={this.state.PersonId} />                */}
             </Col>
             <Col xs={5}>
+              {this.state.stateDisable_showLocation &&
+                <>
+                  <Label className="standardLabelFont">فروشگاه</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbLocation}
+                    displayExpr="label"
+                    placeholder="فروشگاه"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbLocation_onChange}
+                    value={this.state.cmbLocationValue}
+                  />
+                </>
+              }
+              <br />
               <Row>
                 <Label className="title">لیست اشخاص</Label>
               </Row>
@@ -184,7 +247,7 @@ class PersonShift extends React.PureComponent {
                     rtlEnabled={true}
                     allowColumnResizing={true}
                     onRowClick={this.grdPerson_onClickRow}
-                    height={DataGridDefaultHeight}  
+                    height={DataGridDefaultHeight}
                   >
                     <Scrolling
                       rowRenderingMode="virtual"

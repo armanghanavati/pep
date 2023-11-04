@@ -138,8 +138,8 @@ export async function SearchPersonById(personId, Token) {
   return null;
 }
 
-export async function searchPersonByLocationId(locationId, positionId, Token) {
-  const url = window.apiAddress + "/Person/searchPersonByLocationId?locationId=" + locationId + "&positionId=" + positionId;
+export async function searchPersonByLocationId(locationId, positionId, permission, Token) {
+  const url = window.apiAddress + "/Person/searchPersonByLocationId?locationId=" + locationId + "&positionId=" + positionId + "&permission=" + permission;
   const response = await fetch(url, {
     method: "GET",
     headers: {
