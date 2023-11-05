@@ -87,7 +87,7 @@ class Location extends React.Component {
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
-      stateDisable_btnDelete:false,
+      stateDisable_btnDelete: false,
       stateDisable_show: false,
       ToastProps: {
         isToastVisible: false,
@@ -104,6 +104,7 @@ class Location extends React.Component {
       cmbStateValue: null,
       cmbCity: null,
       cmbCityValue: null,
+      txtGradeValue: null
     };
   }
 
@@ -182,9 +183,10 @@ class Location extends React.Component {
   };
 
   grdLocation_onClickRow = async (e) => {
-    this.setState({
-      cmbCity: await cityList(e.data.stateId, this.props.User.token)
-    })
+    if (e.data.stateId != null)
+      this.setState({
+        cmbCity: await cityList(e.data.stateId, this.props.User.token)
+      })
 
     this.setState({
       Id: e.data.id,
@@ -232,6 +234,7 @@ class Location extends React.Component {
     document.getElementById("errPersianName").innerHTML = "";
     document.getElementById("errCity").innerHTML = "";
     document.getElementById("errCode").innerHTML = "";
+    document.getElementById("errGrade").innerHTML = "";
     if (this.state.txtLocationNameValue == null) {
       document.getElementById("errLocationName").innerHTML =
         "نام  محل را وارد نمائید";
@@ -258,6 +261,11 @@ class Location extends React.Component {
         "کد را وارد نمائید";
       flag = false;
     }
+    if (this.state.txtGradeValue == null) {
+      document.getElementById("errGrade").innerHTML =
+        "رتبه را وارد نمائید";
+      flag = false;
+    }
     return flag;
   };
 
@@ -272,7 +280,8 @@ class Location extends React.Component {
         locationId: this.state.LocationId,
         companyId: this.props.Company.currentCompanyId,
         isActive: this.state.chkIsActive,
-        cityId: this.state.cmbCityValue
+        cityId: this.state.cmbCityValue,
+        grade: this.state.txtGradeValue
       };
       const RESULT = await addLocation(data, this.props.User.token);
       this.setState({
@@ -300,6 +309,10 @@ class Location extends React.Component {
     this.setState({ txtDescValue: e.value });
   };
 
+  txtGrade_onChange = (e) => {
+    this.setState({ txtGradeValue: e.value })
+  }
+
   btnUpdate_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
@@ -311,7 +324,8 @@ class Location extends React.Component {
         locationId: this.state.LocationId,
         companyId: this.props.Company.currentCompanyId,
         isActive: this.state.chkIsActive,
-        cityId: this.state.cmbCityValue
+        cityId: this.state.cmbCityValue,
+        grade: this.state.txtGradeValue
       };
       const RESULT = await updateLocation(data, this.props.User.token);
       this.setState({
@@ -406,7 +420,7 @@ class Location extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">کد</Label>
                 <TextBox
                   value={this.state.txtCodeValue}
@@ -419,7 +433,7 @@ class Location extends React.Component {
                 />
                 <Label id="errCode" className="standardLabelFont errMessage" />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">نوع محل</Label>
                 <SelectBox
                   dataSource={this.state.LocationType}
@@ -432,7 +446,7 @@ class Location extends React.Component {
                   value={this.state.LocationTypeId}
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">زیر گروه محل</Label>
                 <SelectBox
                   dataSource={this.state.Location}
@@ -445,7 +459,7 @@ class Location extends React.Component {
                   value={this.state.LocationId}
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">استان</Label>
                 <SelectBox
                   dataSource={this.state.cmbState}
@@ -458,7 +472,7 @@ class Location extends React.Component {
                   value={this.state.cmbStateValue}
                 />
               </Col>
-              <Col>
+              <Col xs="auto">
                 <Label className="standardLabelFont">شهر</Label>
                 <SelectBox
                   dataSource={this.state.cmbCity}
@@ -472,51 +486,70 @@ class Location extends React.Component {
                 />
                 <Label id="errCity" className="standardLabelFont errMessage" />
               </Col>
-              <Col>
-                <Label className="standardLabelFont">نام محل</Label>
-                <TextBox
-                  value={this.state.txtLocationNameValue}
-                  showClearButton={true}
-                  placeholder="نام محل"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtLocationName_onChange}
-                />
-                <Row>
-                  <Label
-                    id="errLocationName"
-                    className="standardLabelFont errMessage"
+              <Row>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">نام محل</Label>
+                  <TextBox
+                    value={this.state.txtLocationNameValue}
+                    showClearButton={true}
+                    placeholder="نام محل"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtLocationName_onChange}
                   />
-                </Row>
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">نام فارسی محل</Label>
-                <TextBox
-                  value={this.state.txtPersianNameValue}
-                  showClearButton={true}
-                  placeholder="نام فارسی موقعیت"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtPersianName_onChange}
-                />
-                <Row>
-                  <Label
-                    id="errPersianName"
-                    className="standardLabelFont errMessage"
+                  <Row>
+                    <Label
+                      id="errLocationName"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">نام فارسی محل</Label>
+                  <TextBox
+                    value={this.state.txtPersianNameValue}
+                    showClearButton={true}
+                    placeholder="نام فارسی موقعیت"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtPersianName_onChange}
                   />
-                </Row>
-              </Col>
-              <Col>
-                <Label className="standardLabelFont">توضیحات</Label>
-                <TextBox
-                  value={this.state.txtDescValue}
-                  showClearButton={true}
-                  placeholder="توضیحات"
-                  rtlEnabled={true}
-                  valueChangeEvent="keyup"
-                  onValueChanged={this.txtDesc_onChange}
-                />
-              </Col>
+                  <Row>
+                    <Label
+                      id="errPersianName"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">توضیحات</Label>
+                  <TextBox
+                    value={this.state.txtDescValue}
+                    showClearButton={true}
+                    placeholder="توضیحات"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtDesc_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">رتبه</Label>
+                  <TextBox
+                    value={this.state.txtGradeValue}
+                    showClearButton={true}
+                    placeholder="رتبه"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtGrade_onChange}
+                  />
+                  <Row>
+                    <Label
+                      id="errGrade"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+              </Row>
             </Row>
             <Row>
               <Col xs="auto">
@@ -564,7 +597,7 @@ class Location extends React.Component {
                       />
                     </Col>
                   )}
-                  {this.state.stateDisable_btnDelete&& (
+                  {this.state.stateDisable_btnDelete && (
                     <Col xs="auto">
                       <Button
                         icon={DeleteIcon}

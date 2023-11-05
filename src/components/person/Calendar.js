@@ -321,7 +321,7 @@ class PersonShift extends React.PureComponent {
                                 />
                             </Col>
                         </Row>
-
+                    
                         <Row className="standardPadding">
                             <Col xs="auto">
                                 <Button

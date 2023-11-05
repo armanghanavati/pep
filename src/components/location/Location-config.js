@@ -49,4 +49,9 @@ export const DataGridLocationColumns = [
     caption: "فعال",
     allowEditing: false,
   },
+  {
+    dataField: "grade",
+    caption: "رتبه",
+    allowEditing: false,
+  }
 ];
