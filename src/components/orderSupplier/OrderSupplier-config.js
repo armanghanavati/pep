@@ -48,6 +48,12 @@ export const DataGridOrderPointSupplierColumns = [
                 
     },
     {
+        dataField:"itemsPerPack2" ,
+        caption:"تعداد در بسته2",
+        allowEditing:false,
+                
+    },
+    {
         dataField:"id" ,
         caption:"شماره سفارش",
         allowEditing:false,   
