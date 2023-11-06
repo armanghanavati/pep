@@ -50,6 +50,21 @@ export const DataGridOrderPointInventoryColumns = [
         allowEditing:false    
     },
     {
+        dataField:"locationGrade" ,
+        caption:"درجه فروشگاه",
+        allowEditing:false
+    },
+    {
+        dataField:"stateName" ,
+        caption:"استان",
+        allowEditing:false
+    },
+    {
+        dataField:"cityName" ,
+        caption:"شهر",
+        allowEditing:false
+    },
+    {
         dataField:"mojoodi" ,
         caption:"موجودی",
         allowEditing:false    
@@ -132,6 +147,21 @@ export const DataGridOrderPointInventoryReportColumns = [
         dataField:"supplierName" ,
         caption:"نام تامین کننده",
         allowEditing:false    
+    },
+    {
+        dataField:"locationGrade" ,
+        caption:"درجه فروشگاه",
+        allowEditing:false
+    },
+    {
+        dataField:"stateName" ,
+        caption:"استان",
+        allowEditing:false
+    },
+    {
+        dataField:"cityName" ,
+        caption:"شهر",
+        allowEditing:false
     },
     {
         dataField:"status" ,

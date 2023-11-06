@@ -54,6 +54,21 @@ export const DataGridOrderPointSupplierColumns = [
                 
     },
     {
+        dataField:"locationGrade" ,
+        caption:"درجه فروشگاه",
+        allowEditing:false
+    },
+    {
+        dataField:"stateName" ,
+        caption:"استان",
+        allowEditing:false
+    },
+    {
+        dataField:"cityName" ,
+        caption:"شهر",
+        allowEditing:false
+    },
+    {
         dataField:"id" ,
         caption:"شماره سفارش",
         allowEditing:false,   

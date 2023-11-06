@@ -136,11 +136,13 @@ class Ticket extends React.Component {
 
 
     fn_LoadAllTickets = async () => {
+        this.OpenCloseWait();
         const rtn = await getAllUserInsertTicket(this.props.User.userId, this.props.User.token);
         this.setState({
             AllTickets: rtn
         })
-        return rtn;
+        this.OpenCloseWait();
+        return rtn;        
     }
 
     fn_TicketPriorityData = async () => {
@@ -236,7 +238,7 @@ class Ticket extends React.Component {
         }
 
         if (flag) {
-            this.OpenCloseWait();
+           
             const obj = {
                 parentId: null,
                 title: this.state.txtTilteValue,
@@ -278,7 +280,7 @@ class Ticket extends React.Component {
             }
 
             await this.fn_UpdateGrids(rtnAllTicket, '1');
-            this.OpenCloseWait();
+           
         }
 
     }
