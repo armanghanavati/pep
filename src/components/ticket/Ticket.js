@@ -369,8 +369,7 @@ class Ticket extends React.Component {
         this.setState({ txtCommnetValue: e.value })
     }
 
-    btnRegisterCommet_onClick = async () => {
-        this.OpenCloseWait();
+    btnRegisterCommet_onClick = async () => {        
         const obj = {
             parentId: this.state.TicketId,
             title: "",
@@ -407,8 +406,7 @@ class Ticket extends React.Component {
         await this.fn_LoadAllTickets();
         this.setState({
             txtCommnetValue: null
-        })
-        this.OpenCloseWait();
+        })        
     }
 
     btnStartTicket_onClick = async () => {
