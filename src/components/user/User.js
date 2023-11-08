@@ -529,7 +529,7 @@ class User extends React.Component {
                     rtlEnabled={true}
                     allowColumnResizing={true}
                     onRowClick={this.grdRole_onClickRow}
-                    height={DataGridDefaultHeight}
+                    height={540}
                   >
                     <RowDragging
                       data={this.state.RoleGridData}
@@ -541,16 +541,6 @@ class User extends React.Component {
                       showScrollbar="always"
                       columnRenderingMode="virtual"
                     />
-
-                    <Paging defaultPageSize={DataGridDefaultPageSize} />
-                    <Pager
-                      visible={true}
-                      allowedPageSizes={DataGridPageSizes}
-                      showPageSizeSelector={true}
-                      showNavigationButtons={true}
-                    />
-                    <FilterRow visible={true} />
-                    <FilterPanel visible={true} />
                   </DataGrid>
                 </Col>
               </Row>
@@ -568,7 +558,7 @@ class User extends React.Component {
                     rtlEnabled={true}
                     allowColumnResizing={true}
                     onRowClick={this.grdRole_onClickRow}
-                    height={DataGridDefaultHeight}
+                    height={540}
                     selectedRowKeys={this.state.selectedItemKeys}
                     onSelectionChanged={this.selectionChanged}
                     onRowRemoved={this.onRowRemoved}
@@ -594,15 +584,6 @@ class User extends React.Component {
                         />
                       </Item>
                     </Toolbar>
-                    <Paging defaultPageSize={DataGridDefaultPageSize} />
-                    <Pager
-                      visible={true}
-                      allowedPageSizes={DataGridPageSizes}
-                      showPageSizeSelector={true}
-                      showNavigationButtons={true}
-                    />
-                    <FilterRow visible={true} />
-                    <FilterPanel visible={true} />
                   </DataGrid>
                 </Col>
               </Row>
