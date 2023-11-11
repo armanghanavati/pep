@@ -447,39 +447,51 @@ class OrderInventory extends React.Component {
   };
 
   btnUpdateOrders_onClick = async () => {
-    this.OpenCloseWait();
-    const RTN = await updateGroupsOrderPointInventory(
-      this.state.OrderPointInventoryEdited,
-      this.props.User.token
-    );
-    let tempOrders = [];
-    if (RTN != null) {
+    if(this.state.OrderPointInventoryEdited.length>0){
+      this.OpenCloseWait();    
+      const RTN = await updateGroupsOrderPointInventory(
+        this.state.OrderPointInventoryEdited,
+        this.props.User.token
+      );
+      let tempOrders = [];
+      if (RTN.id != null) {
+        this.setState({
+          OrderPointInventoryEdited: []
+        });
+
+
+        const ORDER_INV = this.state.OrderInventoryGridData;
+        for (let i = 0; i < RTN.id.length; i++)
+          for (let j = 0; j < ORDER_INV.length; j++) {
+            if (RTN.id[i] == ORDER_INV[j].id)
+              tempOrders.push(ORDER_INV[j])
+          }
+      }
+      else {
+        tempOrders = this.state.OrderInventoryGridData;
+      }      
       this.setState({
-        OrderPointInventoryEdited: []
+        OrderInventoryGridData: tempOrders,
+        ToastProps: {
+          isToastVisible: true,
+          //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+          //Type:RTN==1 ? "success" : "error",
+          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.\n."+RTN.messageOfTime,
+          Type: RTN.id.length==0 ? "success" : "error",
+        },
       });
-
-
-      const ORDER_INV = this.state.OrderInventoryGridData;
-      for (let i = 0; i < RTN.length; i++)
-        for (let j = 0; j < ORDER_INV.length; j++) {
-          if (RTN[i].id == ORDER_INV[j].id)
-            tempOrders.push(ORDER_INV[j])
-        }
+      this.OpenCloseWait();
     }
-    else {
-      tempOrders = this.state.OrderInventoryGridData;
-    }
-    this.setState({
-      OrderInventoryGridData: tempOrders,
-      ToastProps: {
-        isToastVisible: true,
-        //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
-        //Type:RTN==1 ? "success" : "error",
-        Message: RTN.length==0  ? "success" : "ویرایش با موفقیت انجام گردید",
-        Type: RTN.length>0 ? "error" : "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.",
-      },
-    });
-    this.OpenCloseWait();
+    else
+      this.setState({        
+        ToastProps: {
+          isToastVisible: true,
+          //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+          //Type:RTN==1 ? "success" : "error",
+          Message: "سفارش جهت ویرایش وجود ندارد.",
+          Type: "error" ,
+        },
+      });
   };
 
   btnNew_onClick = () => {

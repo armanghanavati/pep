@@ -92,6 +92,7 @@ import {
   Gfn_BuildValueComboSelectAll,
   Gfn_ExportToExcel,
   Gfn_ConvertComboForAll,
+  Gfn_num3Seperator,
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
@@ -422,17 +423,19 @@ class OrderSupplier extends React.Component {
         alert(errMsg);
       }
 
-    let SupplierSummMaxMin = await this.fn_CalculateSumWeightPrice(
-      params.oldData.supplierId,
-      params.oldData.supplierName,
-      params.oldData.retailStoreId,
-      params.oldData.retailStoreName,
-      params.oldData.productId,
-      params.newData.orderUser
-    );
-    this.setState({
-      SupplierListSumMaxMinGridData: SupplierSummMaxMin,
-    });
+    if(FlagError){
+      let SupplierSummMaxMin = await this.fn_CalculateSumWeightPrice(
+        params.oldData.supplierId,
+        params.oldData.supplierName,
+        params.oldData.retailStoreId,
+        params.oldData.retailStoreName,
+        params.oldData.productId,
+        params.newData.orderUser
+      );
+      this.setState({
+        SupplierListSumMaxMinGridData: SupplierSummMaxMin,
+      });
+    }
 
     console.log(
       "Edited Params=" + JSON.stringify(tempOrderPointSupplierEdited)
@@ -450,28 +453,29 @@ class OrderSupplier extends React.Component {
       productId,
       orderUser
     ) => {
+      // alert(orderUser)
       const ORDERS=this.state.OrderSupplierGridData;
       let tempSpecificOrders=[]
       let SumWeight=0;
       let SumPrice=0;
       let SumNumber=0;
-      for(let i=0;i<ORDERS.length;i++)
+      for(let i=0;i<ORDERS.length;i++){
         if(ORDERS[i].supplierId==extSupplierId 
             && ORDERS[i].retailStoreId==retailStoreId 
-            && ORDERS[i].productId!=productId
+            // && ORDERS[i].productId!=productId
             && (ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser)>0){
-              SumWeight+=ORDERS[i].productWeight*(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser);
-              SumPrice+=ORDERS[i].lastPriceProduct*(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser);
-              SumNumber+=(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser)
+              SumWeight=SumWeight+ parseFloat(ORDERS[i].productWeight)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser);
+              SumPrice=SumPrice  + parseFloat(ORDERS[i].lastPriceProduct)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser);
+              SumNumber=SumNumber+ parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser)              
         }                  
-        else if(ORDERS[i].supplierId==extSupplierId 
+        if(ORDERS[i].supplierId==extSupplierId 
             && ORDERS[i].retailStoreId==retailStoreId 
-            && ORDERS[i].productId==productId
-            && (ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser)>0){
-              SumWeight+=ORDERS[i].productWeight*orderUser;
-              SumPrice+=ORDERS[i].lastPriceProduct*orderUser;
-              SumNumber+=orderUser
+            && ORDERS[i].productId==productId){
+              SumWeight=SumWeight - parseFloat(ORDERS[i].productWeight)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser) + parseFloat(ORDERS[i].productWeight)*parseInt(orderUser);
+              SumPrice =SumPrice  - parseFloat(ORDERS[i].lastPriceProduct)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser) + parseFloat(ORDERS[i].lastPriceProduct)*parseInt(orderUser);
+              SumNumber=SumNumber - parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser) + parseInt(orderUser);              
           }
+      }
       alert(
         'weight='+SumWeight+
         '\nprice='+SumPrice+
@@ -1026,7 +1030,7 @@ class OrderSupplier extends React.Component {
                 toggle={this.ModalDetailOfPriceWeighNumber_onClickAway}
                 centered={true}
                 dir="rtl"
-                size="l"
+                size="xl"
               >
                 <ModalHeader
                   toggle={this.ModalDetailOfPriceWeighNumber_onClickAway}
@@ -1047,6 +1051,39 @@ class OrderSupplier extends React.Component {
                       </Col>
                       <Col>
                         نام تامین کننده: {this.state.DetailOfPriceWeighNumber.supplierName}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        حداقل سفارش وزنی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.minWeight,3)}
+                      </Col>
+                      <Col>
+                        حداکثر سفارش وزنی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.maxWeight,3)}
+                      </Col>                      
+                      <Col>
+                        جمع سفارش وزنی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.sumItemsWeight,3)}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        حداقل سفارش ریالی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.minPrice,3)}
+                      </Col>
+                      <Col>
+                        حداکثر سفارش ریالی{Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.maxPrice,3)}
+                      </Col>
+                      <Col>
+                        جمع سفارش ریالی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.sumItemsPrice,3)}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        حداقل سفارش تعدادی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.minNumber,3)}
+                      </Col>
+                      <Col>
+                        حداکثر سفارش تعدادی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.maxNumber,3)}
+                      </Col>
+                      <Col>
+                        جمع سفارش تعدادی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.sumItemsNumber,3)}
                       </Col>
                     </Row>
                   </Row>

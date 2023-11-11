@@ -103,7 +103,8 @@ export function Gfn_convertToMeter(lat1, lon1, lat2, lon2){
 }
 
 //----------Comma Seperator for Numbers----------
-export function Gfn_num3Seperator(customString,every){                                
+export function Gfn_num3Seperator(customString,every){ 
+    customString=customString.toString();                                   
     var result = [], counter = every;
     for (var i = counter; counter <= customString.length; counter += every) {
         result.unshift(customString.substr(customString.length - counter, every))
@@ -112,7 +113,7 @@ export function Gfn_num3Seperator(customString,every){
     var remainder = every - diff;
     if(remainder > 0) 
         { result.unshift(customString.substr(0, remainder)) }        
-    return result;
+    return result.toString();
 } 
 
 //----------Convert Arabic letter to Persian Letter----------
