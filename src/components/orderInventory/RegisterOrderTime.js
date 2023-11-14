@@ -204,8 +204,8 @@ class RegisterOrderTime extends React.Component {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
-        startDate: this.addHours(this.state.FromDate, 3, 30),
-        endDate:  this.addHours(this.state.ToDate, 3, 30),
+        startDate: this.addHours(new Date(this.state.FromDate), 3, 30),
+        endDate:  this.addHours(new Date(this.state.ToDate), 3, 30),
       };
       const RESULT = await addPositionApproveOrderTime(
         data,
