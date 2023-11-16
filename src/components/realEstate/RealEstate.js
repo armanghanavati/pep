@@ -41,26 +41,65 @@ import DataGrid, {
   Grouping,
   GroupPanel,
   SearchPanel,
-  Export
+  Export,
 } from "devextreme-react/data-grid";
+import Wait from "../common/Wait";
 
-class RealEstate extends React.Component{
-    constructor(props){
-        super(props);
-        this.state={}
-    }
-    render(){
-        return(
-            <div>
-                Real Estate pedram
-            </div>
-        )
-    }
+import {
+  DataGridPageSizes,
+  DataGridDefaultPageSize,
+  DataGridDefaultHeight,
+  ToastTime,
+  ToastWidth,
+  ALL_MOD,
+  CHECK_BOXES_MOD,
+  FILTER_BUILDER_POPUP_POSITION,
+} from "../../config/config";
+
+class RealEstate extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      stateWait: false,
+      ToastProps: {
+        isToastVisible: false,
+        Message: "",
+        Type: "",
+      },
+    };
+  }
+
+  onHidingToast = () => {
+    this.setState({ ToastProps: { isToastVisible: false } });
+  };
+  render() {
+    return (
+      <div className="standardMargin" style={{ direction: "rtl" }}>
+        <Toast
+          visible={this.state.ToastProps.isToastVisible}
+          message={this.state.ToastProps.Message}
+          type={this.state.ToastProps.Type}
+          onHiding={this.onHidingToast}
+          displayTime={ToastTime}
+          width={ToastWidth}
+          rtlEnabled={true}
+        />
+        {this.state.stateWait && (
+          <Row className="text-center">
+            <Col style={{ textAlign: "center", marginTop: "10px" }}>
+              <Wait />
+            </Col>
+          </Row>
+        )}
+        <Card className="shadow bg-white border pointer"></Card>ّ
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = (state) => ({
-    User: state.users,    
-    Company: state.companies,    
-  });
-  
+  User: state.users,
+  Company: state.companies,
+});
+
 export default connect(mapStateToProps)(RealEstate);

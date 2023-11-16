@@ -844,6 +844,7 @@ class OrderSupplier extends React.Component {
                       rtlEnabled={true}
                       allowColumnResizing={true}
                       columnResizingMode="widget"
+                      height={DataGridDefaultHeight}
                       onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}                      
                       onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
                       onRowPrepared={this.grdOrderPointSupplier_onRowPrepared}

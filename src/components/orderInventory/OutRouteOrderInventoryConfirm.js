@@ -49,10 +49,12 @@ import Wait from "../common/Wait";
 
 import { orderIventoryOutRouteList,updateGroupsOrderPointInventory,confirmRejectOrderInventoryOutRoute} from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 import { logsOPITodayListByUserId } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
+import { remainOfEditInsertByLocationUser } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 
 import UpdateIcon from "../../assets/images/icon/update.png";
 import ConfirmIcon from "../../assets/images/icon/confirm.png";
 import RejectIcon from "../../assets/images/icon/reject2.png";
+import SearchIcon from "../../assets/images/icon/search.png";
 
 
 class OutRouteOrderInventoryConfirm extends React.Component {
@@ -104,56 +106,142 @@ class OutRouteOrderInventoryConfirm extends React.Component {
 
 
   showOrderInventoryOutRoute=async()=>{
+    this.OpenCloseWait();
     if(this.state.stateEnable_show)
       this.setState({
           OrderInventoryGridData: await orderIventoryOutRouteList(this.props.User.token),
           stateShowRoute:true,
       })
+    this.OpenCloseWait();
   }
 
   grdOrderPointInventory_onRowUpdating = async (params) => {
+    // let FirstVal = 1;
+    // console.log("Old Data=" + JSON.stringify(params.oldData));
+    // console.log("New Data=" + JSON.stringify(params.newData));
+    // let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;  
+
+    // let flagEditRowCount = false;   
+
+    // let flagPush = true;
+    // for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
+    //   if (tempOrderPointInventoryEdited[i].OrderPointInventoryId === params.oldData.id) {
+    //     tempOrderPointInventoryEdited[i].OrderValue =
+    //       params.newData.orderUser === undefined
+    //         ? params.oldData.orderUser
+    //         : params.newData.orderUser;
+    //     tempOrderPointInventoryEdited[i].Description =
+    //       params.newData.description === undefined
+    //         ? params.oldData.description
+    //         : params.newData.description;
+    //     flagPush = false;
+    //     break;
+    //   }
+
+    // let FlagError = true;
+    // let errMsg = "";    
+    // if (
+    //   params.newData.orderUser > 0 &&
+    //   params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
+    //   params.newData.orderUser % params.oldData.itemsPerPack2 !== 0
+    // ) {
+    //   FlagError = false;      
+    //   errMsg += "\nکاربر گرامی عدد سفارش باید مضربی از تعداد در بسته باشد.";
+    // }
+    // if (params.newData.orderUser < 0) {
+    //   FlagError = false;      
+    //   errMsg += "\n کاربر گرامی عدد سفارش باید بزرگتر یا مساوی با 0 باشد.";
+    // }
+    
+    // if (flagPush)
+    //   if (FlagError) {
+    //     // alert( params.oldData.orderUser)
+        
+    //     let obj = {
+    //       UserId: this.props.User.userId,
+    //       OrderPointInventoryId: params.oldData.id,
+    //       FirstValue:
+    //         params.oldData.orderUser == null
+    //           ? params.oldData.orderSystem
+    //           : params.oldData.orderUser,
+    //       OrderValue: params.newData.orderUser,
+    //       Description:
+    //         params.oldData.description === null
+    //           ? ""
+    //           : params.oldData.description,
+    //     };
+    //     tempOrderPointInventoryEdited.push(obj);
+    //   } else {
+    //     params.cancel = true;
+    //     alert(errMsg);
+    //   }
+
+    // console.log(
+    //   "Edited Params=" + JSON.stringify(tempOrderPointInventoryEdited)
+    // );
+    // this.setState({
+    //   OrderPointInventoryEdited: tempOrderPointInventoryEdited,
+    // });
     let FirstVal = 1;
     console.log("Old Data=" + JSON.stringify(params.oldData));
     console.log("New Data=" + JSON.stringify(params.newData));
-    let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;  
+    let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;   
+   
+    // alert('edited='+tempOrderPointInventoryEdited.length+
+    //         '\nMaxEdit='+AuthOBJ.orderInventoryEditRowCount+
+    //         '\nRelaLogs='+(this.state.RealLogs).length)
 
-    let flagEditRowCount = false;   
-
-    let flagPush = true;
-    for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
-      if (tempOrderPointInventoryEdited[i].OrderPointInventoryId === params.oldData.id) {
-        tempOrderPointInventoryEdited[i].OrderValue =
-          params.newData.orderUser === undefined
-            ? params.oldData.orderUser
-            : params.newData.orderUser;
-        tempOrderPointInventoryEdited[i].Description =
-          params.newData.description === undefined
-            ? params.oldData.description
-            : params.newData.description;
-        flagPush = false;
-        break;
-      }
-
+    let flagEditRowCount = false;  
     let FlagError = true;
-    let errMsg = "";    
+    let flagCount=true;
+    let errMsg = "";
+    // ------------------------------------------------    
+    const OBJ_COUNT={
+      LocationId:params.oldData.locationId
+    }
+    const REMAIN_ORDER = await remainOfEditInsertByLocationUser(OBJ_COUNT,this.props.User.token);    
+    
+    if (tempOrderPointInventoryEdited.length >= REMAIN_ORDER && !flagEditRowCount) {
+      flagCount = false;
+      errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
+    }
+    // ------------------------------------------------    
     if (
       params.newData.orderUser > 0 &&
-      params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
-      params.newData.orderUser % params.oldData.itemsPerPack2 !== 0
+      // params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&      
+      params.newData.orderUser % (params.oldData.itemsPerPack2==0 ? params.oldData.itemsPerPack : params.oldData.itemsPerPack2) !== 0
     ) {
-      FlagError = false;      
+      FlagError = false;
+      // flagEditRowCount = false;
       errMsg += "\nکاربر گرامی عدد سفارش باید مضربی از تعداد در بسته باشد.";
     }
     if (params.newData.orderUser < 0) {
-      FlagError = false;      
+      FlagError = false;
+      // flagEditRowCount = false;
       errMsg += "\n کاربر گرامی عدد سفارش باید بزرگتر یا مساوی با 0 باشد.";
     }
     
+    let flagPush = true;
+    if(FlagError)
+      for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
+        if (tempOrderPointInventoryEdited[i].OrderPointInventoryId === params.oldData.id) {
+          tempOrderPointInventoryEdited[i].OrderValue =
+            params.newData.orderUser === undefined
+              ? params.oldData.orderUser
+              : params.newData.orderUser;
+          tempOrderPointInventoryEdited[i].Description =
+            params.newData.description === undefined
+              ? params.oldData.description
+              : params.newData.description;
+          flagPush = false;
+          break;
+        }
+
+
     if (flagPush)
-      if (FlagError) {
-        // alert( params.oldData.orderUser)
-        
+      if(FlagError && (flagCount || flagEditRowCount)){
         let obj = {
+          CompanyId: this.props.Company.currentCompanyId,
           UserId: this.props.User.userId,
           OrderPointInventoryId: params.oldData.id,
           FirstValue:
@@ -165,6 +253,9 @@ class OutRouteOrderInventoryConfirm extends React.Component {
             params.oldData.description === null
               ? ""
               : params.oldData.description,
+          OrderSystem: params.oldData.orderSystem,
+          ProductId: params.oldData.productId,
+          RetailStoreId: params.oldData.retailStoreId,
         };
         tempOrderPointInventoryEdited.push(obj);
       } else {
@@ -180,6 +271,53 @@ class OutRouteOrderInventoryConfirm extends React.Component {
     });
   };
 
+  btnUpdateOrders_onClick = async () => {
+    if(this.state.OrderPointInventoryEdited.length>0){
+      this.OpenCloseWait();    
+      const RTN = await updateGroupsOrderPointInventory(
+        this.state.OrderPointInventoryEdited,
+        this.props.User.token
+      );
+      let tempOrders = [];
+      if (RTN.id != null) {
+        this.setState({
+          OrderPointInventoryEdited: []
+        });
+
+
+        const ORDER_INV = this.state.OrderInventoryGridData;
+        for (let i = 0; i < RTN.id.length; i++)
+          for (let j = 0; j < ORDER_INV.length; j++) {
+            if (RTN.id[i] == ORDER_INV[j].id)
+              tempOrders.push(ORDER_INV[j])
+          }
+      }
+      else {
+        tempOrders = this.state.OrderInventoryGridData;
+      }      
+      this.setState({
+        OrderInventoryGridData: tempOrders,
+        ToastProps: {
+          isToastVisible: true,
+          //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+          //Type:RTN==1 ? "success" : "error",
+          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.\n."+RTN.messageOfTime,
+          Type: RTN.id.length==0 ? "success" : "error",
+        },
+      });
+      this.OpenCloseWait();
+    }
+    else
+      this.setState({        
+        ToastProps: {
+          isToastVisible: true,
+          //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+          //Type:RTN==1 ? "success" : "error",
+          Message: "سفارش جهت ویرایش وجود ندارد.",
+          Type: "error" ,
+        },
+      });
+  };
 
 
   OpenCloseWait() {
@@ -217,6 +355,9 @@ class OutRouteOrderInventoryConfirm extends React.Component {
     await confirmRejectOrderInventoryOutRoute(OBJ,this.props.User.token)
   }
 
+  btnSearch_onClick=async()=>{
+    this.showOrderInventoryOutRoute();
+  }
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -240,9 +381,21 @@ class OutRouteOrderInventoryConfirm extends React.Component {
           <Row className="standardPadding">
             <Row>
               <Label className="title">تائید سفارشات خارج از مسیر</Label>
-            </Row>
+            </Row>            
             <Row className="standardSpaceTop">
               <Col xs="auto" className="standardMarginRight">
+                <Row style={{paddingBottom:'10px'}}>
+                  <Col xs="auto">
+                    <Button
+                      icon={SearchIcon}
+                      text="مشاهده سفارشات خارج از مسیر"
+                      type="default"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnSearch_onClick}
+                    />
+                  </Col>
+                </Row>
                 <DataGrid
                   id="grdOrderPointInventory"
                   dataSource={this.state.OrderInventoryGridData}
@@ -286,7 +439,19 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                 </DataGrid>
               </Col>
             </Row>            
-            <Row className="standardSpaceTop">            
+            <Row className="standardSpaceTop">      
+              {this.state.stateEnable_btnUpdate && (                
+                  <Col xs="auto" className="standardMarginRight">
+                    <Button
+                      icon={UpdateIcon}
+                      text="ذخیره تغییرات"
+                      type="success"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnUpdateOrders_onClick}
+                    />
+                  </Col>                
+              )}      
               {this.state.stateEnable_btnConfirm && (
                 <Col xs="auto" className="standardMarginRight">
                   <Button
@@ -324,6 +489,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
 
 const mapStateToProps = (state) => ({
     User: state.users,    
+    Company: state.companies,
   });
   
 export default connect(mapStateToProps)(OutRouteOrderInventoryConfirm);

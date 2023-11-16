@@ -704,6 +704,7 @@ class OrderInventory extends React.Component {
                   allowColumnReordering={true}
                   showBorders={true}
                   rtlEnabled={true}
+                  height={DataGridDefaultHeight}
                   allowColumnResizing={true}
                   columnResizingMode="widget"
                   onRowUpdating={this.grdOrderPointInventory_onRowUpdating}
