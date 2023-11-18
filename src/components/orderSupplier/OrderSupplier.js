@@ -476,11 +476,11 @@ class OrderSupplier extends React.Component {
               SumNumber=SumNumber - parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser) + parseInt(orderUser);              
           }
       }
-      alert(
-        'weight='+SumWeight+
-        '\nprice='+SumPrice+
-        '\nNumber='+SumNumber
-        )    
+      // alert(
+      //   'weight='+SumWeight+
+      //   '\nprice='+SumPrice+
+      //   '\nNumber='+SumNumber
+      //   )    
       const SUPP_LIST = this.state.SupplierListMaxMinParam;
 
       let tempSup = this.state.SupplierListSumMaxMinGridData;
@@ -623,7 +623,7 @@ class OrderSupplier extends React.Component {
     this.OpenCloseWait();
     // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
     await this.fn_RemoveSuppierForConfirm(this.state.OrderPointSupplierEdited,this.state.SupplierListSumMaxMinGridData)
-    alert(JSON.stringify(this.state.OrderPointSupplierEdited))
+    // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
     await updateGroupsOrderPointSupplier(
       this.state.OrderPointSupplierEdited,
       this.props.User.token
@@ -844,6 +844,7 @@ class OrderSupplier extends React.Component {
                       rtlEnabled={true}
                       allowColumnResizing={true}
                       columnResizingMode="widget"
+                      height={DataGridDefaultHeight}
                       onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}                      
                       onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
                       onRowPrepared={this.grdOrderPointSupplier_onRowPrepared}

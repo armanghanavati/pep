@@ -33,6 +33,7 @@ import TicketSubjects from '../pages/TicketSubjects'
 import OrdersByUpload from '../pages/OrdersByUpload'
 import SupplierLocationContacts from '../pages/SupplierLocationContacts'
 import Opinions from '../pages/Opinions'
+import RealEstates from '../pages/RealEstates'
 import Questions from '../pages/Questions'
 import Answers from '../pages/Answers'
 
@@ -185,6 +186,11 @@ export const REAL_COMPONENT = [
   {
     strComponent: "Opinions",
     orgComponent: <Opinions/>,
+  } 
+  ,
+  {
+    strComponent: "RealEstates",
+    orgComponent: <RealEstates/>,
   },
   {
     strComponent: "Questions",
@@ -193,6 +199,6 @@ export const REAL_COMPONENT = [
   {
     strComponent: "Answers",
     orgComponent: <Answers/>,
-  }        
+  }         
 ];
 
