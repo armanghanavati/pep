@@ -15,7 +15,7 @@ export const DataGridQuestionColumns = [
         allowEditing: true,
     },
     {
-        dataField: "desc",
+        dataField: "dec",
         caption: "توضیحات",
         allowEditing: true,
     },

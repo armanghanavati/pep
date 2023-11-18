@@ -50,6 +50,7 @@ import {
 import {
   questionList,
   updateQuestion,
+  answeredQuestionList,
 } from "../../redux/reducers/question/question-actions";
 import {
   questionTypeList
@@ -72,6 +73,8 @@ import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import { unitList } from "../../redux/reducers/unit/unit-actions";
 import { zoneList } from "../../redux/reducers/zone/zone-actions";
+import Answer from "./Answer";
+import { addAnswerDetail } from "../../redux/reducers/answerDetail/answerDetail-actions";
 
 class NewAnswer extends React.Component {
   constructor(props) {
@@ -96,7 +99,10 @@ class NewAnswer extends React.Component {
       cmbSupervisor: null,
       cmbSupervisorValue: null,
       cmbManager: null,
-      cmbManagerValue: null
+      cmbManagerValue: null,
+      ItemsListUpdated: [],
+      stateAnswer_show: false,
+      AddedAnswerId: null,
     };
   }
   async componentDidMount() {
@@ -111,21 +117,15 @@ class NewAnswer extends React.Component {
     const answer = await answerListById(answerId, this.props.User.token);
     this.setState({
       cmbQuestionTypeValue: answer.questionTypeId,
+      cmbLocation: await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, 1, this.props.User.token),
       cmbLocationValue: answer.locationId,
+      cmbSupervisor: await supervisorList(answer.locationId, 5, this.props.User.token), // 5 سوپروایزر
       cmbSupervisorValue: answer.supervisorId,
+      cmbManager: await supervisorList(answer.locationId, 6, this.props.User.token), // 6 سرپرست فروشگاه
       cmbManagerValue: answer.storeManagerId,
-      QuestionGridData: await questionList(2, this.props.User.token)
+      QuestionGridData: await answeredQuestionList(answerId, this.props.User.userId, answer.questionTypeId, this.props.User.token),
     });
-
   }
-
-  fn_updateGrid = async (e) => {
-    if (this.state.stateDisable_show) {
-      this.setState({
-        QuestionGridData: await questionList(e, this.props.User.token),
-      });
-    }
-  };
 
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
@@ -201,9 +201,13 @@ class NewAnswer extends React.Component {
   };
 
   cmbQuestionType_onChange = async (e) => {
+    var t = 0;
+    this.state.cmbQuestionType.forEach(element => {
+      if (element.id == e) t = element.locationTypeId;
+    })
     this.setState({
       cmbQuestionTypeValue: e,
-      cmbLocation: await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, 1, this.props.User.token)
+      cmbLocation: await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, t, this.props.User.token)
     });
   };
 
@@ -264,8 +268,12 @@ class NewAnswer extends React.Component {
           Type: RESULT != null ? "success" : "error",
         },
       });
-      if (RESULT != null)
-        this.fn_updateGrid(this.state.cmbQuestionTypeValue);
+      if (this.props.answerId == null) {
+        this.setState({
+          AddedAnswerId: RESULT.id
+        })
+      }
+      this.fn_loadData(RESULT.id);
     }
   };
 
@@ -285,7 +293,7 @@ class NewAnswer extends React.Component {
           Type: RESULT > 0 ? "success" : "error",
         },
       });
-      this.fn_updateGrid(this.state.cmbQuestionTypeValue);
+      this.fn_loadData(this.props.answerId);
     }
   };
 
@@ -308,196 +316,221 @@ class NewAnswer extends React.Component {
   //     this.fn_updateGrid(this.state.cmbQuestionTypeValue);
   //   };
 
-  grdItemLocation_onUpdateRow = (params) => {
-    let tempItems = [];
-    if (!this.state.flagSelectAll) tempItems = this.state.ItemsListUpdated;
-    let flagPush = true;
-    for (let i = 0; i < tempItems.length; i++) {
-      if (
-        tempItems[i].itemId === params.data.itemId &&
-        tempItems[i].locationId === params.data.locationId
-      ) {
-        tempItems[i].isActive = params.data.isActive;
-        tempItems[i].maxPercentChange = params.data.maxPercentChange;
-        tempItems[i].minPercentChange = params.data.minPercentChange;
-        flagPush = false;
-      }
-    }
-    if (flagPush) {
-      let obj = {
-        itemId: params.data.itemId,
-        locationId: params.data.locationId,
-        isActive: params.data.isActive,
-        maxPercentChange: params.data.maxPercentChange,
-        minPercentChange: params.data.minPercentChange
-      };
-      tempItems.push(obj);
-    }
-    this.setState({ ItemsListUpdated: tempItems, flagSelectAll: false });
-  };
+  grdQuestion_onUpdateRow = async (params) => {
+    var data = {
+      questionId: params.data.id,
+      answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
+      score: params.data.score,
+      dec: params.data.dec
+    };
+    var minDesc = 0;
+    this.state.cmbQuestionType.forEach(element => {
+      if (element.id == this.state.cmbQuestionTypeValue) minDesc = element.minDesc;
+    })
 
+    if (params.data.score < minDesc && params.data.dec == null)
+      alert("توضیحات باید وارد شود")
+    else {
+      var result = await addAnswerDetail(data, this.props.User.token);
+      if (this.props.answerId == null)
+        this.fn_loadData(this.state.AddedAnswerId)
+      else
+        this.fn_loadData(this.props.answerId)
+    }
+  };
+  btnInsList_onClick = async () => {
+    this.setState({
+      stateAnswer_show: true
+    });
+  }
   render() {
     return (
-      <div className="standardMargin" style={{ direction: "rtl" }}>
-        <Toast
-          visible={this.state.ToastProps.isToastVisible}
-          message={this.state.ToastProps.Message}
-          type={this.state.ToastProps.Type}
-          onHiding={this.onHidingToast}
-          displayTime={ToastTime}
-          width={ToastWidth}
-          rtlEnabled={true}
-        />
-        <Card className="shadow bg-white border pointer">
-          <Row className="standardPadding">
-            <Row>
-              <Label>سوالات</Label>
-            </Row>
+      this.state.stateAnswer_show == false ? (
+        <div className="standardMargin" style={{ direction: "rtl" }}>
+          <Toast
+            visible={this.state.ToastProps.isToastVisible}
+            message={this.state.ToastProps.Message}
+            type={this.state.ToastProps.Type}
+            onHiding={this.onHidingToast}
+            displayTime={ToastTime}
+            width={ToastWidth}
+            rtlEnabled={true}
+          />
+          <Card className="shadow bg-white border pointer">
             <Row className="standardPadding">
-              <Col xs="auto">
-                <Label className="standardLabelFont">نوع سوالات</Label>
-                <SelectBox
-                  dataSource={this.state.cmbQuestionType}
-                  displayExpr="name"
-                  placeholder="نوع سوالات"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbQuestionType_onChange}
-                  value={this.state.cmbQuestionTypeValue}
-                />
-                <Row>
-                  <Label
-                    id="errQuestionType"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">فروشگاه</Label>
-                <SelectBox
-                  dataSource={this.state.cmbLocation}
-                  displayExpr="locationName"
-                  placeholder="فروشگاه"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbLocation_onChange}
-                  value={this.state.cmbLocationValue}
-                />
-                <Row>
-                  <Label
-                    id="errLocation"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">سوپروایزر</Label>
-                <SelectBox
-                  dataSource={this.state.cmbSupervisor}
-                  displayExpr="fullName"
-                  placeholder="سوپروایزر"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbSupervisor_onChange}
-                  value={this.state.cmbSupervisorValue}
-                />
-                <Row>
-                  <Label
-                    id="errSupervisor"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">سرپرست فروشگاه</Label>
-                <SelectBox
-                  dataSource={this.state.cmbManager}
-                  displayExpr="fullName"
-                  placeholder="سرپرست فروشگاه"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbManager_onChange}
-                  value={this.state.cmbManagerValue}
-                />
-                <Row>
-                  <Label
-                    id="errManager"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-            </Row>
-            <Row className="standardSpaceTop">
               <Row>
-                {this.state.stateDisable_btnUpdate && (
+                <Label>سوالات</Label>
+              </Row>
+              <Row className="standardPadding">
+                <Col xs="auto">
+                  <Label className="standardLabelFont">نوع سوالات</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbQuestionType}
+                    displayExpr="name"
+                    placeholder="نوع سوالات"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbQuestionType_onChange}
+                    value={this.state.cmbQuestionTypeValue}
+                  />
+                  <Row>
+                    <Label
+                      id="errQuestionType"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">فروشگاه</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbLocation}
+                    displayExpr="locationName"
+                    placeholder="فروشگاه"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbLocation_onChange}
+                    value={this.state.cmbLocationValue}
+                  />
+                  <Row>
+                    <Label
+                      id="errLocation"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">سوپروایزر</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbSupervisor}
+                    displayExpr="fullName"
+                    placeholder="سوپروایزر"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbSupervisor_onChange}
+                    value={this.state.cmbSupervisorValue}
+                  />
+                  <Row>
+                    <Label
+                      id="errSupervisor"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">سرپرست فروشگاه</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbManager}
+                    displayExpr="fullName"
+                    placeholder="سرپرست فروشگاه"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbManager_onChange}
+                    value={this.state.cmbManagerValue}
+                  />
+                  <Row>
+                    <Label
+                      id="errManager"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
 
-                  <Col xs="auto">
+              </Row>
+              <Row className="standardSpaceTop">
+                <Col xs="auto">
+                  <Button
+                    text="لیست بازرسی"
+                    type="success"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnInsList_onClick}
+                  />
+                </Col>
+                {this.state.stateDisable_btnUpdate && (
+                  this.props.answerId == null && (
+                    <Col xs="auto">
+                      <Button
+                        icon={UpdateIcon}
+                        text="شروع بازرسی"
+                        type="success"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnAdd_onClick}
+                      />
+                    </Col>
+                  ))}
+              </Row>
+              <Row>
+                <Col>
+                  <p
+                    id="ErrorUpdateQuestion"
+                    style={{ textAlign: "right", color: "red" }}
+                  ></p>
+                </Col>
+              </Row>
+            </Row>
+          </Card>
+          <p></p>
+          <Card className="shadow bg-white border pointer">
+            <Row className="standardPadding">
+              <Row>
+                <Label className="title">لیست سوالات {this.state.cmbQuestionTypeValue != null && this.state.cmbQuestionType.map(p => p.id == this.state.cmbQuestionTypeValue ? p.name : '')}</Label>
+              </Row>
+              <Row>
+                <Col xs="auto" className="standardMarginRight">
+                  <DataGrid
+                    dataSource={this.state.QuestionGridData}
+                    defaultColumns={DataGridQuestionColumns}
+                    showBorders={true}
+                    rtlEnabled={true}
+                    allowColumnResizing={true}
+                    onRowClick={this.grdQuestion_onClickRow}
+                    onRowUpdated={this.grdQuestion_onUpdateRow}
+                    height={DataGridDefaultHeight}
+                  >
+                    <Scrolling
+                      rowRenderingMode="virtual"
+                      showScrollbar="always"
+                      columnRenderingMode="virtual"
+                    />
+
+                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                    <Pager
+                      visible={true}
+                      allowedPageSizes={DataGridPageSizes}
+                      showPageSizeSelector={true}
+                      showNavigationButtons={true}
+                    />
+                    <Editing mode="cell" allowUpdating={true} />
+                    <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
+                  </DataGrid>
+                </Col>
+              </Row>
+              {/* {this.state.stateDisable_btnAdd && (
+                <Row>
+                  <Col xs="auto" className="standardMarginRight">
                     <Button
                       icon={UpdateIcon}
-                      text="شروع بازرسی"
+                      text="ذخیره تغییرات"
                       type="success"
                       stylingMode="contained"
                       rtlEnabled={true}
-                      onClick={this.btnAdd_onClick}
+                      onClick={this.btnUpdateOrders_onClick}
                     />
                   </Col>
-                )}
-              </Row>
-            </Row>
-            <Row>
-              <Col>
-                <p
-                  id="ErrorUpdateQuestion"
-                  style={{ textAlign: "right", color: "red" }}
-                ></p>
-              </Col>
-            </Row>
-          </Row>
-        </Card>
-        <p></p>
-        <Card className="shadow bg-white border pointer">
-          <Row className="standardPadding">
-            <Row>
-              <Label className="title">لیست سوالات {this.state.cmbQuestionTypeValue != null && this.state.cmbQuestionType.map(p => p.id == this.state.cmbQuestionTypeValue ? p.name : '')}</Label>
-            </Row>
-            <Row>
-              <Col xs="auto" className="standardMarginRight">
-                <DataGrid
-                  dataSource={this.state.QuestionGridData}
-                  defaultColumns={DataGridQuestionColumns}
-                  showBorders={true}
-                  rtlEnabled={true}
-                  allowColumnResizing={true}
-                  onRowClick={this.grdQuestion_onClickRow}
-                  onRowUpdated={this.grdItemLocation_onUpdateRow}
-                  height={DataGridDefaultHeight}
-                >
-                  <Scrolling
-                    rowRenderingMode="virtual"
-                    showScrollbar="always"
-                    columnRenderingMode="virtual"
-                  />
-
-                  <Paging defaultPageSize={DataGridDefaultPageSize} />
-                  <Pager
-                    visible={true}
-                    allowedPageSizes={DataGridPageSizes}
-                    showPageSizeSelector={true}
-                    showNavigationButtons={true}
-                  />
-                  <Editing mode="cell" allowUpdating={true} />
-                  <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
-                </DataGrid>
-              </Col>
-            </Row>
-          </Row>
-        </Card>
-      </div>
+                </Row>
+              )} */}
+            </Row >
+          </Card>
+        </div>
+      ) : (
+        <Answer />
+      )
     );
   }
 }

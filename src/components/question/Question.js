@@ -435,11 +435,11 @@ class Question extends React.Component {
                 </Row>
               </Col>
               <Col xs="auto">
-                <Label className="standardLabelFont">نمره</Label>
+                <Label className="standardLabelFont">وزن/نمره</Label>
                 <TextBox
                   value={this.state.txtScoreValue}
                   showClearButton={true}
-                  placeholder="نمره"
+                  placeholder="وزن/نمره"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtScore_onChange}

@@ -92,6 +92,7 @@ import {
   Gfn_BuildValueComboSelectAll,
   Gfn_ExportToExcel,
   Gfn_ConvertComboForAll,
+  Gfn_num3Seperator,
 } from "../../utiliy/GlobalMethods";
 import { Template } from "devextreme-react";
 
@@ -129,6 +130,8 @@ class OrderSupplier extends React.Component {
       stateEnable_show: false,
       stateModal_OrderSupplierNew: false,
       stateModal_OrderSupplierNewGroup: false,
+      stateModal_DetailOfPriceWeighNumber:false,
+      DetailOfPriceWeighNumber:null,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -297,6 +300,7 @@ class OrderSupplier extends React.Component {
 
     this.setState({
       OrderSupplierGridData: ORDER_SUPPLIER,
+      SupplierListSumMaxMinGridData:[],
       SupplierListMaxMinParam: await supplierListByExtIds(
         tempSupplierId,
         this.props.User.token
@@ -324,7 +328,7 @@ class OrderSupplier extends React.Component {
     if (e.rowType === "data" && e.data.orderUser !== null)
       e.rowElement.style.backgroundColor = "#60c77f";
   };
-
+  
   grdOrderPointSupplier_onRowUpdating = async (params) => {
     let FirstVal = 1;
     console.log("Old Data=" + JSON.stringify(params.oldData));
@@ -419,14 +423,19 @@ class OrderSupplier extends React.Component {
         alert(errMsg);
       }
 
-    let SupplierSummMaxMin = await this.fn_CalculateSumWeightPrice(
-      params.oldData.supplierId,
-      params.oldData.supplierName,
-      params.oldData.retailStoreId
-    );
-    this.setState({
-      SupplierListSumMaxMinGridData: SupplierSummMaxMin,
-    });
+    if(FlagError){
+      let SupplierSummMaxMin = await this.fn_CalculateSumWeightPrice(
+        params.oldData.supplierId,
+        params.oldData.supplierName,
+        params.oldData.retailStoreId,
+        params.oldData.retailStoreName,
+        params.oldData.productId,
+        params.newData.orderUser
+      );
+      this.setState({
+        SupplierListSumMaxMinGridData: SupplierSummMaxMin,
+      });
+    }
 
     console.log(
       "Edited Params=" + JSON.stringify(tempOrderPointSupplierEdited)
@@ -437,68 +446,169 @@ class OrderSupplier extends React.Component {
   };
 
   fn_CalculateSumWeightPrice = async (
-    extSupplierId,
-    supplierName,
-    retailStoreId
-  ) => {
-    const OBJ = {
-      ExtSupplierId: extSupplierId,
-      RetailStoreId: retailStoreId,
-    };
-    const SUM_MAXMIN = await calcSumWeightPriceOrderPointSupplier(
-      OBJ,
-      this.props.User.token
-    );
-    const SUPP_LIST = this.state.SupplierListMaxMinParam;
+      extSupplierId,
+      supplierName,
+      retailStoreId,
+      retailStoreName,
+      productId,
+      orderUser
+    ) => {
+      // alert(orderUser)
+      const ORDERS=this.state.OrderSupplierGridData;
+      let tempSpecificOrders=[]
+      let SumWeight=0;
+      let SumPrice=0;
+      let SumNumber=0;
+      for(let i=0;i<ORDERS.length;i++){
+        if(ORDERS[i].supplierId==extSupplierId 
+            && ORDERS[i].retailStoreId==retailStoreId 
+            // && ORDERS[i].productId!=productId
+            && (ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser)>0){
+              SumWeight=SumWeight+ parseFloat(ORDERS[i].productWeight)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser);
+              SumPrice=SumPrice  + parseFloat(ORDERS[i].lastPriceProduct)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser);
+              SumNumber=SumNumber+ parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser)              
+        }                  
+        if(ORDERS[i].supplierId==extSupplierId 
+            && ORDERS[i].retailStoreId==retailStoreId 
+            && ORDERS[i].productId==productId){
+              SumWeight=SumWeight - parseFloat(ORDERS[i].productWeight)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser) + parseFloat(ORDERS[i].productWeight)*parseInt(orderUser);
+              SumPrice =SumPrice  - parseFloat(ORDERS[i].lastPriceProduct)*parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser) + parseFloat(ORDERS[i].lastPriceProduct)*parseInt(orderUser);
+              SumNumber=SumNumber - parseInt(ORDERS[i].orderUser==null ? ORDERS[i].orderSystem : ORDERS[i].orderUser) + parseInt(orderUser);              
+          }
+      }
+      alert(
+        'weight='+SumWeight+
+        '\nprice='+SumPrice+
+        '\nNumber='+SumNumber
+        )    
+      const SUPP_LIST = this.state.SupplierListMaxMinParam;
 
-    let tempSup = this.state.SupplierListSumMaxMinGridData;
+      let tempSup = this.state.SupplierListSumMaxMinGridData;
 
-    for (let i = 0; i < SUPP_LIST.length; i++)
-      if (SUPP_LIST[i].extSupplierId == extSupplierId) {
-        // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i])+'\n'+JSON.stringify(SUM_MAXMIN));
-        if (
-          SUM_MAXMIN.sumPrice < SUPP_LIST[i].minOrderRiali ||
-          SUM_MAXMIN.sumPrice > SUPP_LIST[i].maxOrderRiali ||
-          SUM_MAXMIN.sumWeight < SUPP_LIST[i].minOrderWeight ||
-          SUM_MAXMIN.sumWeight > SUPP_LIST[i].maxOrderWeight
-        ) {
-          let flagNew = true;
-          let indexSup=0
-          for (let j = 0; j < tempSup.length; j++)
-            if (tempSup[j].extSupplierId == extSupplierId) {
-              flagNew = false;
-              indexSup=j;
-              break;
-            }              
-          if (flagNew) {
-            const SUPOBJ = {
-              id: extSupplierId,
-              extSupplierId: extSupplierId,
-              supplierName: supplierName,
-              minWeight: SUPP_LIST[i].minOrderWeight,
-              maxWeight: SUPP_LIST[i].maxOrderWeight,
-              sumItemsWeight: SUM_MAXMIN.sumWeight,
-              minPrice: SUPP_LIST[i].minOrderRiali,
-              maxPrice: SUPP_LIST[i].maxOrderRiali,
-              sumItemsPrice: SUM_MAXMIN.sumPrice,
-            };
-            tempSup.push(SUPOBJ);
+      for (let i = 0; i < SUPP_LIST.length; i++)
+        if (SUPP_LIST[i].extSupplierId == extSupplierId) {
+          // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i])+'\n'+JSON.stringify(SUM_MAXMIN));
+          if (
+            SumPrice  < SUPP_LIST[i].minOrderRiali  ||
+            SumPrice  > SUPP_LIST[i].maxOrderRiali  ||
+            SumWeight < SUPP_LIST[i].minOrderWeight ||
+            SumWeight > SUPP_LIST[i].maxOrderWeight ||
+            SumNumber < SUPP_LIST[i].minOrderNumber ||
+            SumNumber > SUPP_LIST[i].maxOrderNumber
+          ) {
+            let flagNew = true;
+            let indexSup=0
+            for (let j = 0; j < tempSup.length; j++)
+              if (tempSup[j].extSupplierId == extSupplierId) {
+                flagNew = false;
+                indexSup=j;
+                break;
+              }              
+            if (flagNew) {
+              const SUPOBJ = {
+                id: extSupplierId,
+                extSupplierId: extSupplierId,
+                retailStoreId: retailStoreId,
+                retailStoreName: retailStoreName,
+                supplierName: supplierName,
+                minWeight: SUPP_LIST[i].minOrderWeight,
+                maxWeight: SUPP_LIST[i].maxOrderWeight,
+                sumItemsWeight: SumWeight,
+                minPrice: SUPP_LIST[i].minOrderRiali,              
+                maxPrice: SUPP_LIST[i].maxOrderRiali,              
+                sumItemsPrice: SumPrice,
+                minNumber: SUPP_LIST[i].minOrderNumber,
+                maxNumber: SUPP_LIST[i].maxOrderNumber,
+                sumItemsNumber: SumNumber,
+              };
+              tempSup.push(SUPOBJ);
+            } 
+            else {
+              tempSup[indexSup].sumItemsWeight = SumWeight;
+              tempSup[indexSup].sumItemsPrice = SumPrice;
+              tempSup[indexSup].sumItemsNumber = SumNumber;
+            }
           } 
           else {
-            tempSup[indexSup].sumItemsWeight = SUM_MAXMIN.sumWeight;
-            tempSup[indexSup].sumItemsPrice = SUM_MAXMIN.sumPrice;
+            for (let j = 0; j < tempSup.length; j++)
+              if (tempSup[j].extSupplierId == extSupplierId) 
+                tempSup.splice(j, 1);
           }
-        } 
-        else {
-          for (let j = 0; j < tempSup.length; j++)
-            if (tempSup[j].extSupplierId == extSupplierId) 
-              tempSup.splice(j, 1);
-        }
 
-        return tempSup;
-      }
-    return null;
-  };
+          return tempSup;
+        }
+      return [];      
+    }
+
+  // fn_CalculateSumWeightPrice = async (
+  //   extSupplierId,
+  //   supplierName,
+  //   retailStoreId
+  // ) => {
+  //   const OBJ = {
+  //     ExtSupplierId: extSupplierId,
+  //     RetailStoreId: retailStoreId,
+  //   };
+  //   const SUM_MAXMIN = await calcSumWeightPriceOrderPointSupplier(
+  //     OBJ,
+  //     this.props.User.token
+  //   );
+  //   const SUPP_LIST = this.state.SupplierListMaxMinParam;
+
+  //   let tempSup = this.state.SupplierListSumMaxMinGridData;
+
+  //   for (let i = 0; i < SUPP_LIST.length; i++)
+  //     if (SUPP_LIST[i].extSupplierId == extSupplierId) {
+  //       // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i])+'\n'+JSON.stringify(SUM_MAXMIN));
+  //       if (
+  //         SUM_MAXMIN.sumPrice < SUPP_LIST[i].minOrderRiali ||
+  //         SUM_MAXMIN.sumPrice > SUPP_LIST[i].maxOrderRiali ||
+  //         SUM_MAXMIN.sumWeight < SUPP_LIST[i].minOrderWeight ||
+  //         SUM_MAXMIN.sumWeight > SUPP_LIST[i].maxOrderWeight ||
+  //         SUM_MAXMIN.sumNumber < SUPP_LIST[i].minOrderNumber ||
+  //         SUM_MAXMIN.sumNumber > SUPP_LIST[i].maxOrderNumber
+  //       ) {
+  //         let flagNew = true;
+  //         let indexSup=0
+  //         for (let j = 0; j < tempSup.length; j++)
+  //           if (tempSup[j].extSupplierId == extSupplierId) {
+  //             flagNew = false;
+  //             indexSup=j;
+  //             break;
+  //           }              
+  //         if (flagNew) {
+  //           const SUPOBJ = {
+  //             id: extSupplierId,
+  //             extSupplierId: extSupplierId,
+  //             supplierName: supplierName,
+  //             minWeight: SUPP_LIST[i].minOrderWeight,
+  //             maxWeight: SUPP_LIST[i].maxOrderWeight,
+  //             sumItemsWeight: SUM_MAXMIN.sumWeight,
+  //             minPrice: SUPP_LIST[i].minOrderRiali,              
+  //             maxPrice: SUPP_LIST[i].maxOrderRiali,              
+  //             sumItemsPrice: SUM_MAXMIN.sumPrice,
+  //             minNumber: SUPP_LIST[i].minOrderNumber,
+  //             maxNumber: SUPP_LIST[i].maxOrderNumber,
+  //             sumItemsNumber: SUM_MAXMIN.sumNumber,
+  //           };
+  //           tempSup.push(SUPOBJ);
+  //         } 
+  //         else {
+  //           tempSup[indexSup].sumItemsWeight = SUM_MAXMIN.sumWeight;
+  //           tempSup[indexSup].sumItemsPrice = SUM_MAXMIN.sumPrice;
+  //           tempSup[indexSup].sumItemsNumber = SUM_MAXMIN.sumNumber;
+  //         }
+  //       } 
+  //       else {
+  //         for (let j = 0; j < tempSup.length; j++)
+  //           if (tempSup[j].extSupplierId == extSupplierId) 
+  //             tempSup.splice(j, 1);
+  //       }
+
+  //       return tempSup;
+  //     }
+  //   return null;
+  // };
 
   grdOrderPointSupplier_onCellDblClick = async (e) => {
     const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);
@@ -512,20 +622,35 @@ class OrderSupplier extends React.Component {
   btnUpdateOrders_onClick = async () => {
     this.OpenCloseWait();
     // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
+    await this.fn_RemoveSuppierForConfirm(this.state.OrderPointSupplierEdited,this.state.SupplierListSumMaxMinGridData)
+    alert(JSON.stringify(this.state.OrderPointSupplierEdited))
     await updateGroupsOrderPointSupplier(
       this.state.OrderPointSupplierEdited,
       this.props.User.token
     );
-    this.setState({
-      OrderPointSupplierEdited: [],
+    this.setState({      
       ToastProps: {
         isToastVisible: true,
-        Message: ",ویرایش با موفقیت انجام گردید.",
-        Type: "success",
+        Message: (this.state.OrderPointSupplierEdited.length==0) ? "سفارشی برای ویرایش وجود ندارد" : ",ویرایش با موفقیت انجام گردید.",
+        Type: ( this.state.OrderPointSupplierEdited.length==0) ? "info" :"success",
       },
+      OrderPointSupplierEdited: ( this.state.OrderPointSupplierEdited.length==0) ? [] : this.state.OrderPointSupplierEdited,
     });
     this.OpenCloseWait();
   };
+
+  fn_RemoveSuppierForConfirm=async(orders,removeList)=>{    
+    for(let i=0;i<removeList.length;i++){    
+      let j=0;
+      while(orders.length>j){
+        if(orders[j].RetailStoreId==removeList[i].retailStoreId && orders[j].SupplierId==removeList[i].extSupplierId)
+          orders.splice(j, 1);
+        else
+          j++;
+      }
+    }
+    this.setState({OrderPointSupplierEdited:orders})
+  }
 
   btnNew_onClick = () => {
     this.setState({
@@ -551,6 +676,10 @@ class OrderSupplier extends React.Component {
   ModalOrderInventoryNewGroup_onClickAway = () => {
     this.setState({ stateModal_OrderSupplierNewGroup: false });
   };
+
+  ModalDetailOfPriceWeighNumber_onClickAway=()=>{
+    this.setState({stateModal_DetailOfPriceWeighNumber:false,})
+  }
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
@@ -715,7 +844,7 @@ class OrderSupplier extends React.Component {
                       rtlEnabled={true}
                       allowColumnResizing={true}
                       columnResizingMode="widget"
-                      onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}
+                      onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}                      
                       onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
                       onRowPrepared={this.grdOrderPointSupplier_onRowPrepared}
                     >
@@ -774,6 +903,7 @@ class OrderSupplier extends React.Component {
                   <table>
                     <tr>
                       {/* <th>کد تامین کننده</th> */}
+                      <th>نام فروشگاه</th>
                       <th>نام تامین کننده</th>
                       {/* <th>حداقل وزن</th>
                         <th>حداکثر وزن</th>
@@ -783,8 +913,9 @@ class OrderSupplier extends React.Component {
                         <th>جمع کل ریال کالاها</th> */}
                     </tr>
                     {this.state.SupplierListSumMaxMinGridData.map((item) => (
-                      <tr>
+                      <tr onClick={()=>this.setState({stateModal_DetailOfPriceWeighNumber:true,DetailOfPriceWeighNumber:item})}>
                         {/* <td>{item.extSupplierId}</td> */}
+                        <td>{item.retailStoreName}</td>
                         <td>{item.supplierName}</td>
                         {/* <td>{item.minWeight}</td>
                           <td>{item.maxWeight}</td>
@@ -884,6 +1015,77 @@ class OrderSupplier extends React.Component {
                     }}
                   >
                     <OrderSupplierNewGroup />
+                  </Row>
+                </ModalBody>
+              </Modal>
+            </Col>
+          </Row>
+        )}
+
+        {this.state.stateModal_DetailOfPriceWeighNumber && (
+          <Row className="text-center">
+            <Col>
+              <Modal
+                isOpen={this.state.stateModal_DetailOfPriceWeighNumber}
+                toggle={this.ModalDetailOfPriceWeighNumber_onClickAway}
+                centered={true}
+                dir="rtl"
+                size="xl"
+              >
+                <ModalHeader
+                  toggle={this.ModalDetailOfPriceWeighNumber_onClickAway}
+                >
+                  جزئیات محدودیت تامین کننده
+                </ModalHeader>
+                <ModalBody>
+                  <Row
+                    className="standardPadding"
+                    style={{
+                      // overflowY: "scroll",
+                      maxHeight: "750px",
+                    }}
+                  >
+                    <Row>
+                      <Col>
+                        نام فروشگاه: {this.state.DetailOfPriceWeighNumber.retailStoreName}
+                      </Col>
+                      <Col>
+                        نام تامین کننده: {this.state.DetailOfPriceWeighNumber.supplierName}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        حداقل سفارش وزنی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.minWeight,3)}
+                      </Col>
+                      <Col>
+                        حداکثر سفارش وزنی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.maxWeight,3)}
+                      </Col>                      
+                      <Col>
+                        جمع سفارش وزنی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.sumItemsWeight,3)}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        حداقل سفارش ریالی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.minPrice,3)}
+                      </Col>
+                      <Col>
+                        حداکثر سفارش ریالی{Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.maxPrice,3)}
+                      </Col>
+                      <Col>
+                        جمع سفارش ریالی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.sumItemsPrice,3)}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        حداقل سفارش تعدادی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.minNumber,3)}
+                      </Col>
+                      <Col>
+                        حداکثر سفارش تعدادی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.maxNumber,3)}
+                      </Col>
+                      <Col>
+                        جمع سفارش تعدادی: {Gfn_num3Seperator(this.state.DetailOfPriceWeighNumber.sumItemsNumber,3)}
+                      </Col>
+                    </Row>
                   </Row>
                 </ModalBody>
               </Modal>

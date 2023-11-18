@@ -15,7 +15,7 @@ export const DataGridAnswerColumns = [
         allowEditing: false,
     },
     {
-        dataField: "date",
+        dataField: "persianDate",
         caption: "تاریخ",
         allowEditing: false,
     }

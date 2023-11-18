@@ -69,4 +69,38 @@ export async function questionList(questionTypeId, Token) {
     }
     return 0;
   }
+
+  export async function notAnsweredQuestionList(answerId, userId, questionTypeId, Token) {
+    const url = window.apiAddress + "/Question/notAnsweredQuestionList?answerId=" + answerId + "&userId=" + userId + "&questionTypeId=" + questionTypeId;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Token}`,
+      },
+    });
+    const result = await response.json();
+    if (result.status == "Success") {
+      console.log("All notAnsweredQuestionList" + JSON.stringify(result.data));
+      return result.data;
+    }
+    return null;
+  }
+
+  export async function answeredQuestionList(answerId, userId, questionTypeId, Token) {
+    const url = window.apiAddress + "/Question/answeredQuestionList?answerId=" + answerId + "&userId=" + userId + "&questionTypeId=" + questionTypeId;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Token}`,
+      },
+    });
+    const result = await response.json();
+    if (result.status == "Success") {
+      console.log("All answeredQuestionList" + JSON.stringify(result.data));
+      return result.data;
+    }
+    return null;
+  }
   

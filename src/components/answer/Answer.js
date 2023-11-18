@@ -145,7 +145,7 @@ class Answer extends React.Component {
         })
     }
 
-    grdAnswer_onClickRow = (e) => {
+    grdAnswer_ondblClickRow = (e) => {
         //alert(JSON.stringify(e.data))
         this.setState({
             AnswerId:e.data.id,
@@ -213,7 +213,7 @@ class Answer extends React.Component {
                                     showBorders={true}
                                     rtlEnabled={true}
                                     allowColumnResizing={true}
-                                    onRowClick={this.grdAnswer_onClickRow}
+                                    onRowDblClick={this.grdAnswer_ondblClickRow}
                                     height={DataGridDefaultHeight}
                                 >
                                     <Scrolling
