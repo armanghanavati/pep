@@ -220,34 +220,34 @@ class NewAnswer extends React.Component {
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
-    // document.getElementById("errQuestionType").innerHTML = "";
-    // document.getElementById("errLocation").innerHTML = "";
-    // document.getElementById("errSupervisor").innerHTML = "";
-    // document.getElementById("errManager").innerHTML = "";
+    document.getElementById("errQuestionType").innerHTML = "";
+    document.getElementById("errLocation").innerHTML = "";
+    document.getElementById("errSupervisor").innerHTML = "";
+    document.getElementById("errManager").innerHTML = "";
 
-    // if (this.state.cmbQuestionTypeValue == null) {
-    //   document.getElementById("errQuestiontype").innerHTML =
-    //     "نوع سوال را انتخاب نمائید";
-    //   flag = false;
-    // }
+    if (this.state.cmbQuestionTypeValue == null) {
+      document.getElementById("errQuestionType").innerHTML =
+        "نوع سوال را انتخاب نمائید";
+      flag = false;
+    }
 
-    // if (this.state.cmbLocationValue == null) {
-    //   document.getElementById("errLocation").innerHTML =
-    //     "فروشگاه را انتخاب نمایید";
-    //   flag = false;
-    // }
+    if (this.state.cmbLocationValue == null) {
+      document.getElementById("errLocation").innerHTML =
+        "فروشگاه را انتخاب نمایید";
+      flag = false;
+    }
 
-    // if (this.state.cmbSupervisorValue == null) {
-    //   document.getElementById("errSupervisor").innerHTML =
-    //     "سوپروایزر را انتخاب نمایید";
-    //   flag = false;
-    // }
+    if (this.state.cmbSupervisorValue == null) {
+      document.getElementById("errSupervisor").innerHTML =
+        "سوپروایزر را انتخاب نمایید";
+      flag = false;
+    }
 
-    // if (this.state.cmbManagerValue == null) {
-    //   document.getElementById("errManager").innerHTML =
-    //     "سرپرست فروشگاه را انتخاب نمایید";
-    //   flag = false;
-    // }
+    if (this.state.cmbManagerValue == null) {
+      document.getElementById("errManager").innerHTML =
+        "سرپرست فروشگاه را انتخاب نمایید";
+      flag = false;
+    }
     return flag;
   };
 
