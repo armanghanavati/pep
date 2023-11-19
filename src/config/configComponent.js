@@ -34,6 +34,8 @@ import OrdersByUpload from '../pages/OrdersByUpload'
 import SupplierLocationContacts from '../pages/SupplierLocationContacts'
 import Opinions from '../pages/Opinions'
 import RealEstates from '../pages/RealEstates'
+import Questions from '../pages/Questions'
+import Answers from '../pages/Answers'
 
 export const REAL_COMPONENT = [
   {
@@ -189,6 +191,14 @@ export const REAL_COMPONENT = [
   {
     strComponent: "RealEstates",
     orgComponent: <RealEstates/>,
-  }     
+  },
+  {
+    strComponent: "Questions",
+    orgComponent: <Questions/>,
+  },
+  {
+    strComponent: "Answers",
+    orgComponent: <Answers/>,
+  }         
 ];
 

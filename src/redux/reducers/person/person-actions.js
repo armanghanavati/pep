@@ -224,3 +224,19 @@ export async function deletePersonShift(shiftId, Token) {
   return 0;
 }
 
+export async function supervisorList(locationId, positionId, Token) {
+  const url = window.apiAddress + "/Person/supervisorList?locationId=" + locationId + "&positionId=" + positionId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All supervisor" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}

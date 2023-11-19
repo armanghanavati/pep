@@ -137,3 +137,22 @@ export async function removeLocationFromUser(userId, locationId, Token) {
     }
     return 0;
   }
+
+  export async function locationListByLocationType(userId, companyId, locationType,Token){
+    const url=window.apiAddress+"/UserLocation/userLocationListByLocationType?userId=" + userId + "&companyId=" + companyId + "&locationType=" + locationType  
+    const response = await fetch(
+        url,
+        {
+            method: "GET",                        
+            headers: {               
+              'Authorization': `Bearer ${Token}`
+            },
+        }
+      );        
+    const result= await response.json();
+    if(result.status=="Success"){
+      console.log('All userLocation'+JSON.stringify(result.data));
+      return result.data;  
+    }
+    return null;
+  }

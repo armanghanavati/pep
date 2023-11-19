@@ -133,13 +133,13 @@ class Person extends React.Component {
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "location.update":
+          case "person.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "location.insert":
+          case "person.insert":
             this.setState({ stateDisable_btnAdd: true });
             break;
-          case "location.show":
+          case "person.show":
             this.setState({ stateDisable_show: true });
             break;
         }
