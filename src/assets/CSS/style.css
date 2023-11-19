@@ -100,3 +100,7 @@
   border: 1px solid #313131;
   width: 100%;
 }
+
+.line {
+  border-bottom: 1px solid #b1b1b1;  
+}
