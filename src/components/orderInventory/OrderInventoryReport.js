@@ -83,6 +83,10 @@ import {
   logsOPIByOPIid,
 } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
 
+import { supplierComboListByCompanyId } from "../../redux/reducers/supplier/supplier-action";
+
+import OrderInventoryLogs from './OrderInventoryLogs'
+
 import {
   Gfn_BuildValueComboMulti,
   Gfn_ConvertComboForAll,
@@ -117,6 +121,7 @@ class OrderInventoryReport extends React.Component {
       cmbItemsValue: null,
       OrderInventoryGridData: null,                  
       stateEnable_show: false,      
+      stateModal_LogsOfOPI: false,
       FromDate: new Date(),
         ToDate: new Date(),
         FromDateapi: "",
@@ -167,7 +172,7 @@ class OrderInventoryReport extends React.Component {
     );
 
     this.setState({      
-      cmbSupplier: await supplierOrderInventoryComboList(
+      cmbSupplier: await supplierComboListByCompanyId(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
@@ -255,6 +260,7 @@ class OrderInventoryReport extends React.Component {
         LogsOfOPI,
       })
     );
+    this.setState({ stateModal_LogsOfOPI: true })
   };
   
   btnExportExcel_onClick=()=>{
@@ -269,6 +275,10 @@ class OrderInventoryReport extends React.Component {
   DatePickerTo_onChange = (params) => {        
     this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) })
 }
+
+  ModalOrderInventoryLogs_onClickAway = () => {
+    this.setState({ stateModal_LogsOfOPI: false });
+  };
 
   render() {
     locale("fa-IR");
@@ -447,7 +457,35 @@ class OrderInventoryReport extends React.Component {
               </Col>
             </Row>           
           </Row>
-        </Card>        
+        </Card>    
+        {this.state.stateModal_LogsOfOPI && (
+          <Row className="text-center">
+            <Col>
+              <Modal
+                style={{ direction: "rtl" }}
+                isOpen={this.state.stateModal_LogsOfOPI}
+                toggle={this.ModalOrderInventoryLogs_onClickAway}
+                centered={true}
+                size="lg"
+              >
+                <ModalHeader toggle={this.ModalOrderInventoryLogs_onClickAway}>
+                  لیست تغییرات سفارش
+                </ModalHeader>
+                <ModalBody>
+                  <Row
+                    className="standardPadding"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "450px",
+                    }}
+                  >
+                    <OrderInventoryLogs />
+                  </Row>
+                </ModalBody>
+              </Modal>
+            </Col>
+          </Row>
+        )}    
       </div>
     );
   }
