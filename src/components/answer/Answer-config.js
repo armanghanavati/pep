@@ -18,5 +18,10 @@ export const DataGridAnswerColumns = [
         dataField: "persianDate",
         caption: "تاریخ",
         allowEditing: false,
+    },
+    {
+        dataField: "time",
+        caption: "ساعت",
+        allowEditing: false,
     }
 ];

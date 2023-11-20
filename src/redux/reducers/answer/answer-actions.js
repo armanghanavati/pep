@@ -51,3 +51,65 @@ export async function answerListById(answerId, Token) {
   }
   return null;
 }
+
+export async function confirmAnswer(Object, Token){
+  const url=window.apiAddress+"/Answer/confirmAnswer"            
+  const response = await fetch(
+      url,
+      {
+          method: "PATCH",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('answer confirm update result='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return 0; 
+}
+
+export async function deleteAnswer(answerId, Token){
+  const url=window.apiAddress+"/Answer/deleteAnswer?answerId=" + answerId              
+  const response = await fetch(
+      url,
+      {
+          method: "DELETE",              
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('Answer delete result='+JSON.stringify(result.data));
+    return result.message;  
+  }
+  return 0; 
+}
+
+export async function updateAnswer(Object, Token){
+  const url=window.apiAddress+"/Answer/updateAnswer"              
+  const response = await fetch(
+      url,
+      {
+          method: "PATCH",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log('Answer update result='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return 0; 
+}

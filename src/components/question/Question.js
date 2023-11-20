@@ -156,15 +156,15 @@ class Question extends React.Component {
     })
   }
 
-  fn_unitList=async()=>{
+  fn_unitList = async () => {
     this.setState({
-      cmbUnit:await unitList(this.props.User.token)
+      cmbUnit: await unitList(this.props.User.token)
     })
   }
 
-  fn_zoneList=async()=>{
+  fn_zoneList = async () => {
     this.setState({
-      cmbZone:await zoneList(this.props.User.token)
+      cmbZone: await zoneList(this.props.User.token)
     })
   }
 
@@ -172,7 +172,7 @@ class Question extends React.Component {
     this.setState({
       txtPriorityValue: e.data.priority,
       cmbZoneValue: e.data.zoneId,
-      txtScoreValue: e.data.score,
+      txtScoreValue: e.data.weight,
       cmbQuestionTypeValue: e.data.questionTypeId,
       cmbUnitValue: e.data.unitId,
       txtQuestionValue: e.data.question,
@@ -379,11 +379,11 @@ class Question extends React.Component {
             <Row className="standardPadding">
 
               <Col xs="auto">
-                <Label className="standardLabelFont">نوع سوالات</Label>
+                <Label className="standardLabelFont">نوع بازرسی</Label>
                 <SelectBox
                   dataSource={this.state.cmbQuestionType}
                   displayExpr="name"
-                  placeholder="نوع سوالات"
+                  placeholder="نوع بازرسی"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
@@ -435,11 +435,11 @@ class Question extends React.Component {
                 </Row>
               </Col>
               <Col xs="auto">
-                <Label className="standardLabelFont">وزن/نمره</Label>
+                <Label className="standardLabelFont">وزن</Label>
                 <TextBox
                   value={this.state.txtScoreValue}
                   showClearButton={true}
-                  placeholder="وزن/نمره"
+                  placeholder="وزن"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtScore_onChange}

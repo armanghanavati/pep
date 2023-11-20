@@ -61,6 +61,7 @@ import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import NewAnswer from "./NewAnswer";
+import { zoneList } from "../../redux/reducers/zone/zone-actions";
 
 class Answer extends React.Component {
     constructor(props) {
@@ -73,6 +74,7 @@ class Answer extends React.Component {
             stateDisable_btnUpdate: false,
             stateDisable_btnDelete: false,
             stateDisable_show: false,
+            stateDisable_showAdmin:false,
             ToastProps: {
                 isToastVisible: false,
                 Message: "",
@@ -94,7 +96,7 @@ class Answer extends React.Component {
     fn_updateGrid = async () => {
         if (this.state.stateDisable_show) {
             this.setState({
-                AnswerGridData: await answerList(this.props.User.userId, this.props.User.token),
+                AnswerGridData: await answerList(this.state.stateDisable_showAdmin ? 0 : this.props.User.userId, this.props.User.token),
             });
         }
     };
@@ -116,6 +118,9 @@ class Answer extends React.Component {
                     case "answer.show":
                         this.setState({ stateDisable_show: true });
                         break;
+                    case "answer.showAdmin":
+                            this.setState({ stateDisable_showAdmin: true });
+                            break;
                 }
             }
     };

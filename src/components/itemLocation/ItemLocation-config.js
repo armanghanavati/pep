@@ -40,6 +40,11 @@ export const DataGridItemLocationColumns = [
     allowEditing: false,
   },
   {
+    dataField: "stateName",
+    caption: "استان",
+    allowEditing: false,
+  },
+  {
     dataField: "inventoryName",
     caption: "نام انبار",
     allowEditing: false,

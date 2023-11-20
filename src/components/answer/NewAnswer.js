@@ -56,7 +56,7 @@ import {
   questionTypeList
 } from "../../redux/reducers/question/questionType-actions";
 import {
-  addAnswer, answerListById,
+  addAnswer, answerListById, confirmAnswer, deleteAnswer, updateAnswer
 } from "../../redux/reducers/answer/answer-actions"
 import {
   locationListByLocationType
@@ -64,7 +64,7 @@ import {
 import {
   supervisorList
 } from "../../redux/reducers/person/person-actions"
-import { DataGridQuestionColumns } from "./Question-config";
+import { DataGridQuestionColumns } from "./NewAnswer-config";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -87,6 +87,8 @@ class NewAnswer extends React.Component {
       stateDisable_btnUpdate: false,
       stateDisable_btnDelete: false,
       stateDisable_show: false,
+      stateDisable_btnConfirm: true,
+      stateDisable_showAdmin: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -103,6 +105,8 @@ class NewAnswer extends React.Component {
       ItemsListUpdated: [],
       stateAnswer_show: false,
       AddedAnswerId: null,
+      cmbZone:null,
+      cmbZoneValue:null
     };
   }
   async componentDidMount() {
@@ -114,16 +118,24 @@ class NewAnswer extends React.Component {
   }
 
   fn_loadData = async (answerId) => {
+    
     const answer = await answerListById(answerId, this.props.User.token);
+    alert(JSON.stringify(answer))
+    var t = 0;
+    this.state.cmbQuestionType.forEach(element => {
+      if (element.id == answer.questionTypeId) t = element.locationTypeId;
+    })
     this.setState({
       cmbQuestionTypeValue: answer.questionTypeId,
-      cmbLocation: await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, 1, this.props.User.token),
+      cmbLocation: await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, t, this.props.User.token),
       cmbLocationValue: answer.locationId,
       cmbSupervisor: await supervisorList(answer.locationId, 5, this.props.User.token), // 5 سوپروایزر
       cmbSupervisorValue: answer.supervisorId,
       cmbManager: await supervisorList(answer.locationId, 6, this.props.User.token), // 6 سرپرست فروشگاه
       cmbManagerValue: answer.storeManagerId,
-      QuestionGridData: await answeredQuestionList(answerId, this.props.User.userId, answer.questionTypeId, this.props.User.token),
+      cmbZone:await zoneList(this.props.User.token),
+      cmbZoneValue:answer.zoneId,
+      QuestionGridData: await answeredQuestionList(answerId, this.props.User.userId, answer.questionTypeId, answer.zoneId, this.props.User.token),
     });
   }
 
@@ -143,6 +155,12 @@ class NewAnswer extends React.Component {
             break;
           case "answer.show":
             this.setState({ stateDisable_show: true });
+            break;
+          case "answer.confirm":
+            this.setState({ stateDisable_confirm: true });
+            break;
+          case "answer.showAdmin":
+            this.setState({ stateDisable_showAdmin: true });
             break;
         }
       }
@@ -169,7 +187,8 @@ class NewAnswer extends React.Component {
 
   fn_questionTypeList = async () => {
     this.setState({
-      cmbQuestionType: await questionTypeList(this.props.User.userId, this.props.User.token)
+      cmbQuestionType: await questionTypeList(this.props.User.userId, this.props.User.token),
+      cmbZone: await zoneList(this.props.User.token)
     })
   }
 
@@ -217,6 +236,12 @@ class NewAnswer extends React.Component {
     })
   }
 
+  cmbZone_onChange=(e)=>{
+    this.setState({
+      cmbZoneValue:e
+    })
+  }
+
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
@@ -258,7 +283,8 @@ class NewAnswer extends React.Component {
         supervisorId: this.state.cmbSupervisorValue,
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
-        userId: this.props.User.userId
+        userId: this.props.User.userId,
+        zoneId:this.state.cmbZoneValue
       };
       const RESULT = await addAnswer(data, this.props.User.token);
       this.setState({
@@ -284,8 +310,10 @@ class NewAnswer extends React.Component {
         supervisorId: this.state.cmbSupervisorValue,
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
+        id: this.props.answerId,
+        zoneId:this.state.cmbZoneValue
       };
-      const RESULT = await updateQuestion(data, this.props.User.token);
+      const RESULT = await updateAnswer(data, this.props.User.token);
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -301,22 +329,23 @@ class NewAnswer extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  //   btnDelete_onClick = async () => {
-  //     const MSG = await deleteAnswer(
-  //       this.state.RowSelected.id,
-  //       this.props.User.token
-  //     );
-  //     this.setState({
-  //       ToastProps: {
-  //         isToastVisible: true,
-  //         Message: MSG,
-  //         Type: "success",
-  //       },
-  //     });
-  //     this.fn_updateGrid(this.state.cmbQuestionTypeValue);
-  //   };
+  btnDelete_onClick = async () => {
+    const MSG = await deleteAnswer(
+      this.props.answerId,
+      this.props.User.token
+    );
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: MSG,
+        Type: "success",
+      },
+      stateAnswer_show: true
+    });
+  };
 
   grdQuestion_onUpdateRow = async (params) => {
+    //alert(JSON.stringify(params.data))
     var data = {
       questionId: params.data.id,
       answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
@@ -324,24 +353,59 @@ class NewAnswer extends React.Component {
       dec: params.data.dec
     };
     var minDesc = 0;
+    var min = 0;
+    var max = 0;
     this.state.cmbQuestionType.forEach(element => {
-      if (element.id == this.state.cmbQuestionTypeValue) minDesc = element.minDesc;
+      if (element.id == this.state.cmbQuestionTypeValue) {
+        minDesc = element.minDesc;
+        min = params.data.min;
+        max = params.data.max
+      }
     })
-
-    if (params.data.score < minDesc && params.data.dec == null)
-      alert("توضیحات باید وارد شود")
-    else {
-      var result = await addAnswerDetail(data, this.props.User.token);
+    if (params.data.score > max || params.data.score < min) {
+      alert("نمره باید از " + min + "تا " + max + "باشد ")
       if (this.props.answerId == null)
         this.fn_loadData(this.state.AddedAnswerId)
       else
         this.fn_loadData(this.props.answerId)
+    }
+    else {
+      if (params.data.score < minDesc && params.data.dec == null)
+        alert("توضیحات باید وارد شود")
+      else {
+        var result = await addAnswerDetail(data, this.props.User.token);
+        if (this.props.answerId == null)
+          this.fn_loadData(this.state.AddedAnswerId)
+        else
+          this.fn_loadData(this.props.answerId)
+      }
     }
   };
   btnInsList_onClick = async () => {
     this.setState({
       stateAnswer_show: true
     });
+  }
+
+  btnConfirm_onClick = async () => {
+    const data = {
+      answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
+      confirm: 1
+    };
+
+    const RESULT = await confirmAnswer(data, this.props.User.token);
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: RESULT > 0 ? "ثبت نهایی با موفقیت انجام گردید" : "عدم ثبت",
+        Type: RESULT > 0 ? "success" : "error",
+      },
+      stateAnswer_show: true
+    });
+    if (this.props.answerId == null)
+      this.fn_loadData(this.state.AddedAnswerId)
+    else
+      this.fn_loadData(this.props.answerId)
   }
   render() {
     return (
@@ -359,20 +423,39 @@ class NewAnswer extends React.Component {
           <Card className="shadow bg-white border pointer">
             <Row className="standardPadding">
               <Row>
-                <Label>سوالات</Label>
+                <Label>بازرسی</Label>
               </Row>
               <Row className="standardPadding">
                 <Col xs="auto">
-                  <Label className="standardLabelFont">نوع سوالات</Label>
+                  <Label className="standardLabelFont">نوع بازرسی</Label>
                   <SelectBox
                     dataSource={this.state.cmbQuestionType}
                     displayExpr="name"
-                    placeholder="نوع سوالات"
+                    placeholder="نوع بازرسی"
                     valueExpr="id"
                     searchEnabled={true}
                     rtlEnabled={true}
                     onValueChange={this.cmbQuestionType_onChange}
                     value={this.state.cmbQuestionTypeValue}
+                  />
+                  <Row>
+                    <Label
+                      id="errQuestionType"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">حوزه</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbZone}
+                    displayExpr="name"
+                    placeholder="حوزه"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbZone_onChange}
+                    value={this.state.cmbZoneValue}
                   />
                   <Row>
                     <Label
@@ -450,7 +533,7 @@ class NewAnswer extends React.Component {
                     onClick={this.btnInsList_onClick}
                   />
                 </Col>
-                {this.state.stateDisable_btnUpdate && (
+                {this.state.stateDisable_btnAdd && (
                   this.props.answerId == null && (
                     <Col xs="auto">
                       <Button
@@ -463,6 +546,33 @@ class NewAnswer extends React.Component {
                       />
                     </Col>
                   ))}
+
+
+                {this.state.stateDisable_btnUpdate && (
+
+                  <Col xs="auto">
+                    <Button
+                      icon={UpdateIcon}
+                      text="ذخیره تغییرات"
+                      type="success"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnUpdate_onClick}
+                    />
+                  </Col>
+                )}
+                {this.state.stateDisable_btnDelete && (
+                  <Col xs="auto">
+                    <Button
+                      icon={DeleteIcon}
+                      text="حذف"
+                      type="danger"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnDelete_onClick}
+                    />
+                  </Col>
+                )}
               </Row>
               <Row>
                 <Col>
@@ -478,7 +588,7 @@ class NewAnswer extends React.Component {
           <Card className="shadow bg-white border pointer">
             <Row className="standardPadding">
               <Row>
-                <Label className="title">لیست سوالات {this.state.cmbQuestionTypeValue != null && this.state.cmbQuestionType.map(p => p.id == this.state.cmbQuestionTypeValue ? p.name : '')}</Label>
+                <Label className="title">لیست {this.state.cmbQuestionTypeValue != null && this.state.cmbQuestionType.map(p => p.id == this.state.cmbQuestionTypeValue ? p.name : '')}</Label>
               </Row>
               <Row>
                 <Col xs="auto" className="standardMarginRight">
@@ -511,20 +621,20 @@ class NewAnswer extends React.Component {
                   </DataGrid>
                 </Col>
               </Row>
-              {/* {this.state.stateDisable_btnAdd && (
+              {this.state.stateDisable_btnConfirm && !this.state.stateDisable_showAdmin && (
                 <Row>
                   <Col xs="auto" className="standardMarginRight">
                     <Button
                       icon={UpdateIcon}
-                      text="ذخیره تغییرات"
+                      text="ثبت نهایی"
                       type="success"
                       stylingMode="contained"
                       rtlEnabled={true}
-                      onClick={this.btnUpdateOrders_onClick}
+                      onClick={this.btnConfirm_onClick}
                     />
                   </Col>
                 </Row>
-              )} */}
+              )}
             </Row >
           </Card>
         </div>

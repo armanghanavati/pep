@@ -1,8 +1,9 @@
 export const DataGridQuestionColumns = [
     {
         dataField: "row",
-        caption: "ردیف",
+        caption: "",
         allowEditing: false,
+        width:30
     },
     {
         dataField: "question",
@@ -11,8 +12,9 @@ export const DataGridQuestionColumns = [
     },
     {
         dataField: "score",
-        caption: "نمره دهی",
+        caption: "نمره",
         allowEditing: true,
+        width:50
     },
     {
         dataField: "dec",
@@ -23,10 +25,12 @@ export const DataGridQuestionColumns = [
         dataField: "zone",
         caption: "حوزه",
         allowEditing: false,
+        width:70
     },
     {
         dataField: "unit",
         caption: "متولی",
         allowEditing: false,
+        width:70
     }
 ];

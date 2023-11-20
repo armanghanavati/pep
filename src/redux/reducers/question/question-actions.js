@@ -87,8 +87,8 @@ export async function questionList(questionTypeId, Token) {
     return null;
   }
 
-  export async function answeredQuestionList(answerId, userId, questionTypeId, Token) {
-    const url = window.apiAddress + "/Question/answeredQuestionList?answerId=" + answerId + "&userId=" + userId + "&questionTypeId=" + questionTypeId;
+  export async function answeredQuestionList(answerId, userId, questionTypeId, zoneId, Token) {
+    const url = window.apiAddress + "/Question/answeredQuestionList?answerId=" + answerId + "&userId=" + userId + "&questionTypeId=" + questionTypeId + "&zoneId=" + zoneId;
     const response = await fetch(url, {
       method: "GET",
       headers: {

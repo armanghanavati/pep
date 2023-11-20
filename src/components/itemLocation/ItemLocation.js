@@ -97,6 +97,7 @@ import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
+import { stateList } from "../../redux/reducers/state/state-actions";
 
 const dateLabel = { "aria-label": "Date" };
 
@@ -140,6 +141,8 @@ class ItemLocation extends React.Component {
       cmbInventory: null,
       cmbInventoryvalue: null,
       stateWait: false,
+      cmbState:null,
+      cmbStateValue:null
     };
   }
 
@@ -150,6 +153,7 @@ class ItemLocation extends React.Component {
     await this.fn_supplierList();
     this.fn_itemGroupList();
     this.fn_inventoryList();
+    await this.fn_stateList();
   }
 
   fn_locationList = async () => {
@@ -190,6 +194,12 @@ class ItemLocation extends React.Component {
   fn_itemList = async () => {
     this.setState({});
   };
+
+  fn_stateList=async()=>{
+    this.setState({
+      cmbState:await stateList(this.props.User.token)
+    })
+  }
 
   OpenCloseWait() {
     this.setState({ stateWait: !this.state.stateWait });
@@ -302,6 +312,12 @@ class ItemLocation extends React.Component {
     });
   };
 
+  cmbState_onChange=async(e)=>{
+    this.setState({
+      cmbStateValue: e
+    })
+  }
+
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
@@ -340,6 +356,7 @@ class ItemLocation extends React.Component {
       supplierId: this.state.SupplierId,
       itemGroupId: this.state.ItemGroupId,
       inventoryId: this.state.cmbInventoryvalue,
+      stateId:this.state.cmbStateValue
     };
     //alert(JSON.stringify(data))
     var RESULT = 0;
@@ -580,7 +597,7 @@ class ItemLocation extends React.Component {
                     className="standardLabelFont errMessage"
                   />
                 </Col>
-                <Col xs={4}>
+                <Col xs={3}>
                   <Label className="standardLabelFont">کالا</Label>
                   <SelectBox
                     dataSource={this.state.cmbItem}
@@ -591,6 +608,23 @@ class ItemLocation extends React.Component {
                     rtlEnabled={true}
                     onValueChange={this.cmbItem_onChange}
                     value={this.state.cmbItemValue}
+                  />
+                  <Label
+                    id="errItem"
+                    className="standardLabelFont errMessage"
+                  />
+                </Col>
+                <Col xs={3}>
+                  <Label className="standardLabelFont">استان</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbState}
+                    displayExpr="name"
+                    placeholder="استان"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbState_onChange}
+                    value={this.state.cmbStateValue}
                   />
                   <Label
                     id="errItem"

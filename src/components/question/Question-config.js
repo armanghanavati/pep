@@ -8,30 +8,36 @@ export const DataGridQuestionColumns = [
         dataField: "priority",
         caption: "اولویت",
         allowEditing: false,
+        width:80
     },
     {
         dataField: "zone",
         caption: "حوزه",
         allowEditing: false,
+        width:150
     },
     {
-        dataField: "score",
-        caption: "نمره",
+        dataField: "weight",
+        caption: "وزن",
         allowEditing: false,
+        width:50
     },
     {
         dataField: "questionType",
         caption: "نوع سوال",
         allowEditing: false,
+        width:140
     },
     {
         dataField: "unit",
         caption: "مسئول",
         allowEditing: false,
+        width:120
     },
     {
         dataField: "isActive",
         caption: "فعال",
         allowEditing: false,
+        width:50
     }
 ];
