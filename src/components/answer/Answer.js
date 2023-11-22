@@ -74,7 +74,7 @@ class Answer extends React.Component {
             stateDisable_btnUpdate: false,
             stateDisable_btnDelete: false,
             stateDisable_show: false,
-            stateDisable_showAdmin:false,
+            stateDisable_show_admin:false,
             ToastProps: {
                 isToastVisible: false,
                 Message: "",
@@ -96,7 +96,7 @@ class Answer extends React.Component {
     fn_updateGrid = async () => {
         if (this.state.stateDisable_show) {
             this.setState({
-                AnswerGridData: await answerList(this.state.stateDisable_showAdmin ? 0 : this.props.User.userId, this.props.User.token),
+                AnswerGridData: await answerList(this.state.stateDisable_show_admin ? 0 : this.props.User.userId, this.props.User.token),
             });
         }
     };
@@ -118,8 +118,8 @@ class Answer extends React.Component {
                     case "answer.show":
                         this.setState({ stateDisable_show: true });
                         break;
-                    case "answer.showAdmin":
-                            this.setState({ stateDisable_showAdmin: true });
+                    case "answer.show_admin":
+                            this.setState({ stateDisable_show_admin: true });
                             break;
                 }
             }
@@ -177,6 +177,12 @@ class Answer extends React.Component {
         this.setState({ ToastProps: { isToastVisible: false } });
     };
 
+    grdAnswer_onRowPrepared = (e) => {
+        if (e.rowType === "data" && e.data.confirm == 1)
+          e.rowElement.style.backgroundColor = "#60c77f";
+      };
+    
+
     render() {
         return (
             this.state.stateNewAnswer_show  == false ?  (
@@ -219,6 +225,7 @@ class Answer extends React.Component {
                                     rtlEnabled={true}
                                     allowColumnResizing={true}
                                     onRowDblClick={this.grdAnswer_ondblClickRow}
+                                    onRowPrepared={this.grdAnswer_onRowPrepared}
                                     height={DataGridDefaultHeight}
                                 >
                                     <Scrolling

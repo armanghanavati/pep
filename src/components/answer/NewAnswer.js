@@ -62,19 +62,21 @@ import {
   locationListByLocationType
 } from "../../redux/reducers/userLocation/userLocation-actions"
 import {
+  personList,
   supervisorList
 } from "../../redux/reducers/person/person-actions"
 import { DataGridQuestionColumns } from "./NewAnswer-config";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
-import PlusNewIcon from "../../assets/images/icon/plus.png";
-import SaveIcon from "../../assets/images/icon/save.png";
-import UpdateIcon from "../../assets/images/icon/update.png";
-import DeleteIcon from "../../assets/images/icon/delete.png";
 import { unitList } from "../../redux/reducers/unit/unit-actions";
 import { zoneList } from "../../redux/reducers/zone/zone-actions";
 import Answer from "./Answer";
 import { addAnswerDetail } from "../../redux/reducers/answerDetail/answerDetail-actions";
+import PlusNewIcon from "../../assets/images/icon/plus.png";
+import SaveIcon from "../../assets/images/icon/save.png";
+import UpdateIcon from "../../assets/images/icon/update.png";
+import DeleteIcon from "../../assets/images/icon/delete.png";
+import StartIcon from "../../assets/images/icon/plus.png";
 
 class NewAnswer extends React.Component {
   constructor(props) {
@@ -87,8 +89,8 @@ class NewAnswer extends React.Component {
       stateDisable_btnUpdate: false,
       stateDisable_btnDelete: false,
       stateDisable_show: false,
-      stateDisable_btnConfirm: true,
-      stateDisable_showAdmin: false,
+      stateDisable_btnConfirm: false,
+      stateDisable_show_admin: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -105,8 +107,9 @@ class NewAnswer extends React.Component {
       ItemsListUpdated: [],
       stateAnswer_show: false,
       AddedAnswerId: null,
-      cmbZone:null,
-      cmbZoneValue:null
+      cmbZone: null,
+      cmbZoneValue: null,
+      confirm: null
     };
   }
   async componentDidMount() {
@@ -118,23 +121,24 @@ class NewAnswer extends React.Component {
   }
 
   fn_loadData = async (answerId) => {
-    
     const answer = await answerListById(answerId, this.props.User.token);
-    alert(JSON.stringify(answer))
-    var t = 0;
+    var questionTypeId = 0;
     this.state.cmbQuestionType.forEach(element => {
-      if (element.id == answer.questionTypeId) t = element.locationTypeId;
+      if (element.id == answer.questionTypeId) questionTypeId = element.locationTypeId;
     })
+    //alert(JSON.stringify(answer))
     this.setState({
+      confirm: answer.confirm,
+      cmbQuestionType:[{id:answer.questionTypeId, name:answer.questionTypeName, minDesc:answer.minDesc, min:answer.min, max:answer.max}],
       cmbQuestionTypeValue: answer.questionTypeId,
-      cmbLocation: await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, t, this.props.User.token),
-      cmbLocationValue: answer.locationId,
-      cmbSupervisor: await supervisorList(answer.locationId, 5, this.props.User.token), // 5 سوپروایزر
-      cmbSupervisorValue: answer.supervisorId,
-      cmbManager: await supervisorList(answer.locationId, 6, this.props.User.token), // 6 سرپرست فروشگاه
-      cmbManagerValue: answer.storeManagerId,
-      cmbZone:await zoneList(this.props.User.token),
+      cmbZone:[{id:answer.zoneId, name:answer.zoneName}],
       cmbZoneValue:answer.zoneId,
+      cmbLocation: [{id:answer.locationId, locationName: answer.location}],//await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, questionTypeId, this.props.User.token),
+      cmbLocationValue: answer.locationId,
+      cmbSupervisor: [{id:answer.supervisorId, fullName:answer.supervisor}],
+      cmbSupervisorValue: answer.supervisorId,
+      cmbManager: [{id:answer.supervisorId, fullName:answer.manager}],
+      cmbManagerValue: answer.supervisorId,
       QuestionGridData: await answeredQuestionList(answerId, this.props.User.userId, answer.questionTypeId, answer.zoneId, this.props.User.token),
     });
   }
@@ -157,10 +161,10 @@ class NewAnswer extends React.Component {
             this.setState({ stateDisable_show: true });
             break;
           case "answer.confirm":
-            this.setState({ stateDisable_confirm: true });
+            this.setState({ stateDisable_btnConfirm: true });
             break;
-          case "answer.showAdmin":
-            this.setState({ stateDisable_showAdmin: true });
+          case "answer.show_admin":
+            this.setState({ stateDisable_show_admin: true });
             break;
         }
       }
@@ -205,11 +209,15 @@ class NewAnswer extends React.Component {
     });
   };
   cmbLocation_onChange = async (e) => {
-    var supervisor = await supervisorList(e, 5, this.props.User.token);
     this.setState({
       cmbLocationValue: e,
-      cmbSupervisor: await supervisorList(e, 5, this.props.User.token), // 5 سوپروایزر
-      cmbManager: await supervisorList(e, 6, this.props.User.token) // 6 سرپرست فروشگاه
+    })
+    var supervisor = await supervisorList(e, 5, this.props.User.token); // 5 سوپروایزر
+    var manager = await supervisorList(e, 6, this.props.User.token); // 6 سرپرست فروشگاه
+    var person = await personList(this.props.Company.currentCompanyId, this.props.User.token);
+    this.setState({
+      cmbSupervisor: supervisor.length > 0 ? supervisor : person,
+      cmbManager: manager.length > 0 ? manager : person
     });
   };
 
@@ -236,9 +244,9 @@ class NewAnswer extends React.Component {
     })
   }
 
-  cmbZone_onChange=(e)=>{
+  cmbZone_onChange = (e) => {
     this.setState({
-      cmbZoneValue:e
+      cmbZoneValue: e
     })
   }
 
@@ -249,6 +257,7 @@ class NewAnswer extends React.Component {
     document.getElementById("errLocation").innerHTML = "";
     document.getElementById("errSupervisor").innerHTML = "";
     document.getElementById("errManager").innerHTML = "";
+    document.getElementById("errZone").innerHTML = "";
 
     if (this.state.cmbQuestionTypeValue == null) {
       document.getElementById("errQuestionType").innerHTML =
@@ -273,6 +282,12 @@ class NewAnswer extends React.Component {
         "سرپرست فروشگاه را انتخاب نمایید";
       flag = false;
     }
+
+    if (this.state.cmbManagerValue == null) {
+      document.getElementById("errZone").innerHTML =
+        "حوزه را انتخاب نمایید";
+      flag = false;
+    }
     return flag;
   };
 
@@ -284,7 +299,7 @@ class NewAnswer extends React.Component {
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
         userId: this.props.User.userId,
-        zoneId:this.state.cmbZoneValue
+        zoneId: this.state.cmbZoneValue
       };
       const RESULT = await addAnswer(data, this.props.User.token);
       this.setState({
@@ -303,27 +318,27 @@ class NewAnswer extends React.Component {
     }
   };
 
-  btnUpdate_onClick = async () => {
-    if (await this.fn_CheckValidation()) {
-      const data = {
-        questionTypeId: this.state.cmbQuestionTypeValue,
-        supervisorId: this.state.cmbSupervisorValue,
-        locationId: this.state.cmbLocationValue,
-        storeManagerId: this.state.cmbManagerValue,
-        id: this.props.answerId,
-        zoneId:this.state.cmbZoneValue
-      };
-      const RESULT = await updateAnswer(data, this.props.User.token);
-      this.setState({
-        ToastProps: {
-          isToastVisible: true,
-          Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
-          Type: RESULT > 0 ? "success" : "error",
-        },
-      });
-      this.fn_loadData(this.props.answerId);
-    }
-  };
+  // btnUpdate_onClick = async () => {
+  //   if (await this.fn_CheckValidation()) {
+  //     const data = {
+  //       questionTypeId: this.state.cmbQuestionTypeValue,
+  //       supervisorId: this.state.cmbSupervisorValue,
+  //       locationId: this.state.cmbLocationValue,
+  //       storeManagerId: this.state.cmbManagerValue,
+  //       id: this.props.answerId,
+  //       zoneId: this.state.cmbZoneValue
+  //     };
+  //     const RESULT = await updateAnswer(data, this.props.User.token);
+  //     this.setState({
+  //       ToastProps: {
+  //         isToastVisible: true,
+  //         Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
+  //         Type: RESULT > 0 ? "success" : "error",
+  //       },
+  //     });
+  //     this.fn_loadData(this.props.answerId);
+  //   }
+  // };
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
@@ -346,38 +361,43 @@ class NewAnswer extends React.Component {
 
   grdQuestion_onUpdateRow = async (params) => {
     //alert(JSON.stringify(params.data))
-    var data = {
-      questionId: params.data.id,
-      answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
-      score: params.data.score,
-      dec: params.data.dec
-    };
-    var minDesc = 0;
-    var min = 0;
-    var max = 0;
-    this.state.cmbQuestionType.forEach(element => {
-      if (element.id == this.state.cmbQuestionTypeValue) {
-        minDesc = element.minDesc;
-        min = params.data.min;
-        max = params.data.max
-      }
-    })
-    if (params.data.score > max || params.data.score < min) {
-      alert("نمره باید از " + min + "تا " + max + "باشد ")
-      if (this.props.answerId == null)
-        this.fn_loadData(this.state.AddedAnswerId)
-      else
-        this.fn_loadData(this.props.answerId)
+    if (this.state.confirm == 1 && !this.state.stateDisable_show_admin) {
+      alert("بازرسی ثبت نهایی شده امکان ویرایش ندارد")
     }
     else {
-      if (params.data.score < minDesc && params.data.dec == null)
-        alert("توضیحات باید وارد شود")
-      else {
-        var result = await addAnswerDetail(data, this.props.User.token);
+      var data = {
+        questionId: params.data.id,
+        answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
+        score: params.data.score,
+        dec: params.data.dec
+      };
+      var minDesc = 0;
+      var min = 0;
+      var max = 0;
+      this.state.cmbQuestionType.forEach(element => {
+        if (element.id == this.state.cmbQuestionTypeValue) {
+          minDesc = element.minDesc;
+          min = params.data.min;
+          max = params.data.max
+        }
+      })
+      if (params.data.score > max || params.data.score < min) {
+        alert("نمره باید از " + min + "تا " + max + "باشد ")
         if (this.props.answerId == null)
           this.fn_loadData(this.state.AddedAnswerId)
         else
           this.fn_loadData(this.props.answerId)
+      }
+      else {
+        if (params.data.score < minDesc && params.data.dec == null)
+          alert("توضیحات باید وارد شود")
+        else {
+          var result = await addAnswerDetail(data, this.props.User.token);
+          if (this.props.answerId == null)
+            this.fn_loadData(this.state.AddedAnswerId)
+          else
+            this.fn_loadData(this.props.answerId)
+        }
       }
     }
   };
@@ -392,20 +412,31 @@ class NewAnswer extends React.Component {
       answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
       confirm: 1
     };
-
-    const RESULT = await confirmAnswer(data, this.props.User.token);
-    this.setState({
-      ToastProps: {
-        isToastVisible: true,
-        Message: RESULT > 0 ? "ثبت نهایی با موفقیت انجام گردید" : "عدم ثبت",
-        Type: RESULT > 0 ? "success" : "error",
-      },
-      stateAnswer_show: true
+    var t;
+    this.state.QuestionGridData.forEach(element => {
+      if (element.score == null) {
+        t = 1
+      }
     });
-    if (this.props.answerId == null)
-      this.fn_loadData(this.state.AddedAnswerId)
-    else
-      this.fn_loadData(this.props.answerId)
+
+    if (t > 0) {
+      alert("برای تایید نهایی باید تمامی سوالات پاسخ داده شوند")
+    }
+    else {
+      const RESULT = await confirmAnswer(data, this.props.User.token);
+      this.setState({
+        ToastProps: {
+          isToastVisible: true,
+          Message: RESULT > 0 ? "ثبت نهایی با موفقیت انجام گردید" : "عدم ثبت",
+          Type: RESULT > 0 ? "success" : "error",
+        },
+        stateAnswer_show: true
+      });
+      if (this.props.answerId == null)
+        this.fn_loadData(this.state.AddedAnswerId)
+      else
+        this.fn_loadData(this.props.answerId)
+    }
   }
   render() {
     return (
@@ -459,7 +490,7 @@ class NewAnswer extends React.Component {
                   />
                   <Row>
                     <Label
-                      id="errQuestionType"
+                      id="errZone"
                       className="standardLabelFont errMessage"
                     />
                   </Row>
@@ -537,9 +568,9 @@ class NewAnswer extends React.Component {
                   this.props.answerId == null && (
                     <Col xs="auto">
                       <Button
-                        icon={UpdateIcon}
+                        icon={StartIcon}
                         text="شروع بازرسی"
-                        type="success"
+                        type="default"
                         stylingMode="contained"
                         rtlEnabled={true}
                         onClick={this.btnAdd_onClick}
@@ -548,7 +579,7 @@ class NewAnswer extends React.Component {
                   ))}
 
 
-                {this.state.stateDisable_btnUpdate && (
+                {/* {this.state.stateDisable_btnUpdate && (
 
                   <Col xs="auto">
                     <Button
@@ -560,8 +591,20 @@ class NewAnswer extends React.Component {
                       onClick={this.btnUpdate_onClick}
                     />
                   </Col>
+                )} */}
+                {this.state.stateDisable_btnDelete && !this.state.confirm == 1 && (
+                  <Col xs="auto">
+                    <Button
+                      icon={DeleteIcon}
+                      text="حذف"
+                      type="danger"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnDelete_onClick}
+                    />
+                  </Col>
                 )}
-                {this.state.stateDisable_btnDelete && (
+                {this.state.stateDisable_btnDelete && this.state.confirm == 1 && this.state.stateDisable_show_admin ==true && (
                   <Col xs="auto">
                     <Button
                       icon={DeleteIcon}
@@ -621,7 +664,7 @@ class NewAnswer extends React.Component {
                   </DataGrid>
                 </Col>
               </Row>
-              {this.state.stateDisable_btnConfirm && !this.state.stateDisable_showAdmin && (
+              {this.state.stateDisable_btnConfirm && !this.state.stateDisable_show_admin && this.state.confirm != 1 && (
                 <Row>
                   <Col xs="auto" className="standardMarginRight">
                     <Button

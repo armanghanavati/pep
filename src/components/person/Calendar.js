@@ -92,7 +92,7 @@ class PersonShift extends React.PureComponent {
             Shift: null,
             RowSelected: null,
             stateModalShift: false,
-            ShiftList: [{ id: 1, title: "شیفت صبح" }, {id: 2, title: "شیفت عصر"}, {id:3, title:"شیفت صبح مخصوص"}, {id:4, title:"شیفت عصر مخصوص"}, {id:5, title:"تعطیل شیفت"}],
+            ShiftList: [{ id: 1, title: "شیفت صبح" }, {id: 2, title: "شیفت عصر"}, {id:3, title:"شیفت صبح فروشگاه مرکزی"}, {id:4, title:"شیفت عصر فروشگاه مرکزی"}, {id:5, title:"تعطیل شیفت"}],
             ShiftId: null,
             today: new Date().toLocaleDateString('fa-IR-u-nu-latn'),
             year: new Date().toLocaleDateString('fa-IR-u-nu-latn').split("/")[0],

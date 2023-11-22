@@ -224,8 +224,8 @@ export async function deletePersonShift(shiftId, Token) {
   return 0;
 }
 
-export async function supervisorList(locationId, positionId, Token) {
-  const url = window.apiAddress + "/Person/supervisorList?locationId=" + locationId + "&positionId=" + positionId;
+export async function supervisorList(locationId, positionCode, Token) {
+  const url = window.apiAddress + "/Person/supervisorList?locationId=" + locationId + "&positionCode=" + positionCode;
   const response = await fetch(url, {
     method: "GET",
     headers: {

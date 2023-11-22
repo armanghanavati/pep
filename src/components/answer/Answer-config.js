@@ -1,17 +1,22 @@
 export const DataGridAnswerColumns = [
     {
         dataField: "supervisor",
-        caption: "سرپرست",
+        caption: "سوپروایزر",
         allowEditing: false,
     },
     {
         dataField: "manager",
-        caption: "مدیر",
+        caption: "سرپرست فروشگاه",
         allowEditing: false,
     },
     {
         dataField: "location",
         caption: "محل",
+        allowEditing: false,
+    },
+    {
+        dataField: "zoneName",
+        caption: "حوزه",
         allowEditing: false,
     },
     {
