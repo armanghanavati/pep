@@ -581,6 +581,7 @@ class Question extends React.Component {
                   allowColumnResizing={true}
                   onRowClick={this.grdQuestion_onClickRow}
                   height={DataGridDefaultHeight}
+                  columnAutoWidth={true}
                 >
                   <Scrolling
                     rowRenderingMode="virtual"

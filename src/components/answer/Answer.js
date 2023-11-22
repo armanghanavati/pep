@@ -74,7 +74,7 @@ class Answer extends React.Component {
             stateDisable_btnUpdate: false,
             stateDisable_btnDelete: false,
             stateDisable_show: false,
-            stateDisable_show_admin:false,
+            stateDisable_show_admin: false,
             ToastProps: {
                 isToastVisible: false,
                 Message: "",
@@ -82,8 +82,8 @@ class Answer extends React.Component {
             },
             cmbQuestionTypeValue: null,
             cmbQuestionType: null,
-            stateNewAnswer_show:false,
-            AnswerId:null,
+            stateNewAnswer_show: false,
+            AnswerId: null,
         };
     }
     async componentDidMount() {
@@ -119,8 +119,8 @@ class Answer extends React.Component {
                         this.setState({ stateDisable_show: true });
                         break;
                     case "answer.show_admin":
-                            this.setState({ stateDisable_show_admin: true });
-                            break;
+                        this.setState({ stateDisable_show_admin: true });
+                        break;
                 }
             }
     };
@@ -153,17 +153,17 @@ class Answer extends React.Component {
     grdAnswer_ondblClickRow = (e) => {
         //alert(JSON.stringify(e.data))
         this.setState({
-            AnswerId:e.data.id,
+            AnswerId: e.data.id,
             stateUpdateDelete: true,
             RowSelected: e.data,
             chkIsActive: e.data.isActive,
-            stateNewAnswer_show:true
+            stateNewAnswer_show: true
         });
     };
 
     btnNew_onClick = () => {
         this.setState({
-            stateNewAnswer_show:true
+            stateNewAnswer_show: true
         })
     };
 
@@ -178,79 +178,80 @@ class Answer extends React.Component {
     };
 
     grdAnswer_onRowPrepared = (e) => {
-        if (e.rowType === "data" && e.data.confirm == 1)
-          e.rowElement.style.backgroundColor = "#60c77f";
-      };
-    
+        if (e.rowType === "data" && e.data.confirm == 1 && !this.state.stateDisable_show_admin)
+            e.rowElement.style.backgroundColor = "#60c77f";
+    };
+
 
     render() {
         return (
-            this.state.stateNewAnswer_show  == false ?  (
-            <div className="standardMargin" style={{ direction: "rtl" }}>
-                <Toast
-                    visible={this.state.ToastProps.isToastVisible}
-                    message={this.state.ToastProps.Message}
-                    type={this.state.ToastProps.Type}
-                    onHiding={this.onHidingToast}
-                    displayTime={ToastTime}
-                    width={ToastWidth}
-                    rtlEnabled={true}
-                />
- 
-                <Card className="shadow bg-white border pointer">
-                    <Row className="standardPadding">
-                        <Row>
-                            <Label className="title">لیست بازرسی</Label>
-                        </Row>
-                        {this.state.stateDisable_btnUpdate && (
+            this.state.stateNewAnswer_show == false ? (
+                <div className="standardMargin" style={{ direction: "rtl" }}>
+                    <Toast
+                        visible={this.state.ToastProps.isToastVisible}
+                        message={this.state.ToastProps.Message}
+                        type={this.state.ToastProps.Type}
+                        onHiding={this.onHidingToast}
+                        displayTime={ToastTime}
+                        width={ToastWidth}
+                        rtlEnabled={true}
+                    />
 
-                            <Col xs="auto">
-                                <Button
-                                    icon={UpdateIcon}
-                                    text="جدید"
-                                    type="success"
-                                    stylingMode="contained"
-                                    rtlEnabled={true}
-                                    onClick={this.btnNew_onClick}
-                                />
-                            </Col>
-                        )}
-                        <Row>
-                        <p></p>
-                            <Col xs="auto" className="standardMarginRight">
-                                <DataGrid
-                                    dataSource={this.state.AnswerGridData}
-                                    defaultColumns={DataGridAnswerColumns}
-                                    showBorders={true}
-                                    rtlEnabled={true}
-                                    allowColumnResizing={true}
-                                    onRowDblClick={this.grdAnswer_ondblClickRow}
-                                    onRowPrepared={this.grdAnswer_onRowPrepared}
-                                    height={DataGridDefaultHeight}
-                                >
-                                    <Scrolling
-                                        rowRenderingMode="virtual"
-                                        showScrollbar="always"
-                                        columnRenderingMode="virtual"
-                                    />
+                    <Card className="shadow bg-white border pointer">
+                        <Row className="standardPadding">
+                            <Row>
+                                <Label className="title">لیست بازرسی</Label>
+                            </Row>
+                            {this.state.stateDisable_btnUpdate && (
 
-                                    <Paging defaultPageSize={DataGridDefaultPageSize} />
-                                    <Pager
-                                        visible={true}
-                                        allowedPageSizes={DataGridPageSizes}
-                                        showPageSizeSelector={true}
-                                        showNavigationButtons={true}
+                                <Col xs="auto">
+                                    <Button
+                                        icon={UpdateIcon}
+                                        text="جدید"
+                                        type="success"
+                                        stylingMode="contained"
+                                        rtlEnabled={true}
+                                        onClick={this.btnNew_onClick}
                                     />
-                                    <FilterRow visible={true} />
-                                    <FilterPanel visible={true} />
-                                </DataGrid>
-                            </Col>
+                                </Col>
+                            )}
+                            <p></p>
+                            <Row>
+                                <Col xs="auto" className="standardMarginRight" >
+                                    <DataGrid
+                                        dataSource={this.state.AnswerGridData}
+                                        defaultColumns={DataGridAnswerColumns}
+                                        showBorders={true}
+                                        rtlEnabled={true}
+                                        allowColumnResizing={true}
+                                        onRowDblClick={this.grdAnswer_ondblClickRow}
+                                        onRowPrepared={this.grdAnswer_onRowPrepared}
+                                        height={DataGridDefaultHeight}
+                                        columnAutoWidth={true}
+                                    >
+                                        <Scrolling
+                                            rowRenderingMode="virtual"
+                                            showScrollbar="always"
+                                            columnRenderingMode="virtual"
+                                        />
+
+                                        <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                        <Pager
+                                            visible={true}
+                                            allowedPageSizes={DataGridPageSizes}
+                                            showPageSizeSelector={true}
+                                            showNavigationButtons={true}
+                                        />
+                                        <FilterRow visible={true} />
+                                        <FilterPanel visible={true} />
+                                    </DataGrid>
+                                </Col>
+                            </Row>
                         </Row>
-                    </Row>
-                </Card>
-            </div>
+                    </Card>
+                </div>
             ) : (
-                <NewAnswer answerId={this.state.AnswerId}/>
+                <NewAnswer answerId={this.state.AnswerId} />
             )
         );
     }
