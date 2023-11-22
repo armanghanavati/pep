@@ -67,6 +67,7 @@ import {
 import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-slice";
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
+import { logsOrderPointSupplierActions } from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-slice";
 
 import {
   itemListComboBySupplierId,
@@ -78,10 +79,12 @@ import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import {
   orderSupplierReport,
 } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
+import { logsOPSByOPSid } from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-actions";
 import {
   logsOPITodayListByUserId,
   logsOPIByOPIid,
 } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
+import OrderSupplierLogs from './OrderSupplierLogs';
 
 import {
   Gfn_BuildValueComboMulti,
@@ -115,6 +118,7 @@ class OrderPointSupplierReport extends React.Component {
       cmbItemsValue: null,
       OrderPointSupplierGridData: null,                  
       stateEnable_show: false,      
+      stateModal_LogsOfOPS: false,
       FromDate: new Date(),
         ToDate: new Date(),
         FromDateapi: "",
@@ -264,6 +268,21 @@ class OrderPointSupplierReport extends React.Component {
   DatePickerTo_onChange = (params) => {        
     this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) })
 }
+
+
+grdOrderPointSupplier_onCellDblClick = async (e) => {
+  const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);
+  this.props.dispatch(
+    logsOrderPointSupplierActions.setLogsOrderPointSupplierByOPSid({
+      LogsOfOPS,
+    })
+  );
+  this.setState({ stateModal_LogsOfOPS: true })
+};
+
+ModalOrderSupplierLogs_onClickAway = () => {
+  this.setState({ stateModal_LogsOfOPS: false });
+};
 
   render() {
     locale("fa-IR");
@@ -440,7 +459,35 @@ class OrderPointSupplierReport extends React.Component {
               </Col>
             </Row>           
           </Row>
-        </Card>        
+        </Card>   
+        {this.state.stateModal_LogsOfOPS && (
+          <Row className="text-center">
+            <Col>
+              <Modal
+                style={{ direction: "rtl" }}
+                isOpen={this.state.stateModal_LogsOfOPS}
+                toggle={this.ModalOrderSupplierLogs_onClickAway}
+                centered={true}
+                size="lg"
+              >
+                <ModalHeader toggle={this.ModalOrderSupplierLogs_onClickAway}>
+                  لیست تغییرات سفارش
+                </ModalHeader>
+                <ModalBody>
+                  <Row
+                    className="standardPadding"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "450px",
+                    }}
+                  >
+                    <OrderSupplierLogs />
+                  </Row>
+                </ModalBody>
+              </Modal>
+            </Col>
+          </Row>
+        )}     
       </div>
     );
   }

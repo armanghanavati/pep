@@ -95,7 +95,7 @@ export async function locationListOrderInventoryComboNew(comapnyId, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("LOCATION FOR NEW" + JSON.stringify(result.data));
+    console.log("LOCATION FOR NEW Group" + JSON.stringify(result.data));
     return result.data;
   }
   return null;

@@ -24,6 +24,7 @@ import { CheckBox } from "devextreme-react/check-box";
 import notify from "devextreme/ui/notify";
 import { Toast } from "devextreme-react/toast";
 import { Tooltip } from "devextreme-react/tooltip";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import DataGrid, {
   Column,
   Editing,
@@ -65,6 +66,7 @@ import companySlice, {
 } from "../../redux/reducers/company/company-slice";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { DataGridLocationColumns } from "./Location-config";
+import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
@@ -388,6 +390,11 @@ class Location extends React.Component {
     });
     this.fn_updateGrid();
   };
+
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.LocationGridData, "Locations")
+  }
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -628,7 +635,17 @@ class Location extends React.Component {
             <Row>
               <Label className="title">لیست محل ها</Label>
             </Row>
-
+            <Row style={{ direction: 'ltr' }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
+            </Row>
             <Row>
               <Col xs="auto" className="standardPadding">
                 <DataGrid

@@ -71,6 +71,7 @@ class OrderInventoryNewGroup extends React.Component {
       cmbLocationValue: null,
       ItemsGridData: null,
       NewDataGroup: [],
+      stateWait: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -85,7 +86,8 @@ class OrderInventoryNewGroup extends React.Component {
 
   fn_CheckRequireState = async () => {
     this.setState({      
-      cmbLocationGroups:  locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token),
+      cmbInventory:this.props.Inventory.inventoryCombo,
+      cmbLocationGroups: await locationListOrderInventoryComboNew(this.props.Company.currentCompanyId,this.props.User.token),
     });
   };
 
@@ -112,11 +114,11 @@ class OrderInventoryNewGroup extends React.Component {
   }
 
   cmbSupplier_onChange = async (e) => {
+    this.OpenCloseWait();
     const OBJ = {
       SupplierId: e,
       LocationId: this.state.cmbLocationValue,
     };
-
     this.setState({
       cmbSupplierValue: e,
       ItemsGridData: await itemListRemainBySupplierId(
@@ -124,6 +126,7 @@ class OrderInventoryNewGroup extends React.Component {
         this.props.User.token
       ),
     });
+    this.OpenCloseWait();
   };
 
   grdOrderPointInventoryNewGroup_onRowUpdating = (params) => {
@@ -149,10 +152,10 @@ class OrderInventoryNewGroup extends React.Component {
       }
     if (flagPush) {
       let temp = {
-        LocationId: this.state.cmbLocationValue,
+        RetailStoreId: this.state.cmbLocationValue,
         InventoryId: this .state.cmbInventoryvalue,
         SupplierId: this.state.cmbSupplierValue,
-        ItemId: params.oldData.id,
+        ProductId: params.oldData.id,
         NumberOrder: parseInt(params.newData.order),
         UserId: this.props.User.userId,
       };
@@ -163,15 +166,49 @@ class OrderInventoryNewGroup extends React.Component {
 
 
   btnSaveGroup_onClick=async()=>{
+    this.OpenCloseWait();
+    // alert(JSON.stringify(this.state.NewDataGroup))
     let data = {
         values: JSON.stringify(this.state.NewDataGroup)
     }
-    await insertNewDataGroupOrderPointInventory(data,this.props.User.token)
+    const RTN=await insertNewDataGroupOrderPointInventory(data,this.props.User.token)
+    
+    this.OpenCloseWait();
+    this.setState({        
+      ToastProps: {
+        isToastVisible: true,        
+        Message: RTN.msg,
+        Type: "info" ,
+      },
+    });    
   }
+
+  OpenCloseWait() {
+    this.setState({ stateWait: !this.state.stateWait });
+  }
+  onHidingToast = () => {
+    this.setState({ ToastProps: { isToastVisible: false } });
+  };
 
   render() {
     return (
       <div style={{ direction: "rtl" }}>
+        <Toast
+          visible={this.state.ToastProps.isToastVisible}
+          message={this.state.ToastProps.Message}
+          type={this.state.ToastProps.Type}
+          onHiding={this.onHidingToast}
+          displayTime={ToastTime}
+          width={ToastWidth}
+          rtlEnabled={true}
+        />
+        {this.state.stateWait && (
+          <Row className="text-center">
+            <Col style={{ textAlign: "center", marginTop: "10px" }}>
+              <Wait />
+            </Col>
+          </Row>
+        )}
         <Row>
           <Col>
             <Label className="standardLabelFont">گروه فروشگاه</Label>
@@ -290,6 +327,7 @@ const mapStateToProps = (state) => ({
   User: state.users,
   Location: state.locations,
   Company: state.companies,
+  Inventory: state.inventories, 
 });
 
 export default connect(mapStateToProps)(OrderInventoryNewGroup);

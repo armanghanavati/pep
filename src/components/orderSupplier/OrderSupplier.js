@@ -76,6 +76,7 @@ import {
   supplierOrderSupplierComboList,
 } from "../../redux/reducers/supplier/supplier-action";
 import { locationOrderSupplierComboListByCompanyId } from "../../redux/reducers/location/location-actions";
+import OrderSupplierLogs from './OrderSupplierLogs';
 
 import {
   orderPointSupplierListByLSI,
@@ -105,6 +106,7 @@ import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
+import { Border } from "devextreme-react/bar-gauge";
 
 class OrderSupplier extends React.Component {
   constructor(props) {
@@ -132,6 +134,7 @@ class OrderSupplier extends React.Component {
       stateModal_OrderSupplierNewGroup: false,
       stateModal_DetailOfPriceWeighNumber:false,
       DetailOfPriceWeighNumber:null,
+      stateModal_LogsOfOPS: false,
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -617,6 +620,11 @@ class OrderSupplier extends React.Component {
         LogsOfOPS,
       })
     );
+    this.setState({ stateModal_LogsOfOPS: true })
+  };
+
+  ModalOrderSupplierLogs_onClickAway = () => {
+    this.setState({ stateModal_LogsOfOPS: false });
   };
 
   btnUpdateOrders_onClick = async () => {
@@ -891,7 +899,7 @@ class OrderSupplier extends React.Component {
                   </Row>
                 )}
               </Row>
-            </Card>
+            </Card>            
           </Col>
           <Col xs="3">
             <Card className="shadow bg-white border pointer">
@@ -901,7 +909,7 @@ class OrderSupplier extends React.Component {
                 </Label> */}
 
                 <div>
-                  <table>
+                  <table className='tablePublic'>
                     <tr>
                       {/* <th>کد تامین کننده</th> */}
                       <th>نام فروشگاه</th>
@@ -962,6 +970,35 @@ class OrderSupplier extends React.Component {
             </Card>
           </Col>
         </Row>
+        {this.state.stateModal_LogsOfOPS && (
+          <Row className="text-center">
+            <Col>
+              <Modal
+                style={{ direction: "rtl" }}
+                isOpen={this.state.stateModal_LogsOfOPS}
+                toggle={this.ModalOrderSupplierLogs_onClickAway}
+                centered={true}
+                size="lg"
+              >
+                <ModalHeader toggle={this.ModalOrderSupplierLogs_onClickAway}>
+                  لیست تغییرات سفارش
+                </ModalHeader>
+                <ModalBody>
+                  <Row
+                    className="standardPadding"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "450px",
+                    }}
+                  >
+                    <OrderSupplierLogs />
+                  </Row>
+                </ModalBody>
+              </Modal>
+            </Col>
+          </Row>
+        )}
+
 
         {this.state.stateModal_OrderSupplierNew && (
           <Row className="text-center">
