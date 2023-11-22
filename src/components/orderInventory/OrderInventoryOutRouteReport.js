@@ -93,6 +93,8 @@ import { Template } from "devextreme-react";
 import { DataGridOrderPointInventoryReportColumns } from "./OrderInventory-config";
 import { orderPointInventoryActions } from "../../redux/reducers/OrderPointInventory/orderPointInventory-slice";
 
+import OrderInventoryLogs from './OrderInventoryLogs'
+
 import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
@@ -112,7 +114,8 @@ class OrderInventoryOutRouteReport extends React.Component {
       cmbSupplierValue: null,
       cmbItems: null,
       cmbItemsValue: null,
-      OrderInventoryGridData: null,                  
+      OrderInventoryGridData: null,    
+      stateModal_LogsOfOPI: false,              
       stateEnable_show: false,      
       FromDate: new Date(),
         ToDate: new Date(),
@@ -247,13 +250,15 @@ class OrderInventoryOutRouteReport extends React.Component {
   };  
 
   
-  grdOrderPointInventory_onCellDblClick = async (e) => {
+  grdOrderPointInventory_onCellDblClick = async (e) => {    
+
     const LogsOfOPI = await logsOPIByOPIid(e.data.id, this.props.User.token);
     this.props.dispatch(
       logsOrderPointInventoryActions.setLogsOrderPointInventoryByOPIid({
         LogsOfOPI,
       })
     );
+    this.setState({ stateModal_LogsOfOPI: true })
   };
   
   btnExportExcel_onClick=()=>{
@@ -268,6 +273,10 @@ class OrderInventoryOutRouteReport extends React.Component {
   DatePickerTo_onChange = (params) => {        
     this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) })
 }
+
+ModalOrderInventoryLogs_onClickAway = () => {
+  this.setState({ stateModal_LogsOfOPI: false });
+};
 
   render() {
     locale("fa-IR");
@@ -292,7 +301,7 @@ class OrderInventoryOutRouteReport extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label>گزارش سفارش از انبار</Label>
+              <Label>گزارش سفارش خارج از برنامه از انبار</Label>
             </Row>
             <Row>
               <Col>
@@ -446,7 +455,35 @@ class OrderInventoryOutRouteReport extends React.Component {
               </Col>
             </Row>           
           </Row>
-        </Card>        
+        </Card>    
+        {this.state.stateModal_LogsOfOPI && (
+          <Row className="text-center">
+            <Col>
+              <Modal
+                style={{ direction: "rtl" }}
+                isOpen={this.state.stateModal_LogsOfOPI}
+                toggle={this.ModalOrderInventoryLogs_onClickAway}
+                centered={true}
+                size="lg"
+              >
+                <ModalHeader toggle={this.ModalOrderInventoryLogs_onClickAway}>
+                  لیست تغییرات سفارش
+                </ModalHeader>
+                <ModalBody>
+                  <Row
+                    className="standardPadding"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "450px",
+                    }}
+                  >
+                    <OrderInventoryLogs />
+                  </Row>
+                </ModalBody>
+              </Modal>
+            </Col>
+          </Row>
+        )}        
       </div>
     );
   }
