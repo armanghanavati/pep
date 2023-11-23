@@ -1,5 +1,5 @@
 .mainBack{
-    font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
+    font-family: IRANSansWeb;
     background: #f1f1f1;
     /* background-color: #ffcdcd; */
     direction:rtl;
@@ -53,7 +53,7 @@
   }
 
   .mainMenuStyle{
-    font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
+    font-family: IRANSansWeb;
     font-size: 14px;    
     color: #00345c;            
   }
@@ -83,12 +83,12 @@
     color:rgb(224, 3, 3)
   }
 
-  .farsiFont{
-    font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
+.fontStyle{
+  font-family:IRANSansWeb ;
 }
 
 .tablePublic {
-  font-family: IRANSansWeb, Tahoma, Geneva, Verdana, sans-serif;
+  font-family: IRANSansWeb;
   border: 1px solid #313131;  
 }
 

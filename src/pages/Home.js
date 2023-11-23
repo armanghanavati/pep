@@ -93,6 +93,7 @@ class Home extends React.Component {
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbCompany_onChange}
+                  className="fontStyle"
                 />
               </div>
             </Item>

@@ -8,6 +8,8 @@ import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
+// import "./assets/fonts/IRANSansWeb.ttf"
+import "./assets/fonts/IRANSansWeb.ttf";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
