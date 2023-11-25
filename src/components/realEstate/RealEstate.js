@@ -55,49 +55,58 @@ import {
   CHECK_BOXES_MOD,
   FILTER_BUILDER_POPUP_POSITION,
 } from "../../config/config";
+import PlusNewIcon from "../../assets/images/icon/plus.png";
+import SaveIcon from "../../assets/images/icon/save.png";
+import UpdateIcon from "../../assets/images/icon/update.png";
+import DeleteIcon from "../../assets/images/icon/delete.png";
 
 class RealEstate extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       cmbCities: null,
-      cmbStates: null,      
+      cmbStates: null,
       txtFullAddressValue: null,
-      txtLatValue:null,
-      txtLongValue:null,
-      txtAreaValue:null,
-      txtRoofStatusDescValue:null,
-      txtFloorStatusDescValue:null,
-      txtWallStatusDescValue:null,
-      txtLightStatusDescValue:null,
-      txtDoorStatusDescValue:null,
-      txtElectricityStatusDescValue:null,
-      txtWcStatusValue:null,
-      txtFrontStatusDescValue:null,
-      txtFrontNumberValue:null,
-      txtStreetWidthValue:null,
-      cmbParkings:null,
-      cmbParkingValue:null,
-      txtCoolingStatusValue:null,
-      txtHeatingStatusValue:null,
-      txtPedestrianNumberValue:null,
-      txtForcastOfHouseholdNumberValue:null,
-      cmbNearEstate:null,
-      cmbNearEstateValue:null,
-      cmbPanelStatus:null,
-      cmbPanelStatusValue:null,
-      txtDocumentStatusValue:null,
-      txtMortgageOfYearValue:null,
-      txtRentOfMonthValue:null,
-      txtAdvantagesDescValue:null,
-      txtDisadvantagesDescValue:null,
-      txtSupplementaryDescValue:null,
-      chkIsBalcony:false,
-      chkIsInventory:false,
-      chkIsBasement:false,
-      chkIsDoorRollup:false,
-      chkWaterStatus:false,
-      chkGasStatus:false,
+      txtLatValue: null,
+      txtLongValue: null,
+      txtAreaValue: null,
+      txtRoofStatusDescValue: null,
+      txtFloorStatusDescValue: null,
+      txtWallStatusDescValue: null,
+      txtLightStatusDescValue: null,
+      txtDoorStatusDescValue: null,
+      txtElectricityStatusDescValue: null,
+      txtWcStatusValue: null,
+      txtFrontStatusDescValue: null,
+      txtFrontNumberValue: null,
+      txtStreetWidthValue: null,
+      cmbParkings: null,
+      cmbParkingValue: null,
+      txtCoolingStatusValue: null,
+      txtHeatingStatusValue: null,
+      txtPedestrianNumberValue: null,
+      txtForcastOfHouseholdNumberValue: null,
+      cmbNearEstate: null,
+      cmbNearEstateValue: null,
+      cmbPanelStatus: null,
+      cmbPanelStatusValue: null,
+      txtDocumentStatusValue: null,
+      txtMortgageOfYearValue: null,
+      txtRentOfMonthValue: null,
+      txtAdvantagesDescValue: null,
+      txtDisadvantagesDescValue: null,
+      txtSupplementaryDescValue: null,
+      chkIsBalcony: false,
+      chkIsInventory: false,
+      chkIsBasement: false,
+      chkIsDoorRollup: false,
+      chkWaterStatus: false,
+      chkGasStatus: false,
+      stateUpdateDelete: true,
+      stateDisable_btnAdd: false,
+      stateDisable_btnUpdate: false,
+      stateDisable_show: false,
+      stateDisable_btnDelete: false,
       stateWait: false,
       ToastProps: {
         isToastVisible: false,
@@ -111,24 +120,49 @@ class RealEstate extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-  chkIsBalcony_onChange=()=>{
-    this.setState({chkIsBalcony:!this.state.chkIsBalcony})
-  }
-  chkIsInventory_onChange=()=>{
-    this.setState({chkIsInventory:!this.state.chkIsInventory})
-  }
-  chkIsBasement_onChange=()=>{
-    this.setState({chkIsBasement:!this.state.chkIsBasement})
-  }
-  chkIsDoorRollup_onChange=()=>{
-    this.setState({chkIsDoorRollup:!this.state.chkIsDoorRollup})
-  }
-  chkWaterStatus_onChange=()=>{
-    this.setState({chkWaterStatus:!this.state.chkWaterStatus})
-  }
-  chkGasStatus_onChange=()=>{
-    this.setState({chkGasStatus:!this.state.chkGasStatus})
-  }
+  componentDidMount = async () => {
+    await this.fn_GetPermissions();
+  };
+
+  fn_GetPermissions = () => {
+    const perm = this.props.User.permissions;
+    if (perm != null)
+      for (let i = 0; i < perm.length; i++) {
+        switch (perm[i].objectName) {
+          case "real_estates.update":
+            this.setState({ stateDisable_btnUpdate: true });
+            break;
+          case "real_estates.delete":
+            this.setState({ stateDisable_btnDelete: true });
+            break;
+          case "real_estates.insert":
+            this.setState({ stateDisable_btnAdd: true });
+            break;
+          case "real_estates.show":
+            this.setState({ stateDisable_show: true });
+            break;
+        }
+      }
+  };
+
+  chkIsBalcony_onChange = () => {
+    this.setState({ chkIsBalcony: !this.state.chkIsBalcony });
+  };
+  chkIsInventory_onChange = () => {
+    this.setState({ chkIsInventory: !this.state.chkIsInventory });
+  };
+  chkIsBasement_onChange = () => {
+    this.setState({ chkIsBasement: !this.state.chkIsBasement });
+  };
+  chkIsDoorRollup_onChange = () => {
+    this.setState({ chkIsDoorRollup: !this.state.chkIsDoorRollup });
+  };
+  chkWaterStatus_onChange = () => {
+    this.setState({ chkWaterStatus: !this.state.chkWaterStatus });
+  };
+  chkGasStatus_onChange = () => {
+    this.setState({ chkGasStatus: !this.state.chkGasStatus });
+  };
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -150,6 +184,20 @@ class RealEstate extends React.Component {
         )}
         <Card className="shadow bg-white border pointer">
           <div className="standardPadding">
+            {this.state.stateDisable_btnAdd && (
+              <Row>
+                <Col xs="auto">
+                  <Button
+                    icon={PlusNewIcon}
+                    text="جدید"
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnNew_onClick}
+                  />
+                </Col>
+              </Row>
+            )}
             <Row>
               <Col>
                 <Label className="standardLabelFont">استان</Label>
@@ -237,7 +285,7 @@ class RealEstate extends React.Component {
                 <Label id="errArea" className="standardLabelFont errMessage" />
               </Col>
             </Row>
-            <div className="line"></div>            
+            <div className="line"></div>
             <Row>
               <Col>
                 <Label className="standardLabelFont">وضعیت سقف</Label>
@@ -331,7 +379,7 @@ class RealEstate extends React.Component {
                 />
               </Col>
             </Row>
-            <div className="line"></div>            
+            <div className="line"></div>
             <Row>
               <Col>
                 <Label className="standardLabelFont">وضعیت سرویس بهداشتی</Label>
@@ -411,7 +459,7 @@ class RealEstate extends React.Component {
                 />
               </Col>
             </Row>
-            <div className="line"></div>            
+            <div className="line"></div>
             <Row>
               <Col>
                 <Label className="standardLabelFont">وضعیت سرمایش</Label>
@@ -459,7 +507,9 @@ class RealEstate extends React.Component {
                 />
               </Col>
               <Col>
-                <Label className="standardLabelFont">پیش بینی تعداد خانوار ساکن</Label>
+                <Label className="standardLabelFont">
+                  پیش بینی تعداد خانوار ساکن
+                </Label>
                 <TextBox
                   defaultValue={this.state.txtForcastOfHouseholdNumberValue}
                   showClearButton={true}
@@ -507,8 +557,8 @@ class RealEstate extends React.Component {
                   className="standardLabelFont errMessage"
                 />
               </Col>
-            </Row>            
-            <div className="line"></div>            
+            </Row>
+            <div className="line"></div>
             <Row>
               <Col>
                 <Label className="standardLabelFont">وضعیت سند</Label>
@@ -601,7 +651,7 @@ class RealEstate extends React.Component {
                 />
               </Col>
             </Row>
-            <div className="line"></div>            
+            <div className="line"></div>
             <Row>
               <Col>
                 <CheckBox
@@ -609,6 +659,7 @@ class RealEstate extends React.Component {
                   text="دارای بالکن"
                   rtlEnabled={true}
                   onValueChanged={this.chkIsBalcony_onChange}
+                  className="fontStyle"
                 />
                 <Label
                   id="errIsBalcony"
@@ -621,6 +672,7 @@ class RealEstate extends React.Component {
                   text="دارای انباری"
                   rtlEnabled={true}
                   onValueChanged={this.chkIsInventory_onChange}
+                  className="fontStyle"
                 />
                 <Label
                   id="errIsInventory"
@@ -633,6 +685,7 @@ class RealEstate extends React.Component {
                   text="دارای زیرزمین"
                   rtlEnabled={true}
                   onValueChanged={this.chkIsBasement_onChange}
+                  className="fontStyle"
                 />
                 <Label
                   id="errIsBasement"
@@ -645,6 +698,7 @@ class RealEstate extends React.Component {
                   text="دارای کرکره برقی"
                   rtlEnabled={true}
                   onValueChanged={this.chkIsDoorRollup_onChange}
+                  className="fontStyle"
                 />
                 <Label
                   id="errIsDoorRollup"
@@ -657,6 +711,7 @@ class RealEstate extends React.Component {
                   text="وضعیت آب"
                   rtlEnabled={true}
                   onValueChanged={this.chkWaterStatus_onChange}
+                  className="fontStyle"
                 />
                 <Label
                   id="errWaterDesc"
@@ -669,12 +724,41 @@ class RealEstate extends React.Component {
                   text="وضعیت گاز"
                   rtlEnabled={true}
                   onValueChanged={this.chkGasStatus_onChange}
+                  className="fontStyle"
                 />
                 <Label
                   id="errGasStatus"
                   className="standardLabelFont errMessage"
                 />
               </Col>
+            </Row>
+            <Row className="standardSpaceTop">
+              <Row>
+                {this.state.stateDisable_btnUpdate && (                 
+                    <Col xs="auto">
+                      <Button
+                        icon={UpdateIcon}
+                        text="ذخیره تغییرات"
+                        type="success"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnUpdate_onClick}
+                      />
+                    </Col>
+                  )}
+                {this.state.stateDisable_btnUpdate && (   
+                    <Col xs="auto">
+                      <Button
+                        icon={DeleteIcon}
+                        text="حذف"
+                        type="danger"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnDelete_onClick}
+                      />
+                    </Col>                              
+                )}
+              </Row>
             </Row>
           </div>
         </Card>
