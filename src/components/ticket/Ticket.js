@@ -142,7 +142,7 @@ class Ticket extends React.Component {
             AllTickets: rtn
         })
         this.OpenCloseWait();
-        return rtn;        
+        return rtn;
     }
 
     fn_TicketPriorityData = async () => {
@@ -238,7 +238,7 @@ class Ticket extends React.Component {
         }
 
         if (flag) {
-           
+
             const obj = {
                 parentId: null,
                 title: this.state.txtTilteValue,
@@ -280,7 +280,7 @@ class Ticket extends React.Component {
             }
 
             await this.fn_UpdateGrids(rtnAllTicket, '1');
-           
+
         }
 
     }
@@ -369,7 +369,7 @@ class Ticket extends React.Component {
         this.setState({ txtCommnetValue: e.value })
     }
 
-    btnRegisterCommet_onClick = async () => {        
+    btnRegisterCommet_onClick = async () => {
         const obj = {
             parentId: this.state.TicketId,
             title: "",
@@ -406,7 +406,7 @@ class Ticket extends React.Component {
         await this.fn_LoadAllTickets();
         this.setState({
             txtCommnetValue: null
-        })        
+        })
     }
 
     btnStartTicket_onClick = async () => {
@@ -675,13 +675,16 @@ class Ticket extends React.Component {
                                     <Col xs="auto">
                                         <label for="file-AttachmentComment">
                                             <Button
+                                                id="file-input"
                                                 icon={AttachmentIcon}
                                                 text="پیوست فایل"
                                                 type="default"
                                                 stylingMode="outlined"
                                                 rtlEnabled={true}
                                             />
+                                            <button onclick="document.getElementById(file-input).text='';return false;">Clear file input</button>
                                         </label>
+                                        
                                         {this.state.AttachedCommentFiles && this.state.AttachedCommentFiles.map((item, key) =>
                                             <Col>{item.name}</Col>
                                         )}
@@ -834,9 +837,11 @@ class Ticket extends React.Component {
                                                 type="default"
                                                 stylingMode="outlined"
                                                 rtlEnabled={true}
+                                                id="file-input"
                                             />
+                                            
                                         </label>
-
+                                        
                                         {this.state.AttachedFiles && this.state.AttachedFiles.map((item, key) =>
                                             <Col>{item.name}</Col>
                                         )}
