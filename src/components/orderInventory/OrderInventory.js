@@ -566,6 +566,7 @@ class OrderInventory extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStoreGroup_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -578,6 +579,7 @@ class OrderInventory extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStore_onChange}
+                  className="fontStyle"
                 />
                 <Label id="errLocation" className="standardLabelFont errMessage" />
               </Col>
@@ -591,6 +593,7 @@ class OrderInventory extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbInventory_onChange}
+                  className="fontStyle"
                 />
                 <Label id="errInventory" className="standardLabelFont errMessage" />
               </Col>
@@ -604,6 +607,7 @@ class OrderInventory extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
+                  className="fontStyle"
                 />
                 <Label id="errSupplier" className="standardLabelFont errMessage" />
               </Col>
@@ -616,9 +620,9 @@ class OrderInventory extends React.Component {
                     displayExpr="label"
                     placeholder="کالا"
                     valueExpr="id"
-
                     rtlEnabled={true}
                     onValueChange={this.cmbItem_onChange}
+                    className="fontStyle"
                   />
                 </Suspense>
                 <Label id="errItem" className="standardLabelFont errMessage" />
@@ -634,6 +638,7 @@ class OrderInventory extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnSearch_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               </Row>
@@ -648,7 +653,7 @@ class OrderInventory extends React.Component {
             </Row>
             {this.state.stateEnable_btnAdd && (
               <Row>
-                <Col xs="auto" className="standardMarginRight">
+                <Col xs="auto" className="standardMarginRight">                  
                   <Button
                     icon={PlusNewIcon}
                     text="سفارش جدید"
@@ -656,12 +661,14 @@ class OrderInventory extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnNew_onClick}
+                    className="fontStyle"
                   />
                 </Col>
                 {this.state.stateEnable_btnAddGroup && (
-                  <Col xs="auto" className="standardMarginRight">
+                  <Col xs="auto" className="standardMarginRight">                    
                     <Button
                       icon={PlusNewIcon}
+                      className="fontStyle"
                       text="سفارش جدید گروهی"
                       type="default"
                       stylingMode="contained"
@@ -678,6 +685,7 @@ class OrderInventory extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnNewOutRoute_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               </Row>
@@ -713,6 +721,7 @@ class OrderInventory extends React.Component {
                 //   onSelectionChanged={
                 //     this.grdOrderPointInventory_onSelectionChanged
                 //   }
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
@@ -750,6 +759,7 @@ class OrderInventory extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnUpdateOrders_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               </Row>
@@ -796,6 +806,7 @@ class OrderInventory extends React.Component {
                 toggle={this.ModalOrderInventoryNew_onClickAway}
                 centered={true}
                 size="lg"
+                className="fontStyle"
               >
                 <ModalHeader toggle={this.ModalOrderInventoryNew_onClickAway}>
                   ثبت سفارش
@@ -825,6 +836,7 @@ class OrderInventory extends React.Component {
                 centered={true}
                 dir="rtl"
                 size="xl"
+                className="fontStyle"
               >
                 <ModalHeader toggle={this.ModalOrderInventoryNewGroup_onClickAway} >
                   ثبت سفارش گروهی

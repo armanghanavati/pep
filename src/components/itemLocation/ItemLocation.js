@@ -534,6 +534,7 @@ class ItemLocation extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbLocationList_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -546,6 +547,7 @@ class ItemLocation extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbLocation_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -558,6 +560,7 @@ class ItemLocation extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbInventory_onChange}
+                  className="fontStyle"
                 />
                 <Label id="errInventory" className="standardLabelFont errMessage" />
               </Col>
@@ -573,6 +576,7 @@ class ItemLocation extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
                   value={this.state.SupplierId}
+                  className="fontStyle"
                 />
                 <Label
                   id="errSupplier"
@@ -591,6 +595,7 @@ class ItemLocation extends React.Component {
                     rtlEnabled={true}
                     onValueChange={this.cmbItemGroup_onChange}
                     value={this.state.ItemGroupId}
+                    className="fontStyle"
                   />
                   <Label
                     id="errItemGroup"
@@ -608,6 +613,7 @@ class ItemLocation extends React.Component {
                     rtlEnabled={true}
                     onValueChange={this.cmbItem_onChange}
                     value={this.state.cmbItemValue}
+                    className="fontStyle"
                   />
                   <Label
                     id="errItem"
@@ -625,6 +631,7 @@ class ItemLocation extends React.Component {
                     rtlEnabled={true}
                     onValueChange={this.cmbState_onChange}
                     value={this.state.cmbStateValue}
+                    className="fontStyle"
                   />
                   <Label
                     id="errItem"
@@ -642,6 +649,7 @@ class ItemLocation extends React.Component {
                   stylingMode="contained"
                   rtlEnabled={true}
                   onClick={this.btnSearch_onClick}
+                  className="fontStyle"                  
                 />
               </Col>
             </Row>
@@ -691,6 +699,7 @@ class ItemLocation extends React.Component {
                   stylingMode="contained"
                   rtlEnabled={true}
                   onClick={this.btnExportExcel_onClick}
+                  className="fontStyle"
                 />
               </Col>
             </Row>
@@ -703,6 +712,7 @@ class ItemLocation extends React.Component {
                 rtlEnabled={true}
                 allowColumnResizing={true}
                 height={DataGridDefaultHeight}
+                className="fontStyle"                
               >
                 <Scrolling
                   rowRenderingMode="virtual"
@@ -733,6 +743,7 @@ class ItemLocation extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnUpdate_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               )}

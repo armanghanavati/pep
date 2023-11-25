@@ -749,7 +749,7 @@ class Ticket extends React.Component {
                                             placeholder="عنوان"
                                             rtlEnabled={true}
                                             valueChangeEvent="keyup"
-                                            onValueChanged={this.txtSubject_onChanege}
+                                            onValueChanged={this.txtSubject_onChanege}                                        
                                         />
                                         <Label id="errTicketTitle" className="standardLabelFont errMessage" />
                                     </Col>

@@ -8,13 +8,16 @@ import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
+// import "./assets/fonts/IRANSansWeb.ttf"
+import "./assets/fonts/IRANSansWeb.ttf";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
-// window.apiAddress="http://172.16.1.40:2884/api"; 
-// window.apiAddress="http://172.16.1.186/api"; 
-window.apiAddress="http://localhost:7021/api";  
-//window.inspectionAddress="http://172.16.1.40:2884/api"
+
+// window.apiAddress="http://localhost:7142/api";  
+window.apiAddress="http://172.16.1.40:2884/api"; 
+
+window.inspectAddress="http://172.16.1.40:2884/api"
 
   
 //  window.siteAddress="http://coapp:9191";
