@@ -96,7 +96,7 @@ class Answer extends React.Component {
     fn_updateGrid = async () => {
         if (this.state.stateDisable_show) {
             this.setState({
-                AnswerGridData: await answerList(this.state.stateDisable_show_admin ? 0 : this.props.User.userId, this.props.User.token),
+                AnswerGridData: await answerList(this.props.User.userId, this.state.stateDisable_show_admin ? 0 : 1, this.props.User.token),
             });
         }
     };

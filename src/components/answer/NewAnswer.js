@@ -129,17 +129,17 @@ class NewAnswer extends React.Component {
     //alert(JSON.stringify(answer))
     this.setState({
       confirm: answer.confirm,
-      cmbQuestionType:[{id:answer.questionTypeId, name:answer.questionTypeName, minDesc:answer.minDesc, min:answer.min, max:answer.max}],
+      cmbQuestionType: [{ id: answer.questionTypeId, name: answer.questionTypeName, minDesc: answer.minDesc, min: answer.min, max: answer.max }],
       cmbQuestionTypeValue: answer.questionTypeId,
-      cmbZone:[{id:answer.zoneId, name:answer.zoneName}],
-      cmbZoneValue:answer.zoneId,
-      cmbLocation: [{id:answer.locationId, locationName: answer.location}],//await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, questionTypeId, this.props.User.token),
+      cmbZone: [{ id: answer.zoneId, name: answer.zoneName }],
+      cmbZoneValue: answer.zoneId,
+      cmbLocation: [{ id: answer.locationId, locationName: answer.location }],//await locationListByLocationType(this.props.User.userId, this.props.Company.currentCompanyId, questionTypeId, this.props.User.token),
       cmbLocationValue: answer.locationId,
-      cmbSupervisor: [{id:answer.supervisorId, fullName:answer.supervisor}],
+      cmbSupervisor: [{ id: answer.supervisorId, fullName: answer.supervisor }],
       cmbSupervisorValue: answer.supervisorId,
-      cmbManager: [{id:answer.supervisorId, fullName:answer.manager}],
+      cmbManager: [{ id: answer.supervisorId, fullName: answer.manager }],
       cmbManagerValue: answer.supervisorId,
-      QuestionGridData: await answeredQuestionList(answerId, this.props.User.userId, answer.questionTypeId, answer.zoneId, this.props.User.token),
+      QuestionGridData: await answeredQuestionList(answerId, answer.questionTypeId, answer.zoneId, this.props.User.token),
     });
   }
 
@@ -412,9 +412,18 @@ class NewAnswer extends React.Component {
       answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
       confirm: 1
     };
-    var t;
+    var t = 0;
+    var minDesc = 0;
+    var min = 0;
+    var max = 0;
+    this.state.cmbQuestionType.forEach(element => {
+      if (element.id == this.state.cmbQuestionTypeValue) {
+        minDesc = element.minDesc;
+      }
+    })
+
     this.state.QuestionGridData.forEach(element => {
-      if (element.score == null) {
+      if (element.score == null || (element.score < minDesc && element.dec == null) ) {
         t = 1
       }
     });
@@ -604,7 +613,7 @@ class NewAnswer extends React.Component {
                     />
                   </Col>
                 )}
-                {this.state.stateDisable_btnDelete && this.state.confirm == 1 && this.state.stateDisable_show_admin ==true && (
+                {this.state.stateDisable_btnDelete && this.state.confirm == 1 && this.state.stateDisable_show_admin == true && (
                   <Col xs="auto">
                     <Button
                       icon={DeleteIcon}
@@ -665,7 +674,7 @@ class NewAnswer extends React.Component {
                   </DataGrid>
                 </Col>
               </Row>
-              {this.state.stateDisable_btnConfirm && !this.state.stateDisable_show_admin && this.state.confirm != 1 && (
+              {this.state.stateDisable_btnConfirm && this.state.confirm != 1 && (
                 <Row>
                   <Col xs="auto" className="standardMarginRight">
                     <Button

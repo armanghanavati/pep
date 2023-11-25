@@ -1,6 +1,6 @@
-export async function answerList(userId, Token) {
+export async function answerList(userId, type, Token) {
   const url =
-    window.apiAddress + "/Answer/answerList?userId=" + userId;
+    window.apiAddress + "/Answer/answerList?userId=" + userId + "&type=" + type;
   const response = await fetch(url, {
     method: "GET",
     headers: {
