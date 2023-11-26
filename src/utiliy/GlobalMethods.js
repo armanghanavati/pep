@@ -125,10 +125,12 @@ export function Gfn_ConvertToPersian(str){
 
 //----------Number Detect----------
 export function Gfn_NumberDetect(number){
-    let str=number;
-    let flag=true;
-    for(let i=0;i<str.length;i++)
-        if(str.charCodeAt(i)<48 || str.charCodeAt(i)>57)
-            flag=false
+    let flag=false;
+    if(number !=null){
+        let str=number;        
+        for(let i=0;i<str.length;i++)
+            if(str.charCodeAt(i)>=48 || str.charCodeAt(i)<=57)
+                flag=true;
+    }
     return flag;
 }
