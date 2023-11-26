@@ -67,14 +67,12 @@ class Answer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            RowSelected: null,
             AnswerGridData: null,
-            stateUpdateDelete: true,
             stateDisable_btnAdd: false,
             stateDisable_btnUpdate: false,
             stateDisable_btnDelete: false,
             stateDisable_show: false,
-            stateDisable_show_admin: false,
+            stateDisable_confirmUpdate: false,
             ToastProps: {
                 isToastVisible: false,
                 Message: "",
@@ -96,7 +94,7 @@ class Answer extends React.Component {
     fn_updateGrid = async () => {
         if (this.state.stateDisable_show) {
             this.setState({
-                AnswerGridData: await answerList(this.props.User.userId, this.state.stateDisable_show_admin ? 0 : 1, this.props.User.token),
+                AnswerGridData: await answerList(this.props.User.userId, this.state.stateDisable_confirmUpdate ? 0 : 1, this.props.User.token),
             });
         }
     };
@@ -118,8 +116,8 @@ class Answer extends React.Component {
                     case "answer.show":
                         this.setState({ stateDisable_show: true });
                         break;
-                    case "answer.show_admin":
-                        this.setState({ stateDisable_show_admin: true });
+                    case "answer.confirmUpdate":
+                        this.setState({ stateDisable_confirmUpdate: true });
                         break;
                 }
             }
@@ -154,9 +152,6 @@ class Answer extends React.Component {
         //alert(JSON.stringify(e.data))
         this.setState({
             AnswerId: e.data.id,
-            stateUpdateDelete: true,
-            RowSelected: e.data,
-            chkIsActive: e.data.isActive,
             stateNewAnswer_show: true
         });
     };
@@ -178,7 +173,7 @@ class Answer extends React.Component {
     };
 
     grdAnswer_onRowPrepared = (e) => {
-        if (e.rowType === "data" && e.data.confirm == 1 && !this.state.stateDisable_show_admin)
+        if (e.rowType === "data" && e.data.confirm == 1 && !this.state.stateDisable_confirmUpdate)
             e.rowElement.style.backgroundColor = "#60c77f";
     };
 
@@ -195,6 +190,7 @@ class Answer extends React.Component {
                         displayTime={ToastTime}
                         width={ToastWidth}
                         rtlEnabled={true}
+                        className="fontStyle"
                     />
 
                     <Card className="shadow bg-white border pointer">
@@ -206,12 +202,13 @@ class Answer extends React.Component {
 
                                 <Col xs="auto">
                                     <Button
-                                        icon={UpdateIcon}
+                                        icon={PlusNewIcon}
                                         text="جدید"
-                                        type="success"
+                                        type="default"
                                         stylingMode="contained"
                                         rtlEnabled={true}
                                         onClick={this.btnNew_onClick}
+                                        className="fontStyle"
                                     />
                                 </Col>
                             )}
@@ -228,6 +225,7 @@ class Answer extends React.Component {
                                         onRowPrepared={this.grdAnswer_onRowPrepared}
                                         height={DataGridDefaultHeight}
                                         columnAutoWidth={true}
+                                        className="fontStyle"
                                     >
                                         <Scrolling
                                             rowRenderingMode="virtual"

@@ -356,6 +356,7 @@ class Question extends React.Component {
           displayTime={ToastTime}
           width={ToastWidth}
           rtlEnabled={true}
+          className="fontStyle"
         />
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
@@ -372,6 +373,7 @@ class Question extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnNew_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               </Row>
@@ -389,6 +391,7 @@ class Question extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbQuestionType_onChange}
                   value={this.state.cmbQuestionTypeValue}
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -407,6 +410,7 @@ class Question extends React.Component {
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtPriority_onChange}
                   mode="number"
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -426,6 +430,7 @@ class Question extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbZone_onChange}
                   value={this.state.cmbZoneValue}
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -444,6 +449,7 @@ class Question extends React.Component {
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtScore_onChange}
                   mode="number"
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -463,6 +469,7 @@ class Question extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbUnit_onChange}
                   value={this.state.cmbUnitValue}
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -482,6 +489,7 @@ class Question extends React.Component {
                     valueChangeEvent="keyup"
                     onValueChanged={this.txtQuestion_onChange}
                     height={120}
+                    className="fontStyle"
                   />
                   <Row>
                     <Label
@@ -498,6 +506,7 @@ class Question extends React.Component {
                     text="فعال"
                     rtlEnabled={true}
                     onValueChanged={this.chkIsActive_onChange}
+                    className="fontStyle"
                   />
                   <Row>
                     <Label
@@ -520,6 +529,7 @@ class Question extends React.Component {
                       stylingMode="contained"
                       rtlEnabled={true}
                       onClick={this.btnAdd_onClick}
+                      className="fontStyle"
                     />
                   </Col>
                 )}
@@ -537,6 +547,7 @@ class Question extends React.Component {
                         stylingMode="contained"
                         rtlEnabled={true}
                         onClick={this.btnUpdate_onClick}
+                        className="fontStyle"
                       />
                     </Col>
                   )}
@@ -549,6 +560,7 @@ class Question extends React.Component {
                         stylingMode="contained"
                         rtlEnabled={true}
                         onClick={this.btnDelete_onClick}
+                        className="fontStyle"
                       />
                     </Col>
                   )}
@@ -582,6 +594,7 @@ class Question extends React.Component {
                   onRowClick={this.grdQuestion_onClickRow}
                   height={DataGridDefaultHeight}
                   columnAutoWidth={true}
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"

@@ -25,12 +25,12 @@ export const DataGridQuestionColumns = [
         dataField: "zone",
         caption: "حوزه",
         allowEditing: false,
-        width:70
+        width:100
     },
     {
         dataField: "unit",
         caption: "متولی",
         allowEditing: false,
-        width:70
+        width:100
     }
 ];
