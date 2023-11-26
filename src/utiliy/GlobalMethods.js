@@ -66,26 +66,26 @@ export function Gfn_BuildValueComboSelectAll(data){
 //----------Convert All UniCode Number to English UniCode Number----------
 export function Gfn_convertENunicode(number){
     let str=number;
-    str=str.replace(String.fromCharCode(1776),String.fromCharCode(48));
-    str=str.replace(String.fromCharCode(1777),String.fromCharCode(49));
-    str=str.replace(String.fromCharCode(1778),String.fromCharCode(50));
-    str=str.replace(String.fromCharCode(1779),String.fromCharCode(51));
-    str=str.replace(String.fromCharCode(1780),String.fromCharCode(52));
-    str=str.replace(String.fromCharCode(1781),String.fromCharCode(53));
-    str=str.replace(String.fromCharCode(1782),String.fromCharCode(54));
-    str=str.replace(String.fromCharCode(1783),String.fromCharCode(55));
-    str=str.replace(String.fromCharCode(1784),String.fromCharCode(56));
-    str=str.replace(String.fromCharCode(1785),String.fromCharCode(57));
-    str=str.replace(String.fromCharCode(1632),String.fromCharCode(48));
-    str=str.replace(String.fromCharCode(1633),String.fromCharCode(49));
-    str=str.replace(String.fromCharCode(1634),String.fromCharCode(50));
-    str=str.replace(String.fromCharCode(1635),String.fromCharCode(51));
-    str=str.replace(String.fromCharCode(1636),String.fromCharCode(52));
-    str=str.replace(String.fromCharCode(1637),String.fromCharCode(53));
-    str=str.replace(String.fromCharCode(1638),String.fromCharCode(54));
-    str=str.replace(String.fromCharCode(1639),String.fromCharCode(55));
-    str=str.replace(String.fromCharCode(1640),String.fromCharCode(56));
-    str=str.replace(String.fromCharCode(1641),String.fromCharCode(57));
+    str=str.toString().replace(String.fromCharCode(1776),String.fromCharCode(48));
+    str=str.toString().replace(String.fromCharCode(1777),String.fromCharCode(49));
+    str=str.toString().replace(String.fromCharCode(1778),String.fromCharCode(50));
+    str=str.toString().replace(String.fromCharCode(1779),String.fromCharCode(51));
+    str=str.toString().replace(String.fromCharCode(1780),String.fromCharCode(52));
+    str=str.toString().replace(String.fromCharCode(1781),String.fromCharCode(53));
+    str=str.toString().replace(String.fromCharCode(1782),String.fromCharCode(54));
+    str=str.toString().replace(String.fromCharCode(1783),String.fromCharCode(55));
+    str=str.toString().replace(String.fromCharCode(1784),String.fromCharCode(56));
+    str=str.toString().replace(String.fromCharCode(1785),String.fromCharCode(57));
+    str=str.toString().replace(String.fromCharCode(1632),String.fromCharCode(48));
+    str=str.toString().replace(String.fromCharCode(1633),String.fromCharCode(49));
+    str=str.toString().replace(String.fromCharCode(1634),String.fromCharCode(50));
+    str=str.toString().replace(String.fromCharCode(1635),String.fromCharCode(51));
+    str=str.toString().replace(String.fromCharCode(1636),String.fromCharCode(52));
+    str=str.toString().replace(String.fromCharCode(1637),String.fromCharCode(53));
+    str=str.toString().replace(String.fromCharCode(1638),String.fromCharCode(54));
+    str=str.toString().replace(String.fromCharCode(1639),String.fromCharCode(55));
+    str=str.toString().replace(String.fromCharCode(1640),String.fromCharCode(56));
+    str=str.toString().replace(String.fromCharCode(1641),String.fromCharCode(57));
     return str
 }
 

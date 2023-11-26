@@ -81,6 +81,7 @@ import DeleteIcon from "../../assets/images/icon/delete.png";
 import StartIcon from "../../assets/images/icon/plus.png";
 import { locationByUserId, locationList } from "../../redux/reducers/location/location-actions";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
+import { Gfn_convertENunicode } from "../../utiliy/GlobalMethods";
 
 class NewAnswer extends React.Component {
   constructor(props) {
@@ -375,7 +376,7 @@ class NewAnswer extends React.Component {
       var data = {
         questionId: params.data.id,
         answerId: this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
-        score: params.data.score,
+        score: Gfn_convertENunicode(params.data.score),
         dec: params.data.dec
       };
       var minDesc = 0;
