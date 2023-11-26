@@ -1,5 +1,10 @@
 export const DataGridAnswerColumns = [
     {
+        dataField: "userName",
+        caption: "بازرس",
+        allowEditing: false,
+    },
+    {
         dataField: "supervisor",
         caption: "سوپروایزر",
         allowEditing: false,
@@ -12,11 +17,6 @@ export const DataGridAnswerColumns = [
     {
         dataField: "location",
         caption: "محل",
-        allowEditing: false,
-    },
-    {
-        dataField: "zoneName",
-        caption: "حوزه",
         allowEditing: false,
     },
     {
