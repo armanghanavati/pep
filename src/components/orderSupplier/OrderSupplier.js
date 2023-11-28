@@ -728,6 +728,7 @@ class OrderSupplier extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStoreGroup_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -740,6 +741,7 @@ class OrderSupplier extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStore_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -752,6 +754,7 @@ class OrderSupplier extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -764,6 +767,7 @@ class OrderSupplier extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbItem_onChange}
+                  className="fontStyle"
                 />
               </Col>
             </Row>
@@ -777,6 +781,7 @@ class OrderSupplier extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnSearch_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               </Row>

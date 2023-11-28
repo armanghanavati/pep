@@ -64,7 +64,7 @@ import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import CancelIcon from "../../assets/images/icon/cancel.png";
-import MinusImage from "../../assets/images/icon/minus.png"
+import MinusImage from "../../assets/images/icon/minus.png";
 import { masterDataRealEstateList } from "../../redux/reducers/rsMasterDataRealEstate/rsMasterDataRealEstate-action";
 import { cityList } from "../../redux/reducers/city/city-actions";
 import { stateList } from "../../redux/reducers/state/state-actions";
@@ -225,6 +225,102 @@ class RealEstate extends React.Component {
     this.setState({ cmbCityValue: e });
   };
 
+  txtFullAddressValue = (e) => {
+    this.setState({ txtFullAddressValue: e.value });
+  };
+
+  txtLat_onChanege = (e) => {
+    this.setState({ txtLatValue: e.value });
+  };
+
+  txtLong_onChanege = (e) => {
+    this.setState({ txtLongValue: e.value });
+  };
+
+  txtArea_onChanege = (e) => {
+    this.setState({ txtAreaValue: e.value });
+  };
+
+  txtFloorStatusDesc_onChanege = (e) => {
+    this.setState({ txtFloorStatusDescValue: e.value });
+  };
+
+  txtRoofStatusDesc_onChanege = (e) => {
+    this.setState({ txtRoofStatusDescValue: e.value });
+  };
+
+  txtWallStatusDesc_onChanege = (e) => {
+    this.setState({ txtWallStatusDescValue: e.value });
+  };
+
+  txtLightStatusDesc_onChanege = (e) => {
+    this.setState({ txtLightStatusDescValue: e.value });
+  };
+
+  txtDoorStatusDesc_onChanege = (e) => {
+    this.setState({ txtDoorStatusDescValue: e.value });
+  };
+
+  txtElectricityStatusDesc_onChanege = (e) => {
+    this.setState({ txtElectricityStatusDescValue: e.value });
+  };
+
+  txtWcStatus_onChanege = (e) => {
+    this.setState({ txtWcStatusValue: e.value });
+  };
+
+  txtFrontStatusDesc_onChanege = (e) => {
+    this.setState({ txtFrontStatusDescValue: e.value });
+  };
+
+  txtFrontNumber_onChanege = (e) => {
+    this.setState({ txtFrontNumberValue: e.value });
+  };
+
+  txtStreetWidth_onChanege = (e) => {
+    this.setState({ txtStreetWidthValue: e.value });
+  };
+
+  txtCoolingStatus_onChanege = (e) => {
+    this.setState({ txtCoolingStatusValue: e.value });
+  };
+
+  txtHeatingStatus_onChanege = (e) => {
+    this.setState({ txtHeatingStatusValue: e.value });
+  };
+
+  txtPedestrianNumber_onChanege = (e) => {
+    this.setState({ txtPedestrianNumberValue: e.value });
+  };
+
+  txtForcastOfHouseholdNumber_onChanege = (e) => {
+    this.setState({ txtForcastOfHouseholdNumberValue: e.value });
+  };
+
+  txtDocumentStatus_onChanege = (e) => {
+    this.setState({ txtDocumentStatusValue: e.value });
+  };
+
+  txtMortgageOfYear_onChanege = (e) => {
+    this.setState({ txtMortgageOfYearValue: e.value });
+  };
+
+  txtRentOfMonth_onChanege = (e) => {
+    this.setState({ txtRentOfMonthValue: e.value });
+  };
+
+  txtAdvantagesDesc_onChanege = (e) => {
+    this.setState({ txtAdvantagesDescValue: e.value });
+  };
+
+  txtDisadvantagesDesc_onChanege = (e) => {
+    this.setState({ txtDisadvantagesDescValue: e.value });
+  };
+
+  txtSupplementaryDesc_onChanege = (e) => {
+    this.setState({ txtSupplementaryDescValue: e.value });
+  };
+
   chkIsBalcony_onChange = () => {
     this.setState({ chkIsBalcony: !this.state.chkIsBalcony });
   };
@@ -244,6 +340,45 @@ class RealEstate extends React.Component {
     this.setState({ chkGasStatus: !this.state.chkGasStatus });
   };
 
+
+  btnAdd_onClick=()=>{
+    let objAdd={
+      cityId:this.state.cmbCityValue,
+      fullAddress:this.state.txtFullAddressValue,
+      lat:this.state.txtLatValue,
+      long:this.state.txtLongValue,
+      area:this.state.txtAreaValue,
+      isbalcony:this.state.chkIsBalcony,
+      isInventory:this.state.chkIsInventory,
+      isBasement:this.state.chkIsBasement,
+      frontStatusDesc:this.state.txtFrontStatusDescValue,
+      frontNumber:this.state.txtFrontNumberValue,
+      streetWidth:this.state.txtStreetWidthValue,
+      floorStatusDesc:this.state.txtFloorStatusDescValue,
+      wallStatusDesc:this.state.txtWallStatusDescValue,
+      roofStatusDesc:this.state.txtRoofStatusDescValue,
+      lightStatusDescc:this.state.txtLightStatusDescValue,
+      doorStatusDesc:this.state.txtDoorStatusDescValue,
+      isDoorRollUp:this.state.chkIsDoorRollup,
+      electricityStatusDesc:this.state.txtElectricityStatusDescValue,
+      waterDesc:this.state.chkWaterStatus,
+      gasStatus:this.state.chkGasStatus,
+      wcStatus:this.state.txtWcStatusValue,
+      coolingStatus:this.state.txtCoolingStatusValue,
+      heatingStatus:this.state.txtHeatingStatusValue,
+      parking:this.state.cmbParkingValue,
+      pedestrianNumber:this.state.txtPedestrianNumberValue,
+      forcastOfHouseholdNumber:this.state.txtForcastOfHouseholdNumberValue,
+      panelStatus:this.state.cmbPanelStatusValue,
+      documentStatus:this.state.txtDocumentStatusValue,
+      mortgageOfYear:this.state.txtMortgageOfYearValue,
+      rentOfMonth:this.state.txtRentOfMonthValue,
+      disadvantagesDesc:this.state.txtDisadvantagesDescValue,
+      advantagesDesc:this.state.txtAdvantagesDescValue,
+      supplementaryDesc:this.state.txtSupplementaryDescValue,
+    }
+  }
+
   cmbRivalEstate_onChange = (e) => {
     // alert(JSON.stringify(e))
     this.setState({
@@ -254,7 +389,7 @@ class RealEstate extends React.Component {
   cmbNearEstate_onChange = (e) => {
     // alert(JSON.stringify(e))
     this.setState({
-      cmbNearEstateValue: e,      
+      cmbNearEstateValue: e,
     });
   };
 
@@ -302,36 +437,36 @@ class RealEstate extends React.Component {
     this.setState({ stateModal_RivalEstate: false });
   };
 
-  btnNearEstate_onClick=()=>{
+  btnNearEstate_onClick = () => {
     this.setState({
-      stateModal_NearEstate:true,
-    })
-  }
+      stateModal_NearEstate: true,
+    });
+  };
 
-  btnRivalEstate_onClick=()=>{
+  btnRivalEstate_onClick = () => {
     this.setState({
-      stateModal_RivalEstate:true,
-    })
-  }
+      stateModal_RivalEstate: true,
+    });
+  };
 
-  imgMinusRivalEstate_onClick(params){
-    let tempArrRivalEstate=this.state.arrRivalEstate;
-    for(let i=0;i<tempArrRivalEstate.length;i++)
-      if(tempArrRivalEstate[i].MasterDataId==params){
-        tempArrRivalEstate.splice(i,1);
+  imgMinusRivalEstate_onClick(params) {
+    let tempArrRivalEstate = this.state.arrRivalEstate;
+    for (let i = 0; i < tempArrRivalEstate.length; i++)
+      if (tempArrRivalEstate[i].MasterDataId == params) {
+        tempArrRivalEstate.splice(i, 1);
         break;
       }
-    this.setState({arrRivalEstate:tempArrRivalEstate})
+    this.setState({ arrRivalEstate: tempArrRivalEstate });
   }
 
-  imgMinusNearEstate_onClick(params){
-    let tempArrNearEstate=this.state.arrNearEstate;
-    for(let i=0;i<tempArrNearEstate.length;i++)
-      if(tempArrNearEstate[i].MasterDataId==params){
-        tempArrNearEstate.splice(i,1);
+  imgMinusNearEstate_onClick(params) {
+    let tempArrNearEstate = this.state.arrNearEstate;
+    for (let i = 0; i < tempArrNearEstate.length; i++)
+      if (tempArrNearEstate[i].MasterDataId == params) {
+        tempArrNearEstate.splice(i, 1);
         break;
       }
-    this.setState({arrNearEstate:tempArrNearEstate})
+    this.setState({ arrNearEstate: tempArrNearEstate });
   }
 
   render() {
@@ -940,32 +1075,54 @@ class RealEstate extends React.Component {
               </Col>
             </Row>
             <Row className="standardSpaceTop">
-              <Row>
-                {this.state.stateDisable_btnUpdate && (
-                  <Col xs="auto">
-                    <Button
-                      icon={UpdateIcon}
-                      text="ذخیره تغییرات"
-                      type="success"
-                      stylingMode="contained"
-                      rtlEnabled={true}
-                      onClick={this.btnUpdate_onClick}
-                    />
-                  </Col>
-                )}
-                {this.state.stateDisable_btnUpdate && (
-                  <Col xs="auto">
-                    <Button
-                      icon={DeleteIcon}
-                      text="حذف"
-                      type="danger"
-                      stylingMode="contained"
-                      rtlEnabled={true}
-                      onClick={this.btnDelete_onClick}
-                    />
-                  </Col>
-                )}
-              </Row>
+              {!this.state.stateUpdateDelete ? (
+                <Row>
+                  {this.state.stateDisable_btnAdd && (
+                    <Col xs="auto">
+                      <Button
+                        icon={SaveIcon}
+                        text="ثبت"
+                        type="success"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnAdd_onClick}
+                        className="fontStyle"
+                      />
+                    </Col>
+                  )}
+                </Row>
+              ) : (
+                <Row className="standardSpaceTop">
+                  <Row>
+                    {this.state.stateDisable_btnUpdate && (
+                      <>
+                        <Col xs="auto">
+                          <Button
+                            icon={UpdateIcon}
+                            text="ذخیره تغییرات"
+                            type="success"
+                            stylingMode="contained"
+                            rtlEnabled={true}
+                            onClick={this.btnUpdate_onClick}
+                            className="fontStyle"
+                          />
+                        </Col>
+                        <Col xs="auto">
+                          <Button
+                            icon={DeleteIcon}
+                            text="حذف"
+                            type="danger"
+                            stylingMode="contained"
+                            rtlEnabled={true}
+                            onClick={this.btnDelete_onClick}
+                            className="fontStyle"
+                          />
+                        </Col>
+                      </>
+                    )}
+                  </Row>
+                </Row>
+              )}
             </Row>
           </div>
         </Card>
@@ -1059,7 +1216,20 @@ class RealEstate extends React.Component {
                     <Row>
                       {this.state.arrNearEstate.map((item, key) => (
                         <p>
-                          <img  src={MinusImage} style={{ width: "30px",margin:"auto" ,cursor:'pointer'}} onClick={this.imgMinusNearEstate_onClick.bind(this,item.MasterDataId)} /> {item.MasterDataName} فاصله {item.MasterDataDistance} متر                                                     
+                          <img
+                            src={MinusImage}
+                            style={{
+                              width: "30px",
+                              margin: "auto",
+                              cursor: "pointer",
+                            }}
+                            onClick={this.imgMinusNearEstate_onClick.bind(
+                              this,
+                              item.MasterDataId
+                            )}
+                          />{" "}
+                          {item.MasterDataName} فاصله {item.MasterDataDistance}{" "}
+                          متر
                         </p>
                       ))}
                     </Row>
@@ -1093,7 +1263,6 @@ class RealEstate extends React.Component {
             </Col>
           </Row>
         )}
-
 
         {this.state.stateModal_RivalEstate && (
           <Row className="text-center">
@@ -1149,10 +1318,23 @@ class RealEstate extends React.Component {
                         />
                       </Col>
                     </Row>
-                    <Row>                    
+                    <Row>
                       {this.state.arrRivalEstate.map((item, key) => (
-                        <p>                          
-                          <img  src={MinusImage} style={{ width: "30px",margin:"auto" ,cursor:'pointer'}} onClick={this.imgMinusRivalEstate_onClick.bind(this,item.MasterDataId)} /> {item.MasterDataName} فاصله {item.MasterDataDistance} متر
+                        <p>
+                          <img
+                            src={MinusImage}
+                            style={{
+                              width: "30px",
+                              margin: "auto",
+                              cursor: "pointer",
+                            }}
+                            onClick={this.imgMinusRivalEstate_onClick.bind(
+                              this,
+                              item.MasterDataId
+                            )}
+                          />{" "}
+                          {item.MasterDataName} فاصله {item.MasterDataDistance}{" "}
+                          متر
                         </p>
                       ))}
                     </Row>
@@ -1179,7 +1361,7 @@ class RealEstate extends React.Component {
                           className="fontStyle"
                         />
                       </Col>
-                    </Row>                    
+                    </Row>
                   </Row>
                 </ModalBody>
               </Modal>

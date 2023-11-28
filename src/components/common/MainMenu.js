@@ -131,23 +131,25 @@ class MainMenu extends React.Component {
         <>
           <Row>
             {/* <Col xs='auto' style={{backgroundColor:'#11648719',color:'white',minHeight:'100vh',boxShadow:'inset 0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}> */}
-            <Col xs="auto" className='rootMenuStyle'>
-              <div style={{padding:'10px'}}>
-                <TreeView id="simple-treeview"
-                    items={this.state.MainMenuData}                    
-                    dataStructure="plain"
-                    displayExpr="Title"
-                    parentIdExpr="ParentId"
-                    keyExpr="Id"
-                    width={300}                
-                    rtlEnabled={true}
-                    selectionMode='single'                                                     
-                    searchEnabled={true}                                 
-                    onItemClick={this.mnuMainMenu_onClick}   
-                    elementAttr={MAIN_MENU_ATTR}                         
-                />                 
-              </div>
-            </Col>            
+            {this.props.showMainMenu &&
+              <Col xs="auto" className='rootMenuStyle'>
+                <div style={{padding:'10px'}}>
+                  <TreeView id="simple-treeview"
+                      items={this.state.MainMenuData}                    
+                      dataStructure="plain"
+                      displayExpr="Title"
+                      parentIdExpr="ParentId"
+                      keyExpr="Id"
+                      width={300}                
+                      rtlEnabled={true}
+                      selectionMode='single'                                                     
+                      searchEnabled={true}                                 
+                      onItemClick={this.mnuMainMenu_onClick}   
+                      elementAttr={MAIN_MENU_ATTR}                         
+                  />                 
+                </div>
+              </Col>    
+            }        
             <Col style={{minWidth:"400px"}}>                    
               <div style={{color:'black'}}>                                   
                 <Link id='lnkRoute' to={this.state.linkPath}></Link>                                

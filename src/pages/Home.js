@@ -15,12 +15,14 @@ import { userActions } from "../redux/reducers/user/user-slice";
 import MainMenu from "../components/common/MainMenu";
 import logo from "../assets/images/LOGO.jpg";
 import LogoutIcon from "../assets/images/icon/logout.svg"
+import BurgerMenuIcon from "../assets/images/icon/burgerMenu.png"
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       arr1Interview: [],
+      stateShowMainMenu:true,
     };
   }
 
@@ -73,6 +75,10 @@ class Home extends React.Component {
     );
   };
 
+  btnShowHideMenu_onClick=()=>{
+    this.setState({stateShowMainMenu:!this.state.stateShowMainMenu})
+  }
+
   render() {
     locale("fa-IR");
     return (
@@ -97,25 +103,23 @@ class Home extends React.Component {
                 />
               </div>
             </Item>
-            <Item location="right">
-              {/* <Button
-                text="خروج"
-                type="success"
-                stylingMode="contained"
-                rtlEnabled={true}
-                onClick={this.btnExit_onClick}
-              /> */}
-     
-              <img src={LogoutIcon} style={{ width: "23px", marginLeft: "20px" ,cursor:'pointer'}}  onClick={this.btnExit_onClick} />
-           
+            <Item location="right">                   
+              <img src={LogoutIcon} style={{ width: "23px", marginLeft: "20px" ,cursor:'pointer'}}  onClick={this.btnExit_onClick} />           
             </Item>
+            
+            <Item location="after" widget="dxButton" >            
+              <img src={BurgerMenuIcon} style={{ width: "30px", marginRight: "10px" ,cursor:'pointer'}}  onClick={this.btnShowHideMenu_onClick} />           
+            </Item>
+            
           </Toolbar>
         </Row>
+ 
         <Row className="textCenter">
           <Col xs="auto">
-            <MainMenu />
+            <MainMenu showMainMenu={this.state.stateShowMainMenu} />
           </Col>
         </Row>
+       
       </div>
     );
   }
