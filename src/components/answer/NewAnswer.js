@@ -49,6 +49,13 @@ import {
   ToastWidth,
 } from "../../config/config";
 import {
+  Gfn_BuildValueComboMulti,
+  Gfn_BuildValueComboSelectAll,
+  Gfn_ExportToExcel,
+  Gfn_ConvertComboForAll,
+  Gfn_num3Seperator,
+} from "../../utiliy/GlobalMethods";
+import {
   questionList,
   updateQuestion,
   answeredQuestionList,
@@ -82,6 +89,7 @@ import StartIcon from "../../assets/images/icon/plus.png";
 import { locationByUserId, locationList } from "../../redux/reducers/location/location-actions";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { Gfn_convertENunicode } from "../../utiliy/GlobalMethods";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 
 class NewAnswer extends React.Component {
   constructor(props) {
@@ -493,6 +501,11 @@ class NewAnswer extends React.Component {
       });
     }
   }
+
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.QuestionGridData, "insQuestionAnswer");
+  };
+
   render() {
     return (
       this.state.stateAnswer_show == false ? (
@@ -681,6 +694,17 @@ class NewAnswer extends React.Component {
           <p></p>
           <Card className="shadow bg-white border pointer">
             <Row className="standardPadding">
+              <Row style={{ direction: "ltr" }}>
+                <Col xs="auto">
+                  <Button
+                    icon={ExportExcelIcon}
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnExportExcel_onClick}
+                  />
+                </Col>
+              </Row>
               <Row>
                 <Label className="title">لیست {this.state.cmbQuestionTypeValue != null && this.state.cmbQuestionType.map(p => p.id == this.state.cmbQuestionTypeValue ? p.name : '')}</Label>
               </Row>

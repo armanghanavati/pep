@@ -49,4 +49,14 @@ export const DataGridSupplierColumns = [
         caption: "حداکثر ریالی",
         allowEditing: true,
     },
+    {
+        dataField: "minOrderNumber",
+        caption: "حداقل تعداد",
+        allowEditing: true,
+    },
+    {
+        dataField: "maxOrderNumber",
+        caption: "حداکثر تعداد",
+        allowEditing: true,
+    } 
 ];
