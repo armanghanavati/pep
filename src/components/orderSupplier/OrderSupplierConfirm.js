@@ -60,6 +60,7 @@ import { locationActions } from "../../redux/reducers/location/location-slice";
 import { supplierOrderSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
 import { transferOrderPointSupplierToKyan } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 import { orderPointSupplierListByLocationSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
+import { locationOrderSupplierComboListByCompanyId } from "../../redux/reducers/location/location-actions";
 
 import Wait from "../common/Wait";
 import SearchIcon from "../../assets/images/icon/search.png";
@@ -143,7 +144,7 @@ class OrderSupplierConfirm extends React.Component {
       );
     }
 
-    const locationPermission = await locationListOrderInventoryCombo(
+    const locationPermission = await locationOrderSupplierComboListByCompanyId(
       this.props.Company.currentCompanyId,
       this.props.User.token
     );

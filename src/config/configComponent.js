@@ -33,7 +33,7 @@ import TicketSubjects from '../pages/TicketSubjects'
 import OrdersByUpload from '../pages/OrdersByUpload'
 import SupplierLocationContacts from '../pages/SupplierLocationContacts'
 import Opinions from '../pages/Opinions'
-import RealEstates from '../pages/RealEstates'
+import RealEstateRegisters from '../pages/RealEstateRegisters'
 import Questions from '../pages/Questions'
 import Answers from '../pages/Answers'
 import Zones from '../pages/Zones'
@@ -190,8 +190,8 @@ export const REAL_COMPONENT = [
   } 
   ,
   {
-    strComponent: "RealEstates",
-    orgComponent: <RealEstates/>,
+    strComponent: "RealEstateRegisters",
+    orgComponent: <RealEstateRegisters/>,
   },
   {
     strComponent: "Questions",

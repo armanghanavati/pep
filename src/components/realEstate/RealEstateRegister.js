@@ -49,6 +49,9 @@ import {
   Gfn_NumberDetect,
   Gfn_convertENunicode,
 } from "../../utiliy/GlobalMethods";
+
+import { addrsRealEstate } from "../../redux/reducers/rsRealEstate/rsRealEstate-actions";
+
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
@@ -141,7 +144,7 @@ class RealEstate extends React.Component {
 
   componentDidMount = async () => {
     await this.fn_GetPermissions();
-    await this.fn_CheckRequireState();
+    await this.fn_CheckRequireState();    
   };
 
   fn_CheckRequireState = async () => {
@@ -225,7 +228,7 @@ class RealEstate extends React.Component {
     this.setState({ cmbCityValue: e });
   };
 
-  txtFullAddressValue = (e) => {
+  txtFullAddress_onChanege = (e) => {
     this.setState({ txtFullAddressValue: e.value });
   };
 
@@ -273,12 +276,16 @@ class RealEstate extends React.Component {
     this.setState({ txtFrontStatusDescValue: e.value });
   };
 
-  txtFrontNumber_onChanege = (e) => {
-    this.setState({ txtFrontNumberValue: e.value });
+  txtFrontNumber_onChanege = async (e) => {  
+    let str = e.value;  
+    if (await Gfn_NumberDetect(str)) {
+      str = Gfn_convertENunicode(str);
+      this.setState({ txtFrontNumberValue: str });    
+    }    
   };
 
   txtStreetWidth_onChanege = (e) => {
-    this.setState({ txtStreetWidthValue: e.value });
+    this.setState({ txtStreetWidthValue: e.value });    
   };
 
   txtCoolingStatus_onChanege = (e) => {
@@ -289,24 +296,41 @@ class RealEstate extends React.Component {
     this.setState({ txtHeatingStatusValue: e.value });
   };
 
-  txtPedestrianNumber_onChanege = (e) => {
-    this.setState({ txtPedestrianNumberValue: e.value });
+  txtPedestrianNumber_onChanege = async (e) => {
+    let str = e.value;
+    if (await Gfn_NumberDetect(str)) {
+      str = Gfn_convertENunicode(str);
+      this.setState({ txtPedestrianNumberValue: str });    
+    }    
   };
 
-  txtForcastOfHouseholdNumber_onChanege = (e) => {
-    this.setState({ txtForcastOfHouseholdNumberValue: e.value });
+  txtForcastOfHouseholdNumber_onChanege = async (e) => {    
+    let str = e.value;
+    if (await Gfn_NumberDetect(str)) {
+      str = Gfn_convertENunicode(str);
+      this.setState({ txtForcastOfHouseholdNumberValue: str });    
+    }    
   };
 
   txtDocumentStatus_onChanege = (e) => {
     this.setState({ txtDocumentStatusValue: e.value });
   };
 
-  txtMortgageOfYear_onChanege = (e) => {
-    this.setState({ txtMortgageOfYearValue: e.value });
+  txtMortgageOfYear_onChanege = async (e) => {
+    
+    let str = e.value;
+    if (await Gfn_NumberDetect(str)) {
+      str = Gfn_convertENunicode(str);
+      this.setState({ txtMortgageOfYearValue: str });
+    }    
   };
 
-  txtRentOfMonth_onChanege = (e) => {
-    this.setState({ txtRentOfMonthValue: e.value });
+  txtRentOfMonth_onChanege = async(e) => {
+    let str = e.value;
+    if (await Gfn_NumberDetect(str)) {
+      str = Gfn_convertENunicode(str);
+      this.setState({ txtRentOfMonthValue: str });      
+    }    
   };
 
   txtAdvantagesDesc_onChanege = (e) => {
@@ -340,24 +364,32 @@ class RealEstate extends React.Component {
     this.setState({ chkGasStatus: !this.state.chkGasStatus });
   };
 
+  cmbPanelStatus_onChange=(e)=>{
+    this.setState({cmbPanelStatusValue:e})
+  }
 
-  btnAdd_onClick=()=>{
+  cmbParkingStaus_onChange=(e)=>{
+    this.setState({cmbParkingValue:e})
+  }
+
+
+  btnAdd_onClick=async()=>{
     let objAdd={
       cityId:this.state.cmbCityValue,
       fullAddress:this.state.txtFullAddressValue,
-      lat:this.state.txtLatValue,
-      long:this.state.txtLongValue,
-      area:this.state.txtAreaValue,
+      lat:parseFloat(this.state.txtLatValue),
+      long:parseFloat(this.state.txtLongValue),
+      area:parseFloat(this.state.txtAreaValue),
       isbalcony:this.state.chkIsBalcony,
       isInventory:this.state.chkIsInventory,
       isBasement:this.state.chkIsBasement,
       frontStatusDesc:this.state.txtFrontStatusDescValue,
-      frontNumber:this.state.txtFrontNumberValue,
-      streetWidth:this.state.txtStreetWidthValue,
+      frontNumber:parseInt(this.state.txtFrontNumberValue),
+      streetWidth:parseFloat(this.state.txtStreetWidthValue),
       floorStatusDesc:this.state.txtFloorStatusDescValue,
       wallStatusDesc:this.state.txtWallStatusDescValue,
       roofStatusDesc:this.state.txtRoofStatusDescValue,
-      lightStatusDescc:this.state.txtLightStatusDescValue,
+      lightStatusDesc:this.state.txtLightStatusDescValue,
       doorStatusDesc:this.state.txtDoorStatusDescValue,
       isDoorRollUp:this.state.chkIsDoorRollup,
       electricityStatusDesc:this.state.txtElectricityStatusDescValue,
@@ -366,17 +398,20 @@ class RealEstate extends React.Component {
       wcStatus:this.state.txtWcStatusValue,
       coolingStatus:this.state.txtCoolingStatusValue,
       heatingStatus:this.state.txtHeatingStatusValue,
-      parking:this.state.cmbParkingValue,
-      pedestrianNumber:this.state.txtPedestrianNumberValue,
-      forcastOfHouseholdNumber:this.state.txtForcastOfHouseholdNumberValue,
-      panelStatus:this.state.cmbPanelStatusValue,
+      parkingStatusId:this.state.cmbParkingValue.id,
+      pedestrianNumber:parseInt(this.state.txtPedestrianNumberValue),
+      forcastOfHouseholdNumber:parseInt(this.state.txtForcastOfHouseholdNumberValue),
+      panelStatusId:this.state.cmbPanelStatusValue.id,
       documentStatus:this.state.txtDocumentStatusValue,
-      mortgageOfYear:this.state.txtMortgageOfYearValue,
-      rentOfMonth:this.state.txtRentOfMonthValue,
+      mortgageOfYear:parseInt(this.state.txtMortgageOfYearValue),
+      rentOfMonth:parseInt(this.state.txtRentOfMonthValue),
       disadvantagesDesc:this.state.txtDisadvantagesDescValue,
       advantagesDesc:this.state.txtAdvantagesDescValue,
       supplementaryDesc:this.state.txtSupplementaryDescValue,
     }
+
+    console.log(JSON.stringify(objAdd));
+    alert(await addrsRealEstate(objAdd,this.props.User.token))
   }
 
   cmbRivalEstate_onChange = (e) => {
@@ -469,6 +504,13 @@ class RealEstate extends React.Component {
     this.setState({ arrNearEstate: tempArrNearEstate });
   }
 
+  btnNew_onClick = () => {
+    this.setState({      
+      stateUpdateDelete: false,      
+    });
+  };
+
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -545,7 +587,7 @@ class RealEstate extends React.Component {
                   آدرس کامل
                 </Label>
                 <TextBox
-                  defaultValue={this.state.txtFullAddressValue}
+                  value={this.state.txtFullAddressValue}
                   showClearButton={true}
                   // placeholder="آدرس کامل"
                   rtlEnabled={true}
@@ -561,7 +603,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">طول جغرافیایی</Label>
                 <TextBox
-                  defaultValue={this.state.txtLongValue}
+                  value={this.state.txtLongValue}
                   showClearButton={true}
                   // placeholder="طول جغرافیایی"
                   rtlEnabled={true}
@@ -573,7 +615,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">عرض جغرافیایی</Label>
                 <TextBox
-                  defaultValue={this.state.txtLatValue}
+                  value={this.state.txtLatValue}
                   showClearButton={true}
                   // placeholder="عرض جغرافیایی"
                   rtlEnabled={true}
@@ -585,7 +627,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">مساحت</Label>
                 <TextBox
-                  defaultValue={this.state.txtAreaValue}
+                  value={this.state.txtAreaValue}
                   showClearButton={true}
                   // placeholder="مساحت"
                   rtlEnabled={true}
@@ -600,7 +642,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت سقف</Label>
                 <TextBox
-                  defaultValue={this.state.txtFloorStatusDescValue}
+                  value={this.state.txtFloorStatusDescValue}
                   showClearButton={true}
                   // placeholder="وضعیت سقف"
                   rtlEnabled={true}
@@ -615,7 +657,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت کف</Label>
                 <TextBox
-                  defaultValue={this.state.txtRoofStatusDescValue}
+                  value={this.state.txtRoofStatusDescValue}
                   showClearButton={true}
                   // placeholder="وضعیت کف"
                   rtlEnabled={true}
@@ -631,7 +673,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت دیوار</Label>
                 <TextBox
-                  defaultValue={this.state.txtWallStatusDescValue}
+                  value={this.state.txtWallStatusDescValue}
                   showClearButton={true}
                   // placeholder="وضعیت دیوار"
                   rtlEnabled={true}
@@ -646,7 +688,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت روشنایی</Label>
                 <TextBox
-                  defaultValue={this.state.txtLightStatusDescValue}
+                  value={this.state.txtLightStatusDescValue}
                   showClearButton={true}
                   // placeholder="وضعیت روشنایی"
                   rtlEnabled={true}
@@ -661,7 +703,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت درب ورودی</Label>
                 <TextBox
-                  defaultValue={this.state.txtDoorStatusDescValue}
+                  value={this.state.txtDoorStatusDescValue}
                   showClearButton={true}
                   // placeholder="وضعیت درب ورودی"
                   rtlEnabled={true}
@@ -676,7 +718,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت برق</Label>
                 <TextBox
-                  defaultValue={this.state.txtElectricityStatusDescValue}
+                  value={this.state.txtElectricityStatusDescValue}
                   showClearButton={true}
                   // placeholder="وضعیت برق"
                   rtlEnabled={true}
@@ -694,7 +736,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت سرویس بهداشتی</Label>
                 <TextBox
-                  defaultValue={this.state.txtWcStatusValue}
+                  value={this.state.txtWcStatusValue}
                   showClearButton={true}
                   // placeholder="وضعیت سرویس بهداشتی"
                   rtlEnabled={true}
@@ -709,7 +751,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت بر ملک</Label>
                 <TextBox
-                  defaultValue={this.state.txtFrontStatusDescValue}
+                  value={this.state.txtFrontStatusDescValue}
                   showClearButton={true}
                   // placeholder="وضعیت بر ملک"
                   rtlEnabled={true}
@@ -724,7 +766,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">تعداد بر ملک</Label>
                 <TextBox
-                  defaultValue={this.state.txtFrontNumberValue}
+                  value={this.state.txtFrontNumberValue}
                   showClearButton={true}
                   // placeholder="تعداد بر ملک"
                   rtlEnabled={true}
@@ -739,7 +781,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">عرض خیابان</Label>
                 <TextBox
-                  defaultValue={this.state.txtStreetWidthValue}
+                  value={this.state.txtStreetWidthValue}
                   showClearButton={true}
                   // placeholder="عرض خیابان"
                   rtlEnabled={true}
@@ -757,7 +799,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت سرمایش</Label>
                 <TextBox
-                  defaultValue={this.state.txtCoolingStatusValue}
+                  value={this.state.txtCoolingStatusValue}
                   showClearButton={true}
                   // placeholder="وضعیت سرمایش"
                   rtlEnabled={true}
@@ -772,7 +814,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">وضعیت گرمایش</Label>
                 <TextBox
-                  defaultValue={this.state.txtHeatingStatusValue}
+                  value={this.state.txtHeatingStatusValue}
                   showClearButton={true}
                   // placeholder="وضعیت گرمایش"
                   rtlEnabled={true}
@@ -787,7 +829,7 @@ class RealEstate extends React.Component {
               <Col>
                 <Label className="standardLabelFont">تعداد عابر پیاده</Label>
                 <TextBox
-                  defaultValue={this.state.txtPedestrianNumberValue}
+                  value={this.state.txtPedestrianNumberValue}
                   showClearButton={true}
                   // placeholder="تعداد عابر پیاده"
                   rtlEnabled={true}
@@ -804,7 +846,7 @@ class RealEstate extends React.Component {
                   پیش بینی تعداد خانوار ساکن
                 </Label>
                 <TextBox
-                  defaultValue={this.state.txtForcastOfHouseholdNumberValue}
+                  value={this.state.txtForcastOfHouseholdNumberValue}
                   showClearButton={true}
                   // placeholder="پیش بینی تعداد خانوار ساکن"
                   rtlEnabled={true}
@@ -870,8 +912,7 @@ class RealEstate extends React.Component {
                   dataSource={this.state.cmbPanelStatus}
                   value={this.state.cmbPanelStatusValue}
                   displayExpr="label"
-                  placeholder="وضعیت تابلو خور "
-                  valueExpr="id"
+                  placeholder="وضعیت تابلو خور "                  
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbPanelStatus_onChange}
@@ -888,11 +929,10 @@ class RealEstate extends React.Component {
                   dataSource={this.state.cmbParkings}
                   value={this.state.cmbParkingValue}
                   displayExpr="label"
-                  placeholder="وضعیت جای پارک"
-                  valueExpr="id"
+                  placeholder="وضعیت جای پارک"                  
                   searchEnabled={true}
                   rtlEnabled={true}
-                  onValueChange={this.cmbParking_onChange}
+                  onValueChange={this.cmbParkingStaus_onChange}
                 />
                 <Label
                   id="errParking"

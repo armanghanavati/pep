@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import RealEstateRegister from "../components/realEstate/RealEstateRegister";
 
-class RealEstates extends React.Component{
+class RealEstateRegisters extends React.Component{
     constructor(props){
         super(props);
         this.state={}
@@ -15,4 +15,4 @@ class RealEstates extends React.Component{
     }
 }
 
-export default RealEstates;
+export default RealEstateRegisters;
