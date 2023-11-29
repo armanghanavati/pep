@@ -80,10 +80,12 @@ class Supplier extends React.Component {
         Message: "",
         Type: "",
       },
-      txtSupplierMinOrderWeightValue:null,
-      txtSupplierMaxOrderWeightValue:null,
-      txtSupplierMinOrderRialiValue:null,
-      txtSupplierMaxOrderRialiValue:null
+      txtSupplierMinOrderWeightValue: null,
+      txtSupplierMaxOrderWeightValue: null,
+      txtSupplierMinOrderRialiValue: null,
+      txtSupplierMaxOrderRialiValue: null,
+      txtSupplierMaxOrderNumberValue:null,
+      txtSupplierMinOrderNumberValue:null,
     };
   }
 
@@ -127,18 +129,24 @@ class Supplier extends React.Component {
       txtSupplierNameValue: null,
       txtSupplierNamePersianValue: null,
       txtSupplierDescValue: null,
+      txtSupplierMaxOrderNumberValue:null,
+      txtSupplierMinOrderNumberValue:null,
+      txtSupplierMinOrderWeightValue:null,
+      txtSupplierMaxOrderWeightValue:null,
+      txtSupplierMinOrderRialiValue:null,
+      txtSupplierMaxOrderRialiValue:null,
       chkIsActive: null,
       chkIsDirect: null,
       stateUpdateDelete: false,
     });
   };
-  txtSupplierName_onChanege=(e)=>{
+  txtSupplierName_onChanege = (e) => {
     this.setState({ txtSupplierNameValue: e.value });
   }
-  txtSupplierNamePersian_onChanege=(e)=>{
+  txtSupplierNamePersian_onChanege = (e) => {
     this.setState({ txtSupplierNamePersianValue: e.value });
   }
-  txtSupplierDesc_onChanege=(e)=>{
+  txtSupplierDesc_onChanege = (e) => {
     this.setState({ txtSupplierDescValue: e.value });
   }
   txtSupplierMinOrderWeight_onChanege = (e) => {
@@ -153,8 +161,16 @@ class Supplier extends React.Component {
     this.setState({ txtSupplierMinOrderRialiValue: e.value });
   };
 
-  txtSupplierMaxOrderRiali_onChanege=(e)=>{
-    this.setState({txtSupplierMaxOrderRialiValue:e.value })
+  txtSupplierMaxOrderRiali_onChanege = (e) => {
+    this.setState({ txtSupplierMaxOrderRialiValue: e.value })
+  }
+
+  txtSupplierMinOrderNumber_onChanege=(e)=>{
+    this.setState({ txtSupplierMinOrderNumberValue: e.value})
+  }
+
+  txtSupplierMaxOrderNumber_onChanege=(e)=>{
+    this.setState({ txtSupplierMaxOrderNumberValue: e.value})
   }
 
   chkIsActive_onChange = (e) => {
@@ -203,10 +219,12 @@ class Supplier extends React.Component {
         desc: this.state.txtSupplierDescValue,
         isActive: this.state.chkIsActive,
         isDirect: this.state.chkIsDirect,
-        minOrderWeight:this.state.txtSupplierMinOrderWeightValue,
-        maxOrderWeight:this.state.txtSupplierMaxOrderWeightValue,
-        minOrderRiali:this.state.txtSupplierMinOrderRialiValue,
-        maxOrderRiali:this.state.txtSupplierMaxOrderRialiValue
+        minOrderWeight: this.state.txtSupplierMinOrderWeightValue,
+        maxOrderWeight: this.state.txtSupplierMaxOrderWeightValue,
+        minOrderRiali: this.state.txtSupplierMinOrderRialiValue,
+        maxOrderRiali: this.state.txtSupplierMaxOrderRialiValue,
+        minOrderNumber: this.state.txtSupplierMinOrderNumberValue,
+        maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue
       };
       await addSupplier(data, this.props.User.token);
       this.setState({
@@ -230,10 +248,12 @@ class Supplier extends React.Component {
         desc: this.state.txtSupplierDescValue,
         isActive: this.state.chkIsActive,
         isDirect: this.state.chkIsDirect,
-        minOrderWeight:this.state.txtSupplierMinOrderWeightValue,
-        maxOrderWeight:this.state.txtSupplierMaxOrderWeightValue,
-        minOrderRiali:this.state.txtSupplierMinOrderRialiValue,
-        maxOrderRiali:this.state.txtSupplierMaxOrderRialiValue
+        minOrderWeight: this.state.txtSupplierMinOrderWeightValue,
+        maxOrderWeight: this.state.txtSupplierMaxOrderWeightValue,
+        minOrderRiali: this.state.txtSupplierMinOrderRialiValue,
+        maxOrderRiali: this.state.txtSupplierMaxOrderRialiValue,
+        minOrderNumber: this.state.txtSupplierMinOrderNumberValue,
+        maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue
       };
       const RESULT = await updateSupplier(data, this.props.User.token);
       this.setState({
@@ -251,6 +271,7 @@ class Supplier extends React.Component {
   };
 
   grdSupplier_onClickRow = (e) => {
+    //alert(JSON.stringify(e.data))
     this.setState({
       txtSupplierNameValue: e.data.supplierName,
       txtSupplierNamePersianValue: e.data.persianName,
@@ -259,10 +280,12 @@ class Supplier extends React.Component {
       chkIsDirect: e.data.isDirect == null && false,
       stateUpdateDelete: true,
       RowSelected: e.data,
-      txtSupplierMinOrderWeightValue:e.data.minOrderWeight,
-      txtSupplierMaxOrderWeightValue:e.data.maxOrderWeight,
-      txtSupplierMinOrderRialiValue:e.data.minOrderRiali,
-      txtSupplierMaxOrderRialiValue:e.data.maxOrderRiali
+      txtSupplierMinOrderWeightValue: e.data.minOrderWeight,
+      txtSupplierMaxOrderWeightValue: e.data.maxOrderWeight,
+      txtSupplierMinOrderRialiValue: e.data.minOrderRiali,
+      txtSupplierMaxOrderRialiValue: e.data.maxOrderRiali,
+      txtSupplierMinOrderNumberValue: e.data.minOrderNumber,
+      txtSupplierMaxOrderNumberValue: e.data.maxOrderNumber
     });
   };
 
@@ -413,6 +436,28 @@ class Supplier extends React.Component {
                     rtlEnabled={true}
                     valueChangeEvent="keyup"
                     onValueChanged={this.txtSupplierMaxOrderRiali_onChanege}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">حداقل تعداد</Label>
+                  <TextBox
+                    value={this.state.txtSupplierMinOrderNumberValue}
+                    showClearButton={true}
+                    placeholder="حداقل تعداد"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtSupplierMinOrderNumber_onChanege}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">حداکثر تعداد</Label>
+                  <TextBox
+                    value={this.state.txtSupplierMaxOrderNumberValue}
+                    showClearButton={true}
+                    placeholder="حداکثر تعداد"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtSupplierMaxOrderNumber_onChanege}
                   />
                 </Col>
               </Row>

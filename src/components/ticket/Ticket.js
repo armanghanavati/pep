@@ -520,6 +520,26 @@ class Ticket extends React.Component {
             cmbLocationValue: e
         })
     }
+
+    btnClearFileAttach_onClick = (e) => {
+        //alert(e.target.id);
+        var temp = this.state.AttachedFiles;
+        temp.splice(e.target.id, 1)
+        //this.state.AttachedCommentFiles.remove(e.target.id);
+        this.setState({
+            AttachedFiles: temp
+        })
+    }
+
+    btnClearCommentFileAttach_onClick=(e)=>{
+        //alert(e.target.id);
+        var temp = this.state.AttachedCommentFiles;
+        temp.splice(e.target.id, 1)
+        //this.state.AttachedCommentFiles.remove(e.target.id);
+        this.setState({
+            AttachedCommentFiles: temp
+        })
+    }
     render() {
         // const  fileName=[];
         // if(this.state.file != null)  {
@@ -682,11 +702,16 @@ class Ticket extends React.Component {
                                                 stylingMode="outlined"
                                                 rtlEnabled={true}
                                             />
-                                            <button onclick="document.getElementById(file-input).text='';return false;">Clear file input</button>
+
                                         </label>
-                                        
+
                                         {this.state.AttachedCommentFiles && this.state.AttachedCommentFiles.map((item, key) =>
-                                            <Col>{item.name}</Col>
+                                            <>
+                                                <Col>{item.name}</Col>
+                                                <Col>
+                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearCommentFileAttach_onClick(e)} width={10} height={10}/>
+                                                </Col>
+                                            </>
                                         )}
                                         <input id="file-AttachmentComment" type="file" multiple style={{ display: "none" }} onChange={e => this.setCommentFile(e)} />
                                         <p id="ErrCommentTicketAttachments" style={{ textAlign: "right", color: "red" }}></p>
@@ -749,7 +774,7 @@ class Ticket extends React.Component {
                                             placeholder="عنوان"
                                             rtlEnabled={true}
                                             valueChangeEvent="keyup"
-                                            onValueChanged={this.txtSubject_onChanege}                                        
+                                            onValueChanged={this.txtSubject_onChanege}
                                         />
                                         <Label id="errTicketTitle" className="standardLabelFont errMessage" />
                                     </Col>
@@ -839,11 +864,17 @@ class Ticket extends React.Component {
                                                 rtlEnabled={true}
                                                 id="file-input"
                                             />
-                                            
+
                                         </label>
-                                        
+
                                         {this.state.AttachedFiles && this.state.AttachedFiles.map((item, key) =>
-                                            <Col>{item.name}</Col>
+                                            <>
+                                                <Col>{item.name}</Col>
+                                                <Col>
+                                                
+                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearFileAttach_onClick(e)} width={10} height={10}/>
+                                                </Col>
+                                            </>
                                         )}
                                         <input id="file-TicketAttachment" type="file" multiple style={{ display: "none" }} onChange={e => this.setFile(e)} />
                                         <p id="ErrTicketAttachments" className='errMessage' ></p>

@@ -49,6 +49,13 @@ import {
   ToastWidth,
 } from "../../config/config";
 import {
+  Gfn_BuildValueComboMulti,
+  Gfn_BuildValueComboSelectAll,
+  Gfn_ExportToExcel,
+  Gfn_ConvertComboForAll,
+  Gfn_num3Seperator,
+} from "../../utiliy/GlobalMethods";
+import {
   questionList,
   updateQuestion,
   answeredQuestionList,
@@ -63,7 +70,7 @@ import {
   locationListByLocationType, locationListCombo
 } from "../../redux/reducers/userLocation/userLocation-actions"
 import {
-  personList,
+  allPerson,
   supervisorList
 } from "../../redux/reducers/person/person-actions"
 import { DataGridQuestionColumns } from "./NewAnswer-config";
@@ -82,6 +89,7 @@ import StartIcon from "../../assets/images/icon/plus.png";
 import { locationByUserId, locationList } from "../../redux/reducers/location/location-actions";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { Gfn_convertENunicode } from "../../utiliy/GlobalMethods";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 
 class NewAnswer extends React.Component {
   constructor(props) {
@@ -114,7 +122,7 @@ class NewAnswer extends React.Component {
       AddedAnswerId: null,
       confirm: null,
       disable_questionType: null,
-      oldParam:null,
+      oldParam: null,
       stateWait: false,
     };
   }
@@ -122,7 +130,7 @@ class NewAnswer extends React.Component {
     await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
     await this.fn_questionTypeList();
-    if (this.props.answerId != null){
+    if (this.props.answerId != null) {
       this.OpenCloseWait();
       await this.fn_loadData(this.props.answerId);
       this.OpenCloseWait();
@@ -137,7 +145,7 @@ class NewAnswer extends React.Component {
     //alert(JSON.stringify(answer))
     var supervisor = await supervisorList(answer.locationId, 5, this.props.User.token); // 5 سوپروایزر
     var manager = await supervisorList(answer.locationId, 6, this.props.User.token); // 6 سرپرست فروشگاه
-    var person = await personList(this.props.Company.currentCompanyId, this.props.User.token);
+    var person = await allPerson(this.props.Company.currentCompanyId, this.props.User.token);
     this.setState({
       disable_questionType: true,
       confirm: answer.confirm,
@@ -231,7 +239,7 @@ class NewAnswer extends React.Component {
     })
     var supervisor = await supervisorList(e, 5, this.props.User.token); // 5 سوپروایزر
     var manager = await supervisorList(e, 6, this.props.User.token); // 6 سرپرست فروشگاه
-    var person = await personList(this.props.Company.currentCompanyId, this.props.User.token);
+    var person = await allPerson(this.props.Company.currentCompanyId, this.props.User.token);
     this.setState({
       cmbSupervisor: supervisor.length > 0 ? supervisor : person,
       cmbManager: manager.length > 0 ? manager : person
@@ -343,17 +351,25 @@ class NewAnswer extends React.Component {
   };
 
   btnDelete_onClick = async () => {
-    const MSG = await deleteAnswer(
-      this.props.answerId,
-      this.props.User.token
-    );
-    this.setState({
-      ToastProps: {
-        isToastVisible: true,
-        Message: MSG,
-        Type: "success",
-      },
-      stateAnswer_show: true
+    let result = confirm("آیا از حذف بازرسی اطمینان دارید؟");
+    result.then(async (dialogResult) => {
+      if (dialogResult) {
+        const MSG = await deleteAnswer(
+          this.props.answerId == null ? this.state.AddedAnswerId : this.props.answerId,
+          this.props.User.token
+        );
+        this.setState({
+          ToastProps: {
+            isToastVisible: true,
+            Message: MSG,
+            Type: "success",
+          },
+          stateAnswer_show: true
+        });
+      }
+      else {
+        return;
+      }
     });
   };
 
@@ -413,7 +429,7 @@ class NewAnswer extends React.Component {
           //console.log(t)
         }
         else {
-          const RESULT=await addAnswerDetail(data, this.props.User.token);
+          const RESULT = await addAnswerDetail(data, this.props.User.token);
           this.setState({
             ToastProps: {
               isToastVisible: true,
@@ -485,6 +501,11 @@ class NewAnswer extends React.Component {
       });
     }
   }
+
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.QuestionGridData, "insQuestionAnswer");
+  };
+
   render() {
     return (
       this.state.stateAnswer_show == false ? (
@@ -499,12 +520,12 @@ class NewAnswer extends React.Component {
             rtlEnabled={true}
           />
           {this.state.stateWait && (
-          <Row className="text-center">
-            <Col style={{ textAlign: "center", marginTop: "10px" }}>
-              <Wait />
-            </Col>
-          </Row>
-        )}
+            <Row className="text-center">
+              <Col style={{ textAlign: "center", marginTop: "10px" }}>
+                <Wait />
+              </Col>
+            </Row>
+          )}
           <Card className="shadow bg-white border pointer">
             <Row className="standardPadding">
               <Row>
@@ -673,6 +694,17 @@ class NewAnswer extends React.Component {
           <p></p>
           <Card className="shadow bg-white border pointer">
             <Row className="standardPadding">
+              <Row style={{ direction: "ltr" }}>
+                <Col xs="auto">
+                  <Button
+                    icon={ExportExcelIcon}
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnExportExcel_onClick}
+                  />
+                </Col>
+              </Row>
               <Row>
                 <Label className="title">لیست {this.state.cmbQuestionTypeValue != null && this.state.cmbQuestionType.map(p => p.id == this.state.cmbQuestionTypeValue ? p.name : '')}</Label>
               </Row>
