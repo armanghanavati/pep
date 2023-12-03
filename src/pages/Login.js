@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import jwt from "jwt-decode";
-import { BrowserRouter as Router,Routes, Route, Link,Redirect,withRouter,Switch,HashHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Redirect, withRouter, Switch, HashHistory } from 'react-router-dom';
 
 import "../assets/CSS/login.css";
 import { Row, Col, Input } from "reactstrap";
@@ -21,7 +21,7 @@ class Login extends React.Component {
       txtUserNameValue: null,
       txtPasswordValue: null,
       stateRedirectHome: false,
-      stateRedirectFish:false
+      stateRedirectFish: false
     };
   }
 
@@ -47,9 +47,9 @@ class Login extends React.Component {
   };
 
   saveUserData = (userId, token, permissions) => {
-    sessionStorage.setItem('UserId',userId);
-    sessionStorage.setItem('Token',token);
-    sessionStorage.setItem('Permissions',JSON.stringify(permissions));
+    sessionStorage.setItem('UserId', userId);
+    sessionStorage.setItem('Token', token);
+    sessionStorage.setItem('Permissions', JSON.stringify(permissions));
     this.props.dispatch(
       userActions.setUser({
         userId,
@@ -86,7 +86,7 @@ class Login extends React.Component {
         </>
       );
 
-    if(this.state.stateRedirectFish){
+    if (this.state.stateRedirectFish) {
       return (
         <>
           <Fish />
@@ -165,7 +165,7 @@ class Login extends React.Component {
                   <Route exact path='/Fish' element={<Fish />}></Route>            
                 </Routes>
                  */}
-                 <input type="submit" name="commit" value="مشاهده فیش حقوقی" onClick={()=>this.setState({stateRedirectFish:true})}/>
+                <input type="submit" name="commit" value="مشاهده فیش حقوقی" onClick={() => this.setState({ stateRedirectFish: true })} />
               </Col>
             </Row>
             <p></p>

@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import { userActions } from "./redux/reducers/user/user-slice";
 import { authUser } from "./redux/reducers/user/user-actions";
 import { Row } from "reactstrap";
+import { checkTokenExpire } from "./utiliy/GlobalMethods";
 
 class App extends React.Component {
   constructor(props) {
@@ -20,9 +21,12 @@ class App extends React.Component {
   }
   componentDidMount = async () => {
     // await this.getParamsFromUrl();
+    let token = this.props.User.token
+    await checkTokenExpire(token);
     await this.fn_CheckIsLogin();
   };
 
+  
   fn_CheckIsLogin = async () => {
     const USER_ID = sessionStorage.getItem("UserId");
     const TOKEN = sessionStorage.getItem("Token");

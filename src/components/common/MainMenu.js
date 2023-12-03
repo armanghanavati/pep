@@ -9,6 +9,7 @@ import 'devextreme/dist/css/dx.light.css';
 import { BrowserRouter as Router,Routes, Route, Link } from 'react-router-dom';
 import { paymentActions } from '../../redux/reducers/payment/payment-slice.js';
 import { REAL_COMPONENT } from '../../config/configComponent.js';
+import  {checkTokenExpire} from '../../utiliy/GlobalMethods.js'
 
 var permTest=[
   {
@@ -101,12 +102,13 @@ class MainMenu extends React.Component {
     return convertedPerm;
   }
 
-  mnuMainMenu_onClick=(e)=>{
+  mnuMainMenu_onClick= async(e)=>{
     // alert(JSON.stringify(e.itemData))
     // switch(e.itemData.Name){
     //     case 'cartable': this.props.dispatch(paymentActions.enableRequestPayment()); break;
     // }        
-    
+    let token = this.props.User.token
+    await checkTokenExpire(token);
       this.setState({
         currentItem: e.itemData ,
         linkPath:'/'+e.itemData.LinkName,

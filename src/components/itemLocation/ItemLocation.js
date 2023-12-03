@@ -154,8 +154,8 @@ class ItemLocation extends React.Component {
     this.fn_itemGroupList();
     this.fn_inventoryList();
     await this.fn_stateList();
+    
   }
-
   fn_locationList = async () => {
     this.setState({
       LocationList: await userLocationListCombo(

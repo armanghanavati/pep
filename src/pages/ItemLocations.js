@@ -1,5 +1,6 @@
 import React from "react";
 import ItemLocation from "../components/itemLocation/ItemLocation";
+import { connect } from "react-redux";
 class ItemLocations extends React.Component {
   constructor(props) {
     super(props);
@@ -7,7 +8,7 @@ class ItemLocations extends React.Component {
   }
   render() {
     return (
-      <div>        
+      <div>
         <ItemLocation />
       </div>
     );
