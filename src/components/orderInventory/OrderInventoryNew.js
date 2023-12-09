@@ -248,6 +248,7 @@ class OrderInventoryNew extends React.Component{
                             searchEnabled={true}
                             rtlEnabled={true}                                        
                             onValueChange={this.cmbLocationGroup_onChange}
+                            className="fontStyle"
                         />
                     </Col>
                     <Col>
@@ -261,6 +262,7 @@ class OrderInventoryNew extends React.Component{
                             rtlEnabled={true}     
                             value={this.state.cmbLocationValue}                                   
                             onValueChange={this.cmbLocation_onChange}
+                            className="fontStyle"
                         />
                         <Label id="errLocationNew" className="standardLabelFont errMessage" />
                     </Col>
@@ -275,6 +277,7 @@ class OrderInventoryNew extends React.Component{
                         rtlEnabled={true}
                         value={this.state.cmbInventoryvalue}  
                         onValueChange={this.cmbInventory_onChange}
+                        className="fontStyle"
                         />
                         <Label id="errInventoryNew" className="standardLabelFont errMessage" />
                     </Col>
@@ -291,6 +294,7 @@ class OrderInventoryNew extends React.Component{
                             searchEnabled={true}
                             rtlEnabled={true}                                        
                             onValueChange={this.cmbItemGroup_onChange}
+                            className="fontStyle"
                         />                        
                     </Col>
                     <Col>
@@ -304,6 +308,7 @@ class OrderInventoryNew extends React.Component{
                             searchEnabled={true}
                             rtlEnabled={true}                                        
                             onValueChange={this.cmbItem_onChange}
+                            className="fontStyle"
                         />
                         <Label id="errItemNew" className="standardLabelFont errMessage" />
                     </Col>                    
@@ -336,6 +341,7 @@ class OrderInventoryNew extends React.Component{
                             rtlEnabled={true}                  
                             value={this.state.cmbSupplierValue}                      
                             onValueChange={this.cmbSupplier_onChange}
+                            className="fontStyle"
                         />
                         <Label id="errSupplierNew" className="standardLabelFont errMessage" />
                     </Col>           
@@ -348,6 +354,7 @@ class OrderInventoryNew extends React.Component{
                             rtlEnabled={true}
                             valueChangeEvent="keyup"
                             onValueChanged={this.txtOrderNumber_onChanege}
+                            className="fontStyle"
                         />  
                         <Label id="errOrderNumberNew" className="standardLabelFont errMessage" />
                     </Col>                    
@@ -362,6 +369,7 @@ class OrderInventoryNew extends React.Component{
                       stylingMode="contained"
                       rtlEnabled={true}
                       onClick={this.btnSaveOrder_onClick}
+                      className="fontStyle"
                     />
                   </Col>                
                   <Col xs="auto">

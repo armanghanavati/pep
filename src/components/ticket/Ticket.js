@@ -573,8 +573,9 @@ class Ticket extends React.Component {
                             toggle={this.ModalCommentAttachment_onClickAway}
                             centered={true}
                             size="lg"
+                            className='fontStyle'
                         >
-                            <ModalHeader toggle={this.ModalCommentAttachment_onClickAway} >
+                            <ModalHeader>
                                 فایل های ضمیمه
                             </ModalHeader>
                             <ModalBody>
@@ -602,8 +603,9 @@ class Ticket extends React.Component {
                             toggle={this.ModalTicketDetail_onClickAway}
                             centered={true}
                             size="lg"
+                            className="fontStyle"
                         >
-                            <ModalHeader toggle={this.ModalTicketDetail_onClickAway} >
+                            <ModalHeader>
                                 پاسخ ها
                             </ModalHeader>
                             <ModalBody>
@@ -663,6 +665,7 @@ class Ticket extends React.Component {
                                                         stylingMode="contained"
                                                         rtlEnabled={true}
                                                         onClick={() => this.btnShowAttachmentsTicketComment_onClick(item.id)}
+                                                        className="fontStyle"
                                                     />
                                                 </Col>
                                             </Row>
@@ -678,6 +681,7 @@ class Ticket extends React.Component {
                                             inputAttr={notesLabel}
                                             autoResizeEnabled={true}
                                             onValueChanged={this.txtTciketComment_onChange}
+                                            className="fontStyle"
                                         />
                                     </Col>
                                 </Row>
@@ -690,6 +694,7 @@ class Ticket extends React.Component {
                                             stylingMode="contained"
                                             rtlEnabled={true}
                                             onClick={this.btnRegisterCommet_onClick}
+                                            className="fontStyle"
                                         />
                                     </Col>
                                     <Col xs="auto">
@@ -701,6 +706,7 @@ class Ticket extends React.Component {
                                                 type="default"
                                                 stylingMode="outlined"
                                                 rtlEnabled={true}
+                                                className="fontStyle"
                                             />
 
                                         </label>
@@ -726,6 +732,7 @@ class Ticket extends React.Component {
                                                 stylingMode="contained"
                                                 rtlEnabled={true}
                                                 onClick={this.btnStartTicket_onClick}
+                                                className="fontStyle"
                                             />
                                         </Col>
                                         <Col xs="auto">
@@ -736,6 +743,7 @@ class Ticket extends React.Component {
                                                 stylingMode="contained"
                                                 rtlEnabled={true}
                                                 onClick={this.btnDoneTicket_onClick}
+                                                className="fontStyle"
                                             />
                                         </Col>
                                         <Col xs="auto">
@@ -746,6 +754,7 @@ class Ticket extends React.Component {
                                                 stylingMode="contained"
                                                 rtlEnabled={true}
                                                 onClick={this.btnRejectTicket_onClick}
+                                                className="fontStyle"
                                             />
                                         </Col>
                                     </>
@@ -760,8 +769,9 @@ class Ticket extends React.Component {
                             toggle={this.ModalNewTicket_onClickAway}
                             centered={true}
                             size="lg"
+                            className="fontStyle"
                         >
-                            <ModalHeader toggle={this.ModalNewTicket_onClickAway} >
+                            <ModalHeader>
                                 تیکت جدید
                             </ModalHeader>
                             <ModalBody>
@@ -775,6 +785,7 @@ class Ticket extends React.Component {
                                             rtlEnabled={true}
                                             valueChangeEvent="keyup"
                                             onValueChanged={this.txtSubject_onChanege}
+                                            className="fontStyle"
                                         />
                                         <Label id="errTicketTitle" className="standardLabelFont errMessage" />
                                     </Col>
@@ -789,6 +800,7 @@ class Ticket extends React.Component {
                                             rtlEnabled={true}
                                             onValueChange={this.cmbLocation_onChange}
                                             value={this.state.cmbLocationValue}
+                                            className="fontStyle"
                                         />
                                         <Label id="errLocation" className="standardLabelFont errMessage" />
                                     </Col>
@@ -802,6 +814,7 @@ class Ticket extends React.Component {
                                             searchEnabled={true}
                                             rtlEnabled={true}
                                             onValueChange={this.cmbTicketSubjectParent_onChange}
+                                            className="fontStyle"
                                         />
                                     </Col>
                                     <Col>
@@ -814,6 +827,7 @@ class Ticket extends React.Component {
                                             searchEnabled={true}
                                             rtlEnabled={true}
                                             onValueChange={this.cmbTicketSubject_onChange}
+                                            className="fontStyle"
                                         />
                                         <Label id="errTicketSubject" className="standardLabelFont errMessage" />
                                     </Col>
@@ -826,6 +840,7 @@ class Ticket extends React.Component {
                                             valueExpr="id"
                                             rtlEnabled={true}
                                             onValueChange={this.cmbTicketPriority_onChange}
+                                            className="fontStyle"
                                         />
                                         <Label id="errTicketPriority" className="standardLabelFont errMessage" />
                                     </Col>
@@ -840,6 +855,7 @@ class Ticket extends React.Component {
                                             inputAttr={notesLabel}
                                             autoResizeEnabled={true}
                                             onValueChanged={this.txtDesc_onChange}
+                                            className="fontStyle"
                                         />
                                         <Label id="errTicketDesc" className="standardLabelFont errMessage" />
                                     </Col>
@@ -852,6 +868,7 @@ class Ticket extends React.Component {
                                             type="default"
                                             stylingMode="contained"
                                             onClick={this.btnRgisterTicket_onClick}
+                                            className="fontStyle"
                                         />
                                     </Col>
                                     <Col xs="auto">
@@ -863,6 +880,7 @@ class Ticket extends React.Component {
                                                 stylingMode="outlined"
                                                 rtlEnabled={true}
                                                 id="file-input"
+                                                className="fontStyle"
                                             />
 
                                         </label>
@@ -892,6 +910,7 @@ class Ticket extends React.Component {
                                 type="default"
                                 stylingMode="contained"
                                 onClick={this.btnNewTicket_onClick}
+                                className="fontStyle"
                             />
                         </Col>
                     </Row>
@@ -941,6 +960,7 @@ class Ticket extends React.Component {
                                         allowColumnResizing={true}
                                         onRowClick={this.grdTicket_onClick}
                                         height={DataGridDefaultHeight}
+                                        className="fontStyle"
                                     >
                                         <Scrolling rowRenderingMode="virtual"
                                             showScrollbar="always"
@@ -973,6 +993,7 @@ class Ticket extends React.Component {
                                         allowColumnResizing={true}
                                         onRowClick={this.grdTicket_onClick}
                                         height={DataGridDefaultHeight}
+                                        className="fontStyle"
                                     >
                                         <Scrolling rowRenderingMode="virtual"
                                             showScrollbar="always"
@@ -1005,6 +1026,7 @@ class Ticket extends React.Component {
                                         allowColumnResizing={true}
                                         onRowClick={this.grdTicket_onClick}
                                         height={DataGridDefaultHeight}
+                                        className="fontStyle"
                                     >
                                         <Scrolling rowRenderingMode="virtual"
                                             showScrollbar="always"
@@ -1037,6 +1059,7 @@ class Ticket extends React.Component {
                                         allowColumnResizing={true}
                                         onRowClick={this.grdTicket_onClick}
                                         height={DataGridDefaultHeight}
+                                        className="fontStyle"
                                     >
                                         <Scrolling rowRenderingMode="virtual"
                                             showScrollbar="always"

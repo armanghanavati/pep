@@ -728,7 +728,7 @@ class OrderSupplier extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStoreGroup_onChange}
-                  className="fontStyle"
+                  className="fontStyle"                  
                 />
               </Col>
               <Col>
@@ -807,6 +807,7 @@ class OrderSupplier extends React.Component {
                         stylingMode="contained"
                         rtlEnabled={true}
                         onClick={this.btnNew_onClick}
+                        className="fontStyle"
                       />
                     </Col>
                     {this.state.stateEnable_btnAddGroup && (
@@ -818,6 +819,7 @@ class OrderSupplier extends React.Component {
                           stylingMode="contained"
                           rtlEnabled={true}
                           onClick={this.btnNewGroup_onClick}
+                          className="fontStyle"
                         />
                       </Col>
                     )}
@@ -829,6 +831,7 @@ class OrderSupplier extends React.Component {
                         stylingMode="contained"
                         rtlEnabled={true}
                         onClick={this.btnNewOutRoute_onClick}
+                        className="fontStyle"
                       />
                     </Col>
                   </Row>
@@ -841,6 +844,7 @@ class OrderSupplier extends React.Component {
                       stylingMode="contained"
                       rtlEnabled={true}
                       onClick={this.btnExportExcel_onClick}
+                      className="fontStyle"
                     />
                   </Col>
                 </Row>
@@ -861,6 +865,7 @@ class OrderSupplier extends React.Component {
                       onRowUpdating={this.grdOrderPointSupplier_onRowUpdating}                      
                       onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
                       onRowPrepared={this.grdOrderPointSupplier_onRowPrepared}
+                      className="fontStyle"
                     >
                       <Scrolling
                         rowRenderingMode="virtual"
@@ -899,6 +904,7 @@ class OrderSupplier extends React.Component {
                         stylingMode="contained"
                         rtlEnabled={true}
                         onClick={this.btnUpdateOrders_onClick}
+                        className="fontStyle"
                       />
                     </Col>
                   </Row>
@@ -984,6 +990,7 @@ class OrderSupplier extends React.Component {
                 toggle={this.ModalOrderSupplierLogs_onClickAway}
                 centered={true}
                 size="lg"
+                className="fontStyle"
               >
                 <ModalHeader toggle={this.ModalOrderSupplierLogs_onClickAway}>
                   لیست تغییرات سفارش
@@ -1014,6 +1021,7 @@ class OrderSupplier extends React.Component {
                 toggle={this.ModalOrderInventoryNew_onClickAway}
                 centered={true}
                 size="lg"
+                className="fontStyle"
               >
                 <ModalHeader toggle={this.ModalOrderInventoryNew_onClickAway}>
                   ثبت سفارش
@@ -1043,6 +1051,7 @@ class OrderSupplier extends React.Component {
                 centered={true}
                 dir="rtl"
                 size="xl"
+                className="fontStyle"
               >
                 <ModalHeader
                   toggle={this.ModalOrderInventoryNewGroup_onClickAway}
@@ -1074,6 +1083,7 @@ class OrderSupplier extends React.Component {
                 centered={true}
                 dir="rtl"
                 size="xl"
+                className="fontStyle"
               >
                 <ModalHeader
                   toggle={this.ModalDetailOfPriceWeighNumber_onClickAway}

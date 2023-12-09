@@ -777,8 +777,9 @@ class OrderInventory extends React.Component {
                 toggle={this.ModalOrderInventoryLogs_onClickAway}
                 centered={true}
                 size="lg"
+                className="fontStyle"
               >
-                <ModalHeader toggle={this.ModalOrderInventoryLogs_onClickAway}>
+                <ModalHeader>
                   لیست تغییرات سفارش
                 </ModalHeader>
                 <ModalBody>
@@ -808,7 +809,7 @@ class OrderInventory extends React.Component {
                 size="lg"
                 className="fontStyle"
               >
-                <ModalHeader toggle={this.ModalOrderInventoryNew_onClickAway}>
+                <ModalHeader>
                   ثبت سفارش
                 </ModalHeader>
                 <ModalBody>
@@ -838,7 +839,7 @@ class OrderInventory extends React.Component {
                 size="xl"
                 className="fontStyle"
               >
-                <ModalHeader toggle={this.ModalOrderInventoryNewGroup_onClickAway} >
+                <ModalHeader>
                   ثبت سفارش گروهی
                 </ModalHeader>
                 <ModalBody>

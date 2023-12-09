@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import RealEstateRegister from "../components/realEstate/RealEstateRegister";
+import RealEstateShow from "../components/realEstate/RealEstateShow";
 
 class RealEstates extends React.Component{
     constructor(props){
@@ -9,7 +9,7 @@ class RealEstates extends React.Component{
     render(){
         return(
             <div>
-                <RealEstateRegister />
+                <RealEstateShow />
             </div>
         )
     }

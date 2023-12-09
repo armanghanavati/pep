@@ -83,6 +83,7 @@ class Home extends React.Component {
     locale("fa-IR");
     return (
       <div className="mainRow">
+        {/* <Row style={{position:'fixed',width:'100vh',top:'0',left:'0',zIndex:'9999',width:'100%'}}> */}
         <Row>
           <Toolbar>
             <Item location="center">

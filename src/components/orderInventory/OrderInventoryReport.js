@@ -316,6 +316,7 @@ class OrderInventoryReport extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStoreGroup_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -328,6 +329,7 @@ class OrderInventoryReport extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStore_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -340,6 +342,7 @@ class OrderInventoryReport extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -352,6 +355,7 @@ class OrderInventoryReport extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbItem_onChange}
+                  className="fontStyle"
                 />
               </Col>
             </Row>   
@@ -363,6 +367,7 @@ class OrderInventoryReport extends React.Component {
                             value={this.state.FromDate}
                             onChange={this.DatePickerFrom_onChange}
                             renderInput={(params) => <TextField {...params} />}
+                            className="fontStyle"
                         />
                     </LocalizationProvider>
                 </Col>
@@ -373,6 +378,7 @@ class OrderInventoryReport extends React.Component {
                             value={this.state.ToDate}
                             onChange={this.DatePickerTo_onChange}
                             renderInput={(params) => <TextField {...params} />}
+                            className="fontStyle"
                         />
                     </LocalizationProvider>
                 </Col>
@@ -386,6 +392,7 @@ class OrderInventoryReport extends React.Component {
                   stylingMode="contained"
                   rtlEnabled={true}
                   onClick={this.btnSearch_onClick}
+                  className="fontStyle"
                 />
               </Col>
             </Row>                    
@@ -406,6 +413,7 @@ class OrderInventoryReport extends React.Component {
                   stylingMode="contained"
                   rtlEnabled={true}
                   onClick={this.btnExportExcel_onClick}
+                  className="fontStyle"
                 />
               </Col>
             </Row>
@@ -425,7 +433,7 @@ class OrderInventoryReport extends React.Component {
                   onRowUpdating={this.grdOrderPointInventory_onRowUpdating}
                   onCellDblClick={this.grdOrderPointInventory_onCellDblClick}
                   onRowPrepared={this.grdOrderPointInventory_onRowPrepared}     
-             
+                  className="fontStyle"             
                   //   onSelectionChanged={
                   //     this.grdOrderPointInventory_onSelectionChanged
                   //   }
@@ -467,8 +475,9 @@ class OrderInventoryReport extends React.Component {
                 toggle={this.ModalOrderInventoryLogs_onClickAway}
                 centered={true}
                 size="lg"
+                className="fontStyle"
               >
-                <ModalHeader toggle={this.ModalOrderInventoryLogs_onClickAway}>
+                <ModalHeader>
                   لیست تغییرات سفارش
                 </ModalHeader>
                 <ModalBody>

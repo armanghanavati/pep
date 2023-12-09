@@ -220,6 +220,7 @@ class OrderInventoryNewGroup extends React.Component {
               searchEnabled={true}
               rtlEnabled={true}
               onValueChange={this.cmbLocationGroup_onChange}
+              className="fontStyle"
             />
           </Col>
           <Col>
@@ -233,6 +234,7 @@ class OrderInventoryNewGroup extends React.Component {
               rtlEnabled={true}
               value={this.state.cmbLocationValue}
               onValueChange={this.cmbLocation_onChange}
+              className="fontStyle"
             />
             <Label id="errLocation" className="standardLabelFont errMessage" />
           </Col>
@@ -246,6 +248,7 @@ class OrderInventoryNewGroup extends React.Component {
               valueExpr="id"
               rtlEnabled={true}
               onValueChange={this.cmbInventory_onChange}
+              className="fontStyle"
               />
               <Label id="errInventory" className="standardLabelFont errMessage" />
           </Col>
@@ -260,6 +263,7 @@ class OrderInventoryNewGroup extends React.Component {
               rtlEnabled={true}
               value={this.state.cmbSupplierValue}
               onValueChange={this.cmbSupplier_onChange}
+              className="fontStyle"
             />
             <Label id="errSupplier" className="standardLabelFont errMessage" />
           </Col>
@@ -278,6 +282,7 @@ class OrderInventoryNewGroup extends React.Component {
               allowColumnResizing={true}
               columnResizingMode="widget"
               onRowUpdating={this.grdOrderPointInventoryNewGroup_onRowUpdating}
+              className="fontStyle"
             >
               <Scrolling
                 rowRenderingMode="virtual"
@@ -315,6 +320,7 @@ class OrderInventoryNewGroup extends React.Component {
               stylingMode="contained"
               rtlEnabled={true}
               onClick={this.btnSaveGroup_onClick}
+              className="fontStyle"
             />
           </Col>
         </Row>

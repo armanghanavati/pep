@@ -37,6 +37,7 @@ import RealEstateRegisters from '../pages/RealEstateRegisters'
 import Questions from '../pages/Questions'
 import Answers from '../pages/Answers'
 import Zones from '../pages/Zones'
+import RealEstateShow from '../components/realEstate/RealEstateShow'
 
 export const REAL_COMPONENT = [
   {
@@ -192,6 +193,10 @@ export const REAL_COMPONENT = [
   {
     strComponent: "RealEstateRegisters",
     orgComponent: <RealEstateRegisters/>,
+  },
+  {
+    strComponent: "RealEstates",
+    orgComponent: <RealEstateShow/>,
   },
   {
     strComponent: "Questions",

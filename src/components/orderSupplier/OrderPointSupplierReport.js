@@ -320,6 +320,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStoreGroup_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -332,6 +333,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStore_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -344,6 +346,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -356,6 +359,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbItem_onChange}
+                  className="fontStyle"
                 />
               </Col>
             </Row>   
@@ -367,6 +371,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                             value={this.state.FromDate}
                             onChange={this.DatePickerFrom_onChange}
                             renderInput={(params) => <TextField {...params} />}
+                            className="fontStyle"
                         />
                     </LocalizationProvider>
                 </Col>
@@ -377,6 +382,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                             value={this.state.ToDate}
                             onChange={this.DatePickerTo_onChange}
                             renderInput={(params) => <TextField {...params} />}
+                            className="fontStyle"
                         />
                     </LocalizationProvider>
                 </Col>
@@ -389,6 +395,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   type="default"
                   stylingMode="contained"
                   rtlEnabled={true}
+                  className="fontStyle"
                   onClick={this.btnSearch_onClick}
                 />
               </Col>
@@ -410,6 +417,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   stylingMode="contained"
                   rtlEnabled={true}
                   onClick={this.btnExportExcel_onClick}
+                  className="fontStyle"
                 />
               </Col>
             </Row>
@@ -427,7 +435,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   allowColumnResizing={true}
                   columnResizingMode="widget"
                   onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}  
-             
+                  className="fontStyle"             
                   //   onSelectionChanged={
                   //     this.grdOrderPointInventory_onSelectionChanged
                   //   }
@@ -469,6 +477,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
                 toggle={this.ModalOrderSupplierLogs_onClickAway}
                 centered={true}
                 size="lg"
+                className="fontStyle"
               >
                 <ModalHeader toggle={this.ModalOrderSupplierLogs_onClickAway}>
                   لیست تغییرات سفارش

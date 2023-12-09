@@ -1165,40 +1165,7 @@ class RealEstate extends React.Component {
               )}
             </Row>
           </div>
-        </Card>
-        <p></p>
-        <Card className="shadow bg-white border pointer">
-          <div className="standardPadding">
-            <Row>
-              <DataGrid
-                dataSource={this.state.grdTickets}
-                // defaultColumns={DataGridTicketcolumns}
-                showBorders={true}
-                rtlEnabled={true}
-                allowColumnResizing={true}
-                onRowClick={this.grdTicket_onClick}
-                height={DataGridDefaultHeight}
-              >
-                <Scrolling
-                  rowRenderingMode="virtual"
-                  showScrollbar="always"
-                  columnRenderingMode="virtual"
-                />
-                <Editing mode="cell" allowUpdating={true} />
-                <Paging defaultPageSize={DataGridDefaultPageSize} />
-                <Pager
-                  visible={true}
-                  allowedPageSizes={DataGridPageSizes}
-                  showPageSizeSelector={true}
-                  showNavigationButtons={true}
-                />
-                <FilterRow visible={true} />
-                <FilterPanel visible={true} />
-                <HeaderFilter visible={true} />
-              </DataGrid>
-            </Row>
-          </div>
-        </Card>
+        </Card>        
         {this.state.stateModal_NearEstate && (
           <Row className="text-center">
             <Col>

@@ -393,6 +393,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                       stylingMode="contained"
                       rtlEnabled={true}
                       onClick={this.btnSearch_onClick}
+                      className="fontStyle"
                     />
                   </Col>
                 </Row>
@@ -411,6 +412,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                   // onCellDblClick={this.grdOrderPointInventory_onCellDblClick}
                   // onRowPrepared={this.grdOrderPointInventory_onRowPrepared}
                   onSelectionChanged={this.grdOrderPointInventory_onSelectionChanged}
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
@@ -449,6 +451,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                       stylingMode="contained"
                       rtlEnabled={true}
                       onClick={this.btnUpdateOrders_onClick}
+                      className="fontStyle"
                     />
                   </Col>                
               )}      
@@ -461,6 +464,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnConfirmOutRoute_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               )}
@@ -474,6 +478,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnRejectOutRoute_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               )}

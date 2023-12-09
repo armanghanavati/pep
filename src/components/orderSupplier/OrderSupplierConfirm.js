@@ -315,6 +315,7 @@ class OrderSupplierConfirm extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStoreGroup_onChange}
+                  className="fontStyle"
                 />
               </Col>
               <Col>
@@ -327,6 +328,7 @@ class OrderSupplierConfirm extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbRetailStore_onChange}
+                  className="fontStyle"
                 />
                 <Label
                   id="errLocation"
@@ -343,6 +345,7 @@ class OrderSupplierConfirm extends React.Component {
                   valueExpr="id"
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
+                  className="fontStyle"
                 />
                 <Label id="errSupplier" className="standardLabelFont errMessage" />
               </Col>
@@ -357,6 +360,7 @@ class OrderSupplierConfirm extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnSearch_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               </Row>
@@ -385,6 +389,7 @@ class OrderSupplierConfirm extends React.Component {
                   onSelectionChanged={
                     this.grdOrderPointSupplier_onSelectionChanged
                   }
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
@@ -420,6 +425,7 @@ class OrderSupplierConfirm extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnConfirm_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               )}
