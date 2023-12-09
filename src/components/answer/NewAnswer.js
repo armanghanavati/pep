@@ -130,21 +130,18 @@ class NewAnswer extends React.Component {
     await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
     await this.fn_questionTypeList();
-    if (this.props.answerId != null) {
-      this.OpenCloseWait();
-      await this.fn_loadData(this.props.answerId);
-      this.OpenCloseWait();
-    }
-    else {
+    if (this.props.answerId != null)
+      this.fn_loadData(this.props.answerId);
+    else
       this.fn_locationList();
-    }
   }
 
   fn_loadData = async (answerId) => {
+    this.OpenCloseWait();
     const answer = await answerListById(answerId, this.props.User.token);
     //alert(JSON.stringify(answer))
-    var supervisor = await supervisorList(answer.locationId, 5, this.props.User.token); // 5 سوپروایزر
-    var manager = await supervisorList(answer.locationId, 6, this.props.User.token); // 6 سرپرست فروشگاه
+    //var supervisor = await supervisorList(answer.locationId, 5, this.props.User.token); // 5 سوپروایزر
+    //var manager = await supervisorList(answer.locationId, 6, this.props.User.token); // 6 سرپرست فروشگاه
     var person = await allPerson(this.props.Company.currentCompanyId, this.props.User.token);
     this.setState({
       disable_questionType: true,
@@ -159,6 +156,7 @@ class NewAnswer extends React.Component {
       cmbManagerValue: answer.storeManagerId,
       QuestionGridData: await answeredQuestionList(answerId, answer.questionTypeId, answer.zoneId, this.props.User.token),
     });
+    this.OpenCloseWait();
   }
 
   fn_GetPermissions = () => {

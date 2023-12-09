@@ -31,6 +31,7 @@ import DataGrid, {
   GroupPanel,
   SearchPanel,
 } from "devextreme-react/data-grid";
+import SelectBox from "devextreme-react/select-box";
 import { Toast } from 'devextreme-react/toast';
 import { connect } from "react-redux";
 import {
@@ -40,7 +41,7 @@ import {
   updateSEPPayment,
   ConfirmSEPPaymentAndSendlink,
 } from "../../redux/reducers/payment/payment-action";
-import { checkPermission } from "../../redux/reducers/user/user-actions";
+import { checkPermission, userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
 import Wait from "../common/Wait";
 import { Gfn_NumberDetect, Gfn_convertENunicode, Gfn_ConvertToPersian } from "../../utiliy/GlobalMethods";
 import { DataGridPaymentcolumns } from "./Payment-Config";
@@ -50,6 +51,8 @@ import {
   , ToastTime
   , ToastWidth
 } from '../../config/config';
+import { locationListCombo } from "../../redux/reducers/userLocation/userLocation-actions";
+import { locationList } from "../../redux/reducers/location/location-actions";
 
 class PaymentRequest extends React.Component {
   constructor(props) {
@@ -75,11 +78,14 @@ class PaymentRequest extends React.Component {
         Message: "",
         Type: "",
       },
+      cmbLocation: null,
+      cmbLocationValue: null,
     };
   }
 
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_locationList();
     const SEPPAYMENT = await this.fn_UpdateSEPPaymentList();
     this.tabPayment_onChange('1', SEPPAYMENT)
   }
@@ -110,9 +116,15 @@ class PaymentRequest extends React.Component {
       }
   }
 
+  fn_locationList = async () => {
+    this.setState({
+      cmbLocation:await userLocationList(this.props.User.userId, 2, this.props.User.token)
+    })
+  }
+
   fn_UpdateSEPPaymentList = async () => {
     if (this.state.stateDisable_showSEPPayment) {
-      const SEPPAYMENT = await allSEPPaymentList(1, this.props.User.token)
+      const SEPPAYMENT = await allSEPPaymentList(this.props.User.userId, 1, this.props.User.token)
       this.setState({
         SEPPayment: SEPPAYMENT,
       });
@@ -156,12 +168,19 @@ class PaymentRequest extends React.Component {
     this.setState({ FactorAmount: num });
   };
 
+  cmbLocation_onChange=(e)=>{
+    this.setState({
+      cmbLocationValue:e
+    })
+  }
+
   btnAddSEPPayment_onClick = async () => {
     let flag = true;
     let errMSG = "";
     document.getElementById("errPayerName").innerHTML = "";
     document.getElementById("errPayerMobile").innerHTML = "";
     document.getElementById("errPaymentAmount").innerHTML = "";
+    document.getElementById("errLocation").innerHTML = "";
     if (this.state.PaymenterName.trim() == '') {
       document.getElementById("errPayerName").innerHTML = "نام پرداخت کننده را وارد نمائید.";
       flag = false;
@@ -174,13 +193,18 @@ class PaymentRequest extends React.Component {
       document.getElementById("errPaymentAmount").innerHTML = "مبلغ پرداخت را وارد نمائید.";
       flag = false;
     }
+    if (this.state.cmbLocationValue == null) {
+      document.getElementById("errLocation").innerHTML = "فروشگاه را انتخاب نمایید";
+      flag = false;
+    }
     if (flag) {
       const data = {
         userIdInsert: this.props.User.userId,
         payerName: this.state.PaymenterName,
         payerMobile: this.state.PaymenterMobile,
         documentSerial: this.state.FactorSerial,
-        amountPay: this.state.FactorAmount.replace(/,/g, "")
+        amountPay: this.state.FactorAmount.replace(/,/g, ""),
+        locationId:this.state.cmbLocationValue
       };
       await addSEPPayment(data, this.props.User.token);
       const SEPPAYMENT = await this.fn_UpdateSEPPaymentList();
@@ -206,6 +230,7 @@ class PaymentRequest extends React.Component {
       FactorAmount: this.addCommas(this.removeNonNumeric(params.data.amountPay)),
       stateUpdateDelete: true,
       RowSelected: params.data,
+      cmbLocationValue:params.data.locationId
     });
   };
 
@@ -216,6 +241,7 @@ class PaymentRequest extends React.Component {
       FactorSerial: "",
       FactorAmount: null,
       stateUpdateDelete: false,
+      cmbLocationValue:null
     });
   };
 
@@ -226,6 +252,7 @@ class PaymentRequest extends React.Component {
     document.getElementById("errPayerName").innerHTML = "";
     document.getElementById("errPayerMobile").innerHTML = "";
     document.getElementById("errPaymentAmount").innerHTML = "";
+    document.getElementById("errLocation").innerHTML = "";
     if (this.state.PaymenterName.trim() == '') {
       document.getElementById("errPayerName").innerHTML = "نام پرداخت کننده را وارد نمائید.";
       flag = false;
@@ -236,6 +263,10 @@ class PaymentRequest extends React.Component {
     }
     if (this.state.FactorAmount == null) {
       document.getElementById("errPaymentAmount").innerHTML = "مبلغ پرداخت را وارد نمائید.";
+      flag = false;
+    }
+    if (this.state.cmbLocationValue == null) {
+      document.getElementById("errLocation").innerHTML = "فروشگاه را انتخاب نمایید";
       flag = false;
     }
 
@@ -257,6 +288,7 @@ class PaymentRequest extends React.Component {
         payerMobile: this.state.PaymenterMobile,
         documentSerial: this.state.FactorSerial,
         amountPay: this.state.FactorAmount.replace(/,/g, "").toString(),
+        locationId:this.state.cmbLocationValue
       };
       let tempSEPPayment = [];
       tempSEPPayment.push(await updateSEPPayment(data, this.props.User.token));
@@ -392,6 +424,20 @@ class PaymentRequest extends React.Component {
                   placeholder="موبایل پرداخت کننده"
                 />
                 <Label id="errPayerMobile" className="standardLabelFont errMessage" />
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">نام فروشگاه</Label>
+                <SelectBox
+                  dataSource={this.state.cmbLocation}
+                  displayExpr="label"
+                  placeholder="نام فروشگاه"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbLocation_onChange}
+                  value={this.state.cmbLocationValue}
+                />
+                <Label id="errLocation" className="standardLabelFont errMessage" />
               </Col>
               <Col>
                 <Label>شماره سند</Label>
@@ -673,6 +719,7 @@ class PaymentRequest extends React.Component {
 
 const mapStateToProps = (state) => ({
   User: state.users,
+  Company: state.companies,
 });
 
 export default connect(mapStateToProps)(PaymentRequest);

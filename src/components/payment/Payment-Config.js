@@ -10,6 +10,11 @@ export const DataGridPaymentcolumns = [
         allowEditing: false,
     },
     {
+        dataField: "locationName",
+        caption: "فروشگاه",
+        allowEditing: false,
+    },
+    {
         dataField: "documentSerial",
         caption: "شماره سند",
         allowEditing: false,

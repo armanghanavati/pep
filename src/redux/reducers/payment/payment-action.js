@@ -1,5 +1,5 @@
-export async function allSEPPaymentList(statusCode, Token) {
-  const url=window.apiAddress+"/SEPPayment/allSEPPaymentList";    
+export async function allSEPPaymentList(userId, statusCode, Token) {
+  const url=window.apiAddress+"/SEPPayment/allSEPPaymentList?userId=" + userId;    
   const response = await fetch(
    url,
       {

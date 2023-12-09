@@ -141,8 +141,8 @@ class ItemLocation extends React.Component {
       cmbInventory: null,
       cmbInventoryvalue: null,
       stateWait: false,
-      cmbState:null,
-      cmbStateValue:null
+      cmbState: null,
+      cmbStateValue: null
     };
   }
 
@@ -154,8 +154,8 @@ class ItemLocation extends React.Component {
     this.fn_itemGroupList();
     this.fn_inventoryList();
     await this.fn_stateList();
-  }
 
+  }
   fn_locationList = async () => {
     this.setState({
       LocationList: await userLocationListCombo(
@@ -195,9 +195,9 @@ class ItemLocation extends React.Component {
     this.setState({});
   };
 
-  fn_stateList=async()=>{
+  fn_stateList = async () => {
     this.setState({
-      cmbState:await stateList(this.props.User.token)
+      cmbState: await stateList(this.props.User.token)
     })
   }
 
@@ -288,7 +288,7 @@ class ItemLocation extends React.Component {
 
   cmbSupplier_onChange = async (e) => {
     var data = await Gfn_BuildValueComboMulti(e);
-    const ITEMS=await itemListComboBySupplierId(data, this.props.User.token);
+    const ITEMS = await itemListComboBySupplierId(data, this.props.User.token);
 
     const LAZY = new DataSource({
       store: ITEMS,
@@ -312,7 +312,7 @@ class ItemLocation extends React.Component {
     });
   };
 
-  cmbState_onChange=async(e)=>{
+  cmbState_onChange = async (e) => {
     this.setState({
       cmbStateValue: e
     })
@@ -356,7 +356,7 @@ class ItemLocation extends React.Component {
       supplierId: this.state.SupplierId,
       itemGroupId: this.state.ItemGroupId,
       inventoryId: this.state.cmbInventoryvalue,
-      stateId:this.state.cmbStateValue
+      stateIds: this.state.cmbStateValue
     };
     //alert(JSON.stringify(data))
     var RESULT = 0;
@@ -622,15 +622,14 @@ class ItemLocation extends React.Component {
                 </Col>
                 <Col xs={3}>
                   <Label className="standardLabelFont">استان</Label>
-                  <SelectBox
+                  <TagBox
                     dataSource={this.state.cmbState}
+                    searchEnabled={true}
                     displayExpr="name"
                     placeholder="استان"
                     valueExpr="id"
-                    searchEnabled={true}
                     rtlEnabled={true}
                     onValueChange={this.cmbState_onChange}
-                    value={this.state.cmbStateValue}
                     className="fontStyle"
                   />
                   <Label
@@ -649,7 +648,7 @@ class ItemLocation extends React.Component {
                   stylingMode="contained"
                   rtlEnabled={true}
                   onClick={this.btnSearch_onClick}
-                  className="fontStyle"                  
+                  className="fontStyle"
                 />
               </Col>
             </Row>
@@ -712,7 +711,7 @@ class ItemLocation extends React.Component {
                 rtlEnabled={true}
                 allowColumnResizing={true}
                 height={DataGridDefaultHeight}
-                className="fontStyle"                
+                className="fontStyle"
               >
                 <Scrolling
                   rowRenderingMode="virtual"
