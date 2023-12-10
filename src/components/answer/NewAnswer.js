@@ -460,7 +460,7 @@ class NewAnswer extends React.Component {
       }
     })
     this.state.QuestionGridData.forEach(element => {
-      if (element.score == null || (element.score < minDesc && (element.dec == null || element.dec == ""))) {
+      if ((element.score == null ||  element.score < minDesc || element.score == "") && (element.dec == null || element.dec == "")) {
         t = 1
       }
     });
