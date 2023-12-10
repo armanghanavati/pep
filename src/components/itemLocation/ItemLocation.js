@@ -116,7 +116,7 @@ class ItemLocation extends React.Component {
       RowSelected: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
-      stateDisable_btnUpdate: true,
+      stateDisable_btnUpdate: false,
       stateDisable_show: false,
       ToastProps: {
         isToastVisible: false,
