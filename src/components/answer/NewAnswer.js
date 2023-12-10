@@ -459,9 +459,8 @@ class NewAnswer extends React.Component {
         minDesc = element.minDesc;
       }
     })
-
     this.state.QuestionGridData.forEach(element => {
-      if (element.score == null || (element.score < minDesc && element.dec == null)) {
+      if (element.score == null || (element.score < minDesc && (element.dec == null || element.dec == ""))) {
         t = 1
       }
     });
@@ -488,10 +487,6 @@ class NewAnswer extends React.Component {
             },
             stateAnswer_show: true
           });
-          if (this.props.answerId == null)
-            this.fn_loadData(this.state.AddedAnswerId)
-          else
-            this.fn_loadData(this.props.answerId)
         }
         else {
           return;
