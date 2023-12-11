@@ -148,7 +148,7 @@ class ItemLocation extends React.Component {
 
   async componentDidMount() {
     await this.fn_GetPermissions();
-    await this.fn_CheckRequireState
+    await this.fn_CheckRequireState();
     await this.fn_locationList();
     await this.fn_supplierList();
     this.fn_itemGroupList();
