@@ -612,23 +612,28 @@ class Ticket extends React.Component {
                                 {this.state.TicketData != null && (
                                     <>
                                         <Row className="standardPadding">
-                                            <Col xs='auto'>شماره تیکت : {this.state.TicketData.id}</Col>
-                                            <Col xs='auto'>کاربر درخواست دهنده : {this.state.TicketData.userNameInserted}</Col>
-                                            <Col xs="auto">نام و نام خانوادگی: {this.state.FullName}</Col>
-                                            <Col xs="auto">شماره همراه: {this.state.Mobile}</Col>
-                                            <Col xs='auto'>تاریخ ثبت : {this.state.TicketData.persianDate}</Col>
+                                            <Col>شماره تیکت : {this.state.TicketData.id}</Col>                                            
+                                            <Col>تاریخ ثبت : {this.state.TicketData.persianDate}</Col>
                                         </Row>
+                                        <div className="line"></div> 
                                         <Row className="standardPadding">
-                                            <Col xs='auto'>موضوع : {this.state.TicketData.ticketSubjectDesc}</Col>
-                                            <Col xs='auto'>وضعیت : {this.state.TicketData.ticketStatusDesc}</Col>
-                                            <Col xs='auto'>اولویت : {this.state.TicketData.ticketPriorityDesc}</Col>
+                                            <Col>نام درخواست دهنده: {this.state.FullName}</Col>
+                                            <Col>نام کاربری : {this.state.TicketData.userNameInserted}</Col>                                            
+                                            <Col>شماره همراه: {this.state.Mobile}</Col>                                            
                                         </Row>
+                                        <div className="line"></div> 
+                                        <Row className="standardPadding">                               
+                                            <Col>موضوع : {this.state.TicketData.ticketSubjectDesc}</Col>             
+                                            <Col>وضعیت : {this.state.TicketData.ticketStatusDesc}</Col>
+                                            <Col>اولویت : {this.state.TicketData.ticketPriorityDesc}</Col>
+                                        </Row>                                        
                                         <Row className="standardPadding">
                                             <Col xs='auto'>عنوان : {this.state.TicketData.title}</Col>
                                         </Row>
+                                        <div className="line"></div> 
                                         <Row className="standardPadding">
                                             <Col>
-                                                توضیحات : {this.state.TicketData.desc}
+                                                توضیحات :<p style={{textAlign:'justify'}}>{this.state.TicketData.desc}</p>
                                             </Col>
                                         </Row>
 

@@ -78,6 +78,7 @@ import {
   
     orderPointInventoryOutRouteReport,
 } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import { supplierComboListByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 
 import { logsOPIByOPIid } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
 
@@ -167,7 +168,7 @@ class OrderInventoryOutRouteReport extends React.Component {
     );
 
     this.setState({      
-      cmbSupplier: await supplierOrderInventoryComboList(
+      cmbSupplier: await supplierComboListByCompanyId(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
