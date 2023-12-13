@@ -103,4 +103,22 @@ export async function questionList(questionTypeId, Token) {
     }
     return null;
   }
+
+  export async function questionNumber(questionTypeId, Token) {
+    const url =
+      window.apiAddress + "/Question/questionNumber?questionTypeId=" + questionTypeId;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Token}`,
+      },
+    });
+    const result = await response.json();
+    if (result.status == "Success") {
+      console.log("Question number result=" + JSON.stringify(result.data));
+      return result.data;
+    }
+    return null;
+  }
   

@@ -59,6 +59,7 @@ import {
   questionList,
   updateQuestion,
   answeredQuestionList,
+  questionNumber
 } from "../../redux/reducers/question/question-actions";
 import {
   questionTypeList
@@ -460,7 +461,7 @@ class NewAnswer extends React.Component {
       }
     })
     this.state.QuestionGridData.forEach(element => {
-      if ((element.score == null ||  element.score < minDesc || element.score == "") && (element.dec == null || element.dec == "")) {
+      if ((element.score == null || element.score < minDesc || element.score == "") && (element.dec == null || element.dec == "")) {
         t = 1
       }
     });
@@ -478,15 +479,29 @@ class NewAnswer extends React.Component {
       let result = confirm("در صورت ثبت نهایی امکان ویرایش وجود ندارد");
       result.then(async (dialogResult) => {
         if (dialogResult) {
-          const RESULT = await confirmAnswer(data, this.props.User.token);
-          this.setState({
-            ToastProps: {
-              isToastVisible: true,
-              Message: RESULT > 0 ? "ثبت نهایی با موفقیت انجام گردید" : "عدم ثبت",
-              Type: RESULT > 0 ? "success" : "error",
-            },
-            stateAnswer_show: true
-          });
+          var answerNumber = this.state.QuestionGridData.length;
+          var number = await questionNumber(this.state.cmbQuestionTypeValue, this.props.User.token);
+          if (answerNumber < number) {
+            this.setState({
+              ToastProps: {
+                isToastVisible: true,
+                Message: "تعداد پاسخ ها کمتر از تعداد سوالات است",
+                Type: "error"
+              }
+            });
+            return;
+          }
+          else {
+            const RESULT = await confirmAnswer(data, this.props.User.token);
+            this.setState({
+              ToastProps: {
+                isToastVisible: true,
+                Message: RESULT > 0 ? "ثبت نهایی با موفقیت انجام گردید" : "عدم ثبت",
+                Type: RESULT > 0 ? "success" : "error",
+              },
+              stateAnswer_show: true
+            });
+          }
         }
         else {
           return;
