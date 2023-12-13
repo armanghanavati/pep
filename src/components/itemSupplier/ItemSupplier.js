@@ -135,6 +135,7 @@ class ItemSupplier extends React.Component {
   }
   async componentDidMount() {
     await this.fn_GetPermissions();
+    await this.fn_CheckRequireState();
     this.fn_supplierList();
     this.fn_itemGroupList();
   }

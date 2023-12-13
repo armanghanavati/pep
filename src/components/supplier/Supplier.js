@@ -84,8 +84,9 @@ class Supplier extends React.Component {
       txtSupplierMaxOrderWeightValue: null,
       txtSupplierMinOrderRialiValue: null,
       txtSupplierMaxOrderRialiValue: null,
-      txtSupplierMaxOrderNumberValue:null,
-      txtSupplierMinOrderNumberValue:null,
+      txtSupplierMaxOrderNumberValue: null,
+      txtSupplierMinOrderNumberValue: null,
+      txtDeliveryDateValue:null
     };
   }
 
@@ -129,15 +130,16 @@ class Supplier extends React.Component {
       txtSupplierNameValue: null,
       txtSupplierNamePersianValue: null,
       txtSupplierDescValue: null,
-      txtSupplierMaxOrderNumberValue:null,
-      txtSupplierMinOrderNumberValue:null,
-      txtSupplierMinOrderWeightValue:null,
-      txtSupplierMaxOrderWeightValue:null,
-      txtSupplierMinOrderRialiValue:null,
-      txtSupplierMaxOrderRialiValue:null,
+      txtSupplierMaxOrderNumberValue: null,
+      txtSupplierMinOrderNumberValue: null,
+      txtSupplierMinOrderWeightValue: null,
+      txtSupplierMaxOrderWeightValue: null,
+      txtSupplierMinOrderRialiValue: null,
+      txtSupplierMaxOrderRialiValue: null,
       chkIsActive: null,
       chkIsDirect: null,
       stateUpdateDelete: false,
+      txtDeliveryDateValue:null
     });
   };
   txtSupplierName_onChanege = (e) => {
@@ -165,12 +167,16 @@ class Supplier extends React.Component {
     this.setState({ txtSupplierMaxOrderRialiValue: e.value })
   }
 
-  txtSupplierMinOrderNumber_onChanege=(e)=>{
-    this.setState({ txtSupplierMinOrderNumberValue: e.value})
+  txtSupplierMinOrderNumber_onChanege = (e) => {
+    this.setState({ txtSupplierMinOrderNumberValue: e.value })
   }
 
-  txtSupplierMaxOrderNumber_onChanege=(e)=>{
-    this.setState({ txtSupplierMaxOrderNumberValue: e.value})
+  txtSupplierMaxOrderNumber_onChanege = (e) => {
+    this.setState({ txtSupplierMaxOrderNumberValue: e.value })
+  }
+
+  txtDeliveryDate_onChanege=(e)=>{
+    this.setState({txtDeliveryDateValue: e.value})
   }
 
   chkIsActive_onChange = (e) => {
@@ -190,6 +196,7 @@ class Supplier extends React.Component {
     document.getElementById("errSupplierName").innerHTML = "";
     document.getElementById("errSupplierIsActive").innerHTML = "";
     document.getElementById("errSupplierIsDirect").innerHTML = "";
+    document.getElementById("errDeliveryDate").innerHTML = "";
     if (this.state.txtSupplierNameValue == null) {
       document.getElementById("errSupplierName").innerHTML =
         "نام را وارد نمائید";
@@ -205,6 +212,12 @@ class Supplier extends React.Component {
     if (this.state.chkIsDirect == null) {
       document.getElementById("errSupplierIsDirect").innerHTML =
         "دایرکتی بودن را مشخص نمائید.";
+      flag = false;
+    }
+
+    if (this.state.txtDeliveryDateValue == null) {
+      document.getElementById("errDeliveryDate").innerHTML =
+        "تاریخ موعد تحویل را وارد نمایید";
       flag = false;
     }
     return flag;
@@ -224,7 +237,8 @@ class Supplier extends React.Component {
         minOrderRiali: this.state.txtSupplierMinOrderRialiValue,
         maxOrderRiali: this.state.txtSupplierMaxOrderRialiValue,
         minOrderNumber: this.state.txtSupplierMinOrderNumberValue,
-        maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue
+        maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue,
+        deliveryDateDay:this.state.txtDeliveryDateValue
       };
       await addSupplier(data, this.props.User.token);
       this.setState({
@@ -253,7 +267,8 @@ class Supplier extends React.Component {
         minOrderRiali: this.state.txtSupplierMinOrderRialiValue,
         maxOrderRiali: this.state.txtSupplierMaxOrderRialiValue,
         minOrderNumber: this.state.txtSupplierMinOrderNumberValue,
-        maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue
+        maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue,
+        deliveryDateDay:this.state.txtDeliveryDateValue
       };
       const RESULT = await updateSupplier(data, this.props.User.token);
       this.setState({
@@ -285,7 +300,8 @@ class Supplier extends React.Component {
       txtSupplierMinOrderRialiValue: e.data.minOrderRiali,
       txtSupplierMaxOrderRialiValue: e.data.maxOrderRiali,
       txtSupplierMinOrderNumberValue: e.data.minOrderNumber,
-      txtSupplierMaxOrderNumberValue: e.data.maxOrderNumber
+      txtSupplierMaxOrderNumberValue: e.data.maxOrderNumber,
+      txtDeliveryDateValue: e.data.deliveryDateDay
     });
   };
 
@@ -337,6 +353,7 @@ class Supplier extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnNew_onClick}
+                    className="fontStyle"
                   />
                 </Col>
               </Row>
@@ -351,6 +368,7 @@ class Supplier extends React.Component {
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtSupplierName_onChanege}
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -368,6 +386,7 @@ class Supplier extends React.Component {
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtSupplierNamePersian_onChanege}
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -385,6 +404,7 @@ class Supplier extends React.Component {
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtSupplierDesc_onChanege}
+                  className="fontStyle"
                 />
                 <Row>
                   <Label
@@ -402,6 +422,7 @@ class Supplier extends React.Component {
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtSupplierMinOrderWeight_onChanege}
+                  className="fontStyle"
                 />
               </Col>
               <Col xs="auto">
@@ -413,6 +434,7 @@ class Supplier extends React.Component {
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtSupplierMaxOrderWeight_onChanege}
+                  className="fontStyle"
                 />
               </Col>
               <Row>
@@ -425,6 +447,7 @@ class Supplier extends React.Component {
                     rtlEnabled={true}
                     valueChangeEvent="keyup"
                     onValueChanged={this.txtSupplierMinOrderRiali_onChanege}
+                    className="fontStyle"
                   />
                 </Col>
                 <Col xs="auto">
@@ -436,6 +459,7 @@ class Supplier extends React.Component {
                     rtlEnabled={true}
                     valueChangeEvent="keyup"
                     onValueChanged={this.txtSupplierMaxOrderRiali_onChanege}
+                    className="fontStyle"
                   />
                 </Col>
                 <Col xs="auto">
@@ -447,6 +471,7 @@ class Supplier extends React.Component {
                     rtlEnabled={true}
                     valueChangeEvent="keyup"
                     onValueChanged={this.txtSupplierMinOrderNumber_onChanege}
+                    className="fontStyle"
                   />
                 </Col>
                 <Col xs="auto">
@@ -458,7 +483,26 @@ class Supplier extends React.Component {
                     rtlEnabled={true}
                     valueChangeEvent="keyup"
                     onValueChanged={this.txtSupplierMaxOrderNumber_onChanege}
+                    className="fontStyle"
                   />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">تاریخ موعد تحویل</Label>
+                  <TextBox
+                    value={this.state.txtDeliveryDateValue}
+                    showClearButton={true}
+                    placeholder="تاریخ موعد تحویل"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtDeliveryDate_onChanege}
+                    className="fontStyle"
+                  />
+                  <Row>
+                  <Label
+                    id="errDeliveryDate"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
                 </Col>
               </Row>
             </Row>
@@ -503,6 +547,7 @@ class Supplier extends React.Component {
                       stylingMode="contained"
                       rtlEnabled={true}
                       onClick={this.btnAdd_onClick}
+                      className="fontStyle"
                     />
                   </Col>
                 )}
@@ -520,6 +565,7 @@ class Supplier extends React.Component {
                           stylingMode="contained"
                           rtlEnabled={true}
                           onClick={this.btnUpdate_onClick}
+                          className="fontStyle"
                         />
                       </Col>
                       <Col xs="auto">
@@ -530,6 +576,7 @@ class Supplier extends React.Component {
                           stylingMode="contained"
                           rtlEnabled={true}
                           onClick={this.btnDelete_onClick}
+                          className="fontStyle"
                         />
                       </Col>
                     </>
@@ -563,6 +610,7 @@ class Supplier extends React.Component {
                   allowColumnResizing={true}
                   onRowClick={this.grdSupplier_onClickRow}
                   height={DataGridDefaultHeight}
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"

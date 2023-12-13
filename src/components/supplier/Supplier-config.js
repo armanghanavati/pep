@@ -58,5 +58,10 @@ export const DataGridSupplierColumns = [
         dataField: "maxOrderNumber",
         caption: "حداکثر تعداد",
         allowEditing: true,
-    } 
+    },
+    {
+        dataField: "deliveryDateDay",
+        caption: "تاریخ موعد تحویل",
+        allowEditing: false,
+    }
 ];
