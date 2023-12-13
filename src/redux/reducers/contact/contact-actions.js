@@ -1,6 +1,6 @@
-export async function contactList(Token) {
+export async function ContactListForSupplier(Token) {
     const url =
-      window.apiAddress + "/Contact/contactList";
+      window.apiAddress + "/Contact/ContactListForSupplier";
     const response = await fetch(url, {
       method: "GET",
       headers: {
