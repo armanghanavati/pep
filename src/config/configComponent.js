@@ -40,6 +40,8 @@ import Zones from '../pages/Zones'
 import RealEstateShow from '../components/realEstate/RealEstateShow'
 import AnswerReports from '../pages/AnswerReports'
 import QuestionTypeUsers from '../pages/QuestionTypeUsers'
+import Profiles from '../pages/Profiles'
+import StoreKalaMojoodiReports from '../pages/StoreKalaMojoodiReports'
 
 
 export const REAL_COMPONENT = [
@@ -220,6 +222,14 @@ export const REAL_COMPONENT = [
   {
     strComponent: "QuestionTypeUsers",
     orgComponent: <QuestionTypeUsers/>,
-  }               
+  },
+  {
+    strComponent: "Profiles",
+    orgComponent: <Profiles />,
+  },
+  {
+    strComponent: "StoreKalaMojoodiReports",
+    orgComponent: <StoreKalaMojoodiReports />,
+  }                
 ];
 
