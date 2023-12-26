@@ -391,7 +391,9 @@ class ItemLocation extends React.Component {
       obj = {
         itemId: tempItemLocation[i].itemId,
         locationId: tempItemLocation[i].locationId,
-        isActive: Status
+        isActive: Status,
+        minPercentChange:tempItemLocation[i].minPercentChange,
+        maxPercentChange:tempItemLocation[i].maxPercentChange
       };
       tempItems.push(obj);
 
