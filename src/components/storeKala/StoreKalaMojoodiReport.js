@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy } from "react";
 import { connect } from "react-redux";
 import DataSource from "devextreme/data/data_source";
 import {
@@ -68,7 +68,7 @@ import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 
 import {
-    itemListCombo,
+    itemListCombo, itemListComboByItemGroupId,
 } from "../../redux/reducers/item/item-action";
 import { supplierOrderInventoryComboList } from "../../redux/reducers/supplier/supplier-action";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
@@ -101,6 +101,7 @@ import { userLocationList, userLocationListCombo } from "../../redux/reducers/us
 import { storeKalamojoodiList } from "../../redux/reducers/storeKala/storekala-actions";
 import { DataGridStoreKalaMojoodiReportColumns } from "./StoreKalaMojoodiReport-config";
 import { itemLocationList } from "../../redux/reducers/itemLocation/itemLocation-actions";
+import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
 
 const dateLabel = { 'aria-label': 'Date' };
 
@@ -111,6 +112,8 @@ class StoreKalaMojoodiReport extends React.Component {
             stateWait: false,
             cmbLocation: null,
             cmbLocationValue: null,
+            cmbItemGroup: null,
+            cmbItemGroupValue: null,
             cmbItem: null,
             cmbItemValue: null,
             storeKalaMojoodiGridData: null,
@@ -126,7 +129,7 @@ class StoreKalaMojoodiReport extends React.Component {
     async componentDidMount() {
         await this.fn_CheckRequireState();
         this.fn_locationList();
-        this.fn_itemList();
+        this.fn_itemGroupList();
         // alert('CompanyId='+this.props.Company.currentCompanyId)
     }
     OpenCloseWait() {
@@ -135,22 +138,22 @@ class StoreKalaMojoodiReport extends React.Component {
 
     fn_CheckRequireState = async () => {
         if (this.props.Company.currentCompanyId == null) {
-          const companyCombo = await companyListCombo(this.props.User.token);
-          if (companyCombo !== null) {
-            const currentCompanyId = companyCombo[0].id;
+            const companyCombo = await companyListCombo(this.props.User.token);
+            if (companyCombo !== null) {
+                const currentCompanyId = companyCombo[0].id;
+                this.props.dispatch(
+                    companyActions.setCurrentCompanyId({
+                        currentCompanyId,
+                    })
+                );
+            }
             this.props.dispatch(
-              companyActions.setCurrentCompanyId({
-                currentCompanyId,
-              })
+                companyActions.setCompanyCombo({
+                    companyCombo,
+                })
             );
-          }
-          this.props.dispatch(
-            companyActions.setCompanyCombo({
-              companyCombo,
-            })
-          );
         }
-      }
+    }
 
     fn_locationList = async () => {
         this.setState({
@@ -158,21 +161,32 @@ class StoreKalaMojoodiReport extends React.Component {
         })
     }
 
-    fn_itemList = async () => {
-        const ITEMS = await itemListCombo(this.props.User.token);
+    fn_itemGroupList = async () => {
+        this.setState({
+            cmbItemGroup: await itemGroupListCombo(this.props.User.token),
+        });
+    };
+
+    cmbLocation_onChange = async (e) => {
+        this.setState({
+            cmbLocationValue: e,
+        })
+    };
+
+    cmbItemGroup_onChange = async (e) => {
+        var object = {
+            ItemGroupId: e,
+            LocationId: this.state.cmbLocationValue
+        }
+        const ITEMS = await itemListComboByItemGroupId(object, this.props.User.token)
         const LAZY = new DataSource({
             store: ITEMS,
             paginate: true,
             pageSize: 10
         })
         this.setState({
+            cmbItemGroupValue: e,
             cmbItem: LAZY
-        })
-    }
-
-    cmbLocation_onChange = async (e) => {
-        this.setState({
-            cmbLocationValue: e
         })
     };
 
@@ -225,6 +239,7 @@ class StoreKalaMojoodiReport extends React.Component {
                             <Label>گزارش  موجودی کالا در فروشگاه</Label>
                         </Row>
                         <Row>
+
                             <Col>
                                 <Label className="standardLabelFont">فروشگاه</Label>
                                 <SelectBox
@@ -239,16 +254,39 @@ class StoreKalaMojoodiReport extends React.Component {
                                 />
                             </Col>
                             <Col>
+                                <Label className="standardLabelFont">گروه کالا</Label>
+                                <SelectBox
+                                    dataSource={this.state.cmbItemGroup}
+                                    displayExpr="label"
+                                    placeholder="گروه کالا"
+                                    valueExpr="id"
+                                    searchEnabled={true}
+                                    rtlEnabled={true}
+                                    onValueChange={this.cmbItemGroup_onChange}
+                                    value={this.state.cmbItemGroupValue}
+                                    className="fontStyle"
+                                />
+                                <Label
+                                    id="errItemGroup"
+                                    className="standardLabelFont errMessage"
+                                />
+                            </Col>
+                            <Col>
                                 <Label className="standardLabelFont">کالا</Label>
                                 <SelectBox
                                     dataSource={this.state.cmbItem}
                                     displayExpr="label"
-                                    placeholder="فروشگاه"
+                                    placeholder="کالا"
                                     valueExpr="id"
                                     searchEnabled={true}
                                     rtlEnabled={true}
                                     onValueChange={this.cmbItem_onChange}
+                                    value={this.state.cmbItemValue}
                                     className="fontStyle"
+                                />
+                                <Label
+                                    id="errItem"
+                                    className="standardLabelFont errMessage"
                                 />
                             </Col>
                         </Row>
