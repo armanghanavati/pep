@@ -4,6 +4,7 @@ import "../assets/CSS/style.css";
 import "../assets/CSS/mainDrawer_style.css";
 import List from "devextreme-react/list";
 import { Row, Col, Button } from "reactstrap";
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { locale } from "devextreme/localization";
 import Toolbar, { Item } from "devextreme-react/toolbar";
 import SelectBox from "devextreme-react/select-box";
@@ -16,13 +17,19 @@ import MainMenu from "../components/common/MainMenu";
 import logo from "../assets/images/LOGO.jpg";
 import LogoutIcon from "../assets/images/icon/logout.svg"
 import BurgerMenuIcon from "../assets/images/icon/burgerMenu.png"
+import profile from "../assets/images/icon/profile.png"
+import Profiles from "./Profiles";
+import { prettyFormat } from "@testing-library/react";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       arr1Interview: [],
-      stateShowMainMenu:true,
+      stateShowMainMenu: true,
+      linkPath: null,
+      linkComponent: null,
+      profile: null,
     };
   }
 
@@ -58,14 +65,23 @@ class Home extends React.Component {
 
   btnExit_onClick = async () => {
     // alert("exit");
-    await this.saveUserData(null,null,null);
+    await this.saveUserData(null, null, null);
     window.location.reload(true);
   };
+  btnProfile_onClick = async () => {
+    this.setState({
+      linkPath: "/Profiles",
+      linkComponent: <Profiles />,
+    });
+    // alert(this.state.linkPath)
+    //if (this.state.linkPath != null)
+      document.getElementById("lnkProfile").click();
+  }
 
   saveUserData = (userId, token, permissions) => {
-    sessionStorage.setItem('UserId',userId);
-    sessionStorage.setItem('Token',token);
-    sessionStorage.setItem('Permissions',JSON.stringify(permissions));
+    sessionStorage.setItem('UserId', userId);
+    sessionStorage.setItem('Token', token);
+    sessionStorage.setItem('Permissions', JSON.stringify(permissions));
     this.props.dispatch(
       userActions.setUser({
         userId,
@@ -75,8 +91,8 @@ class Home extends React.Component {
     );
   };
 
-  btnShowHideMenu_onClick=()=>{
-    this.setState({stateShowMainMenu:!this.state.stateShowMainMenu})
+  btnShowHideMenu_onClick = () => {
+    this.setState({ stateShowMainMenu: !this.state.stateShowMainMenu })
   }
 
   render() {
@@ -104,23 +120,25 @@ class Home extends React.Component {
                 />
               </div>
             </Item>
-            <Item location="right">                   
-              <img src={LogoutIcon} style={{ width: "23px", marginLeft: "20px" ,cursor:'pointer'}}  onClick={this.btnExit_onClick} />           
+            <Item location="right">
+              <img src={profile} style={{ width: "23px", marginLeft: "20px", cursor: 'pointer' }} onClick={this.btnProfile_onClick} />
             </Item>
-            
-            <Item location="after" widget="dxButton" >            
-              <img src={BurgerMenuIcon} style={{ width: "30px", marginRight: "10px" ,cursor:'pointer'}}  onClick={this.btnShowHideMenu_onClick} />           
+            <Item location="right">
+              <img src={LogoutIcon} style={{ width: "23px", marginLeft: "20px", cursor: 'pointer' }} onClick={this.btnExit_onClick} />
             </Item>
-            
+
+            <Item location="after" widget="dxButton" >
+              <img src={BurgerMenuIcon} style={{ width: "30px", marginRight: "10px", cursor: 'pointer' }} onClick={this.btnShowHideMenu_onClick} />
+            </Item>
+
           </Toolbar>
         </Row>
- 
+
         <Row className="textCenter">
           <Col xs="auto">
-            <MainMenu showMainMenu={this.state.stateShowMainMenu} />
+            <MainMenu showMainMenu={this.state.stateShowMainMenu} linkPath={this.state.linkPath} linkComponent={this.state.linkComponent} />
           </Col>
         </Row>
-       
       </div>
     );
   }

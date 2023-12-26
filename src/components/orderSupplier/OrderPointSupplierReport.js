@@ -72,7 +72,7 @@ import { logsOrderPointSupplierActions } from "../../redux/reducers/logsOrderPoi
 import {
   itemListComboBySupplierId,
 } from "../../redux/reducers/item/item-action";
-import { supplierOrderSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
+import { supplierComboListByCompanyId, supplierOrderSupplierComboList } from "../../redux/reducers/supplier/supplier-action";
 import { locationOrderSupplierComboListByCompanyId } from "../../redux/reducers/location/location-actions";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
@@ -169,7 +169,7 @@ class OrderPointSupplierReport extends React.Component {
     );
 
     this.setState({      
-      cmbSupplier: await supplierOrderSupplierComboList(
+      cmbSupplier: await supplierComboListByCompanyId(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),

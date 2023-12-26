@@ -219,3 +219,41 @@ export async function userLocationListCombo(userId, companyId, Token) {
   }
   return null;
 }
+
+export async function SearchUserById(userId, Token) {
+  const url =
+    window.apiAddress +
+    "/User/searchUserById?userId=" +
+    userId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("User" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+// --------------------------------------------------------------------------------------------
+export async function updateProfile(Object, Token) {
+  const url = window.apiAddress + "/User/updateProfile";
+  const response = await fetch(url, {
+    method: "PATCH",
+    body: JSON.stringify(Object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("Profile update result=" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return 0;
+}

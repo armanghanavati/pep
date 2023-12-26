@@ -59,6 +59,7 @@ import {
   questionList,
   updateQuestion,
   answeredQuestionList,
+  questionNumber
 } from "../../redux/reducers/question/question-actions";
 import {
   questionTypeList
@@ -460,7 +461,7 @@ class NewAnswer extends React.Component {
       }
     })
     this.state.QuestionGridData.forEach(element => {
-      if ((element.score == null ||  element.score < minDesc || element.score == "") && (element.dec == null || element.dec == "")) {
+      if ((element.score == null || element.score < minDesc || element.score == "") && (element.dec == null || element.dec == "")) {
         t = 1
       }
     });
