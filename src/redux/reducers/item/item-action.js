@@ -103,3 +103,21 @@ export async function itemListComboByItemGroupIdToSupplier(Object,Token) {
   }
   return null;
 }
+
+export async function updateItemWeightPack(Object, Token) {
+  const url = window.apiAddress + "/Item/updateItemWeightPack";
+  const response = await fetch(url, {
+    method: "PATCH",
+    body: JSON.stringify(Object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("Item update result=" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return 0;
+}

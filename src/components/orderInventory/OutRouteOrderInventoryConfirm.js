@@ -339,20 +339,24 @@ class OutRouteOrderInventoryConfirm extends React.Component {
   }
 
   btnConfirmOutRoute_onClick=async () =>{    
+    this.OpenCloseWait();
     const OBJ={
       values: JSON.stringify(this.state.OutRouteSelected),
       status:true      
     }    
-    alert(JSON.stringify(OBJ))
+    // alert(JSON.stringify(OBJ))
     await confirmRejectOrderInventoryOutRoute(OBJ,this.props.User.token)
+    this.OpenCloseWait();
   }
 
   btnRejectOutRoute_onClick=async()=>{
+    this.OpenCloseWait();
     const OBJ={
       values: JSON.stringify(this.state.OutRouteSelected),
       status:false
     }
     await confirmRejectOrderInventoryOutRoute(OBJ,this.props.User.token)
+    this.OpenCloseWait();
   }
 
   btnSearch_onClick=async()=>{
