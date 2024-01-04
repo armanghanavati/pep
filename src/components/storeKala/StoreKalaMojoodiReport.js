@@ -210,7 +210,7 @@ class StoreKalaMojoodiReport extends React.Component {
     };
 
     btnExportExcel_onClick = () => {
-        Gfn_ExportToExcel(this.state.OrderInventoryGridData, "StoreKalaMojoodi")
+        Gfn_ExportToExcel(this.state.storeKalaMojoodiGridData, "StoreKalaMojoodi")
     }
 
     render() {
