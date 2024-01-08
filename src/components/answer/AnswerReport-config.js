@@ -53,7 +53,13 @@ export const DataGridAnswerColumns = [
     },
     {
         dataField: "date",
-        caption: "تاریخ",
+        caption: "تاریخ ثبت",
+        allowEditing: false,
+        width:100
+    },
+    {
+        dataField: "confirmDate",
+        caption: "تاریخ تایید",
         allowEditing: false,
         width:100
     }

@@ -20,8 +20,9 @@ window.apiAddress="http://localhost:7142/api";
 //window.apiAddress="http://172.16.1.186:2884/api";   //coappweb
 //window.apiAddress="http://79.127.54.146:2884/api"; 
 
-window.siteAddress = "http://172.16.1.40:2884";
-//window.siteAddress = "http://localhost:7142";
+//window.siteAddress = "http://172.16.1.40:2884";
+window.siteAddress = "http://localhost:7142";
+//window.siteAddress="http://79.127.54.146:2884"
 
 window.confirmPayment = "http://172.16.1.40:2884/api";
 
