@@ -139,6 +139,11 @@ export const DataGridOrderPointInventoryReportColumns = [
         allowEditing:true    
     },
     {
+        dataField:"tedadErsali" ,
+        caption:"تعداد ارسالی",
+        allowEditing:true    
+    },
+    {
         dataField:"productId" ,
         caption:"کد کالا",
         allowEditing:false    
