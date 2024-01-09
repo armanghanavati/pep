@@ -123,6 +123,28 @@ export async function updateTicket(object,Token){
   return null;
 }
 
+export async function ticketDetailReport(object,Token){  
+  const url=window.apiAddress+"/Ticket/ticketReport";  
+  const response = await fetch(
+      url,
+      {
+          method: "POST",
+          body :JSON.stringify(object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  // console.log('result='+JSON.stringify(result));
+  if(result.status=="Success"){
+    console.log('Ticket report='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null;
+}
+
 
 
 

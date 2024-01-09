@@ -151,6 +151,7 @@ class MainMenu extends React.Component {
                   searchEnabled={true}
                   onItemClick={this.mnuMainMenu_onClick}
                   elementAttr={MAIN_MENU_ATTR}
+                  //children= {<span style={{display: 'inline-block',marginTop: '-33px',borderBottom: '1px solid gray',borderRight: '1px solid gray',width: '20px',height: '40px'}}></span>}
                 />
               </div>
             </Col>
@@ -174,7 +175,6 @@ class MainMenu extends React.Component {
     );
   }
 }
-
 const mapStateToProps = (state) => ({
   User: state.users,
 });

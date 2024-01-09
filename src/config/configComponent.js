@@ -42,6 +42,7 @@ import AnswerReports from '../pages/AnswerReports'
 import QuestionTypeUsers from '../pages/QuestionTypeUsers'
 import Profiles from '../pages/Profiles'
 import StoreKalaMojoodiReports from '../pages/StoreKalaMojoodiReports'
+import TicketReports from '../pages/TicketReports'
 import ItemsWeights from '../pages/ItemsWeights'
 
 
@@ -233,8 +234,12 @@ export const REAL_COMPONENT = [
     orgComponent: <StoreKalaMojoodiReports />,
   },
   {
+    strComponent: "TicketReports",
+    orgComponent: <TicketReports />,
+  },  
+  {        
     strComponent: "ItemsWeights",
     orgComponent: <ItemsWeights />,
-  },               
+  }             
 ];
 
