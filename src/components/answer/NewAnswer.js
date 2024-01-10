@@ -79,6 +79,10 @@ import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import { unitList } from "../../redux/reducers/unit/unit-actions";
 import { zoneList } from "../../redux/reducers/zone/zone-actions";
+import AdapterJalali from '@date-io/date-fns-jalali';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import TextField from '@mui/material/TextField';
 import Answer from "./Answer";
 import { addAnswerDetail } from "../../redux/reducers/answerDetail/answerDetail-actions";
 import Wait from "../common/Wait";
@@ -125,6 +129,7 @@ class NewAnswer extends React.Component {
       disable_questionType: null,
       oldParam: null,
       stateWait: false,
+      InspectionDate:new Date(),
     };
   }
   async componentDidMount() {
@@ -156,6 +161,7 @@ class NewAnswer extends React.Component {
       cmbManager: person,//[{ id: answer.supervisorId, fullName: answer.manager }],
       cmbManagerValue: answer.storeManagerId,
       QuestionGridData: await answeredQuestionList(answerId, answer.questionTypeId, answer.zoneId, this.props.User.token),
+      InspectionDate: answer.date
     });
     this.OpenCloseWait();
   }
@@ -270,6 +276,7 @@ class NewAnswer extends React.Component {
     document.getElementById("errLocation").innerHTML = "";
     document.getElementById("errSupervisor").innerHTML = "";
     document.getElementById("errManager").innerHTML = "";
+    document.getElementById("errInspectionDate").innerHTML = "";
 
     if (this.state.cmbQuestionTypeValue == null) {
       document.getElementById("errQuestionType").innerHTML =
@@ -295,6 +302,12 @@ class NewAnswer extends React.Component {
       flag = false;
     }
 
+    if (this.state.InspectionDate == null) {
+      document.getElementById("errInspectionDate").innerHTML =
+        "تاریخ بازرسی را وارد نمایید";
+      flag = false;
+    }
+
     return flag;
   };
 
@@ -305,7 +318,8 @@ class NewAnswer extends React.Component {
         supervisorId: this.state.cmbSupervisorValue,
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
-        userId: this.props.User.userId
+        userId: this.props.User.userId,
+        date: this.addHours(new Date(this.state.InspectionDate), 3, 30)
       };
       const RESULT = await addAnswer(data, this.props.User.token);
       this.setState({
@@ -331,7 +345,8 @@ class NewAnswer extends React.Component {
         supervisorId: this.state.cmbSupervisorValue,
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
-        id: this.props.answerId
+        id: this.props.answerId,
+        date:this.addHours(new Date(this.state.InspectionDate), 3, 30),
       };
       const RESULT = await updateAnswer(data, this.props.User.token);
       this.setState({
@@ -500,6 +515,16 @@ class NewAnswer extends React.Component {
     Gfn_ExportToExcel(this.state.QuestionGridData, "insQuestionAnswer");
   };
 
+  DatePickerInspectionDate_onChange = (params) => {
+    this.setState({ InspectionDate: params })
+  }
+
+  addHours=(date, hours, minutes)=> {
+    date.setHours(date.getHours() + hours);
+    date.setMinutes(date.getMinutes() + minutes);
+    return date;
+  }
+
   render() {
     return (
       this.state.stateAnswer_show == false ? (
@@ -607,7 +632,25 @@ class NewAnswer extends React.Component {
                     />
                   </Row>
                 </Col>
-
+              </Row>
+              <Row>
+                <Col xs="auto">
+                  <LocalizationProvider dateAdapter={AdapterJalali}>
+                  <DateTimePicker
+                      label="تاریخ بازرسی"
+                      value={this.state.InspectionDate}
+                      onChange={this.DatePickerInspectionDate_onChange}
+                      renderInput={(params) => <TextField {...params} />}
+                      className="fontStyle"
+                    />
+                  </LocalizationProvider>
+                  <Row>
+                    <Label
+                      id="errInspectionDate"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
               </Row>
               <Row className="standardSpaceTop">
                 <Col xs="auto">

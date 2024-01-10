@@ -26,6 +26,8 @@ window.siteAddress = "http://localhost:7142";
 
 window.confirmPayment = "http://172.16.1.40:2884/api";
 
+window.snapAuthAddress="https://auth-proxy.snapp.express";
+window.snapAddress="https://api-proxy.snapp.express/va/v1";
 // const store = createStore(rootReducer);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
