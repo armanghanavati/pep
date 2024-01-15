@@ -1,5 +1,5 @@
 export async function zoneList(Token) {
-    const url = window.apiAddress + "/Zone/zoneList";
+    const url = window.apiAddressInspection + "/Zone/zoneList";
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -16,7 +16,7 @@ export async function zoneList(Token) {
   }
 
   export async function addZone(Object,Token){
-    const url=window.apiAddress+"/Zone/addZone"              
+    const url=window.apiAddressInspection+"/Zone/addZone"              
     const response = await fetch(
         url,
         {
@@ -38,7 +38,7 @@ export async function zoneList(Token) {
   }
   
   export async function updateZone(Object, Token){
-    const url=window.apiAddress+"/Zone/updateZone"              
+    const url=window.apiAddressInspection+"/Zone/updateZone"              
     const response = await fetch(
         url,
         {
@@ -59,7 +59,7 @@ export async function zoneList(Token) {
   }
   
   export async function deleteZone(zoneId, Token){
-    const url=window.apiAddress+"/Zone/deleteZone?zoneId=" + zoneId              
+    const url=window.apiAddressInspection+"/Zone/deleteZone?zoneId=" + zoneId              
     const response = await fetch(
         url,
         {

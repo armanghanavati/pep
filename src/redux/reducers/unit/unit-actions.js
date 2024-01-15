@@ -1,5 +1,5 @@
 export async function unitList(Token) {
-    const url = window.apiAddress + "/Unit/unitList";
+    const url = window.apiAddressInspection + "/Unit/unitList";
     const response = await fetch(url, {
       method: "GET",
       headers: {

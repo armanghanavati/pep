@@ -1,5 +1,5 @@
 export async function questionList(questionTypeId, Token) {
-    const url = window.apiAddress + "/Question/questionList?questionTypeId=" + questionTypeId;
+    const url = window.apiAddressInspection + "/Question/questionList?questionTypeId=" + questionTypeId;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -16,7 +16,7 @@ export async function questionList(questionTypeId, Token) {
   }
 
   export async function addQuestion(Object, Token) {
-    const url = window.apiAddress + "/Question/addQuestion";
+    const url = window.apiAddressInspection + "/Question/addQuestion";
     const response = await fetch(url, {
       method: "POST",
       body: JSON.stringify(Object),
@@ -35,7 +35,7 @@ export async function questionList(questionTypeId, Token) {
   }
   
   export async function updateQuestion(Object, Token) {
-    const url = window.apiAddress + "/Question/updateQuestion";
+    const url = window.apiAddressInspection + "/Question/updateQuestion";
     const response = await fetch(url, {
       method: "PATCH",
       body: JSON.stringify(Object),
@@ -54,7 +54,7 @@ export async function questionList(questionTypeId, Token) {
   
   export async function deleteQuestion(questionId, Token) {
     const url =
-      window.apiAddress + "/Question/deleteQuestion?questionId=" + questionId;
+      window.apiAddressInspection + "/Question/deleteQuestion?questionId=" + questionId;
     const response = await fetch(url, {
       method: "DELETE",
       headers: {
@@ -71,7 +71,7 @@ export async function questionList(questionTypeId, Token) {
   }
 
   export async function notAnsweredQuestionList(answerId, userId, questionTypeId, Token) {
-    const url = window.apiAddress + "/Question/notAnsweredQuestionList?answerId=" + answerId + "&userId=" + userId + "&questionTypeId=" + questionTypeId;
+    const url = window.apiAddressInspection + "/Question/notAnsweredQuestionList?answerId=" + answerId + "&userId=" + userId + "&questionTypeId=" + questionTypeId;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -88,7 +88,7 @@ export async function questionList(questionTypeId, Token) {
   }
 
   export async function answeredQuestionList(answerId, questionTypeId, zoneId, Token) {
-    const url = window.apiAddress + "/Question/answeredQuestionList?answerId=" + answerId + "&questionTypeId=" + questionTypeId;
+    const url = window.apiAddressInspection + "/Question/answeredQuestionList?answerId=" + answerId + "&questionTypeId=" + questionTypeId;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -106,7 +106,7 @@ export async function questionList(questionTypeId, Token) {
 
   export async function questionNumber(questionTypeId, Token) {
     const url =
-      window.apiAddress + "/Question/questionNumber?questionTypeId=" + questionTypeId;
+      window.apiAddressInspection + "/Question/questionNumber?questionTypeId=" + questionTypeId;
     const response = await fetch(url, {
       method: "GET",
       headers: {

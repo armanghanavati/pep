@@ -1,5 +1,5 @@
 export async function questionTypeList(userId, Token) {
-    const url = window.apiAddress + "/QuestionType/questionTypeList?userId=" + userId;
+    const url = window.apiAddressInspection + "/QuestionType/questionTypeList?userId=" + userId;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -16,7 +16,7 @@ export async function questionTypeList(userId, Token) {
   }
 
   export async function allQuestionType(Token) {
-    const url = window.apiAddress + "/QuestionType/AllQuestionType";
+    const url = window.apiAddressInspection + "/QuestionType/AllQuestionType";
     const response = await fetch(url, {
       method: "GET",
       headers: {
