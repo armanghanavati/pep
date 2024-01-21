@@ -14,18 +14,14 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
 window.apiAddress="http://localhost:7142/api";  
-//window.apiAddress="http://localhost:7021/api";  
-//window.apiAddress="http://172.16.1.40:3884/api" //inspection
-//window.apiAddress="http://172.16.1.40:2884/api"; //peppay
-//window.apiAddress="http://172.16.1.186:2884/api"; //coappweb
-//window.apiAddress="http://79.127.54.146:2884/api"; //inspectionweb
 
-//window.siteAddress = "http://172.16.1.40:3884"; //inspection
-//window.siteAddress = "http://172.16.1.40:2884"; //pep
-window.siteAddress = "http://localhost:7142";
-//window.siteAddress="http://79.127.54.146:2884" //inspectionweb
-
-window.confirmPayment = "http://172.16.1.40:2884/api";
+//window.apiAddress="https://pepapi.minoomart.ir/api";
+window.siteAddress = "https://pepapi.minoomart.ir";
+// window.siteAddress = "http://172.16.1.40:2884";
+window.confirmPayment = "https://pepapi.minoomart.ir/api";
+//window.apiAddressInspection="https://pepinspectionapi.minoomart.ir/api";
+window.apiAddressInspection="http://localhost:7021/api";  
+//window.apiAddress="http://172.16.1.186:2884/api";   //coappweb
 
 // const store = createStore(rootReducer);
 

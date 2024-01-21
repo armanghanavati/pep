@@ -19,6 +19,7 @@ import {
 
 import { locale } from "devextreme/localization";
 import TagBox from "devextreme-react/tag-box";
+import SelectBox from "devextreme-react/select-box";
 import { Button } from "devextreme-react/button";
 
 import { Toast } from "devextreme-react/toast";
@@ -76,6 +77,7 @@ import PlusNewIcon from "../../assets/images/icon/plus.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import { answerDetailReport } from "../../redux/reducers/answerDetail/answerDetail-actions";
+import { allQuestionType, questionTypeList } from "../../redux/reducers/question/questionType-actions";
 
 const dateLabel = { 'aria-label': 'Date' };
 class AnswerReport extends React.Component {
@@ -97,12 +99,15 @@ class AnswerReport extends React.Component {
         Type: "",
       },
       LocationIds: null,
+      cmbQuestionType:null,
+      cmbQuestionTypeValue:null
     };
   }
 
   async componentDidMount() {
     await this.fn_CheckRequireState();
     await this.fn_locationList();
+    await this.fn_questionTypeList();
   }
   OpenCloseWait() {
     this.setState({ stateWait: !this.state.stateWait });
@@ -136,6 +141,12 @@ class AnswerReport extends React.Component {
       )
     })
   }
+  
+  fn_questionTypeList=async()=>{
+    this.setState({
+      cmbQuestionType: await allQuestionType(this.props.User.token)
+    })
+  }
 
   cmbLocation_onChange = async (e) => {
     const IDS = e.toString().split(",");
@@ -155,12 +166,19 @@ class AnswerReport extends React.Component {
     }
   };
 
+  cmbQuestionType_onChange=async(e)=>{
+    this.setState({
+      cmbQuestionTypeValue:e
+    })
+  }
+
   btnSearch_onClick = async () => {
     this.OpenCloseWait();
     var object = {
       startDate: this.state.FromDate,
       endDate: this.state.ToDate,
-      LocationIds: this.state.cmbLocationValue
+      LocationIds: this.state.cmbLocationValue,
+      questionTypeId:this.state.cmbQuestionTypeValue
     }
     this.setState({
       AnswerGridData: await answerDetailReport(
@@ -224,7 +242,7 @@ class AnswerReport extends React.Component {
               <Label>گزارش بازرسی</Label>
             </Row>
             <Row>
-              <Col xs={4}>
+              <Col xs={3}>
                 <Label className="standardLabelFont">فروشگاه</Label>
                 <TagBox
                   dataSource={this.state.cmbLocation}
@@ -236,6 +254,26 @@ class AnswerReport extends React.Component {
                   onValueChange={this.cmbLocation_onChange}
                   className="fontStyle"
                 />
+              </Col>
+              <Col xs={3}>
+                <Label className="standardLabelFont">نوع بازرسی</Label>
+                <SelectBox
+                  dataSource={this.state.cmbQuestionType}
+                  displayExpr="name"
+                  placeholder="نوع بازرسی"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbQuestionType_onChange}
+                  value={this.state.cmbQuestionTypeValue}
+                  className="fontStyle"
+                />
+                <Row>
+                  <Label
+                    id="errQuestionType"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
               </Col>
             </Row>
             <Row className="standardSpaceTop">

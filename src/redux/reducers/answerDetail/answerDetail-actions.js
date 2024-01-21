@@ -1,6 +1,6 @@
 export async function answerDetailList(answerId, Token) {
     const url =
-      window.apiAddress + "/AnswerDetail/answerDetailList?answerId=" + answerId;
+      window.apiAddressInspection + "/AnswerDetail/answerDetailList?answerId=" + answerId;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -17,7 +17,7 @@ export async function answerDetailList(answerId, Token) {
   }
   
   export async function addAnswerDetail(Object, Token) {
-    const url = window.apiAddress + "/AnswerDetail/addAnswerDetail";
+    const url = window.apiAddressInspection + "/AnswerDetail/addAnswerDetail";
     const response = await fetch(url, {
       method: "POST",
       body: JSON.stringify(Object),
@@ -36,7 +36,7 @@ export async function answerDetailList(answerId, Token) {
 
   export async function answerDetailReport(object, Token) {
     const url =
-      window.apiAddress + "/AnswerDetail/answerDetailReport";
+      window.apiAddressInspection + "/AnswerDetail/answerDetailReport";
     const response = await fetch(url, {
       method: "POST",
       body: JSON.stringify(object),

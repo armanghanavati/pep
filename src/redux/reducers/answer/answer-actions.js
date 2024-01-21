@@ -1,6 +1,6 @@
 export async function answerList(userId, type, Token) {
   const url =
-    window.apiAddress + "/Answer/answerList?userId=" + userId + "&type=" + type;
+    window.apiAddressInspection + "/Answer/answerList?userId=" + userId + "&type=" + type;
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -17,7 +17,7 @@ export async function answerList(userId, type, Token) {
 }
 
 export async function addAnswer(Object, Token) {
-  const url = window.apiAddress + "/Answer/addAnswer";
+  const url = window.apiAddressInspection + "/Answer/addAnswer";
   const response = await fetch(url, {
     method: "POST",
     body: JSON.stringify(Object),
@@ -36,7 +36,7 @@ export async function addAnswer(Object, Token) {
 
 export async function answerListById(answerId, Token) {
   const url =
-    window.apiAddress + "/Answer/SearchAnswerById?answerId=" + answerId;
+    window.apiAddressInspection + "/Answer/SearchAnswerById?answerId=" + answerId;
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -53,7 +53,7 @@ export async function answerListById(answerId, Token) {
 }
 
 export async function confirmAnswer(Object, Token){
-  const url=window.apiAddress+"/Answer/confirmAnswer"            
+  const url=window.apiAddressInspection+"/Answer/confirmAnswer"            
   const response = await fetch(
       url,
       {
@@ -74,7 +74,7 @@ export async function confirmAnswer(Object, Token){
 }
 
 export async function deleteAnswer(answerId, Token){
-  const url=window.apiAddress+"/Answer/deleteAnswer?answerId=" + answerId              
+  const url=window.apiAddressInspection+"/Answer/deleteAnswer?answerId=" + answerId              
   const response = await fetch(
       url,
       {
@@ -94,7 +94,7 @@ export async function deleteAnswer(answerId, Token){
 }
 
 export async function updateAnswer(Object, Token){
-  const url=window.apiAddress+"/Answer/updateAnswer"              
+  const url=window.apiAddressInspection+"/Answer/updateAnswer"              
   const response = await fetch(
       url,
       {

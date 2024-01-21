@@ -1,5 +1,5 @@
 export async function questionTypeUserList(Token) {
-    const url = window.apiAddress + "/QuestionTypeUser/questionTypeUserList";
+    const url = window.apiAddressInspection + "/QuestionTypeUser/questionTypeUserList";
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -16,7 +16,7 @@ export async function questionTypeUserList(Token) {
   }
 
   export async function addQuestionTypeUser(Object, Token) {
-    const url = window.apiAddress + "/QuestionTypeUser/addQuestionTypeUser";
+    const url = window.apiAddressInspection + "/QuestionTypeUser/addQuestionTypeUser";
     const response = await fetch(url, {
       method: "POST",
       body: JSON.stringify(Object),
@@ -36,7 +36,7 @@ export async function questionTypeUserList(Token) {
   
   export async function deleteQuestionTypeUser(userId, questionTypeId, Token) {
     const url =
-      window.apiAddress + "/QuestionTypeUser/deleteQuestionTypeUser?userId=" + userId + "&questionTypeId=" + questionTypeId;
+      window.apiAddressInspection + "/QuestionTypeUser/deleteQuestionTypeUser?userId=" + userId + "&questionTypeId=" + questionTypeId;
     const response = await fetch(url, {
       method: "DELETE",
       headers: {
@@ -53,7 +53,7 @@ export async function questionTypeUserList(Token) {
   }
 
   export async function updateQuestionTypeUser(Object, Token){
-    const url=window.apiAddress+"/questionTypeUser/updateQuestionTypeUser"              
+    const url=window.apiAddressInspection+"/questionTypeUser/updateQuestionTypeUser"              
     const response = await fetch(
         url,
         {
