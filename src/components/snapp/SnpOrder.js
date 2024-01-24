@@ -58,6 +58,9 @@ class SnpOrder extends React.Component {
             activeTab: null,
             SnpOrderDetail: [],
             stateModalSnpOrderDetail: false,
+            stateDisable_btnAdd: false,
+            stateDisable_btnUpdate: false,
+            stateDisable_show: false,
             SnpOrderId: null,
             TicketData: null,
             ToastProps: {
