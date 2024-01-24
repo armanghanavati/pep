@@ -349,7 +349,7 @@ class SnpOrder extends React.Component {
                                 </Row>
 
                                 <Row className="standardPadding">
-                                    {this.state.activeTab == "1" ? (
+                                    {this.state.activeTab == "1" && this.state.stateDisable_btnUpdate ? (
                                         <>
                                             <Col xs="auto">
                                                 <Button
