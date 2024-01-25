@@ -1,11 +1,5 @@
 export const DataGridAnswerColumns = [
     {
-        dataField: "row",
-        caption: "row",
-        allowEditing: false,
-        width:30
-    },
-    {
         dataField: "locationName",
         caption: "فروشگاه",
         allowEditing: false,

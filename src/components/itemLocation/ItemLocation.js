@@ -97,7 +97,7 @@ import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
-import { stateList } from "../../redux/reducers/state/state-actions";
+import { stateList, stateListCombo } from "../../redux/reducers/state/state-actions";
 
 const dateLabel = { "aria-label": "Date" };
 
@@ -197,7 +197,7 @@ class ItemLocation extends React.Component {
 
   fn_stateList = async () => {
     this.setState({
-      cmbState: await stateList(this.props.User.token)
+      cmbState: await stateListCombo(this.props.User.token)
     })
   }
 
@@ -313,9 +313,17 @@ class ItemLocation extends React.Component {
   };
 
   cmbState_onChange = async (e) => {
-    this.setState({
-      cmbStateValue: e
-    })
+    const IDS = e.toString().split(",");
+    if (IDS.includes('0')) {
+      const TEMP_STATE = this.state.cmbState
+      let data = await Gfn_ConvertComboForAll(e, TEMP_STATE)
+      this.setState({ cmbStateValue: data });
+    }
+    else {
+      this.setState({
+        cmbStateValue: e,
+      })
+    }
   }
 
   fn_CheckValidation = () => {
@@ -627,7 +635,7 @@ class ItemLocation extends React.Component {
                   <TagBox
                     dataSource={this.state.cmbState}
                     searchEnabled={true}
-                    displayExpr="name"
+                    displayExpr="label"
                     placeholder="استان"
                     valueExpr="id"
                     rtlEnabled={true}

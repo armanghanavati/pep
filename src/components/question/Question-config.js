@@ -18,7 +18,7 @@ export const DataGridQuestionColumns = [
     },
     {
         dataField: "weight",
-        caption: "وزن",
+        caption: "نمره",
         allowEditing: false,
         width:50
     },
