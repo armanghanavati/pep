@@ -404,7 +404,24 @@ class OrderSupplier extends React.Component {
     }
     if (flagPush)
       if (FlagError || flagEditRowCount) {
+        // let obj = {
+        //   UserId: this.props.User.userId,
+        //   OrderPointSupplierId: params.oldData.id,
+        //   FirstValue:
+        //     params.oldData.orderUser == null
+        //       ? params.oldData.orderSystem
+        //       : params.oldData.orderUser,
+        //   OrderValue: params.newData.orderUser,
+        //   Description:
+        //     params.oldData.description === null
+        //       ? ""
+        //       : params.oldData.description,
+        //   SupplierId: params.oldData.supplierId,
+        //   ProductId: params.oldData.productId,
+        //   RetailStoreId: params.oldData.retailStoreId,
+        // };
         let obj = {
+          CompanyId: this.props.Company.currentCompanyId,
           UserId: this.props.User.userId,
           OrderPointSupplierId: params.oldData.id,
           FirstValue:
@@ -416,7 +433,7 @@ class OrderSupplier extends React.Component {
             params.oldData.description === null
               ? ""
               : params.oldData.description,
-          SupplierId: params.oldData.supplierId,
+          OrderSystem: params.oldData.orderSystem,
           ProductId: params.oldData.productId,
           RetailStoreId: params.oldData.retailStoreId,
         };
