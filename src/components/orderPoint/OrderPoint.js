@@ -63,7 +63,7 @@ import { companyActions } from "../../redux/reducers/company/company-slice";
 
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
-import { supplierOrderInventoryComboList } from "../../redux/reducers/supplier/supplier-action";
+import { supplierComboListByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
 import { orderPointListByLSI ,orderPointUpdate} from "../../redux/reducers/orderPoint/orderPoint-actions";
 
@@ -163,7 +163,7 @@ class OrderPoint extends React.Component {
     );
 
     this.setState({
-      cmbSupplier: await supplierOrderInventoryComboList(
+      cmbSupplier: await supplierComboListByCompanyId(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
