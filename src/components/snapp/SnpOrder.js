@@ -44,10 +44,11 @@ import DoneIcon from '../../assets/images/icon/done.png';
 import RejectIcon from '../../assets/images/icon/reject.png'
 import SendTimerIcon from '../../assets/images/icon/sandtimer.png'
 import RegisterCommentIcon from '../../assets/images/icon/register_comment.png'
-
+import snpOrderReport from './SnpOrderReport';
 const notesLabel = { 'aria-label': 'Notes' };
 
 class SnpOrder extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -72,6 +73,9 @@ class SnpOrder extends React.Component {
             SnpOrderData: null,
         }
     }
+
+
+
 
     async componentDidMount() {
         await this.fn_GetPermissions();
@@ -269,6 +273,9 @@ class SnpOrder extends React.Component {
                         </Col>
                     </Row>
                 )}
+                {/* ------------------------------ */}
+                <div id="viewer"></div>
+                {/* ------------------------------ */}
                 <Row className="text-center">
                     <Col>
                         <Modal style={{ direction: 'rtl' }}

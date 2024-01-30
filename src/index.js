@@ -14,13 +14,12 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
 window.apiAddress="http://localhost:7142/api";  
-// window.apiAddress="https://pepapi.minoomart.ir/api";
+//window.apiAddress="https://pepapi.minoomart.ir/api";
 window.siteAddress = "https://pepapi.minoomart.ir";
-// window.siteAddress = "http://172.16.1.40:2884";
+
 window.confirmPayment = "https://pepapi.minoomart.ir/api";
 window.apiAddressInspection="https://pepinspectionapi.minoomart.ir/api";
 // window.apiAddressInspection="http://localhost:7021/api";  
-//window.apiAddress="http://172.16.1.186:2884/api";   //coappweb
 
 // const store = createStore(rootReducer);
 
