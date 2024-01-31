@@ -71,6 +71,8 @@ class SnpOrder extends React.Component {
             },
             stateWait: false,
             SnpOrderData: null,
+            OrderStaus:[{id:1,desc:'ثبت شده'},{id:8,desc:'تایید شده'},{id:7,desc:'لغو شده'}],
+            flagFirstValueTabs:true,
         }
     }
 
@@ -81,7 +83,19 @@ class SnpOrder extends React.Component {
         await this.fn_GetPermissions();
         await this.fn_CheckRequireState();
         const rtnAllSnpOrders = await this.fn_LoadAllSnpOrders();
-        this.tabOrders_onChange("1", rtnAllSnpOrders)
+
+        const FIRST_TAB=1
+        await this.fn_DeleteFirstOrderStatus(FIRST_TAB);
+        this.tabOrders_onChange(FIRST_TAB.toString(), rtnAllSnpOrders)
+    }
+
+    async fn_DeleteFirstOrderStatus(firstTab){
+        let tempOrderStatus=this.state.OrderStaus;
+        for (let i=0;i<tempOrderStatus.length;i++){
+            if(tempOrderStatus[i].id==firstTab)
+                tempOrderStatus.splice(i,1)
+        }
+        this.setState({OrderStaus:tempOrderStatus});
     }
 
     fn_GetPermissions = () => {
@@ -205,8 +219,8 @@ class SnpOrder extends React.Component {
         this.setState({
             ToastProps: {
                 isToastVisible: true,
-                Message: result > 0 ? "درخواست تایید شد" : "خطا",
-                Type: result > 0 ? "info" : "error",
+                Message: result != null ? "درخواست تایید شد" : "خطا",
+                Type: result != null ? "info" : "error",
             }
         })
 
@@ -288,36 +302,7 @@ class SnpOrder extends React.Component {
                             <ModalHeader>
                                 جزییات درخواست
                             </ModalHeader>
-                            <ModalBody>
-                                {this.state.TicketData != null && (
-                                    <>
-                                        <Row className="standardPadding">
-                                            <Col>شماره تیکت : {this.state.TicketData.id}</Col>
-                                            <Col>تاریخ ثبت : {this.state.TicketData.persianDate}</Col>
-                                        </Row>
-                                        <div className="line"></div>
-                                        <Row className="standardPadding">
-                                            <Col>نام درخواست دهنده: {this.state.FullName}</Col>
-                                            <Col>نام کاربری : {this.state.TicketData.userNameInserted}</Col>
-                                            <Col>شماره همراه: {this.state.Mobile}</Col>
-                                        </Row>
-                                        <div className="line"></div>
-                                        <Row className="standardPadding">
-                                            <Col>موضوع : {this.state.TicketData.ticketSubjectDesc}</Col>
-                                            <Col>وضعیت : {this.state.TicketData.ticketStatusDesc}</Col>
-                                            <Col>اولویت : {this.state.TicketData.ticketPriorityDesc}</Col>
-                                        </Row>
-                                        <Row className="standardPadding">
-                                            <Col xs='auto'>عنوان : {this.state.TicketData.title}</Col>
-                                        </Row>
-                                        <div className="line"></div>
-                                        <Row className="standardPadding">
-                                            <Col>
-                                                توضیحات :<p style={{ textAlign: 'justify' }}>{this.state.TicketData.desc}</p>
-                                            </Col>
-                                        </Row>
-                                    </>
-                                )}
+                            <ModalBody>                               
                                 <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
                                     {this.state.SnpOrderDetail.map((item, key) =>
 
@@ -393,7 +378,98 @@ class SnpOrder extends React.Component {
                 </Row>
                 <Card className="shadow bg-white border pointer">
                     <Row className="standardPadding">
-                        <Nav tabs>
+                        <Nav tabs>                   
+                            <NavItem>
+                                <NavLink
+                                    className={classnames({ active: this.state.activeTab === '1' })}
+                                    onClick={() => { this.tabOrders_onChange('1', this.state.AllSnpOrders); }}                                            
+                                >
+                                    ثبت شده
+                                </NavLink>
+                            </NavItem>                       
+                            {this.state.OrderStaus.map((item,index)=>(                            
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.activeTab === item.id })}
+                                            onClick={() => { this.tabOrders_onChange(item.id, this.state.AllSnpOrders); }}                                            
+                                        >
+                                            {item.desc}
+                                        </NavLink>
+                                    </NavItem>                                
+                            ))} 
+                        </Nav>
+                        <TabContent activeTab={this.state.activeTab}>       
+                            <TabPane tabId='1'>
+                                    <Row className="standardPadding">
+                                        <DataGrid
+                                            dataSource={this.state.grdSnpOrders}
+                                            defaultColumns={DataGridSnpOrderColumns}
+                                            showBorders={true}
+                                            rtlEnabled={true}
+                                            allowColumnResizing={true}
+                                            onRowClick={this.grdSnpOrder_onClick}
+                                            height={DataGridDefaultHeight}
+                                            className="fontStyle"
+                                        >
+                                            <Scrolling rowRenderingMode="virtual"
+                                                showScrollbar="always"
+                                                columnRenderingMode="virtual"
+                                            />
+                                            <Editing
+                                                mode="cell"
+                                                allowUpdating={true}
+                                            />
+                                            <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                            <Pager
+                                                visible={true}
+                                                allowedPageSizes={DataGridPageSizes}
+                                                showPageSizeSelector={true}
+                                                showNavigationButtons={true}
+                                            />
+                                            <FilterRow visible={true} />
+                                            <FilterPanel visible={true} />
+                                            <HeaderFilter visible={true} />
+                                        </DataGrid>
+                                    </Row>
+                                </TabPane>                 
+                            {this.state.OrderStaus.map((item,index)=>(                            
+                                <TabPane tabId={item.id}>
+                                    <Row className="standardPadding">
+                                        <DataGrid
+                                            dataSource={this.state.grdSnpOrders}
+                                            defaultColumns={DataGridSnpOrderColumns}
+                                            showBorders={true}
+                                            rtlEnabled={true}
+                                            allowColumnResizing={true}
+                                            onRowClick={this.grdSnpOrder_onClick}
+                                            height={DataGridDefaultHeight}
+                                            className="fontStyle"
+                                        >
+                                            <Scrolling rowRenderingMode="virtual"
+                                                showScrollbar="always"
+                                                columnRenderingMode="virtual"
+                                            />
+                                            <Editing
+                                                mode="cell"
+                                                allowUpdating={true}
+                                            />
+                                            <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                            <Pager
+                                                visible={true}
+                                                allowedPageSizes={DataGridPageSizes}
+                                                showPageSizeSelector={true}
+                                                showNavigationButtons={true}
+                                            />
+                                            <FilterRow visible={true} />
+                                            <FilterPanel visible={true} />
+                                            <HeaderFilter visible={true} />
+                                        </DataGrid>
+                                    </Row>
+                                </TabPane>
+                                
+                        ))} 
+                        </TabContent>
+                         {/* <Nav tabs>
                             <NavItem>
                                 <NavLink
                                     className={classnames({ active: this.state.activeTab === "1" })}
@@ -418,8 +494,8 @@ class SnpOrder extends React.Component {
                                     رد شده
                                 </NavLink>
                             </NavItem>
-                        </Nav>
-                        <TabContent activeTab={this.state.activeTab}>
+                        </Nav>  */}
+                        {/*<TabContent activeTab={this.state.activeTab}>
                             <TabPane tabId="1">
                                 <Row className="standardPadding">
                                     <DataGrid
@@ -519,7 +595,7 @@ class SnpOrder extends React.Component {
                                     </DataGrid>
                                 </Row>
                             </TabPane>
-                        </TabContent>
+                        </TabContent> */}
                     </Row>
                 </Card>
             </div >

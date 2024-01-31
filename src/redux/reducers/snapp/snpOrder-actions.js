@@ -46,8 +46,9 @@ export async function snpOrderAccept(object, token) {
     },
   });
   const result = await response.json();
+  console.log("ACCEPT ORDER=" + JSON.stringify(result.data));
   if (result.status == "Success") {
-    console.log("accept" + JSON.stringify(result.data));
+    console.log("ACCEPT ORDER=" + JSON.stringify(result.data));
     return result.data;
   }
   return null;
