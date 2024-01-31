@@ -219,8 +219,9 @@ class SnpOrder extends React.Component {
         this.setState({
             ToastProps: {
                 isToastVisible: true,
-                Message: result != null ? "درخواست تایید شد" : "خطا",
-                Type: result != null ? "info" : "error",
+                Message: result == null ? "درخواست تایید شد" : "خطا",
+                Type: result == null ? "info" : "error",
+
             }
         })
 
@@ -256,8 +257,8 @@ class SnpOrder extends React.Component {
         this.setState({
             ToastProps: {
                 isToastVisible: true,
-                Message: result > 0 ? "وضعیت درخواست به رد شده تغییر یافت" : "خطا",
-                Type: result > 0 ? "success" : "error",
+                Message: result == null ? "وضعیت درخواست به رد شده تغییر یافت" : "خطا",
+                Type: result == null ? "success" : "error",
             }
         })
         const rtnAllSnpOrder = await this.fn_LoadAllSnpOrders();
