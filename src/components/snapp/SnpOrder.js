@@ -267,7 +267,7 @@ class SnpOrder extends React.Component {
     }
 
     btnPrint_onClick=()=>{
-        window.location.href="https://pepreports.minoomart.ir/snappreport/snapporder?reportId=" + this.state.SnpOrderId
+        window.location.href="https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId
     }
 
     onHidingToast = () => {
