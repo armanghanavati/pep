@@ -185,7 +185,7 @@ class SnpOrder extends React.Component {
         const tempAllSnpOrders = AllSnpOrders;
         let tempSnpOrders = [];
         for (let i = 0; i < tempAllSnpOrders.length; i++)
-            if (tab == 1 && (tempAllSnpOrders[i].statusId == "1" || tempAllSnpOrders[i].statusId == "3" || tempAllSnpOrders[i].statusId == "4" || tempAllSnpOrders[i].statusId == "5"))
+            if (tab == 1 && (tempAllSnpOrders[i].statusId == "1" || tempAllSnpOrders[i].statusId == "3" || tempAllSnpOrders[i].statusId == "4" || tempAllSnpOrders[i].statusId == "5" || tempAllSnpOrders[i].statusId == "6"))
                 tempSnpOrders.push(tempAllSnpOrders[i]);
             else if (tempAllSnpOrders[i].statusId == tab)
                 tempSnpOrders.push(tempAllSnpOrders[i]);
@@ -266,8 +266,8 @@ class SnpOrder extends React.Component {
         this.tabOrders_onChange('6', rtnAllSnpOrder)
     }
 
-    btnPrint_onClick=()=>{
-        window.location.href="https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId
+    btnPrint_onClick = () => {
+        window.location.href = "https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId
     }
 
     onHidingToast = () => {
@@ -328,42 +328,28 @@ class SnpOrder extends React.Component {
                                     )}
                                 </Row>
                                 <Row className="standardPadding">
-                                    {this.state.activeTab == 8 && (
-                                        <Col xs="auto">
-                                            <Button
-                                                //icon={PrintIcon}
-                                                text="چاپ فاکتور"
-                                                type="default"
-                                                stylingMode="contained"
+                                    <Col>
+                                        <>
+                                            <Label className="standardLabelFont">نیاز به تماس درخواست</Label>
+                                            <SelectBox
+                                                dataSource={this.state.cmbDeclineReason}
+                                                displayExpr="title"
+                                                placeholder="نیاز به تماس درخواست"
+                                                valueExpr="id"
+                                                searchEnabled={true}
                                                 rtlEnabled={true}
-                                                onClick={this.btnPrint_onClick}
+                                                onValueChange={this.cmbDeclineReason_onChange}
+                                                value={this.state.cmbDeclineReasonValue}
                                                 className="fontStyle"
                                             />
-                                        </Col>
-                                    )}
-                                    <Col>
-                                        {this.state.activeTab == "1" ? (
-                                            <>
-                                                <Label className="standardLabelFont">دلیل رد درخواست</Label>
-                                                <SelectBox
-                                                    dataSource={this.state.cmbDeclineReason}
-                                                    displayExpr="title"
-                                                    placeholder="دلیل رد درخواست"
-                                                    valueExpr="id"
-                                                    searchEnabled={true}
-                                                    rtlEnabled={true}
-                                                    onValueChange={this.cmbDeclineReason_onChange}
-                                                    value={this.state.cmbDeclineReasonValue}
-                                                    className="fontStyle"
-                                                />
-                                                <Label id="errDeclineReason" className="standardLabelFont errMessage" />
-                                            </>
-                                        ) : <><p>{this.state.SnpOrderData != null && this.state.activeTab != "8" && "دلیل رد درخواست: " + this.state.SnpOrderData.declineReason}</p></>}
+                                            <Label id="errDeclineReason" className="standardLabelFont errMessage" />
+                                        </>
+                                        <><p>{this.state.SnpOrderData != null && this.state.activeTab != "1" && this.state.SnpOrderData.declineReason}</p></>
                                     </Col>
                                 </Row>
 
                                 <Row className="standardPadding">
-                                    {this.state.activeTab == "1" && this.state.stateDisable_btnUpdate ? (
+                                    {this.state.stateDisable_btnUpdate ? (
                                         <>
                                             <Col xs="auto">
                                                 <Button
@@ -380,7 +366,7 @@ class SnpOrder extends React.Component {
                                             <Col xs="auto">
                                                 <Button
                                                     icon={RejectIcon}
-                                                    text="رد کردن"
+                                                    text="نیاز به تماس درخواست"
                                                     type="danger"
                                                     stylingMode="contained"
                                                     rtlEnabled={true}
@@ -388,6 +374,21 @@ class SnpOrder extends React.Component {
                                                     className="fontStyle"
                                                 />
                                             </Col>
+                                            {this.state.activeTab == 8 && (
+
+                                                <Col xs="auto">
+                                                    <Button
+                                                        //icon={PrintIcon}
+                                                        text="چاپ فاکتور"
+                                                        type="default"
+                                                        stylingMode="contained"
+                                                        rtlEnabled={true}
+                                                        onClick={this.btnPrint_onClick}
+                                                        className="fontStyle"
+                                                    />
+                                                </Col>
+
+                                            )}
                                         </>
                                     ) : ""}
                                 </Row>
