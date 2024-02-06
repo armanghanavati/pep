@@ -327,53 +327,58 @@ class SnpOrder extends React.Component {
                                         </Card>
                                     )}
                                 </Row>
-                                <Row className="standardPadding">
-                                    <Col>
-                                        <>
-                                            <Label className="standardLabelFont">نیاز به تماس درخواست</Label>
-                                            <SelectBox
-                                                dataSource={this.state.cmbDeclineReason}
-                                                displayExpr="title"
-                                                placeholder="نیاز به تماس درخواست"
-                                                valueExpr="id"
-                                                searchEnabled={true}
-                                                rtlEnabled={true}
-                                                onValueChange={this.cmbDeclineReason_onChange}
-                                                value={this.state.cmbDeclineReasonValue}
-                                                className="fontStyle"
-                                            />
-                                            <Label id="errDeclineReason" className="standardLabelFont errMessage" />
-                                        </>
-                                        <><p>{this.state.SnpOrderData != null && this.state.activeTab != "1" && this.state.SnpOrderData.declineReason}</p></>
-                                    </Col>
-                                </Row>
-
+                                {this.state.activeTab != 7 && (
+                                    <Row className="standardPadding">
+                                        <Col>
+                                            <>
+                                                {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
+                                                <SelectBox
+                                                    dataSource={this.state.cmbDeclineReason}
+                                                    displayExpr="title"
+                                                    placeholder="نیاز به تماس درخواست"
+                                                    valueExpr="id"
+                                                    searchEnabled={true}
+                                                    rtlEnabled={true}
+                                                    onValueChange={this.cmbDeclineReason_onChange}
+                                                    value={this.state.cmbDeclineReasonValue}
+                                                    className="fontStyle"
+                                                />
+                                                <Label id="errDeclineReason" className="standardLabelFont errMessage" />
+                                            </>
+                                            <><p>{this.state.SnpOrderData != null && this.state.activeTab == 1 && this.state.SnpOrderData.declineReason}</p></>
+                                        </Col>
+                                    </Row>
+                                )}
                                 <Row className="standardPadding">
                                     {this.state.stateDisable_btnUpdate ? (
                                         <>
-                                            <Col xs="auto">
-                                                <Button
-                                                    icon={RegisterCommentIcon}
-                                                    text="تایید درخواست"
-                                                    type="default"
-                                                    stylingMode="contained"
-                                                    rtlEnabled={true}
-                                                    onClick={this.btnAccept_onClick}
-                                                    className="fontStyle"
-                                                />
-                                            </Col>
+                                            {this.state.activeTab != 7 && (
+                                                <>
+                                                    <Col xs="auto">
+                                                        <Button
+                                                            icon={RegisterCommentIcon}
+                                                            text="تایید درخواست"
+                                                            type="default"
+                                                            stylingMode="contained"
+                                                            rtlEnabled={true}
+                                                            onClick={this.btnAccept_onClick}
+                                                            className="fontStyle"
+                                                        />
+                                                    </Col>
 
-                                            <Col xs="auto">
-                                                <Button
-                                                    icon={RejectIcon}
-                                                    text="نیاز به تماس درخواست"
-                                                    type="danger"
-                                                    stylingMode="contained"
-                                                    rtlEnabled={true}
-                                                    onClick={this.btnReject_onClick}
-                                                    className="fontStyle"
-                                                />
-                                            </Col>
+                                                    <Col xs="auto">
+                                                        <Button
+                                                            icon={RejectIcon}
+                                                            text="نیاز به تماس درخواست"
+                                                            type="danger"
+                                                            stylingMode="contained"
+                                                            rtlEnabled={true}
+                                                            onClick={this.btnReject_onClick}
+                                                            className="fontStyle"
+                                                        />
+                                                    </Col>
+                                                </>
+                                            )}
                                             {this.state.activeTab == 8 && (
 
                                                 <Col xs="auto">
