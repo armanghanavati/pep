@@ -315,6 +315,7 @@ class SnpOrder extends React.Component {
                                         <Card className="shadow bg-white border pointer">
                                             <Row className="standardPadding">
                                                 <Col xs='auto'>کالا: {item.itemName}</Col>
+                                                <Col xs='auto'>بارکد: {item.barCode}</Col>
                                             </Row>
                                             <Row className="standardPadding">
                                                 <Col xs="auto">تعداد: {item.quantity}</Col>
