@@ -170,7 +170,7 @@ class SnpOrder extends React.Component {
         this.setState({ cmbDeclineReasonValue: e })
     }
 
-    grdSnpOrder_onClick = async (e) => {
+    grdSnpOrder_onDbClick = async (e) => {
         const snpOrderDetail = await snpOrderDetailList(e.data.id, this.props.User.token);
         this.setState({
             stateModalSnpOrderDetail: true,
@@ -331,25 +331,23 @@ class SnpOrder extends React.Component {
                                 {this.state.activeTab != 7 && (
                                     <Row className="standardPadding">
                                         <Col>
-                                            <>
-                                                {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
-                                                <SelectBox
-                                                    dataSource={this.state.cmbDeclineReason}
-                                                    displayExpr="title"
-                                                    placeholder="نیاز به تماس درخواست"
-                                                    valueExpr="id"
-                                                    searchEnabled={true}
-                                                    rtlEnabled={true}
-                                                    onValueChange={this.cmbDeclineReason_onChange}
-                                                    value={this.state.cmbDeclineReasonValue}
-                                                    className="fontStyle"
-                                                />
-                                                <Label id="errDeclineReason" className="standardLabelFont errMessage" />
-                                            </>
-                                            <><p>{this.state.SnpOrderData != null && this.state.activeTab == 1 && this.state.SnpOrderData.declineReason}</p></>
+                                            {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
+                                            <SelectBox
+                                                dataSource={this.state.cmbDeclineReason}
+                                                displayExpr="title"
+                                                placeholder="نیاز به تماس درخواست"
+                                                valueExpr="id"
+                                                searchEnabled={true}
+                                                rtlEnabled={true}
+                                                onValueChange={this.cmbDeclineReason_onChange}
+                                                value={this.state.cmbDeclineReasonValue}
+                                                className="fontStyle"
+                                            />
+                                            <Label id="errDeclineReason" className="standardLabelFont errMessage" />
                                         </Col>
                                     </Row>
                                 )}
+                                <p>{this.state.SnpOrderData != null && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
                                 <Row className="standardPadding">
                                     {this.state.stateDisable_btnUpdate ? (
                                         <>
@@ -380,7 +378,7 @@ class SnpOrder extends React.Component {
                                                     </Col>
                                                 </>
                                             )}
-                                            {this.state.activeTab == 8 && (
+                                            {this.state.activeTab != 7 && (
 
                                                 <Col xs="auto">
                                                     <Button
@@ -433,7 +431,7 @@ class SnpOrder extends React.Component {
                                         showBorders={true}
                                         rtlEnabled={true}
                                         allowColumnResizing={true}
-                                        onRowClick={this.grdSnpOrder_onClick}
+                                        onRowDblClick={this.grdSnpOrder_onDbClick}
                                         height={DataGridDefaultHeight}
                                         className="fontStyle"
                                     >
@@ -467,7 +465,7 @@ class SnpOrder extends React.Component {
                                             showBorders={true}
                                             rtlEnabled={true}
                                             allowColumnResizing={true}
-                                            onRowClick={this.grdSnpOrder_onClick}
+                                            onRowDblClick={this.grdSnpOrder_onDbClick}
                                             height={DataGridDefaultHeight}
                                             className="fontStyle"
                                         >
