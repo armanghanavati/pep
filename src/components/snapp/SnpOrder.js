@@ -43,6 +43,7 @@ import { companyActions } from "../../redux/reducers/company/company-slice";
 import DoneIcon from '../../assets/images/icon/done.png';
 import RejectIcon from '../../assets/images/icon/reject.png'
 import SendTimerIcon from '../../assets/images/icon/sandtimer.png'
+import PrintIcon from '../../assets/images/icon/reject.png'
 import RegisterCommentIcon from '../../assets/images/icon/register_comment.png'
 import snpOrderReport from './SnpOrderReport';
 const notesLabel = { 'aria-label': 'Notes' };
@@ -71,8 +72,8 @@ class SnpOrder extends React.Component {
             },
             stateWait: false,
             SnpOrderData: null,
-            OrderStaus:[{id:1,desc:'ثبت شده'},{id:8,desc:'تایید شده'},{id:7,desc:'لغو شده'}],
-            flagFirstValueTabs:true,
+            OrderStaus: [{ id: 1, desc: 'ثبت شده' }, { id: 8, desc: 'تایید شده' }, { id: 7, desc: 'لغو شده' }],
+            flagFirstValueTabs: true,
         }
     }
 
@@ -84,18 +85,18 @@ class SnpOrder extends React.Component {
         await this.fn_CheckRequireState();
         const rtnAllSnpOrders = await this.fn_LoadAllSnpOrders();
 
-        const FIRST_TAB=1
+        const FIRST_TAB = 1
         await this.fn_DeleteFirstOrderStatus(FIRST_TAB);
         this.tabOrders_onChange(FIRST_TAB.toString(), rtnAllSnpOrders)
     }
 
-    async fn_DeleteFirstOrderStatus(firstTab){
-        let tempOrderStatus=this.state.OrderStaus;
-        for (let i=0;i<tempOrderStatus.length;i++){
-            if(tempOrderStatus[i].id==firstTab)
-                tempOrderStatus.splice(i,1)
+    async fn_DeleteFirstOrderStatus(firstTab) {
+        let tempOrderStatus = this.state.OrderStaus;
+        for (let i = 0; i < tempOrderStatus.length; i++) {
+            if (tempOrderStatus[i].id == firstTab)
+                tempOrderStatus.splice(i, 1)
         }
-        this.setState({OrderStaus:tempOrderStatus});
+        this.setState({ OrderStaus: tempOrderStatus });
     }
 
     fn_GetPermissions = () => {
@@ -169,7 +170,7 @@ class SnpOrder extends React.Component {
         this.setState({ cmbDeclineReasonValue: e })
     }
 
-    grdSnpOrder_onClick = async (e) => {
+    grdSnpOrder_onDbClick = async (e) => {
         const snpOrderDetail = await snpOrderDetailList(e.data.id, this.props.User.token);
         this.setState({
             stateModalSnpOrderDetail: true,
@@ -184,7 +185,7 @@ class SnpOrder extends React.Component {
         const tempAllSnpOrders = AllSnpOrders;
         let tempSnpOrders = [];
         for (let i = 0; i < tempAllSnpOrders.length; i++)
-            if (tab == 1 && (tempAllSnpOrders[i].statusId == "1" || tempAllSnpOrders[i].statusId == "3" || tempAllSnpOrders[i].statusId == "4" || tempAllSnpOrders[i].statusId == "5"))
+            if (tab == 1 && (tempAllSnpOrders[i].statusId == "1" || tempAllSnpOrders[i].statusId == "3" || tempAllSnpOrders[i].statusId == "4" || tempAllSnpOrders[i].statusId == "5" || tempAllSnpOrders[i].statusId == "6"))
                 tempSnpOrders.push(tempAllSnpOrders[i]);
             else if (tempAllSnpOrders[i].statusId == tab)
                 tempSnpOrders.push(tempAllSnpOrders[i]);
@@ -265,6 +266,11 @@ class SnpOrder extends React.Component {
         this.tabOrders_onChange('6', rtnAllSnpOrder)
     }
 
+    btnPrint_onClick = () => {
+         window.open("https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId,'_blank'); 
+        //window.location.href = "https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId
+    }
+
     onHidingToast = () => {
         this.setState({ ToastProps: { isToastVisible: false } })
     }
@@ -303,13 +309,14 @@ class SnpOrder extends React.Component {
                             <ModalHeader>
                                 جزییات درخواست
                             </ModalHeader>
-                            <ModalBody>                               
+                            <ModalBody>
                                 <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
                                     {this.state.SnpOrderDetail.map((item, key) =>
 
                                         <Card className="shadow bg-white border pointer">
                                             <Row className="standardPadding">
                                                 <Col xs='auto'>کالا: {item.itemName}</Col>
+                                                <Col xs='auto'>بارکد: {item.barCode}</Col>
                                             </Row>
                                             <Row className="standardPadding">
                                                 <Col xs="auto">تعداد: {item.quantity}</Col>
@@ -322,54 +329,71 @@ class SnpOrder extends React.Component {
                                         </Card>
                                     )}
                                 </Row>
+                                {this.state.activeTab != 7 && (
+                                    <Row className="standardPadding">
+                                        <Col>
+                                            {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
+                                            <SelectBox
+                                                dataSource={this.state.cmbDeclineReason}
+                                                displayExpr="title"
+                                                placeholder="نیاز به تماس درخواست"
+                                                valueExpr="id"
+                                                searchEnabled={true}
+                                                rtlEnabled={true}
+                                                onValueChange={this.cmbDeclineReason_onChange}
+                                                value={this.state.cmbDeclineReasonValue}
+                                                className="fontStyle"
+                                            />
+                                            <Label id="errDeclineReason" className="standardLabelFont errMessage" />
+                                        </Col>
+                                    </Row>
+                                )}
+                                <p>{this.state.SnpOrderData != null && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
                                 <Row className="standardPadding">
-                                    <Col>
-                                        {this.state.activeTab == "1" ? (
-                                            <>
-                                                <Label className="standardLabelFont">دلیل رد درخواست</Label>
-                                                <SelectBox
-                                                    dataSource={this.state.cmbDeclineReason}
-                                                    displayExpr="title"
-                                                    placeholder="دلیل رد درخواست"
-                                                    valueExpr="id"
-                                                    searchEnabled={true}
-                                                    rtlEnabled={true}
-                                                    onValueChange={this.cmbDeclineReason_onChange}
-                                                    value={this.state.cmbDeclineReasonValue}
-                                                    className="fontStyle"
-                                                />
-                                                <Label id="errDeclineReason" className="standardLabelFont errMessage" />
-                                            </>
-                                        ) : <><p>{this.state.SnpOrderData != null && this.state.activeTab != "8" && "دلیل رد درخواست: " + this.state.SnpOrderData.declineReason}</p></>}
-                                    </Col>
-                                </Row>
-
-                                <Row className="standardPadding">
-                                    {this.state.activeTab == "1" && this.state.stateDisable_btnUpdate ? (
+                                    {this.state.stateDisable_btnUpdate ? (
                                         <>
-                                            <Col xs="auto">
-                                                <Button
-                                                    icon={RegisterCommentIcon}
-                                                    text="تایید درخواست"
-                                                    type="default"
-                                                    stylingMode="contained"
-                                                    rtlEnabled={true}
-                                                    onClick={this.btnAccept_onClick}
-                                                    className="fontStyle"
-                                                />
-                                            </Col>
+                                            {this.state.activeTab != 7 && (
+                                                <>
+                                                    <Col xs="auto">
+                                                        <Button
+                                                            icon={RegisterCommentIcon}
+                                                            text="تایید درخواست"
+                                                            type="default"
+                                                            stylingMode="contained"
+                                                            rtlEnabled={true}
+                                                            onClick={this.btnAccept_onClick}
+                                                            className="fontStyle"
+                                                        />
+                                                    </Col>
 
-                                            <Col xs="auto">
-                                                <Button
-                                                    icon={RejectIcon}
-                                                    text="رد کردن"
-                                                    type="danger"
-                                                    stylingMode="contained"
-                                                    rtlEnabled={true}
-                                                    onClick={this.btnReject_onClick}
-                                                    className="fontStyle"
-                                                />
-                                            </Col>
+                                                    <Col xs="auto">
+                                                        <Button
+                                                            icon={RejectIcon}
+                                                            text="نیاز به تماس درخواست"
+                                                            type="danger"
+                                                            stylingMode="contained"
+                                                            rtlEnabled={true}
+                                                            onClick={this.btnReject_onClick}
+                                                            className="fontStyle"
+                                                        />
+                                                    </Col>
+                                                </>
+                                            )}
+                                            {this.state.activeTab != 7 && (
+
+                                                <Col xs="auto">
+                                                    <Button
+                                                        //icon={PrintIcon}
+                                                        text="چاپ فاکتور"
+                                                        type="default"
+                                                        stylingMode="contained"
+                                                        rtlEnabled={true}
+                                                        onClick={this.btnPrint_onClick}
+                                                        className="fontStyle"
+                                                    />
+                                                </Col>
+
+                                            )}
                                         </>
                                     ) : ""}
                                 </Row>
@@ -379,61 +403,61 @@ class SnpOrder extends React.Component {
                 </Row>
                 <Card className="shadow bg-white border pointer">
                     <Row className="standardPadding">
-                        <Nav tabs>                   
+                        <Nav tabs>
                             <NavItem>
                                 <NavLink
                                     className={classnames({ active: this.state.activeTab === '1' })}
-                                    onClick={() => { this.tabOrders_onChange('1', this.state.AllSnpOrders); }}                                            
+                                    onClick={() => { this.tabOrders_onChange('1', this.state.AllSnpOrders); }}
                                 >
                                     ثبت شده
                                 </NavLink>
-                            </NavItem>                       
-                            {this.state.OrderStaus.map((item,index)=>(                            
-                                    <NavItem>
-                                        <NavLink
-                                            className={classnames({ active: this.state.activeTab === item.id })}
-                                            onClick={() => { this.tabOrders_onChange(item.id, this.state.AllSnpOrders); }}                                            
-                                        >
-                                            {item.desc}
-                                        </NavLink>
-                                    </NavItem>                                
-                            ))} 
+                            </NavItem>
+                            {this.state.OrderStaus.map((item, index) => (
+                                <NavItem>
+                                    <NavLink
+                                        className={classnames({ active: this.state.activeTab === item.id })}
+                                        onClick={() => { this.tabOrders_onChange(item.id, this.state.AllSnpOrders); }}
+                                    >
+                                        {item.desc}
+                                    </NavLink>
+                                </NavItem>
+                            ))}
                         </Nav>
-                        <TabContent activeTab={this.state.activeTab}>       
+                        <TabContent activeTab={this.state.activeTab}>
                             <TabPane tabId='1'>
-                                    <Row className="standardPadding">
-                                        <DataGrid
-                                            dataSource={this.state.grdSnpOrders}
-                                            defaultColumns={DataGridSnpOrderColumns}
-                                            showBorders={true}
-                                            rtlEnabled={true}
-                                            allowColumnResizing={true}
-                                            onRowClick={this.grdSnpOrder_onClick}
-                                            height={DataGridDefaultHeight}
-                                            className="fontStyle"
-                                        >
-                                            <Scrolling rowRenderingMode="virtual"
-                                                showScrollbar="always"
-                                                columnRenderingMode="virtual"
-                                            />
-                                            <Editing
-                                                mode="cell"
-                                                allowUpdating={true}
-                                            />
-                                            <Paging defaultPageSize={DataGridDefaultPageSize} />
-                                            <Pager
-                                                visible={true}
-                                                allowedPageSizes={DataGridPageSizes}
-                                                showPageSizeSelector={true}
-                                                showNavigationButtons={true}
-                                            />
-                                            <FilterRow visible={true} />
-                                            <FilterPanel visible={true} />
-                                            <HeaderFilter visible={true} />
-                                        </DataGrid>
-                                    </Row>
-                                </TabPane>                 
-                            {this.state.OrderStaus.map((item,index)=>(                            
+                                <Row className="standardPadding">
+                                    <DataGrid
+                                        dataSource={this.state.grdSnpOrders}
+                                        defaultColumns={DataGridSnpOrderColumns}
+                                        showBorders={true}
+                                        rtlEnabled={true}
+                                        allowColumnResizing={true}
+                                        onRowDblClick={this.grdSnpOrder_onDbClick}
+                                        height={DataGridDefaultHeight}
+                                        className="fontStyle"
+                                    >
+                                        <Scrolling rowRenderingMode="virtual"
+                                            showScrollbar="always"
+                                            columnRenderingMode="virtual"
+                                        />
+                                        <Editing
+                                            mode="cell"
+                                            allowUpdating={true}
+                                        />
+                                        <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                        <Pager
+                                            visible={true}
+                                            allowedPageSizes={DataGridPageSizes}
+                                            showPageSizeSelector={true}
+                                            showNavigationButtons={true}
+                                        />
+                                        <FilterRow visible={true} />
+                                        <FilterPanel visible={true} />
+                                        <HeaderFilter visible={true} />
+                                    </DataGrid>
+                                </Row>
+                            </TabPane>
+                            {this.state.OrderStaus.map((item, index) => (
                                 <TabPane tabId={item.id}>
                                     <Row className="standardPadding">
                                         <DataGrid
@@ -442,7 +466,7 @@ class SnpOrder extends React.Component {
                                             showBorders={true}
                                             rtlEnabled={true}
                                             allowColumnResizing={true}
-                                            onRowClick={this.grdSnpOrder_onClick}
+                                            onRowDblClick={this.grdSnpOrder_onDbClick}
                                             height={DataGridDefaultHeight}
                                             className="fontStyle"
                                         >
@@ -467,10 +491,10 @@ class SnpOrder extends React.Component {
                                         </DataGrid>
                                     </Row>
                                 </TabPane>
-                                
-                        ))} 
+
+                            ))}
                         </TabContent>
-                         {/* <Nav tabs>
+                        {/* <Nav tabs>
                             <NavItem>
                                 <NavLink
                                     className={classnames({ active: this.state.activeTab === "1" })}

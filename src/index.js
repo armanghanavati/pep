@@ -18,6 +18,7 @@ window.apiAddress="https://pepapi.minoomart.ir/api";
 window.siteAddress = "https://pepapi.minoomart.ir";
 
 window.confirmPayment = "https://pepapi.minoomart.ir/api";
+
 window.apiAddressInspection="https://pepinspectionapi.minoomart.ir/api";
 // window.apiAddressInspection="http://localhost:7021/api";  
 
