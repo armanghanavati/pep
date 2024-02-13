@@ -55,6 +55,11 @@ export const DataGridItemLocationColumns = [
     allowEditing: true,
   },
   {
+    dataField: "isActiveSnapp",
+    caption: "فعال برای اسنپ",
+    allowEditing: true,
+  },
+  {
     dataField: "maxPercentChange",
     caption: "حداکثر درصد افزایش",
     allowEditing: true,
@@ -63,5 +68,20 @@ export const DataGridItemLocationColumns = [
     dataField: "minPercentChange",
     caption: "حداقل درصد افزایش",
     allowEditing: true,
-  }
+  },
+  {
+    dataField: "isCreateOrderInventory",
+    caption: "ایجاد سفارش انباری",
+    allowEditing: true,
+  },
+  {
+    dataField: "isCreateOrderSupplier",
+    caption: "ایجاد سفارش دایرکتی",
+    allowEditing: true,
+  },
+  {
+    dataField: "orderNumber",
+    caption: "تعداد سفارش",
+    allowEditing: true,
+  },
 ];

@@ -400,8 +400,8 @@ class ItemLocation extends React.Component {
         itemId: tempItemLocation[i].itemId,
         locationId: tempItemLocation[i].locationId,
         isActive: Status,
-        minPercentChange:tempItemLocation[i].minPercentChange,
-        maxPercentChange:tempItemLocation[i].maxPercentChange
+        minPercentChange: tempItemLocation[i].minPercentChange,
+        maxPercentChange: tempItemLocation[i].maxPercentChange
       };
       tempItems.push(obj);
 
@@ -435,6 +435,10 @@ class ItemLocation extends React.Component {
         tempItems[i].isActive = params.data.isActive;
         tempItems[i].maxPercentChange = params.data.maxPercentChange;
         tempItems[i].minPercentChange = params.data.minPercentChange;
+        tempItems[i].isActiveSnapp = params.data.isActiveSnapp;
+        tempItems[i].isCreateOrderInventory = params.data.isCreateOrderInventory;
+        tempItems[i].isCreateOrderSupplier = params.data.isCreateOrderSupplier;
+        tempItems[i].orderNumber = params.data.orderNumber;
         flagPush = false;
       }
     }
@@ -444,7 +448,11 @@ class ItemLocation extends React.Component {
         locationId: params.data.locationId,
         isActive: params.data.isActive,
         maxPercentChange: params.data.maxPercentChange,
-        minPercentChange: params.data.minPercentChange
+        minPercentChange: params.data.minPercentChange,
+        isActiveSnapp:params.data.isActiveSnapp,
+        isCreateOrderInventory:params.data.isCreateOrderInventory,
+        isCreateOrderSupplier:params.data.isCreateOrderSupplier,
+        orderNumber:params.data.orderNumber
       };
       tempItems.push(obj);
     }
