@@ -134,6 +134,7 @@ class SnpOrder extends React.Component {
                 })
             );
         }
+        this.setState({cmbDeclineReason:  snpOrderDeclineReasonList("3demnx", this.props.User.token)})
     }
 
     OpenCloseWait() {
@@ -177,7 +178,7 @@ class SnpOrder extends React.Component {
             SnpOrderDetail: snpOrderDetail == null ? [] : snpOrderDetail,
             SnpOrderId: e.data.id,
             SnpOrderData: e.data,
-            cmbDeclineReason: await snpOrderDeclineReasonList(e.data.vendorCode, this.props.User.token)
+            // cmbDeclineReason: await snpOrderDeclineReasonList(e.data.vendorCode, this.props.User.token)
         });
     }
 
