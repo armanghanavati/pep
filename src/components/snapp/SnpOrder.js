@@ -140,6 +140,7 @@ class SnpOrder extends React.Component {
             );
         }
 
+              
     }
 
     OpenCloseWait() {
@@ -215,8 +216,7 @@ class SnpOrder extends React.Component {
         this.setState({ stateModalSnpOrderDetail: false })
     }
 
-    btnAccept_onClick = async () => {
-        this.OpenCloseWait();
+    btnAccept_onClick = async () => {        
         const obj = {
             orderId: this.state.SnpOrderId,
             orderCode: this.state.SnpOrderData.code,
@@ -294,8 +294,8 @@ class SnpOrder extends React.Component {
         const ORDERS=await snpOrderList(OBJ,this.props.User.token);
         this.setState({
             AllSnpOrders: ORDERS,
-        });
-
+            cmbDeclineReason: await snpOrderDeclineReasonList("3demnx", this.props.User.token)
+        });        
         // const rtnAllSnpOrders = await this.fn_LoadAllSnpOrders();
         const FIRST_TAB = 1
         await this.fn_DeleteFirstOrderStatus(FIRST_TAB);

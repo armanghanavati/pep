@@ -361,7 +361,7 @@ class OrderInventoryReport extends React.Component {
             </Row>   
             <Row className="standardSpaceTop">
                 <Col xs="auto">                    
-                    <LocalizationProvider dateAdapter={AdapterJalali}>
+                    <LocalizationProvider  dateAdapter={AdapterJalali}>
                         <DesktopDatePicker 
                             label="از تاریخ"                                      
                             value={this.state.FromDate}
