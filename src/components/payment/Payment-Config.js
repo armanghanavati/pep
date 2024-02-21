@@ -23,6 +23,10 @@ export const DataGridPaymentcolumns = [
         dataField: "amountPay",
         caption: "مبلغ پرداختی(ریال)",
         allowEditing: false,
+        format: {  
+            type: "fixedPoint",  
+            precision: 0  
+         } 
     },
     {
         dataField: "sepStatusDesc",

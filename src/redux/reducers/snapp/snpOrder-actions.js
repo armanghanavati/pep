@@ -1,8 +1,9 @@
-export async function snpOrderList(userId, Token) {
+export async function snpOrderList(obj, Token) {
   const url =
-    window.apiAddress + "/SnpOrder/snpOrderList?userId=" + userId;
+    window.apiAddress + "/SnpOrder/snpOrderList";
   const response = await fetch(url, {
-    method: "GET",
+    method: "POST",
+    body: JSON.stringify(obj),
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${Token}`,
@@ -10,7 +11,7 @@ export async function snpOrderList(userId, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("All snp orders" + JSON.stringify(result.data));
+    console.log("snpOrder List" + JSON.stringify(result.data));
     return result.data;
   }
   return null;
