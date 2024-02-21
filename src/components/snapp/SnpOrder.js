@@ -16,6 +16,10 @@ import { Button } from 'devextreme-react/button';
 import notify from 'devextreme/ui/notify';
 import { Toast } from 'devextreme-react/toast';
 import { Tooltip } from 'devextreme-react/tooltip';
+import AdapterJalali from '@date-io/date-fns-jalali';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import TextField from '@mui/material/TextField';
 import DataGrid, {
     Column, Editing, Paging, Lookup, Scrolling,
     FilterRow,
@@ -24,13 +28,14 @@ import DataGrid, {
     Pager,
 } from 'devextreme-react/data-grid';
 import Wait from "../common/Wait";
+import { Gfn_numberWithCommas,Gfn_DT2StringSql } from '../../utiliy/GlobalMethods';
 import {
     DataGridPageSizes, DataGridDefaultPageSize
     , DataGridDefaultHeight
     , ToastTime
     , ToastWidth
 } from '../../config/config';
-import { DataGridSnpOrderColumns } from './SnpOrder-config';
+import { DataGridSnpOrderColumns, DataGridSnpOrderDetailsColumns } from './SnpOrder-config';
 import {
     snpOrderAccept,
     snpOrderDeclineReasonList,
@@ -44,6 +49,7 @@ import DoneIcon from '../../assets/images/icon/done.png';
 import RejectIcon from '../../assets/images/icon/reject.png'
 import SendTimerIcon from '../../assets/images/icon/sandtimer.png'
 import PrintIcon from '../../assets/images/icon/reject.png'
+import SearchIcon from "../../assets/images/icon/search.png";
 import RegisterCommentIcon from '../../assets/images/icon/register_comment.png'
 import snpOrderReport from './SnpOrderReport';
 const notesLabel = { 'aria-label': 'Notes' };
@@ -64,7 +70,12 @@ class SnpOrder extends React.Component {
             stateDisable_btnUpdate: false,
             stateDisable_show: false,
             SnpOrderId: null,
-            TicketData: null,
+            snpOrderConsumerName: '',
+            SnpSumOfOrder: 0,
+            FromDate: new Date(),
+            ToDate: new Date(),
+            FromDateapi: "",
+            ToDateapi: "",
             ToastProps: {
                 isToastVisible: false,
                 Message: "",
@@ -78,16 +89,10 @@ class SnpOrder extends React.Component {
     }
 
 
-
-
     async componentDidMount() {
         await this.fn_GetPermissions();
         await this.fn_CheckRequireState();
-        const rtnAllSnpOrders = await this.fn_LoadAllSnpOrders();
-
-        const FIRST_TAB = 1
-        await this.fn_DeleteFirstOrderStatus(FIRST_TAB);
-        this.tabOrders_onChange(FIRST_TAB.toString(), rtnAllSnpOrders)
+        const rtnAllSnpOrders = await this.btnSearch_onClick();        
     }
 
     async fn_DeleteFirstOrderStatus(firstTab) {
@@ -134,6 +139,8 @@ class SnpOrder extends React.Component {
                 })
             );
         }
+
+              
     }
 
     OpenCloseWait() {
@@ -160,7 +167,8 @@ class SnpOrder extends React.Component {
         this.OpenCloseWait();
         const rtn = await snpOrderList(this.props.User.userId, this.props.User.token);
         this.setState({
-            AllSnpOrders: rtn
+            AllSnpOrders: rtn,
+            cmbDeclineReason: await snpOrderDeclineReasonList("3demnx", this.props.User.token)
         })
         this.OpenCloseWait();
         return rtn;
@@ -176,8 +184,10 @@ class SnpOrder extends React.Component {
             stateModalSnpOrderDetail: true,
             SnpOrderDetail: snpOrderDetail == null ? [] : snpOrderDetail,
             SnpOrderId: e.data.id,
+            SnpSumOfOrder: e.data.price,
             SnpOrderData: e.data,
-            cmbDeclineReason: await snpOrderDeclineReasonList(e.data.vendorCode, this.props.User.token)
+            snpOrderConsumerName: e.data.fullName
+            // cmbDeclineReason: await snpOrderDeclineReasonList(e.data.vendorCode, this.props.User.token)
         });
     }
 
@@ -206,7 +216,7 @@ class SnpOrder extends React.Component {
         this.setState({ stateModalSnpOrderDetail: false })
     }
 
-    btnAccept_onClick = async () => {
+    btnAccept_onClick = async () => {        
         const obj = {
             orderId: this.state.SnpOrderId,
             orderCode: this.state.SnpOrderData.code,
@@ -226,10 +236,7 @@ class SnpOrder extends React.Component {
             }
         })
 
-        await this.fn_LoadAllSnpOrders();
-        this.setState({
-            cmbDeclineReasonValue: null
-        })
+        await this.btnSearch_onClick();
     }
 
     btnReject_onClick = async () => {
@@ -262,13 +269,40 @@ class SnpOrder extends React.Component {
                 Type: result == null ? "success" : "error",
             }
         })
-        const rtnAllSnpOrder = await this.fn_LoadAllSnpOrders();
+        const rtnAllSnpOrder = await this.btnSearch_onClick();
         this.tabOrders_onChange('6', rtnAllSnpOrder)
     }
 
     btnPrint_onClick = () => {
-         window.open("https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId,'_blank'); 
+        window.open("https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId, '_blank');
     }
+
+    DatePickerFrom_onChange = (params) => {
+        this.setState({ FromDate: params, FromDateapi: Gfn_DT2StringSql(params) })
+    }
+
+    DatePickerTo_onChange = (params) => {
+        this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) })
+    }
+
+    btnSearch_onClick = async () => {
+        this.OpenCloseWait();    
+        const OBJ = {          
+          fromDate: this.state.FromDate,
+          toDate: this.state.ToDate
+        };   
+        const ORDERS=await snpOrderList(OBJ,this.props.User.token);
+        this.setState({
+            AllSnpOrders: ORDERS,
+            cmbDeclineReason: await snpOrderDeclineReasonList("3demnx", this.props.User.token)
+        });        
+        // const rtnAllSnpOrders = await this.fn_LoadAllSnpOrders();
+        const FIRST_TAB = 1
+        await this.fn_DeleteFirstOrderStatus(FIRST_TAB);
+        this.tabOrders_onChange(FIRST_TAB.toString(), ORDERS)
+    
+        this.OpenCloseWait();
+      };  
 
     onHidingToast = () => {
         this.setState({ ToastProps: { isToastVisible: false } })
@@ -306,30 +340,62 @@ class SnpOrder extends React.Component {
                             className="fontStyle"
                         >
                             <ModalHeader>
-                                جزییات درخواست
+                                جزییات درخواست مشتری: {this.state.snpOrderConsumerName}
                             </ModalHeader>
                             <ModalBody>
                                 <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
-                                    {this.state.SnpOrderDetail.map((item, key) =>
-
-                                        <Card className="shadow bg-white border pointer">
-                                            <Row className="standardPadding">
-                                                <Col xs='auto'>کالا: {item.itemName}</Col>
-                                                <Col xs='auto'>بارکد: {item.barCode}</Col>
-                                            </Row>
-                                            <Row className="standardPadding">
-                                                <Col xs="auto">تعداد: {item.quantity}</Col>
-                                                <Col xs='auto'> تخفیف: {item.discount}</Col>
-                                            </Row>
-                                            <Row className="standardPadding">
-                                                <Col xs="auto">قیمت: {item.price}</Col>
-                                                <Col xs='auto'> کد باندل: {item.bundlecode == null && "-"}</Col>
-                                            </Row>
-                                        </Card>
-                                    )}
+                                    <Col>
+                                        {this.state.SnpOrderDetail.map((item, key) =>
+                                            <Card className="shadow bg-white border pointer">
+                                                <Row className="standardPadding">
+                                                    {/* <Col xs='auto'>کد کالا: {item.extItemId}</Col> */}
+                                                    <Col xs='auto'>کالا: {item.itemName}</Col>
+                                                    <Col xs='auto'>بارکد: {item.barCode}</Col>
+                                                </Row>
+                                                <Row className="standardPadding">
+                                                    <Col xs="auto">تعداد: {Gfn_numberWithCommas(item.quantity)}</Col>
+                                                    <Col xs='auto'> جمع تخفیف: {Gfn_numberWithCommas(item.discount)}</Col>
+                                                    <Col xs="auto">قیمت: {Gfn_numberWithCommas(item.price)}</Col>
+                                                </Row>
+                                            </Card>
+                                        )}
+                                    </Col>
+                                </Row>
+                                {/* <Row className="standardPadding">
+                                    <DataGrid
+                                        dataSource={this.state.SnpOrderDetail}
+                                        defaultColumns={DataGridSnpOrderDetailsColumns}
+                                        showBorders={true}
+                                        rtlEnabled={true}
+                                        allowColumnResizing={true}
+                                        // height={DataGridDefaultHeight}
+                                        className="fontStyle"
+                                    >
+                                        <Scrolling rowRenderingMode="virtual"
+                                            showScrollbar="always"
+                                            columnRenderingMode="virtual"
+                                        />
+                                        <Editing
+                                            mode="cell"
+                                            allowUpdating={true}
+                                        />
+                                        <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                        <Pager
+                                            visible={true}
+                                            // allowedPageSizes={DataGridPageSizes}
+                                            showPageSizeSelector={true}
+                                            showNavigationButtons={true}
+                                        />
+                                        <FilterRow visible={true} />
+                                        <FilterPanel visible={true} />
+                                        <HeaderFilter visible={true} />
+                                    </DataGrid>
+                                </Row> */}
+                                <Row className="standardPadding" style={{ textAlign: 'left', marginTop: '10px' }}>
+                                    <p className='fontStyle'>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
                                 </Row>
                                 {this.state.activeTab != 7 && (
-                                    <Row className="standardPadding">
+                                    <Row>
                                         <Col>
                                             {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
                                             <SelectBox
@@ -347,8 +413,8 @@ class SnpOrder extends React.Component {
                                         </Col>
                                     </Row>
                                 )}
-                                <p>{this.state.SnpOrderData != null && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
-                                <Row className="standardPadding">
+                                <p style={{ marginTop: '20px' }}> {(this.state.activeTab == 7 && this.state.SnpOrderData != null) && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
+                                <Row>
                                     {this.state.stateDisable_btnUpdate ? (
                                         <>
                                             {this.state.activeTab != 7 && (
@@ -401,6 +467,52 @@ class SnpOrder extends React.Component {
                     </Col>
                 </Row>
                 <Card className="shadow bg-white border pointer">
+                    <Row className="standardPadding">
+                        <Label>جستجوی سفارشات اسنپ</Label>
+                    </Row>
+                    <Row className="standardPadding">
+                        <Col xs="auto">
+                            <LocalizationProvider dateAdapter={AdapterJalali}>
+                                <DesktopDatePicker
+                                    label="از تاریخ"
+                                    value={this.state.FromDate}
+                                    onChange={this.DatePickerFrom_onChange}
+                                    renderInput={(params) => <TextField {...params} />}
+                                    className="fontStyle"
+                                />
+                            </LocalizationProvider>
+                        </Col>
+                        <Col xs="auto">
+                            <LocalizationProvider dateAdapter={AdapterJalali}>
+                                <DesktopDatePicker
+                                    label="تا تاریخ"
+                                    value={this.state.ToDate}
+                                    onChange={this.DatePickerTo_onChange}
+                                    renderInput={(params) => <TextField {...params} />}
+                                    className="fontStyle"
+                                />
+                            </LocalizationProvider>
+                        </Col>
+                    </Row>
+                    <Row className="standardPadding">
+                        <Col xs="auto">
+                            <Button
+                                icon={SearchIcon}
+                                text="جستجو"
+                                type="default"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                onClick={this.btnSearch_onClick}
+                                className="fontStyle"
+                            />
+                        </Col>
+                    </Row>
+                </Card>
+                <p></p>
+                <Card className="shadow bg-white border pointer">
+                    <Row className="standardPadding">
+                        <Label>سفارشات اسنپ</Label>
+                    </Row>
                     <Row className="standardPadding">
                         <Nav tabs>
                             <NavItem>

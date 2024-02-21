@@ -10,6 +10,11 @@ export const DataGridSnpOrderReportColumns = [
         allowEditing: false
     },
     {
+        dataField: "status",
+        caption: "وضعیت",
+        allowEditing: false
+    },
+    {
         dataField: "barCode",
         caption: "بارکد",
         allowEditing: false,
@@ -22,17 +27,30 @@ export const DataGridSnpOrderReportColumns = [
     {
         dataField: "price",
         caption: "قیمت",
-        allowEditing: false
+        allowEditing: false,
+        allowEditing: false,        
+        format: {  
+            type: "fixedPoint",  
+            precision: 0  
+         }  
     },
     {
         dataField: "packingPrice",
         caption: "هزینه آماده سازی",
         allowEditing: false,
+        format: {  
+            type: "fixedPoint",  
+            precision: 0  
+         } 
     },
     {
         dataField: "discount",
         caption: "تخفیف",
         allowEditing: false,
+        format: {  
+            type: "fixedPoint",  
+            precision: 0  
+         } 
     },
     {
         dataField: "itemName",
