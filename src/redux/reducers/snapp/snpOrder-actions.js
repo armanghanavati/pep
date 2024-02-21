@@ -110,3 +110,22 @@ export async function itemJetList(object, token) {
   return null;
 }
 
+export async function snpOrderReport(object, token) {
+  const url =
+    window.apiAddress + "/SnpOrder/snpOrderReport";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("accept" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
