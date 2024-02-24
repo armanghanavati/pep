@@ -84,6 +84,11 @@ export const DataGridItemLocationColumns = [
     caption: "تعداد سفارش",
     allowEditing: true,
   },
+  {
+    dataField: "maxAllowOrderNumberSnapp",
+    caption: "تعداد مجاز سفارش اسنپ",
+    allowEditing: true,
+  },
 ];
 
 

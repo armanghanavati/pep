@@ -31,18 +31,18 @@ class Login extends React.Component {
       password: this.state.txtPasswordValue,
     };
     let resAuthUser = await authUser(data, "Not Token Generated Yet.");
-    if (resAuthUser != null) {
-      const Token = resAuthUser.token;
+    if (resAuthUser.data != null) {
+      const Token = resAuthUser.data.token;
       const userData = jwt(Token);
       let Vals = Object.values(userData);
       const UserId = Vals[1];
-      const permissions = resAuthUser.permissions;
+      const permissions = resAuthUser.data.permissions;
 
       await this.saveUserData(UserId, Token, permissions);
       this.setState({ stateRedirectHome: true });
     } else
       this.setState({
-        errLoginMsg: "نام کاربری یا رمز عبور را درست وارد نمائید.",
+        errLoginMsg: resAuthUser.msg,
       });
   };
 

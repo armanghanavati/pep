@@ -13,13 +13,8 @@ import "./assets/fonts/IRANSansWeb.ttf";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
-<<<<<<< HEAD
- window.apiAddress="http://localhost:7142/api";  
-// window.apiAddress="https://pepapi.minoomart.ir/api";
-=======
-  window.apiAddress="http://localhost:7142/api";  
-//window.apiAddress="https://pepapi.minoomart.ir/api";
->>>>>>> 97893723dd0b4e120cf1da70cfcc4a3580ddf4df
+//  window.apiAddress="http://localhost:7142/api";  
+window.apiAddress="https://pepapi.minoomart.ir/api";
 
 window.siteAddress = "https://pepapi.minoomart.ir";
 
