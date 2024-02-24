@@ -364,7 +364,7 @@ class ItemJet extends React.Component {
                         <Row className="standardSpaceTop">
                             <Col xs="auto" className="standardMarginRight">
                                 <DataGrid
-                                    id="grdOrderPointInventory"
+                                    id="grdItemJet"
                                     dataSource={this.state.ItemJetGridData}
                                     defaultColumns={DataGridItemJetColumns}
                                     //keyExpr="id"

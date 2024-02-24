@@ -47,6 +47,7 @@ import ItemsWeights from '../pages/ItemsWeights'
 import SnpOrders from '../pages/SnpOrder'
 import ItemJets from '../pages/ItemJets'
 import ItemLocationSnapps from '../pages/ItemLocationSnapps'
+import SnpOrderReports from '../pages/SnpOrderReports'
 
 export const REAL_COMPONENT = [
   {
@@ -250,6 +251,10 @@ export const REAL_COMPONENT = [
   {        
     strComponent: "ItemJets",
     orgComponent: <ItemJets />,
+  },  
+  {        
+    strComponent: "SnpOrderReports",
+    orgComponent: <SnpOrderReports />,
   }                 
   ,  
   {        

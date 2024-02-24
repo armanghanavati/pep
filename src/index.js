@@ -13,13 +13,17 @@ import "./assets/fonts/IRANSansWeb.ttf";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
+<<<<<<< HEAD
  window.apiAddress="http://localhost:7142/api";  
 // window.apiAddress="https://pepapi.minoomart.ir/api";
+=======
+  window.apiAddress="http://localhost:7142/api";  
+//window.apiAddress="https://pepapi.minoomart.ir/api";
+>>>>>>> 97893723dd0b4e120cf1da70cfcc4a3580ddf4df
 
 window.siteAddress = "https://pepapi.minoomart.ir";
 
-window.confirmPayment = "https://pepapi.minoomart.ir/api";
-
+window.confirmPayment = "http://pepapi.minoomart.ir/api";
 window.apiAddressInspection="https://pepinspectionapi.minoomart.ir/api";
 // window.apiAddressInspection="http://localhost:7021/api";  
 
