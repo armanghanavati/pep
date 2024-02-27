@@ -8,11 +8,16 @@ export async function authUser(Object, Token) {
     },
   });
   const result = await response.json();
-  if (result.status == "Success") {
-    console.log("User Authenticated=" + JSON.stringify(result.data));
-    return result.data;
+  var rtnOBJ={
+    status:result.status,
+    data:result.data,
+    msg:result.message
   }
-  return null;
+  // if (result.status == "Success") {
+  //   console.log("User Authenticated=" + JSON.stringify(result.data));    
+  //   return result.data;
+  // }  
+  return rtnOBJ;
 }
 // --------------------------------------------------------------------------------------------
 export async function checkPermission(permissions, permissionValue) {
