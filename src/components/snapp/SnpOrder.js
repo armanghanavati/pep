@@ -259,8 +259,9 @@ class SnpOrder extends React.Component {
             orderCode: this.state.SnpOrderData.code,
             reasonId: this.state.cmbDeclineReasonValue,
             comment: elementTitle,
-            vendorCode: this.state.SnpOrderData.vendorCode
+            vendorCode: this.state.SnpOrderData.vendorCode,            
         }
+        alert(JSON.stringify(obj))
         var result = await snpOrderReject(obj, this.props.User.token);
         this.setState({
             ToastProps: {
