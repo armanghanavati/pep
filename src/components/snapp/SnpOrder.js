@@ -28,7 +28,7 @@ import DataGrid, {
     Pager,
 } from 'devextreme-react/data-grid';
 import Wait from "../common/Wait";
-import { Gfn_numberWithCommas,Gfn_DT2StringSql } from '../../utiliy/GlobalMethods';
+import { Gfn_numberWithCommas, Gfn_DT2StringSql } from '../../utiliy/GlobalMethods';
 import {
     DataGridPageSizes, DataGridDefaultPageSize
     , DataGridDefaultHeight
@@ -52,15 +52,19 @@ import PrintIcon from '../../assets/images/icon/reject.png'
 import SearchIcon from "../../assets/images/icon/search.png";
 import RegisterCommentIcon from '../../assets/images/icon/register_comment.png'
 import snpOrderReport from './SnpOrderReport';
+import { itemList, itemListComboByItemGroupId } from '../../redux/reducers/item/item-action';
+import { Point } from 'devextreme-react/chart';
+
 const notesLabel = { 'aria-label': 'Notes' };
 
 class SnpOrder extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
             cmbDeclineReasonValue: null,
             cmbDeclineReason: null,
+            cmbItem: null,
+            cmbItemValue: null,
             AllSnpOrders: null,
             grdSnpOrders: null,
             activeTab: null,
@@ -85,6 +89,17 @@ class SnpOrder extends React.Component {
             SnpOrderData: null,
             OrderStaus: [{ id: 1, desc: 'ثبت شده' }, { id: 8, desc: 'تایید شده' }, { id: 7, desc: 'لغو شده' }],
             flagFirstValueTabs: true,
+            LocationId: null,
+            ItemList: null,
+            Item: null,
+            txtCommentValue: null,
+            stateShowItem: false,
+            stateChangeItem: false,
+            nonExistentProducts: [],
+            stateModalItem: false,
+            suggestedProductBarcodes: null,
+            suggestedProducts: [],
+            nonExistentProductsToSnap:[]
         }
     }
 
@@ -92,7 +107,7 @@ class SnpOrder extends React.Component {
     async componentDidMount() {
         await this.fn_GetPermissions();
         await this.fn_CheckRequireState();
-        const rtnAllSnpOrders = await this.btnSearch_onClick();        
+        const rtnAllSnpOrders = await this.btnSearch_onClick();
     }
 
     async fn_DeleteFirstOrderStatus(firstTab) {
@@ -140,7 +155,7 @@ class SnpOrder extends React.Component {
             );
         }
 
-              
+
     }
 
     OpenCloseWait() {
@@ -186,8 +201,10 @@ class SnpOrder extends React.Component {
             SnpOrderId: e.data.id,
             SnpSumOfOrder: e.data.price,
             SnpOrderData: e.data,
-            snpOrderConsumerName: e.data.fullName
+            snpOrderConsumerName: e.data.fullName,
+            LocationId: e.data.locationId,
             // cmbDeclineReason: await snpOrderDeclineReasonList(e.data.vendorCode, this.props.User.token)
+            cmbItemValue: null,
         });
     }
 
@@ -216,7 +233,7 @@ class SnpOrder extends React.Component {
         this.setState({ stateModalSnpOrderDetail: false })
     }
 
-    btnAccept_onClick = async () => {        
+    btnAccept_onClick = async () => {
         const obj = {
             orderId: this.state.SnpOrderId,
             orderCode: this.state.SnpOrderData.code,
@@ -246,22 +263,18 @@ class SnpOrder extends React.Component {
                 "دلیل رد درخواست باید انتخاب شود";
             return;
         }
-        var elementTitle;
-        this.state.cmbDeclineReason.map((element, index) => {
-            if (element.id == this.state.cmbDeclineReasonValue) {
-                elementTitle = element.title
-            }
-        }
-        );
-
+        this.state.nonExistentProducts.map((item, key)=>{
+            this.state.nonExistentProductsToSnap.push({barcode:item.barcode.barCode, suggestedProductBarcodes:item.suggestedProductBarcodes.map((item, key)=>
+                item.barCode
+            )})
+        })
         const obj = {
             orderId: this.state.SnpOrderId,
             orderCode: this.state.SnpOrderData.code,
             reasonId: this.state.cmbDeclineReasonValue,
             comment: elementTitle,
             vendorCode: this.state.SnpOrderData.vendorCode,            
-        }
-        alert(JSON.stringify(obj))
+        }                    
         var result = await snpOrderReject(obj, this.props.User.token);
         this.setState({
             ToastProps: {
@@ -271,7 +284,7 @@ class SnpOrder extends React.Component {
             }
         })
         const rtnAllSnpOrder = await this.btnSearch_onClick();
-        this.tabOrders_onChange('6', rtnAllSnpOrder)
+        this.tabOrders_onChange('1', rtnAllSnpOrder)
     }
 
     btnPrint_onClick = () => {
@@ -287,29 +300,111 @@ class SnpOrder extends React.Component {
     }
 
     btnSearch_onClick = async () => {
-        this.OpenCloseWait();    
-        const OBJ = {          
-          fromDate: this.state.FromDate,
-          toDate: this.state.ToDate
-        };   
-        const ORDERS=await snpOrderList(OBJ,this.props.User.token);
+        this.OpenCloseWait();
+        const OBJ = {
+            fromDate: this.state.FromDate,
+            toDate: this.state.ToDate
+        };
+        const ORDERS = await snpOrderList(OBJ, this.props.User.token);
         this.setState({
             AllSnpOrders: ORDERS,
             cmbDeclineReason: await snpOrderDeclineReasonList("3demnx", this.props.User.token)
-        });        
+        });
         // const rtnAllSnpOrders = await this.fn_LoadAllSnpOrders();
         const FIRST_TAB = 1
         await this.fn_DeleteFirstOrderStatus(FIRST_TAB);
         this.tabOrders_onChange(FIRST_TAB.toString(), ORDERS)
-    
+
         this.OpenCloseWait();
-      };  
+    };
 
     onHidingToast = () => {
         this.setState({ ToastProps: { isToastVisible: false } })
     }
 
+    suggestedItem = async (name, itemGroupId, itemBarcode) => {
+        const OBJ = {
+            ItemGroupId: itemGroupId,
+            LocationId: this.state.LocationId,
+        };
+        this.setState({
+            cmbItem: await itemListComboByItemGroupId(OBJ, this.props.User.token),
+            Item: { barCode: itemBarcode, name: name },
+            stateShowItem: true
+        })
+        var array = [...this.state.nonExistentProducts];
+        //alert(JSON.stringify(array))
+        var index = array.findIndex(p => p.barcode.barCode == itemBarcode)
+        
+        if (index != -1){
+            this.setState({ suggestedProducts: array[index].suggestedProductBarcodes });
+        }
+        else
+            this.setState({
+                suggestedProducts: []
+            })
+
+        this.setState({
+            stateModalItem: true
+        })
+       
+    }
+
+    cmbItem_onChange = async (e) => {
+        this.state.cmbItem.map((item, key) => {
+            if (item.barCode == e)
+                this.state.suggestedProducts.push({ name: item.label, barCode: item.barCode });
+        });
+
+        this.setState({
+            cmbItemValue: e,
+        });
+    }
+
+    btnAdd_onClick =  () => {
+        var array = [...this.state.nonExistentProducts];
+        var index = array.findIndex(p => p.barcode.barCode == this.state.Item.barCode)
+        if (index != -1){
+            array[index].suggestedProductBarcodes = this.state.suggestedProducts;
+           // alert(JSON.stringify(array[index].suggestedProductBarcodes))
+            this.setState({
+                nonExistentProducts:array
+            })
+        }
+        else
+            this.state.nonExistentProducts.push({
+                barcode: this.state.Item,
+                suggestedProductBarcodes: this.state.suggestedProducts
+            })
+        this.setState({
+            stateModalItem: false
+        })
+        //alert(JSON.stringify(this.state.nonExistentProducts))
+    }
+
+    txtComment_onChanege = (e) => {
+        this.setState({
+            txtCommentValue: e.value
+        })
+    }
+
+    removeSuggestedProduct = (barcode) => {
+        var array = [...this.state.suggestedProducts];
+        var index = array.findIndex(p => p.barCode == barcode)
+        if (index != -1) {
+            array.splice(index, 1);
+            this.setState({ suggestedProducts: array });
+        }
+    }
+
+    btnCancel_onClick = () => {
+        this.setState({
+            stateModalItem: false,
+        });
+    }
     render() {
+        var t;
+        var itemName;
         return (
             <div className='standardMargin'>
                 <Toast
@@ -347,11 +442,12 @@ class SnpOrder extends React.Component {
                                 <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
                                     <Col>
                                         {this.state.SnpOrderDetail.map((item, key) =>
-                                            <Card className="shadow bg-white border pointer">
+                                            <Card className="shadow bg-white border pointer" onClick={() => this.suggestedItem(item.itemName, item.itemGroupId, item.barCode)}>
                                                 <Row className="standardPadding">
-                                                    {/* <Col xs='auto'>کد کالا: {item.extItemId}</Col> */}
+
                                                     <Col xs='auto'>کالا: {item.itemName}</Col>
-                                                    <Col xs='auto'>بارکد: {item.barCode}</Col>
+
+                                                    <Col xs='auto' value={item.barCode}>بارکد: {item.barCode}</Col>
                                                 </Row>
                                                 <Row className="standardPadding">
                                                     <Col xs="auto">تعداد: {Gfn_numberWithCommas(item.quantity)}</Col>
@@ -362,57 +458,45 @@ class SnpOrder extends React.Component {
                                         )}
                                     </Col>
                                 </Row>
-                                {/* <Row className="standardPadding">
-                                    <DataGrid
-                                        dataSource={this.state.SnpOrderDetail}
-                                        defaultColumns={DataGridSnpOrderDetailsColumns}
-                                        showBorders={true}
-                                        rtlEnabled={true}
-                                        allowColumnResizing={true}
-                                        // height={DataGridDefaultHeight}
-                                        className="fontStyle"
-                                    >
-                                        <Scrolling rowRenderingMode="virtual"
-                                            showScrollbar="always"
-                                            columnRenderingMode="virtual"
-                                        />
-                                        <Editing
-                                            mode="cell"
-                                            allowUpdating={true}
-                                        />
-                                        <Paging defaultPageSize={DataGridDefaultPageSize} />
-                                        <Pager
-                                            visible={true}
-                                            // allowedPageSizes={DataGridPageSizes}
-                                            showPageSizeSelector={true}
-                                            showNavigationButtons={true}
-                                        />
-                                        <FilterRow visible={true} />
-                                        <FilterPanel visible={true} />
-                                        <HeaderFilter visible={true} />
-                                    </DataGrid>
-                                </Row> */}
                                 <Row className="standardPadding" style={{ textAlign: 'left', marginTop: '10px' }}>
                                     <p className='fontStyle'>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
                                 </Row>
+
                                 {this.state.activeTab != 7 && (
-                                    <Row>
-                                        <Col>
-                                            {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
-                                            <SelectBox
-                                                dataSource={this.state.cmbDeclineReason}
-                                                displayExpr="title"
-                                                placeholder="نیاز به تماس درخواست"
-                                                valueExpr="id"
-                                                searchEnabled={true}
-                                                rtlEnabled={true}
-                                                onValueChange={this.cmbDeclineReason_onChange}
-                                                value={this.state.cmbDeclineReasonValue}
-                                                className="fontStyle"
-                                            />
-                                            <Label id="errDeclineReason" className="standardLabelFont errMessage" />
-                                        </Col>
-                                    </Row>
+                                    <>
+                                        <Row>
+                                            <Col>
+                                                {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
+                                                <SelectBox
+                                                    dataSource={this.state.cmbDeclineReason}
+                                                    displayExpr="title"
+                                                    placeholder="نیاز به تماس درخواست"
+                                                    valueExpr="id"
+                                                    searchEnabled={true}
+                                                    rtlEnabled={true}
+                                                    onValueChange={this.cmbDeclineReason_onChange}
+                                                    value={this.state.cmbDeclineReasonValue}
+                                                    className="fontStyle"
+                                                />
+                                                <Label id="errDeclineReason" className="standardLabelFont errMessage" />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <Label className="standardLabelFont">توضیحات</Label>
+                                                <TextBox
+                                                    defaultValue={this.state.txtCommentValue}
+                                                    showClearButton={true}
+                                                    placeholder="توضیحات"
+                                                    rtlEnabled={true}
+                                                    valueChangeEvent="keyup"
+                                                    onValueChanged={this.txtComment_onChanege}
+                                                    className="fontStyle"
+                                                />
+                                                <Label id="errTicketTitle" className="standardLabelFont errMessage" />
+                                            </Col>
+                                        </Row>
+                                    </>
                                 )}
                                 <p style={{ marginTop: '20px' }}> {(this.state.activeTab == 7 && this.state.SnpOrderData != null) && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
                                 <Row>
@@ -462,6 +546,80 @@ class SnpOrder extends React.Component {
                                             )}
                                         </>
                                     ) : ""}
+                                </Row>
+                            </ModalBody>
+                        </Modal>
+                    </Col>
+                </Row>
+                <Row className="text-center">
+                    <Col>
+                        <Modal style={{ direction: 'rtl' }}
+                            isOpen={this.state.stateModalItem}
+                            centered={true}
+                            size="lg"
+                            className="fontStyle"
+                        >
+                            <ModalHeader>
+                                لیست کالا
+                            </ModalHeader>
+                            <ModalBody>
+                                <Row className="standardPadding">
+                                    <Col>
+                                        <div id="orderDetail" style={{ textAlign: 'right' }}>
+                                        </div>
+                                    </Col>
+                                    <>
+                                        <Row>
+                                            <Col>
+                                                <SelectBox
+                                                    dataSource={this.state.cmbItem}
+                                                    displayExpr="label"
+                                                    placeholder="انتخاب کالا"
+                                                    valueExpr="barCode"
+                                                    searchEnabled={true}
+                                                    rtlEnabled={true}
+                                                    onValueChange={this.cmbItem_onChange}
+                                                    value={this.state.cmbItemValue}
+                                                    className="fontStyle"
+                                                />
+                                                {/* <Label id="errItem" className="standardLabelFont errMessage" /> */}
+                                            </Col>
+                                        </Row>
+                                        {this.state.suggestedProducts != null && this.state.suggestedProducts.map((item, key) =>
+                                            <Row className="standardPadding">
+                                                <Col>
+                                                    {item.name}
+                                                </Col>
+                                                <Col>
+                                                    <p onClick={() => this.removeSuggestedProduct(item.barCode)} style={{ cursor: 'pointer' }}>-</p>
+                                                </Col>
+                                            </Row>
+                                        )}
+                                        <Row className="standardPadding">
+                                            <Col>
+                                                <Button
+                                                    icon={RegisterCommentIcon}
+                                                    text="ثبت کالا"
+                                                    type="default"
+                                                    stylingMode="contained"
+                                                    rtlEnabled={true}
+                                                    onClick={this.btnAdd_onClick}
+                                                    className="fontStyle"
+                                                />
+                                            </Col>
+                                            <Col>
+                                                <Button
+                                                    // icon={RegisterCommentIcon}
+                                                    text="انصراف"
+                                                    type="default"
+                                                    stylingMode="contained"
+                                                    rtlEnabled={true}
+                                                    onClick={this.btnCancel_onClick}
+                                                    className="fontStyle"
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </>
                                 </Row>
                             </ModalBody>
                         </Modal>

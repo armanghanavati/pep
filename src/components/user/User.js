@@ -541,6 +541,8 @@ class User extends React.Component {
                       showScrollbar="always"
                       columnRenderingMode="virtual"
                     />
+                     <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
                   </DataGrid>
                 </Col>
               </Row>
