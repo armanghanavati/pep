@@ -54,6 +54,9 @@ import RegisterCommentIcon from '../../assets/images/icon/register_comment.png'
 import snpOrderReport from './SnpOrderReport';
 import { itemList, itemListComboByItemGroupId } from '../../redux/reducers/item/item-action';
 import { Point } from 'devextreme-react/chart';
+import SaveIcon from "../../assets/images/icon/save.png";
+import UpdateIcon from "../../assets/images/icon/update.png";
+import DeleteIcon from "../../assets/images/icon/delete.png";
 
 const notesLabel = { 'aria-label': 'Notes' };
 
@@ -404,6 +407,18 @@ class SnpOrder extends React.Component {
             stateModalItem: false,
         });
     }
+
+    btnRemoveBracode_onClick=()=>{
+        var array = [...this.state.nonExistentProducts];
+        var index = array.findIndex(p => p.barcode.barCode == this.state.Item.barCode)
+        if (index != -1) {
+            array.splice(index, 1);
+            this.setState({ 
+                nonExistentProducts: array,
+                stateModalItem:false
+             });
+        }
+    }
     render() {
         var t;
         var itemName;
@@ -617,6 +632,17 @@ class SnpOrder extends React.Component {
                                                     stylingMode="contained"
                                                     rtlEnabled={true}
                                                     onClick={this.btnCancel_onClick}
+                                                    className="fontStyle"
+                                                />
+                                            </Col>
+                                            <Col>
+                                                <Button
+                                                    icon={DeleteIcon}
+                                                    text="حذف بارکد"
+                                                    type="default"
+                                                    stylingMode="contained"
+                                                    rtlEnabled={true}
+                                                    onClick={this.btnRemoveBracode_onClick}
                                                     className="fontStyle"
                                                 />
                                             </Col>
