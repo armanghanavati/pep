@@ -262,18 +262,24 @@ class SnpOrder extends React.Component {
     }
 
     btnReject_onClick = async () => {
-        document.getElementById("errDeclineReason").innerHTML = "";
+        document.getElementById("errCommentValue").innerHTML = "";
+        document.getElementById("errTxtCommentValue").innerHTML = "";
         if (this.state.cmbDeclineReasonValue == null) {
-            document.getElementById("errDeclineReason").innerHTML =
+            document.getElementById("errCommentValue").innerHTML =
                 "دلیل رد درخواست باید انتخاب شود";
             return;
         }
-        this.state.nonExistentProducts.map((item, key) => {
-            this.state.nonExistentProductsToSnap.push({
-                barcode: item.barcode.barCode, suggestedProductBarcodes: item.suggestedProductBarcodes.map((item, key) =>
-                    item.barCode
-                )
-            })
+
+        if (this.state.txtCommentValue == null) {
+            document.getElementById("errTxtCommentValue").innerHTML =
+                "این فیلد باید پر شود";
+            return;
+        }
+        this.state.nonExistentProducts.map((item, key)=>{
+            this.state.nonExistentProductsToSnap.push({barcode:item.barcode.barCode, suggestedProductBarcodes:item.suggestedProductBarcodes.map((item, key)=>
+                item.barCode
+            )})
+
         })
         const obj = {
             orderId: this.state.SnpOrderId,
@@ -504,7 +510,7 @@ class SnpOrder extends React.Component {
                                                     value={this.state.cmbDeclineReasonValue}
                                                     className="fontStyle"
                                                 />
-                                                <Label id="errDeclineReason" className="standardLabelFont errMessage" />
+                                                <Label id="errCommentValue" className="standardLabelFont errMessage" />
                                             </Col>
                                             <Col>
                                                 <Label className="standardLabelFont">توضیحات</Label>
@@ -517,7 +523,7 @@ class SnpOrder extends React.Component {
                                                     onValueChanged={this.txtComment_onChanege}
                                                     className="fontStyle"
                                                 />
-                                                <Label id="errTicketTitle" className="standardLabelFont errMessage" />
+                                                <Label id="errTxtCommentValue" className="standardLabelFont errMessage" />
                                             </Col>
                                         </Row>                                        
                                     </>
