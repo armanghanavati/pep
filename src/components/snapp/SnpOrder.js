@@ -261,6 +261,7 @@ class SnpOrder extends React.Component {
 
     btnReject_onClick = async () => {
         document.getElementById("errCommentValue").innerHTML = "";
+        document.getElementById("errTxtCommentValue").innerHTML = "";
         if (this.state.cmbDeclineReasonValue == null) {
             document.getElementById("errCommentValue").innerHTML =
                 "دلیل رد درخواست باید انتخاب شود";
