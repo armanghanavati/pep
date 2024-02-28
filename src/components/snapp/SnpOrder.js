@@ -79,6 +79,7 @@ class SnpOrder extends React.Component {
             SnpOrderId: null,
             snpOrderConsumerName: '',
             SnpSumOfOrder: 0,
+            CustomerComment: null,
             FromDate: new Date(),
             ToDate: new Date(),
             FromDateapi: "",
@@ -102,7 +103,7 @@ class SnpOrder extends React.Component {
             stateModalItem: false,
             suggestedProductBarcodes: null,
             suggestedProducts: [],
-            nonExistentProductsToSnap:[]
+            nonExistentProductsToSnap: []
         }
     }
 
@@ -206,6 +207,7 @@ class SnpOrder extends React.Component {
             SnpOrderData: e.data,
             snpOrderConsumerName: e.data.fullName,
             LocationId: e.data.locationId,
+            CustomerComment: e.data.comment,
             // cmbDeclineReason: await snpOrderDeclineReasonList(e.data.vendorCode, this.props.User.token)
             cmbItemValue: null,
         });
@@ -233,7 +235,7 @@ class SnpOrder extends React.Component {
     }
 
     ModalSnpOrderDetail_onClickAway = () => {
-        this.setState({ stateModalSnpOrderDetail: false })
+        this.setState({ stateModalSnpOrderDetail: false, cmbDeclineReasonValue:null})
     }
 
     btnAccept_onClick = async () => {
@@ -266,19 +268,21 @@ class SnpOrder extends React.Component {
                 "دلیل رد درخواست باید انتخاب شود";
             return;
         }
-        this.state.nonExistentProducts.map((item, key)=>{
-            this.state.nonExistentProductsToSnap.push({barcode:item.barcode.barCode, suggestedProductBarcodes:item.suggestedProductBarcodes.map((item, key)=>
-                item.barCode
-            )})
+        this.state.nonExistentProducts.map((item, key) => {
+            this.state.nonExistentProductsToSnap.push({
+                barcode: item.barcode.barCode, suggestedProductBarcodes: item.suggestedProductBarcodes.map((item, key) =>
+                    item.barCode
+                )
+            })
         })
         const obj = {
             orderId: this.state.SnpOrderId,
             orderCode: this.state.SnpOrderData.code,
             reasonId: this.state.cmbDeclineReasonValue,
             comment: this.state.txtCommentValue,
-            vendorCode: this.state.SnpOrderData.vendorCode,   
-            nonExistentProducts:this.state.nonExistentProductsToSnap         
-        }                    
+            vendorCode: this.state.SnpOrderData.vendorCode,
+            nonExistentProducts: this.state.nonExistentProductsToSnap
+        }
         var result = await snpOrderReject(obj, this.props.User.token);
         this.setState({
             ToastProps: {
@@ -339,8 +343,8 @@ class SnpOrder extends React.Component {
         var array = [...this.state.nonExistentProducts];
         //alert(JSON.stringify(array))
         var index = array.findIndex(p => p.barcode.barCode == itemBarcode)
-        
-        if (index != -1){
+
+        if (index != -1) {
             this.setState({ suggestedProducts: array[index].suggestedProductBarcodes });
         }
         else
@@ -351,7 +355,7 @@ class SnpOrder extends React.Component {
         this.setState({
             stateModalItem: true
         })
-       
+
     }
 
     cmbItem_onChange = async (e) => {
@@ -365,14 +369,14 @@ class SnpOrder extends React.Component {
         });
     }
 
-    btnAdd_onClick =  () => {
+    btnAdd_onClick = () => {
         var array = [...this.state.nonExistentProducts];
         var index = array.findIndex(p => p.barcode.barCode == this.state.Item.barCode)
-        if (index != -1){
+        if (index != -1) {
             array[index].suggestedProductBarcodes = this.state.suggestedProducts;
-           // alert(JSON.stringify(array[index].suggestedProductBarcodes))
+            // alert(JSON.stringify(array[index].suggestedProductBarcodes))
             this.setState({
-                nonExistentProducts:array
+                nonExistentProducts: array
             })
         }
         else
@@ -407,15 +411,15 @@ class SnpOrder extends React.Component {
         });
     }
 
-    btnRemoveBracode_onClick=()=>{
+    btnRemoveBracode_onClick = () => {
         var array = [...this.state.nonExistentProducts];
         var index = array.findIndex(p => p.barcode.barCode == this.state.Item.barCode)
         if (index != -1) {
             array.splice(index, 1);
-            this.setState({ 
+            this.setState({
                 nonExistentProducts: array,
-                stateModalItem:false
-             });
+                stateModalItem: false
+            });
         }
     }
     render() {
@@ -474,19 +478,25 @@ class SnpOrder extends React.Component {
                                         )}
                                     </Col>
                                 </Row>
-                                <Row className="standardPadding" style={{ textAlign: 'left', marginTop: '10px' }}>
-                                    <p className='fontStyle'>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
+                                <Row className="standardPadding" style={{ textAlign: 'left' ,marginTop: '10px' }}>
+                                    <p className='fontStyle' style={{fontWeight:'bold'}}>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
                                 </Row>
+                                {this.state.CustomerComment != null &&
+                                    <Row  style={{ textAlign: 'right' }}>
+                                        <p className='fontStyle' style={{fontWeight:'bold'}}>پیغام ارسالی از مشتری:</p>
+                                        <p>{this.state.CustomerComment}</p>
+                                    </Row>
+                                }
 
                                 {this.state.activeTab != 7 && (
                                     <>
                                         <Row>
-                                            <Col>
-                                                {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
+                                            <Col>                                                
+                                                <Label className="standardLabelFont">دلایل نیاز به تماس</Label>
                                                 <SelectBox
                                                     dataSource={this.state.cmbDeclineReason}
                                                     displayExpr="title"
-                                                    placeholder="نیاز به تماس درخواست"
+                                                    placeholder="دلایل نیاز به تماس"
                                                     valueExpr="id"
                                                     searchEnabled={true}
                                                     rtlEnabled={true}
@@ -496,8 +506,6 @@ class SnpOrder extends React.Component {
                                                 />
                                                 <Label id="errDeclineReason" className="standardLabelFont errMessage" />
                                             </Col>
-                                        </Row>
-                                        <Row>
                                             <Col>
                                                 <Label className="standardLabelFont">توضیحات</Label>
                                                 <TextBox
@@ -511,7 +519,7 @@ class SnpOrder extends React.Component {
                                                 />
                                                 <Label id="errTicketTitle" className="standardLabelFont errMessage" />
                                             </Col>
-                                        </Row>
+                                        </Row>                                        
                                     </>
                                 )}
                                 <p style={{ marginTop: '20px' }}> {(this.state.activeTab == 7 && this.state.SnpOrderData != null) && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
