@@ -260,10 +260,15 @@ class SnpOrder extends React.Component {
     }
 
     btnReject_onClick = async () => {
-        document.getElementById("errDeclineReason").innerHTML = "";
+        document.getElementById("errCommentValue").innerHTML = "";
         if (this.state.cmbDeclineReasonValue == null) {
-            document.getElementById("errDeclineReason").innerHTML =
+            document.getElementById("errCommentValue").innerHTML =
                 "دلیل رد درخواست باید انتخاب شود";
+            return;
+        }
+        if (this.state.txtCommentValue == null) {
+            document.getElementById("errTxtCommentValue").innerHTML =
+                "این فیلد باید پر شود";
             return;
         }
         this.state.nonExistentProducts.map((item, key)=>{
@@ -494,7 +499,7 @@ class SnpOrder extends React.Component {
                                                     value={this.state.cmbDeclineReasonValue}
                                                     className="fontStyle"
                                                 />
-                                                <Label id="errDeclineReason" className="standardLabelFont errMessage" />
+                                                <Label id="errCommentValue" className="standardLabelFont errMessage" />
                                             </Col>
                                         </Row>
                                         <Row>
@@ -509,7 +514,7 @@ class SnpOrder extends React.Component {
                                                     onValueChanged={this.txtComment_onChanege}
                                                     className="fontStyle"
                                                 />
-                                                <Label id="errTicketTitle" className="standardLabelFont errMessage" />
+                                                <Label id="errTxtCommentValue" className="standardLabelFont errMessage" />
                                             </Col>
                                         </Row>
                                     </>
