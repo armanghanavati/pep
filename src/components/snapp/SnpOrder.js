@@ -286,7 +286,7 @@ class SnpOrder extends React.Component {
             }
         })
         const rtnAllSnpOrder = await this.btnSearch_onClick();
-        this.tabOrders_onChange('6', rtnAllSnpOrder)
+        this.tabOrders_onChange('1', rtnAllSnpOrder)
     }
 
     btnPrint_onClick = () => {
