@@ -80,6 +80,7 @@ class SnpOrder extends React.Component {
             SnpOrderId: null,
             snpOrderConsumerName: '',
             SnpSumOfOrder: 0,
+            CustomerComment: null,
             FromDate: new Date(),
             ToDate: new Date(),
             FromDateapi: "",
@@ -207,6 +208,7 @@ class SnpOrder extends React.Component {
             SnpOrderData: e.data,
             snpOrderConsumerName: e.data.fullName,
             LocationId: e.data.locationId,
+            CustomerComment: e.data.comment,
             // cmbDeclineReason: await snpOrderDeclineReasonList(e.data.vendorCode, this.props.User.token)
             cmbItemValue: null,
         });
@@ -234,7 +236,7 @@ class SnpOrder extends React.Component {
     }
 
     ModalSnpOrderDetail_onClickAway = () => {
-        this.setState({ stateModalSnpOrderDetail: false })
+        this.setState({ stateModalSnpOrderDetail: false, cmbDeclineReasonValue:null})
     }
 
     btnAccept_onClick = async () => {
@@ -268,17 +270,17 @@ class SnpOrder extends React.Component {
                 "دلیل رد درخواست باید انتخاب شود";
             return;
         }
+
         if (this.state.txtCommentValue == null) {
             document.getElementById("errTxtCommentValue").innerHTML =
                 "این فیلد باید پر شود";
             return;
         }
-        this.state.nonExistentProducts.map((item, key) => {
-            this.state.nonExistentProductsToSnap.push({
-                barcode: item.barcode.barCode, suggestedProductBarcodes: item.suggestedProductBarcodes.map((item, key) =>
-                    item.barCode
-                )
-            })
+        this.state.nonExistentProducts.map((item, key)=>{
+            this.state.nonExistentProductsToSnap.push({barcode:item.barcode.barCode, suggestedProductBarcodes:item.suggestedProductBarcodes.map((item, key)=>
+                item.barCode
+            )})
+
         })
         const obj = {
             orderId: this.state.SnpOrderId,
@@ -483,19 +485,25 @@ class SnpOrder extends React.Component {
                                         )}
                                     </Col>
                                 </Row>
-                                <Row className="standardPadding" style={{ textAlign: 'left', marginTop: '10px' }}>
-                                    <p className='fontStyle'>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
+                                <Row className="standardPadding" style={{ textAlign: 'left' ,marginTop: '10px' }}>
+                                    <p className='fontStyle' style={{fontWeight:'bold'}}>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
                                 </Row>
+                                {this.state.CustomerComment != null &&
+                                    <Row  style={{ textAlign: 'right' }}>
+                                        <p className='fontStyle' style={{fontWeight:'bold'}}>پیغام ارسالی از مشتری:</p>
+                                        <p>{this.state.CustomerComment}</p>
+                                    </Row>
+                                }
 
                                 {this.state.activeTab != 7 && (
                                     <>
                                         <Row>
-                                            <Col>
-                                                {/* <Label className="standardLabelFont">نیاز به تماس درخواست</Label> */}
+                                            <Col>                                                
+                                                <Label className="standardLabelFont">دلایل نیاز به تماس</Label>
                                                 <SelectBox
                                                     dataSource={this.state.cmbDeclineReason}
                                                     displayExpr="title"
-                                                    placeholder="نیاز به تماس درخواست"
+                                                    placeholder="دلایل نیاز به تماس"
                                                     valueExpr="id"
                                                     searchEnabled={true}
                                                     rtlEnabled={true}
@@ -505,8 +513,6 @@ class SnpOrder extends React.Component {
                                                 />
                                                 <Label id="errCommentValue" className="standardLabelFont errMessage" />
                                             </Col>
-                                        </Row>
-                                        <Row>
                                             <Col>
                                                 <Label className="standardLabelFont">توضیحات</Label>
                                                 <TextBox
@@ -520,7 +526,7 @@ class SnpOrder extends React.Component {
                                                 />
                                                 <Label id="errTxtCommentValue" className="standardLabelFont errMessage" />
                                             </Col>
-                                        </Row>
+                                        </Row>                                        
                                     </>
                                 )}
                                 <p style={{ marginTop: '20px' }}> {(this.state.activeTab == 7 && this.state.SnpOrderData != null) && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
