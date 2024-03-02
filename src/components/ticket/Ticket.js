@@ -8,6 +8,10 @@ import {
     TabContent, TabPane, Nav, NavItem, NavLink,
     Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
+import AdapterJalali from "@date-io/date-fns-jalali";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import TextField from "@mui/material/TextField";
 import classnames from 'classnames';
 import TextBox from 'devextreme-react/text-box';
 import TextArea from 'devextreme-react/text-area';
@@ -56,6 +60,7 @@ import { locationList } from '../../redux/reducers/location/location-actions';
 
 const notesLabel = { 'aria-label': 'Notes' };
 
+
 class Ticket extends React.Component {
     constructor(props) {
         super(props);
@@ -94,6 +99,7 @@ class Ticket extends React.Component {
             cmbLocationValue: null,
             Mobile: null,
             FullName: null,
+            ExpectedDoneTime: new Date(),
         }
     }
 
@@ -531,7 +537,7 @@ class Ticket extends React.Component {
         })
     }
 
-    btnClearCommentFileAttach_onClick=(e)=>{
+    btnClearCommentFileAttach_onClick = (e) => {
         //alert(e.target.id);
         var temp = this.state.AttachedCommentFiles;
         temp.splice(e.target.id, 1)
@@ -540,6 +546,12 @@ class Ticket extends React.Component {
             AttachedCommentFiles: temp
         })
     }
+
+    DatePickerExpectedDoneTime_onChange = (params) => {
+        this.setState({ ExpectedDoneTime: params });
+    };
+
+
     render() {
         // const  fileName=[];
         // if(this.state.file != null)  {
@@ -612,28 +624,28 @@ class Ticket extends React.Component {
                                 {this.state.TicketData != null && (
                                     <>
                                         <Row className="standardPadding">
-                                            <Col>شماره تیکت : {this.state.TicketData.id}</Col>                                            
+                                            <Col>شماره تیکت : {this.state.TicketData.id}</Col>
                                             <Col>تاریخ ثبت : {this.state.TicketData.persianDate}</Col>
                                         </Row>
-                                        <div className="line"></div> 
+                                        <div className="line"></div>
                                         <Row className="standardPadding">
                                             <Col>نام درخواست دهنده: {this.state.FullName}</Col>
-                                            <Col>نام کاربری : {this.state.TicketData.userNameInserted}</Col>                                            
-                                            <Col>شماره همراه: {this.state.Mobile}</Col>                                            
+                                            <Col>نام کاربری : {this.state.TicketData.userNameInserted}</Col>
+                                            <Col>شماره همراه: {this.state.Mobile}</Col>
                                         </Row>
-                                        <div className="line"></div> 
-                                        <Row className="standardPadding">                               
-                                            <Col>موضوع : {this.state.TicketData.ticketSubjectDesc}</Col>             
+                                        <div className="line"></div>
+                                        <Row className="standardPadding">
+                                            <Col>موضوع : {this.state.TicketData.ticketSubjectDesc}</Col>
                                             <Col>وضعیت : {this.state.TicketData.ticketStatusDesc}</Col>
                                             <Col>اولویت : {this.state.TicketData.ticketPriorityDesc}</Col>
-                                        </Row>                                        
+                                        </Row>
                                         <Row className="standardPadding">
                                             <Col xs='auto'>عنوان : {this.state.TicketData.title}</Col>
                                         </Row>
-                                        <div className="line"></div> 
+                                        <div className="line"></div>
                                         <Row className="standardPadding">
                                             <Col>
-                                                توضیحات :<p style={{textAlign:'justify'}}>{this.state.TicketData.desc}</p>
+                                                توضیحات :<p style={{ textAlign: 'justify' }}>{this.state.TicketData.desc}</p>
                                             </Col>
                                         </Row>
 
@@ -720,7 +732,7 @@ class Ticket extends React.Component {
                                             <>
                                                 <Col>{item.name}</Col>
                                                 <Col>
-                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearCommentFileAttach_onClick(e)} width={10} height={10}/>
+                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearCommentFileAttach_onClick(e)} width={10} height={10} />
                                                 </Col>
                                             </>
                                         )}
@@ -850,6 +862,18 @@ class Ticket extends React.Component {
                                         <Label id="errTicketPriority" className="standardLabelFont errMessage" />
                                     </Col>
                                 </Row>
+                                <Row>
+                                    <Col>                                        
+                                        <LocalizationProvider dateAdapter={AdapterJalali}>
+                                            <DateTimePicker
+                                                label="تاریخ مورد انتظار انجام"
+                                                value={this.state.ExpectedDoneTime}
+                                                onChange={this.DatePickerExpectedDoneTime_onChange}
+                                                renderInput={(params) => <TextField {...params} style={{color:'red'}} />}                                                
+                                            />
+                                        </LocalizationProvider>
+                                    </Col>
+                                </Row>
 
                                 <Row className="standardPadding">
                                     <Col>
@@ -894,8 +918,8 @@ class Ticket extends React.Component {
                                             <>
                                                 <Col>{item.name}</Col>
                                                 <Col>
-                                                
-                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearFileAttach_onClick(e)} width={10} height={10}/>
+
+                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearFileAttach_onClick(e)} width={10} height={10} />
                                                 </Col>
                                             </>
                                         )}
