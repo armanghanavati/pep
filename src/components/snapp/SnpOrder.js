@@ -57,6 +57,7 @@ import { Point } from 'devextreme-react/chart';
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
+import DeleteItem from "../../assets/images/icon/minus.png"
 
 const notesLabel = { 'aria-label': 'Notes' };
 
@@ -594,73 +595,67 @@ class SnpOrder extends React.Component {
                             </ModalHeader>
                             <ModalBody>
                                 <Row className="standardPadding">
-                                    <Col>
-                                        <div id="orderDetail" style={{ textAlign: 'right' }}>
-                                        </div>
-                                    </Col>
-                                    <>
+                                    <Row>
+                                        <Col>
+                                            <SelectBox
+                                                dataSource={this.state.cmbItem}
+                                                displayExpr="label"
+                                                placeholder="انتخاب کالا"
+                                                valueExpr="barCode"
+                                                searchEnabled={true}
+                                                rtlEnabled={true}
+                                                onValueChange={this.cmbItem_onChange}
+                                                value={this.state.cmbItemValue}
+                                                className="fontStyle"
+                                            />
+                                            {/* <Label id="errItem" className="standardLabelFont errMessage" /> */}
+                                        </Col>
+                                    </Row>
+                                    {this.state.suggestedProducts != null && this.state.suggestedProducts.map((item, key) =>
                                         <Row>
                                             <Col>
-                                                <SelectBox
-                                                    dataSource={this.state.cmbItem}
-                                                    displayExpr="label"
-                                                    placeholder="انتخاب کالا"
-                                                    valueExpr="barCode"
-                                                    searchEnabled={true}
-                                                    rtlEnabled={true}
-                                                    onValueChange={this.cmbItem_onChange}
-                                                    value={this.state.cmbItemValue}
-                                                    className="fontStyle"
-                                                />
-                                                {/* <Label id="errItem" className="standardLabelFont errMessage" /> */}
+                                                {item.name}
+                                            </Col>
+                                            <Col>
+                                                <img src={DeleteItem} onClick={() => this.removeSuggestedProduct(item.barCode)} style={{ cursor: 'pointer', width: '25px', height: '25px' }} />
                                             </Col>
                                         </Row>
-                                        {this.state.suggestedProducts != null && this.state.suggestedProducts.map((item, key) =>
-                                            <Row className="standardPadding">
-                                                <Col>
-                                                    {item.name}
-                                                </Col>
-                                                <Col>
-                                                    <p onClick={() => this.removeSuggestedProduct(item.barCode)} style={{ cursor: 'pointer' }}>-</p>
-                                                </Col>
-                                            </Row>
-                                        )}
-                                        <Row className="standardPadding">
-                                            <Col>
-                                                <Button
-                                                    icon={RegisterCommentIcon}
-                                                    text="ثبت کالا"
-                                                    type="default"
-                                                    stylingMode="contained"
-                                                    rtlEnabled={true}
-                                                    onClick={this.btnAdd_onClick}
-                                                    className="fontStyle"
-                                                />
-                                            </Col>
-                                            <Col>
-                                                <Button
-                                                    // icon={RegisterCommentIcon}
-                                                    text="انصراف"
-                                                    type="default"
-                                                    stylingMode="contained"
-                                                    rtlEnabled={true}
-                                                    onClick={this.btnCancel_onClick}
-                                                    className="fontStyle"
-                                                />
-                                            </Col>
-                                            <Col>
-                                                <Button
-                                                    icon={DeleteIcon}
-                                                    text="حذف بارکد"
-                                                    type="default"
-                                                    stylingMode="contained"
-                                                    rtlEnabled={true}
-                                                    onClick={this.btnRemoveBracode_onClick}
-                                                    className="fontStyle"
-                                                />
-                                            </Col>
-                                        </Row>
-                                    </>
+                                    )}
+                                    <Row className="standardMargin">
+                                        <Col xs="auto">
+                                            <Button
+                                                icon={RegisterCommentIcon}
+                                                text="ثبت کالا"
+                                                type="default"
+                                                stylingMode="contained"
+                                                rtlEnabled={true}
+                                                onClick={this.btnAdd_onClick}
+                                                className="fontStyle"
+                                            />
+                                        </Col>
+                                        <Col xs="auto">
+                                            <Button
+                                                // icon={RegisterCommentIcon}
+                                                text="انصراف"
+                                                type="default"
+                                                stylingMode="contained"
+                                                rtlEnabled={true}
+                                                onClick={this.btnCancel_onClick}
+                                                className="fontStyle"
+                                            />
+                                        </Col>
+                                        <Col xs="auto">
+                                            <Button
+                                                icon={DeleteIcon}
+                                                text="حذف بارکد"
+                                                type="default"
+                                                stylingMode="contained"
+                                                rtlEnabled={true}
+                                                onClick={this.btnRemoveBracode_onClick}
+                                                className="fontStyle"
+                                            />
+                                        </Col>
+                                    </Row>
                                 </Row>
                             </ModalBody>
                         </Modal>
