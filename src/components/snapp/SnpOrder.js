@@ -303,7 +303,7 @@ class SnpOrder extends React.Component {
     }
 
     btnPrint_onClick = () => {
-        window.open("https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId + "&token=" + this.props.User.token, '_blank');
+        window.open("https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId, '_blank');
     }
 
     DatePickerFrom_onChange = (params) => {
