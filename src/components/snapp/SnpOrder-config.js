@@ -85,7 +85,7 @@ export const DataGridSnpOrderDetailsColumns = [
         allowEditing: false,        
         format: {  
             type: "fixedPoint",  
-            precision: 0  
+            precision: 0,
          }         
     },
     {
