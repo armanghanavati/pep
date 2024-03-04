@@ -100,6 +100,7 @@ class Ticket extends React.Component {
             Mobile: null,
             FullName: null,
             ExpectedDoneTime: new Date(),
+            isSelectedExpectedDoneTime: false,
         }
     }
 
@@ -862,7 +863,7 @@ class Ticket extends React.Component {
                                         <Label id="errTicketPriority" className="standardLabelFont errMessage" />
                                     </Col>
                                 </Row>
-                                <Row>
+                                <Row className="standardPadding">
                                     <Col>                                        
                                         <LocalizationProvider dateAdapter={AdapterJalali}>
                                             <DateTimePicker
@@ -870,6 +871,7 @@ class Ticket extends React.Component {
                                                 value={this.state.ExpectedDoneTime}
                                                 onChange={this.DatePickerExpectedDoneTime_onChange}
                                                 renderInput={(params) => <TextField {...params} style={{color:'red'}} />}                                                
+                                                className='fontStyle'
                                             />
                                         </LocalizationProvider>
                                     </Col>

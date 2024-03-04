@@ -48,6 +48,7 @@ import SnpOrders from '../pages/SnpOrder'
 import ItemJets from '../pages/ItemJets'
 import ItemLocationSnapps from '../pages/ItemLocationSnapps'
 import SnpOrderReports from '../pages/SnpOrderReports'
+import TissMapItemSSTIDs from '../pages/TissMapItemSSTIDs'
 
 export const REAL_COMPONENT = [
   {
@@ -260,6 +261,10 @@ export const REAL_COMPONENT = [
   {        
     strComponent: "ItemLocationSnapps",
     orgComponent: <ItemLocationSnapps />,
+  },             
+  {        
+    strComponent: "TissMapItemSSTIDs",
+    orgComponent: <TissMapItemSSTIDs />,
   }                   
 ];
 
