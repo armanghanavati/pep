@@ -430,8 +430,6 @@ class SnpOrder extends React.Component {
         }
     }
     render() {
-        var t;
-        var itemName;
         return (
             <div className='standardMargin'>
                 <Toast
@@ -529,7 +527,7 @@ class SnpOrder extends React.Component {
                                         </Row>                                        
                                     </>
                                 )}
-                                <p style={{ marginTop: '20px' }}> {(this.state.activeTab == 7 && this.state.SnpOrderData != null) && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
+                                <p style={{ marginTop: '20px' }}> {( this.state.SnpOrderData != null) && this.state.SnpOrderData.declineReason != null &&  "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason }</p>
                                 <Row>
                                     {this.state.stateDisable_btnUpdate ? (
                                         <>
@@ -740,7 +738,8 @@ class SnpOrder extends React.Component {
                                         allowColumnResizing={true}
                                         onRowDblClick={this.grdSnpOrder_onDbClick}
                                         height={DataGridDefaultHeight}
-                                        className="fontStyle"
+                                        //className="fontStyle"
+                                        
                                     >
                                         <Scrolling rowRenderingMode="virtual"
                                             showScrollbar="always"
@@ -774,7 +773,7 @@ class SnpOrder extends React.Component {
                                             allowColumnResizing={true}
                                             onRowDblClick={this.grdSnpOrder_onDbClick}
                                             height={DataGridDefaultHeight}
-                                            className="fontStyle"
+                                            //className="fontStyle"
                                         >
                                             <Scrolling rowRenderingMode="virtual"
                                                 showScrollbar="always"
