@@ -20,12 +20,20 @@ class App extends React.Component {
     };
   }
   componentDidMount = async () => {
-    // await this.getParamsFromUrl();
+    // await this.getParamsFromUrl();    
+    await  this.fn_CheckUrlProtocol();
     let token = this.props.User.token
     await checkTokenExpire(token);
     await this.fn_CheckIsLogin();
   };
 
+  fn_CheckUrlProtocol=()=>{
+    const HOST_NAME=window.location.hostname;
+    const PROTOCOL=window.location.protocol;
+    if (HOST_NAME!=="localhost" && HOST_NAME!=="127.0.0.1" && PROTOCOL!== "https:"){
+      window.location.replace(window.location.href.replace("http:", "https:"));
+     }
+  }
   
   fn_CheckIsLogin = async () => {
     const USER_ID = sessionStorage.getItem("UserId");

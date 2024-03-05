@@ -21,7 +21,7 @@ export const DataGridTissMapItemSSTIDcolumns = [
     }, 
     {
         dataField:"sstid" ,
-        caption:"شناسه کالا دارایی",
+        caption:"شناسه کالا دارایی",        
         allowEditing:true    
     }, 
     {

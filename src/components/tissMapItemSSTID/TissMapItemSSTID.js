@@ -48,6 +48,9 @@ import Wait from "../common/Wait";
 import {
     Gfn_NumberDetect,
     Gfn_convertENunicode,
+    Gfn_ConvertComboForAll,
+    Gfn_BuildValueComboMulti,
+    Gfn_ExportToExcel,
 } from "../../utiliy/GlobalMethods";
 
 import {
@@ -61,7 +64,7 @@ import {
     FILTER_BUILDER_POPUP_POSITION,
 } from "../../config/config";
 
-import { itemListComboByItemGroup } from "../../redux/reducers/item/item-action";
+import { itemListComboByItemGroupWithAll } from "../../redux/reducers/item/item-action";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
@@ -77,6 +80,7 @@ import DeleteIcon from "../../assets/images/icon/delete.png";
 import CancelIcon from "../../assets/images/icon/cancel.png";
 import MinusImage from "../../assets/images/icon/minus.png";
 import SearchIcon from "../../assets/images/icon/search.png";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 
 
 class TissMapItemSSTID extends React.Component {
@@ -89,6 +93,7 @@ class TissMapItemSSTID extends React.Component {
             cmbItems: null,
             cmbItemsOrg: null,
             cmbItemValue: null,
+            cmbItemSend: null,
             ItemUpdated: null,
             stateModal_TissMapItemSSTIDNew: false,
             isNew: false,
@@ -169,7 +174,7 @@ class TissMapItemSSTID extends React.Component {
             cmbItemGroupValue: e,
         });
 
-        const ITEMS = await itemListComboByItemGroup(OBJ, this.props.User.token)
+        const ITEMS = await itemListComboByItemGroupWithAll(OBJ, this.props.User.token)
         const LAZY = new DataSource({
             store: ITEMS,
             paginate: true,
@@ -182,18 +187,23 @@ class TissMapItemSSTID extends React.Component {
     }
 
     cmbItem_onChange = async (e) => {
+        let data = await Gfn_ConvertComboForAll(e, this.state.cmbItemsOrg)
+        const final = await Gfn_BuildValueComboMulti(data);
         this.setState({
             cmbItemValue: e,
-        })
+            cmbItemSend: final
+        });
+        // this.setState({
+        //     cmbItemValue: e,
+        // })
     }
 
     btnSearch_onClick = async () => {
-        const OBJ = {
-            ItemId: this.state.cmbItemValue,
-        }
+        this.OpenCloseWait();
         this.setState({
-            ItemGridData: await itemListById(OBJ, this.props.User.token)
+            ItemGridData: await itemListById(this.state.cmbItemSend, this.props.User.token)
         })
+        this.OpenCloseWait();
     }
 
     btnNew_onClick = () => {
@@ -214,18 +224,22 @@ class TissMapItemSSTID extends React.Component {
             sstid: params.data.sstid,
         };
 
-        this.setState({ ItemUpdated: obj});
+        this.setState({ ItemUpdated: obj });
     };
 
-    btnUpdate_onClick=async()=>{        
-        const RESULT=await updateItemSSTID(this.state.ItemUpdated,this.props.User.token);        
+    btnUpdate_onClick = async () => {
+        const RESULT = await updateItemSSTID(this.state.ItemUpdated, this.props.User.token);
         this.setState({
             ToastProps: {
-              isToastVisible: true,
-              Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
-              Type: RESULT > 0 ? "success" : "error",
+                isToastVisible: true,
+                Message: RESULT > 0 ? "ویرایش با موفقیت انجام گردید" : "عدم ویرایش",
+                Type: RESULT > 0 ? "success" : "error",
             },
-          });
+        });
+    }
+
+    btnExportExcel_onClick = () => {
+        Gfn_ExportToExcel(this.state.ItemGridData, "TissMapItemSSTID")
     }
 
     render() {
@@ -297,7 +311,8 @@ class TissMapItemSSTID extends React.Component {
                 </Card>
                 <p></p>
                 <Card className="shadow bg-white border pointer">
-                    {/* {this.state.stateDisable_btnAdd && (
+                    <Row className="standardPadding">
+                        {/* {this.state.stateDisable_btnAdd && (
                         <Row className="standardPadding">
                             <Col xs="auto">
                                 <Button
@@ -312,46 +327,68 @@ class TissMapItemSSTID extends React.Component {
                             </Col>
                         </Row>
                     )} */}
-                    <Row className="standardPadding">
-                        <Label className="title">شناسه کالا دارایی</Label>
-                    </Row>
-                    <Row className="standardPadding">
-                        <Col xs="auto" className="standardPadding">
-                            <DataGrid
-                                dataSource={this.state.ItemGridData}
-                                defaultColumns={DataGridTissMapItemSSTIDcolumns}
-                                showBorders={true}
-                                rtlEnabled={true}
-                                allowColumnResizing={true}
-                                onRowUpdated={this.TissMapItemSSTIDDataGrd_onUpdateRow}
-                                className="fontStyle"
-
-                            >
-                                <Scrolling
-                                    rowRenderingMode="virtual"
-                                    showScrollbar="always"
-                                    columnRenderingMode="virtual"
-                                />
-                                <Editing mode="cell" allowUpdating={true} />
-                            </DataGrid>
-                        </Col>
-                    </Row>
-
-                    {this.state.stateDisable_btnUpdate && (
                         <Row className="standardPadding">
+                            <Label className="title">شناسه کالا دارایی</Label>
+                        </Row>
+                        <Row style={{ direction: 'ltr' }}>
                             <Col xs="auto">
                                 <Button
-                                    icon={UpdateIcon}
-                                    text="ذخیره تغییرات"
-                                    type="success"
+                                    icon={ExportExcelIcon}
+                                    type="default"
                                     stylingMode="contained"
                                     rtlEnabled={true}
-                                    onClick={this.btnUpdate_onClick}
-                                    className="fontStyle"
+                                    onClick={this.btnExportExcel_onClick}
                                 />
                             </Col>
                         </Row>
-                    )}
+                        <Row className="standardPadding">
+                            <Col xs="auto" className="standardPadding">
+                                <DataGrid
+                                    dataSource={this.state.ItemGridData}
+                                    defaultColumns={DataGridTissMapItemSSTIDcolumns}
+                                    showBorders={true}
+                                    rtlEnabled={true}
+                                    allowColumnResizing={true}
+                                    height={DataGridDefaultHeight}
+                                    onRowUpdated={this.TissMapItemSSTIDDataGrd_onUpdateRow}
+                                    className="fontStyle"
+
+                                >
+                                    <Scrolling
+                                        rowRenderingMode="virtual"
+                                        showScrollbar="always"
+                                        columnRenderingMode="virtual"
+                                    />
+                                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                                    <Pager
+                                        visible={true}
+                                        allowedPageSizes={DataGridPageSizes}
+                                        showPageSizeSelector={true}
+                                        showNavigationButtons={true}
+                                    />
+                                    <Editing mode="cell" allowUpdating={true} />
+                                    <FilterRow visible={true} />
+                                    <HeaderFilter visible={true} />
+                                </DataGrid>
+                            </Col>
+                        </Row>
+
+                        {this.state.stateDisable_btnUpdate && (
+                            <Row className="standardPadding">
+                                <Col xs="auto">
+                                    <Button
+                                        icon={UpdateIcon}
+                                        text="ذخیره تغییرات"
+                                        type="success"
+                                        stylingMode="contained"
+                                        rtlEnabled={true}
+                                        onClick={this.btnUpdate_onClick}
+                                        className="fontStyle"
+                                    />
+                                </Col>
+                            </Row>
+                        )}
+                    </Row>
                 </Card>
                 {/* {this.state.stateModal_TissMapItemSSTIDNew && (
                     <Row className="text-center">
