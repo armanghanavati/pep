@@ -438,7 +438,7 @@ class ItemLocation extends React.Component {
         tempItems[i].isActiveSnapp = params.data.isActiveSnapp;
         tempItems[i].isCreateOrderInventory = params.data.isCreateOrderInventory;
         tempItems[i].isCreateOrderSupplier = params.data.isCreateOrderSupplier;
-        tempItems[i].orderNumber = params.data.orderNumber;        
+        tempItems[i].orderNumber = params.data.orderNumber;
         tempItems[i].maxAllowOrderNumberSnapp = params.data.maxAllowOrderNumberSnapp;
         flagPush = false;
       }
@@ -450,10 +450,10 @@ class ItemLocation extends React.Component {
         isActive: params.data.isActive,
         maxPercentChange: params.data.maxPercentChange,
         minPercentChange: params.data.minPercentChange,
-        isActiveSnapp:params.data.isActiveSnapp,
-        isCreateOrderInventory:params.data.isCreateOrderInventory,
-        isCreateOrderSupplier:params.data.isCreateOrderSupplier,
-        orderNumber:params.data.orderNumber,
+        isActiveSnapp: params.data.isActiveSnapp,
+        isCreateOrderInventory: params.data.isCreateOrderInventory,
+        isCreateOrderSupplier: params.data.isCreateOrderSupplier,
+        orderNumber: params.data.orderNumber,
         maxAllowOrderNumberSnapp: params.data.maxAllowOrderNumberSnapp
       };
       tempItems.push(obj);
@@ -732,6 +732,10 @@ class ItemLocation extends React.Component {
                 allowColumnResizing={true}
                 height={DataGridDefaultHeight}
                 className="fontStyle"
+                keyExpr="id"
+                columnAutoWidth={true}
+                allowColumnReordering={true}
+                columnResizingMode="widget"                
               >
                 <Scrolling
                   rowRenderingMode="virtual"
