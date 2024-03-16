@@ -32,12 +32,35 @@ class App extends React.Component {
     };
   }
   componentDidMount = async () => {
-    // await this.getParamsFromUrl();
+    // await this.getParamsFromUrl();    
+    await this.fn_CheckUrlProtocol();
     let token = this.props.User.token
     await checkTokenExpire(token);
     await this.fn_CheckIsLogin();
+    const hubConnection = new HubConnectionBuilder().withUrl(`${window.snapApi}/chatHub?userId=${sessionStorage.getItem("UserId")}`).withAutomaticReconnect().build();
+    this.setState({ hubConnection }, () => {
+      this.state.hubConnection
+        .start()
+        .then(() => console.log('Connection started!'))
+        .catch(err => console.log('Error while establishing connection :('));
+      this.state.hubConnection.on('ReceiveMessage', (message) => {
+        this.setState({ stateSignalNotification: true, message: message })
+      });
+    });
+    this.props.dispatch(
+      hubConnectionActions.setHubConnection({
+        hubConnection
+      })
+    );
   };
 
+  fn_CheckUrlProtocol = () => {
+    const HOST_NAME = window.location.hostname;
+    const PROTOCOL = window.location.protocol;
+    if (HOST_NAME !== "localhost" && HOST_NAME !== "127.0.0.1" && PROTOCOL !== "https:") {
+      window.location.replace(window.location.href.replace("http:", "https:"));
+    }
+  }
 
   fn_CheckIsLogin = async () => {
     const USER_ID = sessionStorage.getItem("UserId");
@@ -45,21 +68,6 @@ class App extends React.Component {
     const PERMISSIONS = JSON.parse(sessionStorage.getItem("Permissions"));
     if (USER_ID != null && TOKEN != null && PERMISSIONS != null) {
       await this.saveUserData();
-      const hubConnection = new HubConnectionBuilder().withUrl(`${window.snapApi}/chatHub?userId=${sessionStorage.getItem("UserId")}`).withAutomaticReconnect().build();
-      this.setState({ hubConnection }, () => {
-        this.state.hubConnection
-          .start()
-          .then(() => console.log('Connection started!'))
-          .catch(err => console.log('Error while establishing connection :('));
-        this.state.hubConnection.on('ReceiveMessage', (message) => {
-          this.setState({ stateSignalNotification: true, message: message })
-        });
-      });
-      this.props.dispatch(
-        hubConnectionActions.setHubConnection({
-          hubConnection
-        })
-      );
       this.setState({
         stateRedirectLogin: false,
         stateRedirectHome: true,

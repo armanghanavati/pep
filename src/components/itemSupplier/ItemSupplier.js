@@ -232,11 +232,11 @@ class ItemSupplier extends React.Component {
         tempItems[i].UnitWeight = params.data.unitWeight;
         tempItems[i].QtyPerPack = params.data.qtyPerPack;
         tempItems[i].QtyPerPack2 = params.data.qtyPerPack2;
-        tempItems[i].MaxOrderWeight=params.data.maxOrderWeight;
-        tempItems[i].MaxOrderRiali=params.data.maxOrderRiali;
-        tempItems[i].MinOrderWeight=params.data.minOrderWeight;
-        tempItems[i].MinOrderRiali=params.data.minOrderRiali;
-        tempItems[i].SupplierId=this.state.SupplierId;
+        tempItems[i].MaxOrderWeight = params.data.maxOrderWeight;
+        tempItems[i].MaxOrderRiali = params.data.maxOrderRiali;
+        tempItems[i].MinOrderWeight = params.data.minOrderWeight;
+        tempItems[i].MinOrderRiali = params.data.minOrderRiali;
+        tempItems[i].SupplierId = this.state.SupplierId;
         flagPush = false;
         break;
       }
@@ -248,10 +248,10 @@ class ItemSupplier extends React.Component {
         QtyPerPack: params.data.qtyPerPack,
         QtyPerPack2: params.data.qtyPerPack2,
         MaxOrderRiali: params.data.maxOrderRiali,
-        MaxOrderWeight:params.data.maxOrderWeight,
-        MinOrderRiali:params.data.minOrderRiali,
-        MinOrderWeight:params.data.minOrderWeight,
-        SupplierId:this.state.SupplierId,
+        MaxOrderWeight: params.data.maxOrderWeight,
+        MinOrderRiali: params.data.minOrderRiali,
+        MinOrderWeight: params.data.minOrderWeight,
+        SupplierId: this.state.SupplierId,
       };
       tempItems.push(obj);
     }
@@ -273,18 +273,18 @@ class ItemSupplier extends React.Component {
       obj = {
         id: tempItemSupplier[i].id,
         isActive: Status,
-        unitWeight:tempItemSupplier[i].unitWeight,
-        qtyPerPack:tempItemSupplier[i].qtyPerPack,
-        qtyPerPack2:tempItemSupplier[i].qtyPerPack2
+        unitWeight: tempItemSupplier[i].unitWeight,
+        qtyPerPack: tempItemSupplier[i].qtyPerPack,
+        qtyPerPack2: tempItemSupplier[i].qtyPerPack2
       };
       tempItems.push(obj);
 
       this.setState((state) => {
         const ItemSuppliers = state.ItemSupplierGridData.map((item, i) => {
           item.isActive = Status;
-          item.qtyPerPack=tempItemSupplier[i].qtyPerPack;
-          item.qtyPerPack2=tempItemSupplier[i].qtyPerPack2;
-          item.unitWeight=tempItemSupplier[i].unitWeight;
+          item.qtyPerPack = tempItemSupplier[i].qtyPerPack;
+          item.qtyPerPack2 = tempItemSupplier[i].qtyPerPack2;
+          item.unitWeight = tempItemSupplier[i].unitWeight;
           return item;
         });
 
@@ -466,6 +466,11 @@ class ItemSupplier extends React.Component {
                   allowColumnResizing={true}
                   onRowUpdated={this.itemsSupplierDataGrd_onUpdateRow}
                   height={DataGridDefaultHeight}
+                  keyExpr="id"
+                  columnAutoWidth={true}
+                  allowColumnReordering={true}
+                  columnResizingMode="widget"
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"
