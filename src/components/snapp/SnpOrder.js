@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
+import { HubConnectionBuilder } from '@microsoft/signalr';
 import {
     Row,
     Col,
@@ -58,6 +59,9 @@ import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import DeleteItem from "../../assets/images/icon/minus.png"
+import { json } from 'react-router';
+import sound from '../../sound/message.mp3';
+//import Popup from 'reactjs-popup';
 
 const notesLabel = { 'aria-label': 'Notes' };
 
@@ -69,7 +73,7 @@ class SnpOrder extends React.Component {
             cmbDeclineReason: null,
             cmbItem: null,
             cmbItemValue: null,
-            AllSnpOrders: null,
+            AllSnpOrders: [],
             grdSnpOrders: null,
             activeTab: null,
             SnpOrderDetail: [],
@@ -104,7 +108,19 @@ class SnpOrder extends React.Component {
             stateModalItem: false,
             suggestedProductBarcodes: null,
             suggestedProducts: [],
-            nonExistentProductsToSnap: []
+            nonExistentProductsToSnap: [],
+            message: '',
+            messages: [],
+            hubConnection: null,
+            tempSignalData: [],
+            ToastProps: {
+                isToastVisibleSignal: false,
+                Message: "",
+                Type: "",
+            },
+            stateSignalNotification: false,
+            type: null,
+            OrderId: null,
         }
     }
 
@@ -113,8 +129,14 @@ class SnpOrder extends React.Component {
         await this.fn_GetPermissions();
         await this.fn_CheckRequireState();
         const rtnAllSnpOrders = await this.btnSearch_onClick();
+        await this.fn_ConnectSocket();
     }
 
+    fn_ConnectSocket = async () => {
+         this.props.HubConneciton.hubConnection.on('ReceiveMessage', async (message) => {
+            await this.btnSearch_onClick();
+        });
+    }
     async fn_DeleteFirstOrderStatus(firstTab) {
         let tempOrderStatus = this.state.OrderStaus;
         for (let i = 0; i < tempOrderStatus.length; i++) {
@@ -236,7 +258,7 @@ class SnpOrder extends React.Component {
     }
 
     ModalSnpOrderDetail_onClickAway = () => {
-        this.setState({ stateModalSnpOrderDetail: false, cmbDeclineReasonValue:null})
+        this.setState({ stateModalSnpOrderDetail: false, cmbDeclineReasonValue: null })
     }
 
     btnAccept_onClick = async () => {
@@ -276,10 +298,12 @@ class SnpOrder extends React.Component {
                 "این فیلد باید پر شود";
             return;
         }
-        this.state.nonExistentProducts.map((item, key)=>{
-            this.state.nonExistentProductsToSnap.push({barcode:item.barcode.barCode, suggestedProductBarcodes:item.suggestedProductBarcodes.map((item, key)=>
-                item.barCode
-            )})
+        this.state.nonExistentProducts.map((item, key) => {
+            this.state.nonExistentProductsToSnap.push({
+                barcode: item.barcode.barCode, suggestedProductBarcodes: item.suggestedProductBarcodes.map((item, key) =>
+                    item.barCode
+                )
+            })
 
         })
         const obj = {
@@ -302,8 +326,22 @@ class SnpOrder extends React.Component {
         this.tabOrders_onChange('1', rtnAllSnpOrder)
     }
 
-    btnPrint_onClick = () => {
+    btnPrint_onClick = async () => {
         window.open("https://pepreports.minoomart.ir/snappreport/snapporder?id=" + this.state.SnpOrderId, '_blank');
+        // const url =
+        //     "http://localhost:7086/api/snappreport/snapporder1?id=" + this.state.SnpOrderId;
+        // const response = await fetch(url, {
+        //     method: "GET",
+        //     headers: {
+        //         "Content-Type": "text/html",
+        //         Authorization: `Bearer ${this.props.User.token}`,
+        //     },
+        // });
+        // if (result.status == "Success") {
+        //     console.log(JSON.stringify(result.data));
+        //     window.open("http://localhost:7086/api/snappreport/snapporder?id=" + this.state.SnpOrderId)
+        // }
+        // return null;
     }
 
     DatePickerFrom_onChange = (params) => {
@@ -429,6 +467,12 @@ class SnpOrder extends React.Component {
             });
         }
     }
+
+    closeSignalNotif = () => {
+        this.setState({
+            stateSignalNotification: false
+        })
+    }
     render() {
         return (
             <div className='standardMargin'>
@@ -483,12 +527,12 @@ class SnpOrder extends React.Component {
                                         )}
                                     </Col>
                                 </Row>
-                                <Row className="standardPadding" style={{ textAlign: 'left' ,marginTop: '10px' }}>
-                                    <p className='fontStyle' style={{fontWeight:'bold'}}>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
+                                <Row className="standardPadding" style={{ textAlign: 'left', marginTop: '10px' }}>
+                                    <p className='fontStyle' style={{ fontWeight: 'bold' }}>جمع سفارش : {Gfn_numberWithCommas(this.state.SnpSumOfOrder)}</p>
                                 </Row>
                                 {this.state.CustomerComment != null &&
-                                    <Row  style={{ textAlign: 'right' }}>
-                                        <p className='fontStyle' style={{fontWeight:'bold'}}>پیغام ارسالی از مشتری:</p>
+                                    <Row style={{ textAlign: 'right' }}>
+                                        <p className='fontStyle' style={{ fontWeight: 'bold' }}>پیغام ارسالی از مشتری:</p>
                                         <p>{this.state.CustomerComment}</p>
                                     </Row>
                                 }
@@ -496,7 +540,7 @@ class SnpOrder extends React.Component {
                                 {this.state.activeTab != 7 && (
                                     <>
                                         <Row>
-                                            <Col>                                                
+                                            <Col>
                                                 <Label className="standardLabelFont">دلایل نیاز به تماس</Label>
                                                 <SelectBox
                                                     dataSource={this.state.cmbDeclineReason}
@@ -524,10 +568,10 @@ class SnpOrder extends React.Component {
                                                 />
                                                 <Label id="errTxtCommentValue" className="standardLabelFont errMessage" />
                                             </Col>
-                                        </Row>                                        
+                                        </Row>
                                     </>
                                 )}
-                                <p style={{ marginTop: '20px' }}> {( this.state.SnpOrderData != null) && this.state.SnpOrderData.declineReason != null &&  "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason }</p>
+                                <p style={{ marginTop: '20px' }}> {(this.state.SnpOrderData != null) && this.state.SnpOrderData.declineReason != null && "دلیل نیاز به تماس:  " + this.state.SnpOrderData.declineReason}</p>
                                 <Row>
                                     {this.state.stateDisable_btnUpdate ? (
                                         <>
@@ -738,8 +782,8 @@ class SnpOrder extends React.Component {
                                         allowColumnResizing={true}
                                         onRowDblClick={this.grdSnpOrder_onDbClick}
                                         height={DataGridDefaultHeight}
-                                        //className="fontStyle"
-                                        
+                                    //className="fontStyle"
+
                                     >
                                         <Scrolling rowRenderingMode="virtual"
                                             showScrollbar="always"
@@ -773,7 +817,7 @@ class SnpOrder extends React.Component {
                                             allowColumnResizing={true}
                                             onRowDblClick={this.grdSnpOrder_onDbClick}
                                             height={DataGridDefaultHeight}
-                                            //className="fontStyle"
+                                        //className="fontStyle"
                                         >
                                             <Scrolling rowRenderingMode="virtual"
                                                 showScrollbar="always"
@@ -935,7 +979,8 @@ class SnpOrder extends React.Component {
 
 const mapStateToProps = (state) => ({
     User: state.users,
-    Company: state.companies
+    Company: state.companies,
+    HubConneciton: state.hubConnections
 });
 
 export default connect(mapStateToProps)(SnpOrder);

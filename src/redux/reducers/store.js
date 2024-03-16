@@ -14,6 +14,7 @@ import logsOrderPointInventorySlice from "./logsOrderPointInventory/logsOrderPoi
 import orderPointSupplierSlice from "./orderPointSupplier/orderPointSupplier-slice";
 import logsOrderPointSupplierSlice from "./logsOrderPointSupplier/logsOrderPointSupplier-slice";
 import inventorySlice from "./inventory/inventory-slice";
+import hubConnectionSlice from "./hubConnection/hubConnection-slice";
 
 const store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ const store = configureStore({
     orderPointSuppliers: orderPointSupplierSlice.reducer,  
     logsOrderPointSuppliers: logsOrderPointSupplierSlice.reducer,  
     inventories:inventorySlice.reducer,
+    hubConnections:hubConnectionSlice.reducer,
   },
 });
 export default store;

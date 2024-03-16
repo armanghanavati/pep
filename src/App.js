@@ -1,6 +1,14 @@
 import React from "react";
 import "devextreme/dist/css/dx.common.css";
 import "devextreme/dist/css/dx.light.css";
+import {
+  Row,
+  Col,
+  Card,
+  Label,
+  TabContent, TabPane, Nav, NavItem, NavLink,
+  Modal, ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap';
 import { connect } from "react-redux";
 import jwt from "jwt-decode";
 import Home from "./pages/Home";
@@ -8,8 +16,9 @@ import VersionCO from "./components/common/VersionCO";
 import Login from "./pages/Login";
 import { userActions } from "./redux/reducers/user/user-slice";
 import { authUser } from "./redux/reducers/user/user-actions";
-import { Row } from "reactstrap";
+import { hubConnectionActions } from "./redux/reducers/hubConnection/hubConnection-slice"
 import { checkTokenExpire } from "./utiliy/GlobalMethods";
+import { HubConnectionBuilder } from '@microsoft/signalr';
 
 class App extends React.Component {
   constructor(props) {
@@ -17,6 +26,9 @@ class App extends React.Component {
     this.state = {
       stateRedirectHome: false,
       stateRedirectLogin: true,
+      hubConnection: null,
+      stateSignalNotification: false,
+      message: "",
     };
   }
   componentDidMount = async () => {
@@ -26,13 +38,28 @@ class App extends React.Component {
     await this.fn_CheckIsLogin();
   };
 
-  
+
   fn_CheckIsLogin = async () => {
     const USER_ID = sessionStorage.getItem("UserId");
     const TOKEN = sessionStorage.getItem("Token");
     const PERMISSIONS = JSON.parse(sessionStorage.getItem("Permissions"));
     if (USER_ID != null && TOKEN != null && PERMISSIONS != null) {
       await this.saveUserData();
+      const hubConnection = new HubConnectionBuilder().withUrl(`${window.snapApi}/chatHub?userId=${sessionStorage.getItem("UserId")}`).withAutomaticReconnect().build();
+      this.setState({ hubConnection }, () => {
+        this.state.hubConnection
+          .start()
+          .then(() => console.log('Connection started!'))
+          .catch(err => console.log('Error while establishing connection :('));
+        this.state.hubConnection.on('ReceiveMessage', (message) => {
+          this.setState({ stateSignalNotification: true, message: message })
+        });
+      });
+      this.props.dispatch(
+        hubConnectionActions.setHubConnection({
+          hubConnection
+        })
+      );
       this.setState({
         stateRedirectLogin: false,
         stateRedirectHome: true,
@@ -94,13 +121,27 @@ class App extends React.Component {
       })
     );
   };
-  
+
+  closeSignalNotif = () => {
+    this.setState({
+      stateSignalNotification: false
+    })
+  }
   render() {
     return (
       <div className="mainBack">
         {/* <ComThree /> */}
         {this.state.stateRedirectHome && <Home />}
         {this.state.stateRedirectLogin && <Login />}
+        {this.state.stateSignalNotification && (
+          <Row style={{ backgroundColor: "lightblue", padding: "20px", position: "fixed", zIndex: "2", bottom: "0", height: "200px", width: "460px" }}>
+            <Col xs="auto"><p style={{ fontSize: "16pt", cursor: "pointer" }} onClick={this.closeSignalNotif}>x</p></Col>
+            <Col style={{ textAlign: "left" }}><span style={{ fontSize: "12pt", marginRight: "100px" }}>اطلاع</span></Col>
+            <Row>
+              <p style={{ fontSize: "16pt", textAlign: "justify" }}>{this.state.message}<span style={{ fontSize: '20pt', marginRight: "30px", fontStyle: "italic" }}>!</span></p>
+            </Row>
+          </Row>
+        )}
       </div>
     );
   }
@@ -108,6 +149,7 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => ({
   User: state.users,
+  //Hub_conneciton: state.hubConnections
 });
 
 export default connect(mapStateToProps)(App);
