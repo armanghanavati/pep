@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { HubConnectionBuilder } from '@microsoft/signalr';
 import "../assets/CSS/style.css";
 import "../assets/CSS/mainDrawer_style.css";
 import List from "devextreme-react/list";
@@ -12,7 +13,7 @@ import SelectBox from "devextreme-react/select-box";
 import { companyActions } from "../redux/reducers/company/company-slice";
 import { companyListCombo } from "../redux/reducers/company/company-actions";
 import { userActions } from "../redux/reducers/user/user-slice";
-
+import { hubConnectionActions } from "../redux/reducers/hubConnection/hubConnection-slice"
 import MainMenu from "../components/common/MainMenu";
 import logo from "../assets/images/LOGO.jpg";
 import LogoutIcon from "../assets/images/icon/logout.svg"
@@ -30,11 +31,29 @@ class Home extends React.Component {
       linkPath: null,
       linkComponent: null,
       profile: null,
+      hubConnection: null,
+      stateSignalNotification: false,
+      message: "",
     };
   }
 
   async componentDidMount() {
     await this.fn_SetState();
+    const hubConnection = new HubConnectionBuilder().withUrl(`${window.snapApi}/chatHub?userId=${sessionStorage.getItem("UserId")}`).withAutomaticReconnect().build();
+    this.setState({ hubConnection }, () => {
+      this.state.hubConnection
+        .start()
+        .then(() => console.log('Connection started!'))
+        .catch(err => console.log('Error while establishing connection :('));
+      this.state.hubConnection.on('ReceiveMessage', (message) => {
+        this.setState({ stateSignalNotification: true, message: message })
+      });
+    });
+    this.props.dispatch(
+      hubConnectionActions.setHubConnection({
+        hubConnection
+      })
+    );
   }
 
   fn_SetState = async () => {
@@ -95,6 +114,12 @@ class Home extends React.Component {
     this.setState({ stateShowMainMenu: !this.state.stateShowMainMenu })
   }
 
+  closeSignalNotif = () => {
+    this.setState({
+      stateSignalNotification: false
+    })
+  }
+
   render() {
     locale("fa-IR");
     return (
@@ -139,6 +164,15 @@ class Home extends React.Component {
             <MainMenu showMainMenu={this.state.stateShowMainMenu} linkPath={this.state.linkPath} linkComponent={this.state.linkComponent} />
           </Col>
         </Row>
+        {this.state.stateSignalNotification && (
+          <Row style={{ backgroundColor: "lightblue", padding: "20px", position: "fixed", zIndex: "2", bottom: "0", height: "200px", width: "460px" }}>
+            <Col xs="auto"><p style={{ fontSize: "16pt", cursor: "pointer" }} onClick={this.closeSignalNotif}>x</p></Col>
+            <Col style={{ textAlign: "left" }}><span style={{ fontSize: "12pt", marginRight: "100px" }}>اطلاع</span></Col>
+            <Row>
+              <p style={{ fontSize: "16pt", textAlign: "justify" }}>{this.state.message}<span style={{ fontSize: '20pt', marginRight: "30px", fontStyle: "italic" }}>!</span></p>
+            </Row>
+          </Row>
+        )}
       </div>
     );
   }

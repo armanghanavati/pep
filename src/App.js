@@ -16,9 +16,7 @@ import VersionCO from "./components/common/VersionCO";
 import Login from "./pages/Login";
 import { userActions } from "./redux/reducers/user/user-slice";
 import { authUser } from "./redux/reducers/user/user-actions";
-import { hubConnectionActions } from "./redux/reducers/hubConnection/hubConnection-slice"
 import { checkTokenExpire } from "./utiliy/GlobalMethods";
-import { HubConnectionBuilder } from '@microsoft/signalr';
 
 class App extends React.Component {
   constructor(props) {
@@ -26,9 +24,6 @@ class App extends React.Component {
     this.state = {
       stateRedirectHome: false,
       stateRedirectLogin: true,
-      hubConnection: null,
-      stateSignalNotification: false,
-      message: "",
     };
   }
   componentDidMount = async () => {
@@ -37,21 +32,6 @@ class App extends React.Component {
     let token = this.props.User.token
     await checkTokenExpire(token);
     await this.fn_CheckIsLogin();
-    const hubConnection = new HubConnectionBuilder().withUrl(`${window.snapApi}/chatHub?userId=${sessionStorage.getItem("UserId")}`).withAutomaticReconnect().build();
-    this.setState({ hubConnection }, () => {
-      this.state.hubConnection
-        .start()
-        .then(() => console.log('Connection started!'))
-        .catch(err => console.log('Error while establishing connection :('));
-      this.state.hubConnection.on('ReceiveMessage', (message) => {
-        this.setState({ stateSignalNotification: true, message: message })
-      });
-    });
-    this.props.dispatch(
-      hubConnectionActions.setHubConnection({
-        hubConnection
-      })
-    );
   };
 
   fn_CheckUrlProtocol = () => {
@@ -130,26 +110,12 @@ class App extends React.Component {
     );
   };
 
-  closeSignalNotif = () => {
-    this.setState({
-      stateSignalNotification: false
-    })
-  }
   render() {
     return (
       <div className="mainBack">
         {/* <ComThree /> */}
         {this.state.stateRedirectHome && <Home />}
         {this.state.stateRedirectLogin && <Login />}
-        {this.state.stateSignalNotification && (
-          <Row style={{ backgroundColor: "lightblue", padding: "20px", position: "fixed", zIndex: "2", bottom: "0", height: "200px", width: "460px" }}>
-            <Col xs="auto"><p style={{ fontSize: "16pt", cursor: "pointer" }} onClick={this.closeSignalNotif}>x</p></Col>
-            <Col style={{ textAlign: "left" }}><span style={{ fontSize: "12pt", marginRight: "100px" }}>اطلاع</span></Col>
-            <Row>
-              <p style={{ fontSize: "16pt", textAlign: "justify" }}>{this.state.message}<span style={{ fontSize: '20pt', marginRight: "30px", fontStyle: "italic" }}>!</span></p>
-            </Row>
-          </Row>
-        )}
       </div>
     );
   }
