@@ -60,7 +60,7 @@ import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import DeleteItem from "../../assets/images/icon/minus.png"
 import { json } from 'react-router';
-import sound from '../../sound/message.mp3';
+
 //import Popup from 'reactjs-popup';
 
 const notesLabel = { 'aria-label': 'Notes' };

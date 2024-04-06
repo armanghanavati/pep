@@ -21,6 +21,7 @@ import BurgerMenuIcon from "../assets/images/icon/burgerMenu.png"
 import profile from "../assets/images/icon/profile.png"
 import Profiles from "./Profiles";
 import { prettyFormat } from "@testing-library/react";
+import sound from '../assets/sound/message.mp3';
 
 class Home extends React.Component {
   constructor(props) {
@@ -33,10 +34,10 @@ class Home extends React.Component {
       profile: null,
       hubConnection: null,
       stateSignalNotification: false,
-      message: "",
+      message: ""
     };
   }
-
+  audio = new Audio(sound)
   async componentDidMount() {
     await this.fn_SetState();
     const hubConnection = new HubConnectionBuilder().withUrl(`${window.snapApi}/chatHub?userId=${sessionStorage.getItem("UserId")}`).withAutomaticReconnect().build();
@@ -47,6 +48,7 @@ class Home extends React.Component {
         .catch(err => console.log('Error while establishing connection :('));
       this.state.hubConnection.on('ReceiveMessage', (message) => {
         this.setState({ stateSignalNotification: true, message: message })
+       // this.audio.play();
       });
     });
     this.props.dispatch(
@@ -54,7 +56,11 @@ class Home extends React.Component {
         hubConnection
       })
     );
+    this.audio.muted = true; // without this line it's not working although I have "muted" in HTML
+    this.audio.play();
   }
+
+
 
   fn_SetState = async () => {
     const companyCombo = await companyListCombo(this.props.User.token);
