@@ -124,7 +124,6 @@ class SnpOrder extends React.Component {
         }
     }
 
-
     async componentDidMount() {
         await this.fn_GetPermissions();
         await this.fn_CheckRequireState();
@@ -133,7 +132,7 @@ class SnpOrder extends React.Component {
     }
 
     fn_ConnectSocket = async () => {
-         this.props.HubConneciton.hubConnection.on('ReceiveMessage', async (message) => {
+        this.props.HubConneciton.hubConnection.on('ReceiveMessage', async (message) => {
             await this.btnSearch_onClick();
         });
     }

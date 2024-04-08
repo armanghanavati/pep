@@ -48,7 +48,8 @@ class Home extends React.Component {
         .catch(err => console.log('Error while establishing connection :('));
       this.state.hubConnection.on('ReceiveMessage', (message) => {
         this.setState({ stateSignalNotification: true, message: message })
-       // this.audio.play();
+        this.audio.muted = false; // without this line it's not working although I have "muted" in HTML
+        this.audio.play();
       });
     });
     this.props.dispatch(
@@ -56,8 +57,8 @@ class Home extends React.Component {
         hubConnection
       })
     );
-    this.audio.muted = true; // without this line it's not working although I have "muted" in HTML
-    this.audio.play();
+    // this.audio.muted = false; // without this line it's not working although I have "muted" in HTML
+    // this.audio.play();
   }
 
 
