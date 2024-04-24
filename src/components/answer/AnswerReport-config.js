@@ -56,5 +56,23 @@ export const DataGridAnswerColumns = [
         caption: "تاریخ تایید",
         allowEditing: false,
         width:100
+    },
+    {
+        dataField: "zone",
+        caption: "حوزه",
+        allowEditing: false,
+        width:100
+    },
+    {
+        dataField: "unit",
+        caption: "مسئول",
+        allowEditing: false,
+        width:100
+    },
+    {
+        dataField: "weight",
+        caption: "وزن",
+        allowEditing: false,
+        width:100
     }
 ];
