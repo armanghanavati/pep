@@ -1,9 +1,9 @@
 export const DataGridItemLocationColumns = [
-  {
-    dataField: "row",
-    caption: "ردیف",
-    allowEditing: false,
-  },
+  // {
+  //   dataField: "row",
+  //   caption: "ردیف",
+  //   allowEditing: false,
+  // },
   {
     dataField: "code",
     caption: "کد کالا",
