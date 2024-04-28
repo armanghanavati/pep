@@ -22,9 +22,9 @@ window.siteAddress = "https://pepapi.minoomart.ir";
 
 window.confirmPayment = "https://pepapi.minoomart.ir/api";
 window.apiAddressInspection="https://pepinspectionapi.minoomart.ir/api";
-window.snapApi="https://pepsnappapi.minoomart.ir"
+window.snapApi="https://pepsnappapi.minoomart.ir";
 //window.snapApi="http://localhost:7031"
-// window.apiAddressInspection="http://localhost:7021/api";  
+//window.apiAddressInspection="http://localhost:7021/api";  
 
 // const store = createStore(rootReducer);
 

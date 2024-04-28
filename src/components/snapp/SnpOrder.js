@@ -60,7 +60,7 @@ import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import DeleteItem from "../../assets/images/icon/minus.png"
 import { json } from 'react-router';
-import sound from '../../sound/message.mp3';
+
 //import Popup from 'reactjs-popup';
 
 const notesLabel = { 'aria-label': 'Notes' };
@@ -124,7 +124,6 @@ class SnpOrder extends React.Component {
         }
     }
 
-
     async componentDidMount() {
         await this.fn_GetPermissions();
         await this.fn_CheckRequireState();
@@ -133,7 +132,7 @@ class SnpOrder extends React.Component {
     }
 
     fn_ConnectSocket = async () => {
-         this.props.HubConneciton.hubConnection.on('ReceiveMessage', async (message) => {
+        this.props.HubConneciton.hubConnection.on('ReceiveMessage', async (message) => {
             await this.btnSearch_onClick();
         });
     }

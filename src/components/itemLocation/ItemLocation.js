@@ -732,7 +732,7 @@ class ItemLocation extends React.Component {
                 allowColumnResizing={true}
                 height={DataGridDefaultHeight}
                 className="fontStyle"
-                keyExpr="id"
+                valueExpr="id"
                 columnAutoWidth={true}
                 allowColumnReordering={true}
                 columnResizingMode="widget"                
