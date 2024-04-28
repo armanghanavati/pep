@@ -37,7 +37,7 @@ class App extends React.Component {
   fn_CheckUrlProtocol = () => {
     const HOST_NAME = window.location.hostname;
     const PROTOCOL = window.location.protocol;
-    if (HOST_NAME !== "localhost" && HOST_NAME !== "127.0.0.1" && PROTOCOL !== "https:") {
+    if (HOST_NAME !== "localhost"  && HOST_NAME !== "127.0.0.1" && PROTOCOL !== "https:") {
       window.location.replace(window.location.href.replace("http:", "https:"));
     }
   }
