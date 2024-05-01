@@ -349,8 +349,12 @@ class OrderSupplier extends React.Component {
       }
 
     let flagPush = true;
-    if (tempOrderPointSupplierEdited.length > 0)
-      flagPush = false;
+    for (let i = 0; i < tempOrderPointSupplierEdited.length; i++)
+      if (
+        tempOrderPointSupplierEdited[i].OrderPointSupplierId ===
+        params.oldData.id
+      )
+        flagPush = false;
 
     // alert('edited='+tempOrderPointSupplierEdited.length+
     //         '\nMaxEdit='+AuthOBJ.orderSupplierEditRowCount+
@@ -358,7 +362,7 @@ class OrderSupplier extends React.Component {
 
     let FlagError = true;
     let errMsg = "";
-    
+
     if (
       parseInt(params.newData.orderUser) > 0 &&
       (parseInt(params.newData.orderUser) % (params.oldData.itemsPerPack2 == 0 ? params.oldData.itemsPerPack : params.oldData.itemsPerPack2) !== 0)
@@ -474,11 +478,11 @@ class OrderSupplier extends React.Component {
     //   '\nprice='+SumPrice+
     //   '\nNumber='+SumNumber
     //   )   
-    const SUM_MAXMIN={
-      weight:SumWeight,
-      price:SumPrice,
-      Number:SumNumber
-    } 
+    const SUM_MAXMIN = {
+      weight: SumWeight,
+      price: SumPrice,
+      Number: SumNumber
+    }
 
     const SUPP_LIST = this.state.SupplierListMaxMinParam;
 
@@ -486,7 +490,7 @@ class OrderSupplier extends React.Component {
 
     for (let i = 0; i < SUPP_LIST.length; i++)
       if (SUPP_LIST[i].extSupplierId == extSupplierId) {
-        alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i])+'\n'+JSON.stringify(SUM_MAXMIN));
+        // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i])+'\n'+JSON.stringify(SUM_MAXMIN));
         if (
           SumPrice < SUPP_LIST[i].minOrderRiali ||
           SumPrice > SUPP_LIST[i].maxOrderRiali ||
@@ -537,7 +541,7 @@ class OrderSupplier extends React.Component {
         return tempSup;
       }
     return [];
-  }  
+  }
 
   grdOrderPointSupplier_onCellDblClick = async (e) => {
     const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);

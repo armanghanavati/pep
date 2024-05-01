@@ -218,3 +218,83 @@ export const DataGridOrderPointSupplierNewGroupColumns = [
         allowEditing:false    
     },
 ]
+
+// ------------------------------OrderPointSupplierConfirmReport--------------------------------
+export const DataGridOrderPointSupplierConfirmReportColumns = [  
+    {
+        dataField:"id" ,
+        caption:"شماره سفارش",
+        allowEditing:false,   
+            
+    }, 
+    {
+        dataField:"persianOrderDate" ,
+        caption:"تاریخ سفارش",
+        allowEditing:false,   
+            
+    },                     
+    {
+        dataField:"stateName" ,
+        caption:"استان",
+        allowEditing:false
+    },
+    {
+        dataField:"cityName" ,
+        caption:"شهر",
+        allowEditing:false
+    }, 
+    {
+        dataField:"retailStoreName" ,
+        caption:"نام فروشگاه",
+        allowEditing:false,
+               
+    },
+    {
+        dataField:"productName" ,
+        caption:"نام کالا",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"barcode" ,
+        caption:"بارکد",
+        allowEditing:false,
+            
+    },  
+    {
+        dataField:"orderNumber" ,
+        caption:"تعداد سفارش",
+        allowEditing:true,
+            
+    },   
+    {
+        dataField:"supplierName" ,
+        caption:"نام تامین کننده",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"itemsPerPack" ,
+        caption:"تعداد در بسته",
+        allowEditing:false,
+                
+    },
+    {
+        dataField:"itemsPerPack2" ,
+        caption:"تعداد در بسته2",
+        allowEditing:false,
+                
+    },              
+    {
+        dataField:"description" ,
+        caption:"توضیحات",
+        allowEditing:true,
+            
+    },    
+    {
+        dataField:"extDocumentCode" ,
+        caption:"کد سند کیان",
+        allowEditing:false,
+                
+    }
+]

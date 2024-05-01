@@ -46,6 +46,24 @@ export async function supplierComboListByCompanyId(companyId,Token) {
   return null;
 }
 
+export async function supplierComboListByUserId(companyId,Token) {
+  const url = window.apiAddress + "/Supplier/supplierComboListByUserId?companyId="+companyId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("Supplier COMBO" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+
+
 export async function supplierOrderSupplierComboList(companyId,Token) {
   const url = window.apiAddress + "/Supplier/supplierOrderSupplierComboList?companyId="+companyId;
   const response = await fetch(url, {

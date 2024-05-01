@@ -50,6 +50,7 @@ import ItemLocationSnapps from '../pages/ItemLocationSnapps'
 import SnpOrderReports from '../pages/SnpOrderReports'
 import TissMapItemSSTIDs from '../pages/TissMapItemSSTIDs'
 import TissDataDocs from '../pages/TissDataDocs'
+import OrderPointSupplierConfirmReports from '../pages/OrderPointSupplierConfirmReports'
 
 export const REAL_COMPONENT = [
   {
@@ -270,6 +271,10 @@ export const REAL_COMPONENT = [
   {        
     strComponent: "TissDataDocs",
     orgComponent: <TissDataDocs />,
-  }                     
+  } , 
+  {        
+    strComponent: "OrderPointSupplierConfirmReports",
+    orgComponent: <OrderPointSupplierConfirmReports />,
+  }                      
 ];
 
