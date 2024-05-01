@@ -60,7 +60,7 @@ import {
 } from "../../redux/reducers/userLocation/userLocation-actions";
 import { DataGridUserColumns } from "../user/User-config";
 import { DataGridLocationColumns } from "../location/Location-config";
-
+import DataSource from "devextreme/data/data_source";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
@@ -87,7 +87,7 @@ class UserLocation extends React.Component {
       LocationId: null,
       LocationList: null,
       UserId: null,
-      UserList: null,
+      cmbUser: null,
       selectedItemKeys: [],
       LocationRowSelected:null,
     };
@@ -121,8 +121,14 @@ class UserLocation extends React.Component {
   };
 
   fn_userList = async () => {
+    const USERLIST=await userList(this.props.User.token);
+    const LAZY = new DataSource({
+      store: USERLIST,
+      paginate: true,
+      pageSize: 10,
+    });
     this.setState({
-      UserList: await userList(this.props.User.token),
+      cmbUser: LAZY
     });
   };
 
@@ -285,7 +291,7 @@ class UserLocation extends React.Component {
               <Col xs="auto">
                 <Label className="standardLabelFont">کاربر</Label>
                 <SelectBox
-                  dataSource={this.state.UserList}
+                  dataSource={this.state.cmbUser}
                   displayExpr="userName"
                   placeholder="کاربر"
                   valueExpr="id"
