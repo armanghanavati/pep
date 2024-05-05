@@ -57,6 +57,7 @@ import {
 import { userList} from "../../redux/reducers/user/user-actions";
 import { fetchTicketSubjectData, ticketSubjectWithGroupList} from "../../redux/reducers/ticketSubject/ticketSubject-actions";
 import { DataGridTicketSubjectUserColumns } from "./TicketSubjectUser-config";
+import DataSource from "devextreme/data/data_source";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
@@ -98,10 +99,16 @@ class PepObject extends React.Component {
     };
 
     fn_userList = async () => {
+        const USERLIST=await userList(this.props.User.token);
+        const LAZY = new DataSource({
+          store: USERLIST,
+          paginate: true,
+          pageSize: 10,
+        });
         this.setState({
-            cmbUser: await userList(this.props.User.token)
-        })
-    }
+          cmbUser: LAZY
+        });
+      };
 
     fn_ticketSubjectList = async () => {
         this.setState({
