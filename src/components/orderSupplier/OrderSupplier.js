@@ -557,25 +557,75 @@ class OrderSupplier extends React.Component {
     this.setState({ stateModal_LogsOfOPS: false });
   };
 
+  // btnUpdateOrders_onClick = async () => {
+  //   this.OpenCloseWait();
+  //   // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
+  //   await this.fn_RemoveSuppierForConfirm(this.state.OrderPointSupplierEdited, this.state.SupplierListSumMaxMinGridData)
+  //   // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
+  //   await updateGroupsOrderPointSupplier(
+  //     this.state.OrderPointSupplierEdited,
+  //     this.props.User.token
+  //   );
+  //   this.setState({
+  //     ToastProps: {
+  //       isToastVisible: true,
+  //       Message: (this.state.OrderPointSupplierEdited.length == 0) ? "سفارشی برای ویرایش وجود ندارد" : ",ویرایش با موفقیت انجام گردید.",
+  //       Type: (this.state.OrderPointSupplierEdited.length == 0) ? "info" : "success",
+  //     },
+  //     OrderPointSupplierEdited: (this.state.OrderPointSupplierEdited.length == 0) ? [] : this.state.OrderPointSupplierEdited,
+  //   });
+  //   this.OpenCloseWait();
+  // };
+
   btnUpdateOrders_onClick = async () => {
-    this.OpenCloseWait();
-    // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
-    await this.fn_RemoveSuppierForConfirm(this.state.OrderPointSupplierEdited, this.state.SupplierListSumMaxMinGridData)
-    // alert(JSON.stringify(this.state.OrderPointSupplierEdited))
-    await updateGroupsOrderPointSupplier(
-      this.state.OrderPointSupplierEdited,
-      this.props.User.token
-    );
-    this.setState({
-      ToastProps: {
-        isToastVisible: true,
-        Message: (this.state.OrderPointSupplierEdited.length == 0) ? "سفارشی برای ویرایش وجود ندارد" : ",ویرایش با موفقیت انجام گردید.",
-        Type: (this.state.OrderPointSupplierEdited.length == 0) ? "info" : "success",
-      },
-      OrderPointSupplierEdited: (this.state.OrderPointSupplierEdited.length == 0) ? [] : this.state.OrderPointSupplierEdited,
-    });
-    this.OpenCloseWait();
+    if(this.state.OrderPointSupplierEdited.length>0){
+      this.OpenCloseWait();    
+      await this.fn_RemoveSuppierForConfirm(this.state.OrderPointSupplierEdited, this.state.SupplierListSumMaxMinGridData);
+      const RTN = await updateGroupsOrderPointSupplier(
+        this.state.OrderPointSupplierEdited,
+        this.props.User.token
+      );
+      let tempOrders = [];
+      if (RTN.id != null) {
+        this.setState({
+          OrderPointSupplierEdited: []
+        });
+
+
+        const ORDER_INV = this.state.OrderSupplierGridData;
+        for (let i = 0; i < RTN.id.length; i++)
+          for (let j = 0; j < ORDER_INV.length; j++) {
+            if (RTN.id[i] == ORDER_INV[j].id)
+              tempOrders.push(ORDER_INV[j])
+          }
+      }
+      else {
+        tempOrders = this.state.OrderSupplierGridData;
+      }      
+      this.setState({
+        OrderSupplierGridData: tempOrders,
+        ToastProps: {
+          isToastVisible: true,
+          //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+          //Type:RTN==1 ? "success" : "error",
+          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.\n."+RTN.messageOfTime,
+          Type: RTN.id.length==0 ? "success" : "error",
+        },
+      });
+      this.OpenCloseWait();
+    }
+    else
+      this.setState({        
+        ToastProps: {
+          isToastVisible: true,
+          //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+          //Type:RTN==1 ? "success" : "error",
+          Message: "سفارش جهت ویرایش وجود ندارد.",
+          Type: "error" ,
+        },
+      });
   };
+
 
   fn_RemoveSuppierForConfirm = async (orders, removeList) => {
     for (let i = 0; i < removeList.length; i++) {
