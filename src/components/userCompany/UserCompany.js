@@ -59,7 +59,7 @@ import {
 } from "../../redux/reducers/userCompany/userCompany-actions";
 import { DataGridUserColumns } from "../user/User-config";
 import { DataGridCompanyColumns } from "../company/Company-config";
-
+import DataSource from "devextreme/data/data_source";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
@@ -85,8 +85,8 @@ class UserCompany extends React.Component {
       },
       CompanyId: null,
       CompanyList: null,
-      UserId: null,
-      UserList: null,
+      cmbUserValue: null,
+      cmbUser: null,
       selectedItemKeys: [],
     };
   }
@@ -119,8 +119,14 @@ class UserCompany extends React.Component {
   };
 
   fn_userList = async () => {
+    const USERLIST=await userList(this.props.User.token);
+    const LAZY = new DataSource({
+      store: USERLIST,
+      paginate: true,
+      pageSize: 10,
+    });
     this.setState({
-      UserList: await userList(this.props.User.token),
+      cmbUser: LAZY
     });
   };
 
@@ -153,7 +159,7 @@ class UserCompany extends React.Component {
   btnNew_onClick = () => {
     this.setState({
       CompanyId: null,
-      UserId: null,
+      cmbUserValue: null,
       stateUpdateDelete: false,
     });
   };
@@ -172,7 +178,7 @@ class UserCompany extends React.Component {
   btnAdd_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
-        userId: this.state.UserId,
+        userId: this.state.cmbUserValue,
         companyId: this.state.CompanyId,
       };
       const RESULT = await addUserCompany(data, this.props.User.token);
@@ -212,7 +218,7 @@ class UserCompany extends React.Component {
 
   cmbUser_onChange = (e) => {
     this.setState({
-      UserId: e,
+      cmbUserValue: e,
     });
   };
 
@@ -256,14 +262,14 @@ class UserCompany extends React.Component {
               <Col xs="auto">
                 <Label className="standardLabelFont">کاربر</Label>
                 <SelectBox
-                  dataSource={this.state.UserList}
+                  dataSource={this.state.cmbUser}
                   displayExpr="userName"
                   placeholder="کاربر"
                   valueExpr="id"
                   searchEnabled={true}
                   rtlEnabled={true}
                   onValueChange={this.cmbUser_onChange}
-                  value={this.state.UserId}
+                  value={this.state.cmbUserValue}
                 />
               </Col>
               <Col xs="auto">

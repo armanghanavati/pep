@@ -104,6 +104,12 @@ class User extends React.Component {
       RoleGridData: null,
       UserRoleGridData: null,
       selectedItemKeys: [],
+      stateModalCopyAccess: false,
+      cmbUser: null,
+      cmbUserValue: null,
+      cmbUserCopyAccess: null,
+      cmbUserCopyAccessValue: null,
+      selectedItemCopyAccessKeys: [],
     };
   }
 
@@ -313,7 +319,8 @@ class User extends React.Component {
     var items = this.dataGrid._items;
     if (e.toIndex >= items.length) return;
     const id = e.itemData.id;
-    const roleName = items[e.toIndex].name;
+    var roleName = [];
+    roleName.push(items[e.toIndex].name);
     var data = {
       userId: id,
       roleName: roleName,
@@ -323,6 +330,67 @@ class User extends React.Component {
     await this.fn_userRoleGrid(this.state.RowSelected.id);
   };
 
+  btnCopyAccess_onClick = async () => {
+    const USERLIST = await userList(this.props.User.token);
+    const LAZY = new DataSource({
+      store: USERLIST,
+      paginate: true,
+      pageSize: 10,
+    });
+    this.setState({
+      cmbUser: LAZY,
+      cmbUserCopyAccess: LAZY,
+      stateModalCopyAccess: true
+    });
+  }
+
+  ModalCopyAccess_onClickAway = () => {
+    this.setState({ stateModalCopyAccess: false, })
+  }
+
+  cmbUser_onChange = async (e) => {
+    this.setState({
+      cmbUserValue: e,
+      UserRoleCopyAccessGridData: await userRoleList(e, this.props.User.token)
+    });
+  }
+
+  cmbUserCopyAccess_onChange = (e) => {
+    this.setState({
+      cmbUserCopyAccessValue: e
+    });
+  }
+
+  btnAddCopyAccess_onClick = async () => {
+    document.getElementById("errUserCopyAccess").innerHTML = "";
+    document.getElementById("errUser").innerHTML = "";
+    document.getElementById("errRoleCopyAccess").innerHTML = "";
+    if (this.state.cmbUserValue == null) {
+      document.getElementById("errUser").innerHTML = "لطفا کاربر را انتخاب نمایید";
+      return;
+    }
+    if (this.state.cmbUserCopyAccessValue == null) {
+      document.getElementById("errUserCopyAccess").innerHTML = "لطفا کاربر مقصد را انتخاب نمایید";
+      return;
+    }
+    if (this.state.selectedItemCopyAccessKeys == null || !this.state.selectedItemCopyAccessKeys.length > 0) {
+      document.getElementById("errRoleCopyAccess").innerHTML = "لطفا نقش کاربر را انتخاب نمایید";
+      return;
+    }
+    var role = [];
+    var roleNames = this.state.selectedItemCopyAccessKeys;
+    roleNames.forEach(element => {
+      role.push(element.name)
+    });
+    var data = {
+      userId: this.state.cmbUserCopyAccessValue,
+      roleName: role,
+    };
+    //alert(JSON.stringify(data))
+    await roleAsignToUser(data, this.props.User.token);
+    this.fn_updateGrid();
+    await this.fn_userRoleGrid(this.state.RowSelected.id);
+  }
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -335,6 +403,113 @@ class User extends React.Component {
           width={ToastWidth}
           rtlEnabled={true}
         />
+        <Col>
+          <Modal style={{ direction: 'rtl' }}
+            isOpen={this.state.stateModalCopyAccess}
+            toggle={this.ModalCopyAccess_onClickAway}
+            centered={true}
+            size="lg"
+            className='fontStyle'
+          >
+            <ModalHeader>
+              کپی دسترسی ها
+            </ModalHeader>
+            <ModalBody>
+              <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#fff' }}>
+                <Row className="standardPadding">
+                  <Col xs='auto'>
+                    <Col xs="auto">
+                      <Label className="standardLabelFont">کاربر</Label>
+                      <SelectBox
+                        dataSource={this.state.cmbUser}
+                        displayExpr="userName"
+                        placeholder="نام کاربری"
+                        valueExpr="id"
+                        searchEnabled={true}
+                        rtlEnabled={true}
+                        onValueChange={this.cmbUser_onChange}
+                        value={this.state.cmbUserValue}
+                      />
+                    </Col>
+                    <Row>
+                      <Label
+                        id="errUser"
+                        className="standardLabelFont errMessage"
+                      />
+                    </Row>
+                  </Col>
+                  <Col xs='auto'>
+                    <Col xs="auto">
+                      <Label className="standardLabelFont">کاربر مقصد</Label>
+                      <SelectBox
+                        dataSource={this.state.cmbUserCopyAccess}
+                        displayExpr="userName"
+                        placeholder="کاربر مقصد"
+                        valueExpr="id"
+                        searchEnabled={true}
+                        rtlEnabled={true}
+                        onValueChange={this.cmbUserCopyAccess_onChange}
+                        value={this.state.cmbUserCopyAccessValue}
+                      />
+                    </Col>
+                    <Row>
+                      <Label
+                        id="errUserCopyAccess"
+                        className="standardLabelFont errMessage"
+                      />
+                    </Row>
+                  </Col>
+                </Row>
+                <Row className="standardPadding">
+                  <Col>
+                    <Row>
+                      <Label className="title">نقش کاربر</Label>
+                    </Row>
+                    <Row>
+                      <Col xs="auto">
+                        <DataGrid
+                          dataSource={this.state.UserRoleCopyAccessGridData}
+                          defaultColumns={DataGridRoleColumns}
+                          showBorders={true}
+                          rtlEnabled={true}
+                          allowColumnResizing={true}
+                          onRowClick={this.grdRoleCopyAccess_onClickRow}
+                          selectedRowKeys={this.state.selectedItemCopyAccessKeys}
+                          onSelectionChanged={this.selectionCopyAccessChanged}
+                        >
+                          <Selection mode="multiple" />
+                          <Scrolling
+                            rowRenderingMode="virtual"
+                            showScrollbar="always"
+                            columnRenderingMode="virtual"
+                          />
+                        </DataGrid>
+                      </Col>
+                      <Row>
+                        <Label
+                          id="errRoleCopyAccess"
+                          className="standardLabelFont errMessage"
+                        />
+                      </Row>
+                    </Row>
+                  </Col>
+                </Row>
+                <Row className="standardPadding">
+                  <Col xs="auto">
+                    <Button
+                      icon={UpdateIcon}
+                      text="ذخیره"
+                      type="success"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnAddCopyAccess_onClick}
+                    />
+                  </Col>
+                </Row>
+              </Row>
+            </ModalBody>
+          </Modal>
+        </Col>
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
@@ -350,6 +525,16 @@ class User extends React.Component {
                     stylingMode="contained"
                     rtlEnabled={true}
                     onClick={this.btnNew_onClick}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Button
+                    icon={SaveIcon}
+                    text="کپی دسترسی ها"
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnCopyAccess_onClick}
                   />
                 </Col>
               </Row>
@@ -541,7 +726,7 @@ class User extends React.Component {
                       showScrollbar="always"
                       columnRenderingMode="virtual"
                     />
-                     <FilterRow visible={true} />
+                    <FilterRow visible={true} />
                     <FilterPanel visible={true} />
                   </DataGrid>
                 </Col>
@@ -625,6 +810,13 @@ class User extends React.Component {
   selectionChanged = (data) => {
     this.setState({
       selectedItemKeys: data.selectedRowKeys,
+    });
+  };
+
+  selectionCopyAccessChanged = (data) => {
+    //alert(JSON.stringify(data.selectedRowKeys))
+    this.setState({
+      selectedItemCopyAccessKeys: data.selectedRowKeys,
     });
   };
 

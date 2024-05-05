@@ -14,8 +14,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
 
-window.apiAddress="http://localhost:7142/api";  
-// window.apiAddress="https://pepapi.minoomart.ir/api";
+//window.apiAddress="http://localhost:7142/api";  
+ window.apiAddress="https://pepapi.minoomart.ir/api";
 
 
 window.siteAddress = "https://pepapi.minoomart.ir";
