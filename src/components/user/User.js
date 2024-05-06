@@ -124,10 +124,17 @@ class User extends React.Component {
   }
 
   fn_personNoneAsignList = async () => {
+    const PERSONLIST= await personNoneAsignList(this.props.User.token)
+    const LAZY = new DataSource({
+      store: PERSONLIST,
+      paginate: true,
+      pageSize: 10,
+    });
     this.setState({
-      PersonList: await personNoneAsignList(this.props.User.token),
+      PersonList:LAZY
     });
   };
+
 
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show)
