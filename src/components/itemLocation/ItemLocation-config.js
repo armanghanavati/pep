@@ -66,7 +66,7 @@ export const DataGridItemLocationColumns = [
   },
   {
     dataField: "minPercentChange",
-    caption: "حداقل درصد افزایش",
+    caption: "حداکثر درصد کاهش",
     allowEditing: true,
   },
   {
@@ -87,6 +87,11 @@ export const DataGridItemLocationColumns = [
   {
     dataField: "maxAllowOrderNumberSnapp",
     caption: "تعداد مجاز سفارش اسنپ",
+    allowEditing: true,
+  },
+  {
+    dataField: "grade",
+    caption: "رتبه",
     allowEditing: true,
   },
 ];
