@@ -65,7 +65,7 @@ import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPo
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import { inventoryActions } from "../../redux/reducers/inventory/inventory-slice";
-import { remainOfEditInsertByLocationUser } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import { remainOfEditZeroOPIByLocationUser,remainOfEditOPIByLocationUser } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 
 import {
   itemListCombo,
@@ -365,11 +365,12 @@ class OrderInventory extends React.Component {
     const OBJ_COUNT={
       LocationId:params.oldData.locationId
     }
-    const REMAIN_ORDER = await remainOfEditInsertByLocationUser(OBJ_COUNT,this.props.User.token);    
+    const REMAIN_EDITORDER = await remainOfEditOPIByLocationUser(OBJ_COUNT,this.props.User.token);    
+    // const REMAIN_ZEROORDER = await remainOfEditZeroOPIByLocationUser(OBJ_COUNT,this.props.User.token);
     
-    if (tempOrderPointInventoryEdited.length >= REMAIN_ORDER && !flagEditRowCount) {
+    if (tempOrderPointInventoryEdited.length >= REMAIN_EDITORDER && !flagEditRowCount) {
       flagCount = false;
-      errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
+      errMsg += "کاربر گرامی ظرفیت ویرایش سفارشات فروشگاه تکمیل شده است";
     }
     // ------------------------------------------------    
     if (

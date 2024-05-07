@@ -152,12 +152,12 @@ class OrderInventoryNewGroup extends React.Component {
       }
     if (flagPush) {
       let temp = {
-        RetailStoreId: this.state.cmbLocationValue,
+        LocationId: this.state.cmbLocationValue,
         InventoryId: this .state.cmbInventoryvalue,
         SupplierId: this.state.cmbSupplierValue,
         ProductId: params.oldData.id,
         NumberOrder: parseInt(params.newData.order),
-        UserId: this.props.User.userId,
+        UserId: parseInt(this.props.User.userId),
       };
       NewOrder.push(temp);
     }
@@ -166,8 +166,7 @@ class OrderInventoryNewGroup extends React.Component {
 
 
   btnSaveGroup_onClick=async()=>{
-    this.OpenCloseWait();
-    // alert(JSON.stringify(this.state.NewDataGroup))
+    this.OpenCloseWait();     
     let data = {
         values: JSON.stringify(this.state.NewDataGroup)
     }
@@ -177,7 +176,7 @@ class OrderInventoryNewGroup extends React.Component {
     this.setState({        
       ToastProps: {
         isToastVisible: true,        
-        Message: RTN.msg,
+        Message: RTN.MSG,
         Type: "info" ,
       },
     });    

@@ -14,5 +14,5 @@ export const FILTER_BUILDER_POPUP_POSITION = {
 
 
 //----config for Toast-----------
-export const ToastTime=4000;
+export const ToastTime=10000;
 export const ToastWidth=600;

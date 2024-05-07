@@ -578,7 +578,17 @@ class OrderSupplier extends React.Component {
   // };
 
   btnUpdateOrders_onClick = async () => {
-    if(this.state.OrderPointSupplierEdited.length>0){
+    let MSG='';
+    let flagSend=true
+    if(this.state.SupplierListSumMaxMinGridData.length!==0){
+      MSG='محدودیت ریالی، وزنی و تعدادی رعایت نشده است.'
+      flagSend=false
+    }      
+    if(this.state.OrderPointSupplierEdited.length===0){
+      MSG+='\nسفارش جهت ویرایش وجود ندارد.'
+      flagSend=false
+    }
+    if(flagSend){
       this.OpenCloseWait();    
       await this.fn_RemoveSuppierForConfirm(this.state.OrderPointSupplierEdited, this.state.SupplierListSumMaxMinGridData);
       const RTN = await updateGroupsOrderPointSupplier(
@@ -608,7 +618,7 @@ class OrderSupplier extends React.Component {
           isToastVisible: true,
           //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
           //Type:RTN==1 ? "success" : "error",
-          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.\n."+RTN.messageOfTime,
+          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است.\n."+RTN.messageOfTime,
           Type: RTN.id.length==0 ? "success" : "error",
         },
       });
@@ -620,7 +630,7 @@ class OrderSupplier extends React.Component {
           isToastVisible: true,
           //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
           //Type:RTN==1 ? "success" : "error",
-          Message: "سفارش جهت ویرایش وجود ندارد.",
+          Message: MSG,
           Type: "error" ,
         },
       });

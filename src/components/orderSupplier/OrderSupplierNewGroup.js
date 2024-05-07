@@ -147,7 +147,7 @@ class OrderInventoryNewGroup extends React.Component {
         SupplierId: this.state.cmbSupplierValue,
         ItemId: params.oldData.id,
         NumberOrder: parseInt(params.newData.order),
-        UserId: this.props.User.userId,
+        UserId: parseInt(this.props.User.userId),
       };
       NewOrder.push(temp);
     }
