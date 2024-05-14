@@ -15,9 +15,9 @@ import { BrowserRouter } from "react-router-dom";
 
 
 
-window.apiAddress="http://localhost:7142/api";  
-//  window.apiAddress="https://pepapi.minoomart.ir/api";
-
+// window.apiAddress="http://localhost:7142/api";  
+ window.apiAddress="https://pepapi.minoomart.ir/api";
+// window.apiAddress="http://172.16.1.40:2923/api";  
 
 window.siteAddress = "https://pepapi.minoomart.ir";
 
