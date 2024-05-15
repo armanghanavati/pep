@@ -130,3 +130,21 @@ export async function snpOrderReport(object, token) {
   return null;
 }
 
+
+export async function snpOrderFinalConfirmSendOrder(object, Token) {
+  const url =
+    window.apiAddress + "/SnpOrder/snpOrderFinalConfirmSendOrder?orderId=" + object.orderId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();  
+  if (result.status == "Success") {
+    console.log("FInal COnfirm Order=" + JSON.stringify(result.jsonString));
+    return result.jsonString;
+  }
+  return null;
+}

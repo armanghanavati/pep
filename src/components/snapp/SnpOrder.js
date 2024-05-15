@@ -42,7 +42,8 @@ import {
     snpOrderDeclineReasonList,
     snpOrderDetailList,
     snpOrderList,
-    snpOrderReject
+    snpOrderReject,
+    snpOrderFinalConfirmSendOrder
 } from '../../redux/reducers/snapp/snpOrder-actions';
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
@@ -281,6 +282,22 @@ class SnpOrder extends React.Component {
         })
 
         await this.btnSearch_onClick();
+    }
+
+    btnFinalConfirmSend_onClick = async()=>{
+        this.OpenCloseWait();
+        const obj = {
+            orderId: this.state.SnpOrderId,            
+        }
+        var result = await snpOrderFinalConfirmSendOrder(obj, this.props.User.token);
+        this.OpenCloseWait();
+        this.setState({
+            ToastProps: {
+                isToastVisible: true,
+                Message: result ,
+                Type: "info",
+            }
+        })
     }
 
     btnReject_onClick = async () => {
@@ -596,6 +613,18 @@ class SnpOrder extends React.Component {
                                                             stylingMode="contained"
                                                             rtlEnabled={true}
                                                             onClick={this.btnReject_onClick}
+                                                            className="fontStyle"
+                                                        />
+                                                    </Col>
+
+                                                    <Col xs="auto">
+                                                        <Button
+                                                            icon={RegisterCommentIcon}
+                                                            text="تحویل سفارش و ثبت در کیان"
+                                                            type="success"
+                                                            stylingMode="contained"
+                                                            rtlEnabled={true}
+                                                            onClick={this.btnFinalConfirmSend_onClick}
                                                             className="fontStyle"
                                                         />
                                                     </Col>
