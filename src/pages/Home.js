@@ -218,7 +218,7 @@ class Home extends React.Component {
               isOpen={this.state.stateModalBakhshnamehNotification}
               toggle={this.ModalBakhshnamehNotification_onClickAway}
               centered={true}
-              size="xl"
+              size="lg"
               className="fontStyle"
             >
               <ModalHeader>

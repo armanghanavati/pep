@@ -62,7 +62,7 @@ import {
 } from "../../redux/reducers/bakhshnameh/bakhshnameh-actions";
 import { UploadFiles, AttachmentList } from '../../redux/reducers/Attachments/attachment-action';
 import { bakhshnamehTypeList } from "../../redux/reducers/bakhshnameh/bakhshnamehType-actions";
-import { positionList, searchPositionByBakhshnamehTypeIdList } from "../../redux/reducers/position/position-actions";
+import { positionList, searchPositionByBakhshnamehTypeIdList, searchPositionByUserId } from "../../redux/reducers/position/position-actions";
 import "../../assets/CSS/style.css";
 import { DataGridBakhshnamehColumns, tabs } from "./Bakhshnameh-config";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
@@ -132,27 +132,36 @@ class Bakhshnameh extends React.Component {
             bakhshnamehPostionList: null,
             AttachedFiles: null,
             Attachments: null,
+            positionId: null,
+            t:false,
         };
     }
     async componentDidMount() {
         await this.fn_GetPermissions();
         await this.fn_CheckRequireState();
+        // await this.fn_getPositionId();
         this.fn_bakhshnamehType();
         this.fn_updateGrid();
     }
 
     fn_bakhshnamehType = async () => {
         this.setState({
-            cmbBakhshnamehType: await bakhshnamehTypeList(7, this.props.User.token)
+            cmbBakhshnamehType: await bakhshnamehTypeList(await searchPositionByUserId(this.props.User.userId, this.props.Company.currentCompanyId, this.props.User.token), this.props.User.token)
         })
     }
 
     fn_updateGrid = async () => {
         if (this.state.stateDisable_show)
             this.setState({
-                BakhshnamehGridData: await bakhshnamehList(7, this.props.User.userId, this.props.User.token),
+                BakhshnamehGridData: await bakhshnamehList(await searchPositionByUserId(this.props.User.userId, this.props.Company.currentCompanyId, this.props.User.token), this.props.User.userId, this.props.User.token),
             });
     };
+
+    fn_getPositionId = async () => {
+        this.setState({
+            positionId: await searchPositionByUserId(this.props.User.userId, this.props.Company.currentCompanyId, this.props.User.token)
+        })
+    }
 
     fn_GetPermissions = () => {
         const perm = this.props.User.permissions;
@@ -264,7 +273,10 @@ class Bakhshnameh extends React.Component {
             txtTextValue: null,
             stateModalBakhshnameh: true,
             newState: true,
-            RowSelected: null
+            RowSelected: null,
+            Attachments: null,
+            AttachedFiles: null,
+            t:true,
         });
     };
 
@@ -276,12 +288,12 @@ class Bakhshnameh extends React.Component {
         document.getElementById("errTitle").innerHTML = "";
         if (this.state.cmbBakhshnamehTypeValue == null) {
             document.getElementById("errBakhshnamehType").innerHTML =
-                "نوع بخشنامه را وارد نمائید";
+                "نوع اسناد را وارد نمائید";
             flag = false;
         }
         if (this.state.txtTitleValue == null) {
             document.getElementById("errTitle").innerHTML =
-                "عنوان بخشنامه را وارد نمائید";
+                "عنوان اسناد را وارد نمائید";
             flag = false;
         }
 
@@ -422,7 +434,6 @@ class Bakhshnameh extends React.Component {
         } else {
             checkList = checkList.filter(id => id !== parseInt(checkedId))
         }
-        alert(checkedId)
     }
 
     render() {
@@ -447,17 +458,17 @@ class Bakhshnameh extends React.Component {
                             className="fontStyle"
                         >
                             <ModalHeader>
-                                ثبت بخشنامه
+                                ثبت اسناد
                             </ModalHeader>
                             <ModalBody>
                                 <Row className="standardPadding">
                                     <Row>
                                         <Col xs="auto">
-                                            <Label className="standardLabelFont">نوع بخشنامه</Label>
+                                            <Label className="standardLabelFont">نوع اسناد</Label>
                                             <SelectBox
                                                 dataSource={this.state.cmbBakhshnamehType}
                                                 displayExpr="name"
-                                                placeholder="انتخاب نوع بخشنامه"
+                                                placeholder="انتخاب نوع اسناد"
                                                 valueExpr="id"
                                                 searchEnabled={true}
                                                 rtlEnabled={true}
@@ -472,11 +483,11 @@ class Bakhshnameh extends React.Component {
                                             </Row>
                                         </Col>
                                         <Col xs={4}>
-                                            <Label className="standardLabelFont">عنوان بخشنامه</Label>
+                                            <Label className="standardLabelFont">عنوان سند</Label>
                                             <TextBox
                                                 value={this.state.txtTitleValue}
                                                 showClearButton={true}
-                                                placeholder="عنوان بخشنامه"
+                                                placeholder="عنوان سند"
                                                 rtlEnabled={true}
                                                 valueChangeEvent="keyup"
                                                 onValueChanged={this.txtTitle_onChange}
@@ -497,7 +508,7 @@ class Bakhshnameh extends React.Component {
                                                 //valueType={editorValueType}
                                                 value={this.state.txtTextValue}
                                                 onValueChanged={this.txtText_onChange}
-                                                //rtlEnabled="true"
+                                            //rtlEnabled="true"
                                             >
                                                 <MediaResizing enabled={true} />
                                                 <ImageUpload
@@ -561,8 +572,8 @@ class Bakhshnameh extends React.Component {
                                         </Col>
 
                                         <Row className="standardMargin">
-                                            {this.state.positionList != null && this.state.positionList.map((item, index) => (
-                                                <Col xs="auto">
+                                            <Col>
+                                                {this.state.positionList != null && this.state.positionList.map((item, index) => (
                                                     <label key={item.id}>
                                                         <input
                                                             type="checkbox"
@@ -573,55 +584,86 @@ class Bakhshnameh extends React.Component {
                                                         />
                                                         {item.positionName}
                                                     </label>
-                                                </Col>
-                                            )
-                                            )}
+                                                )
+                                                )}
+                                            </Col>
+                                            <Col>
+                                                {this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId &&(
+                                                    <Col xs="auto">
+                                                        <label for="file-TicketAttachment">
+                                                            <Button
+                                                                icon={AttachmentIcon}
+                                                                text="پیوست فایل"
+                                                                type="default"
+                                                                stylingMode="outlined"
+                                                                rtlEnabled={true}
+                                                                id="file-input"
+                                                                className="fontStyle"
+                                                            />
+
+                                                        </label>
+
+                                                        {this.state.AttachedFiles && this.state.AttachedFiles.map((item, key) =>
+                                                            <>
+                                                                <Col>{item.name}</Col>
+                                                                <Col>
+                                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearFileAttach_onClick(e)} width={10} height={10} />
+                                                                </Col>
+                                                            </>
+                                                        )}
+                                                        <input id="file-TicketAttachment" type="file" multiple style={{ display: "none" }} onChange={e => this.setFile(e)} />
+                                                        <p id="ErrTicketAttachments" className='errMessage' ></p>
+                                                    </Col>
+                                                )}
+                                                {this.state.RowSelected == null &&(
+                                                    <Col xs="auto">
+                                                        <label for="file-TicketAttachment">
+                                                            <Button
+                                                                icon={AttachmentIcon}
+                                                                text="پیوست فایل"
+                                                                type="default"
+                                                                stylingMode="outlined"
+                                                                rtlEnabled={true}
+                                                                id="file-input"
+                                                                className="fontStyle"
+                                                            />
+
+                                                        </label>
+
+                                                        {this.state.AttachedFiles && this.state.AttachedFiles.map((item, key) =>
+                                                            <>
+                                                                <Col>{item.name}</Col>
+                                                                <Col>
+                                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearFileAttach_onClick(e)} width={10} height={10} />
+                                                                </Col>
+                                                            </>
+                                                        )}
+                                                        <input id="file-TicketAttachment" type="file" multiple style={{ display: "none" }} onChange={e => this.setFile(e)} />
+                                                        <p id="ErrTicketAttachments" className='errMessage' ></p>
+                                                    </Col>
+                                                )}
+
+                                                <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
+                                                    {this.state.Attachments && this.state.Attachments.map((item, key) =>
+
+                                                        <Card className="shadow bg-white border pointer" key={key}>
+                                                            <Row className="standardPadding">
+                                                                <Col xs='auto'>
+                                                                    {(item.ext.toLowerCase() == ".jpg" || item.ext.toLowerCase() == ".png" || item.ext.toLowerCase() == ".jpeg" || item.ext.toLowerCase() == ".ico") &&
+                                                                        <img src={window.siteAddress + "/" + item.attachmentType + "/" + item.fileName + item.ext} style={{ width: "100px", height: "100px" }} />
+                                                                    }
+                                                                    <p><a href={window.siteAddress + "/" + item.attachmentType + "/" + item.fileName + item.ext} target="_blank">دانلود فایل {item.ext}</a></p>
+                                                                </Col>
+                                                            </Row>
+                                                        </Card>
+                                                    )}
+                                                </Row>
+                                            </Col>
                                         </Row>
 
-                                    </Row>
-                                    <Row className="standardMargin">
-                                        <Col xs="auto">
-                                            <label for="file-TicketAttachment">
-                                                <Button
-                                                    icon={AttachmentIcon}
-                                                    text="پیوست فایل"
-                                                    type="default"
-                                                    stylingMode="outlined"
-                                                    rtlEnabled={true}
-                                                    id="file-input"
-                                                    className="fontStyle"
-                                                />
 
-                                            </label>
-
-                                            {this.state.AttachedFiles && this.state.AttachedFiles.map((item, key) =>
-                                                <>
-                                                    <Col>{item.name}</Col>
-                                                    <Col>
-                                                        <img src={RejectIcon} id={key} onClick={e => this.btnClearFileAttach_onClick(e)} width={10} height={10} />
-                                                    </Col>
-                                                </>
-                                            )}
-                                            <input id="file-TicketAttachment" type="file" multiple style={{ display: "none" }} onChange={e => this.setFile(e)} />
-                                            <p id="ErrTicketAttachments" className='errMessage' ></p>
-                                        </Col>
                                     </Row>
 
-                                    <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
-                                        {this.state.Attachments && this.state.Attachments.map((item, key) =>
-
-                                            <Card className="shadow bg-white border pointer" key={key}>
-                                                <Row className="standardPadding">
-                                                    <Col xs='auto'>
-                                                        {(item.ext.toLowerCase() == ".jpg" || item.ext.toLowerCase() == ".png" || item.ext.toLowerCase() == ".jpeg" || item.ext.toLowerCase() == ".ico") &&
-                                                            <img src={window.siteAddress + "/" + item.attachmentType + "/" + item.fileName + item.ext} style={{ width: "100px", height: "100px" }} />
-                                                        }
-                                                        <p><a href={window.siteAddress + "/" + item.attachmentType + "/" + item.fileName + item.ext} target="_blank">دانلود فایل {item.ext}</a></p>
-                                                    </Col>
-                                                </Row>
-                                            </Card>
-                                        )}
-                                    </Row>
                                     {this.state.RowSelected == null && (
                                         <>
                                             <Row className="standardMargin">
@@ -629,7 +671,7 @@ class Bakhshnameh extends React.Component {
                                                     <Col xs="auto">
                                                         <Button
                                                             icon={SaveIcon}
-                                                            text="ثبت"
+                                                            text="ذخیره"
                                                             type="success"
                                                             stylingMode="contained"
                                                             rtlEnabled={true}
@@ -641,7 +683,7 @@ class Bakhshnameh extends React.Component {
                                                     <Col xs="auto">
                                                         <Button
                                                             icon={UpdateIcon}
-                                                            text="ذخیره تغییرات"
+                                                            text="دخیره تغییرات"
                                                             type="success"
                                                             stylingMode="contained"
                                                             rtlEnabled={true}
@@ -665,7 +707,7 @@ class Bakhshnameh extends React.Component {
                                                     <Col xs="auto">
                                                         <Button
                                                             icon={SaveIcon}
-                                                            text="ثبت نهایی"
+                                                            text="انتشار"
                                                             type="success"
                                                             stylingMode="contained"
                                                             rtlEnabled={true}
@@ -676,7 +718,7 @@ class Bakhshnameh extends React.Component {
                                             </Row>
                                         </>
                                     )}
-                                    {this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0 && (
+                                    { (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0) && (
                                         <>
                                             <Row className="standardMargin">
                                                 {this.state.stateDisable_btnAdd && (
@@ -745,7 +787,6 @@ class Bakhshnameh extends React.Component {
 
                             </ModalBody>
                         </Modal>
-
                     </Col>
                 </Row>
                 <Card className="shadow bg-white border pointer">

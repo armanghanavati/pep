@@ -88,3 +88,21 @@ export async function searchPositionByBakhshnamehTypeIdList(bakhshnamehTypeId, T
   }
   return null;
 }
+
+export async function searchPositionByUserId(userId, companyId, Token) {
+  const url =
+    window.apiAddress + "/Position/searchPositionByUserId?userId=" + userId + "&companyId=" + companyId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("Position by userId" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}

@@ -1,12 +1,12 @@
 export const DataGridBakhshnamehColumns = [
     {
       dataField: "id",
-      caption: "شماره بخشنامه",
+      caption: "شماره سند",
       allowEditing: false,
     },
     {
       dataField: "title",
-      caption: "عنوان بخشنامه",
+      caption: "عنوان سند",
       allowEditing: false,
     },
     {
@@ -15,7 +15,12 @@ export const DataGridBakhshnamehColumns = [
       allowEditing: false,
     },
     {
-      dataField: "statusLog",
+      dataField: "statusBakhshnameh",
+      caption: "وضعیت ثبت",
+      allowEditing: false,
+    },
+    {
+      dataField: "statusRead",
       caption: "وضعیت",
       allowEditing: false,
     }
