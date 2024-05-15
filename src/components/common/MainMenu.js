@@ -48,22 +48,22 @@ class MainMenu extends React.Component {
     await this.fn_Routing();
   }
 
-  fn_Routing=async()=>{
-    const ORG_URL=window.location.href;
-    const URL=ORG_URL.split('/');
-    const LINK_PATH = ORG_URL.substring(ORG_URL.indexOf(URL[3]),ORG_URL.length);
-    const LINK_COMPONENT=URL[URL.length-1];
+  fn_Routing = async () => {
+    const ORG_URL = window.location.href;
+    const URL = ORG_URL.split('/');
+    const LINK_PATH = ORG_URL.substring(ORG_URL.indexOf(URL[3]), ORG_URL.length);
+    const LINK_COMPONENT = URL[URL.length - 1];
 
-    const PERMISSIONS=this.props.User.permissions
-    for(let i=0;i<PERMISSIONS.length;i++)
-      if(PERMISSIONS[i].linkName==LINK_COMPONENT){                  
+    const PERMISSIONS = this.props.User.permissions
+    for (let i = 0; i < PERMISSIONS.length; i++)
+      if (PERMISSIONS[i].linkName == LINK_COMPONENT) {
         this.setState({
-          linkPath:'/'+LINK_PATH,   
-          stateDenyPermission:false   
-        })    
-        await this.fn_FindLinkComponent(LINK_COMPONENT);            
+          linkPath: '/' + LINK_PATH,
+          stateDenyPermission: false
+        })
+        await this.fn_FindLinkComponent(LINK_COMPONENT);
         document.getElementById('lnkRoute').click();
-      }      
+      }
   }
 
   fn_FindLinkComponent = (linkParams) => {
@@ -106,23 +106,23 @@ class MainMenu extends React.Component {
     return convertedPerm;
   }
 
-  mnuMainMenu_onClick= async(e)=>{
+  mnuMainMenu_onClick = async (e) => {
     // alert(JSON.stringify(e.itemData))
     // switch(e.itemData.Name){
     //     case 'cartable': this.props.dispatch(paymentActions.enableRequestPayment()); break;
     // }        
     let token = this.props.User.token
     await checkTokenExpire(token);
-      this.setState({
-        currentItem: e.itemData ,
-        linkPath:'/'+e.itemData.LinkName,
-        linkComponent:e.itemData.LinkComponent
-      });                
-      
+    this.setState({
+      currentItem: e.itemData,
+      linkPath: '/' + e.itemData.LinkName,
+      linkComponent: e.itemData.LinkComponent
+    });
+
   }
 
-  componentDidUpdate(prevProps, prevState){
-    if (prevState.currentItem !== this.state.currentItem )
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.currentItem !== this.state.currentItem)
       document.getElementById('lnkRoute').click();
   }
 
@@ -151,17 +151,17 @@ class MainMenu extends React.Component {
                   searchEnabled={true}
                   onItemClick={this.mnuMainMenu_onClick}
                   elementAttr={MAIN_MENU_ATTR}
-                  //children= {<span style={{display: 'inline-block',marginTop: '-33px',borderBottom: '1px solid gray',borderRight: '1px solid gray',width: '20px',height: '40px'}}></span>}
+                //children= {<span style={{display: 'inline-block',marginTop: '-33px',borderBottom: '1px solid gray',borderRight: '1px solid gray',width: '20px',height: '40px'}}></span>}
                 />
               </div>
             </Col>
           }
           <Col style={{ minWidth: "400px" }}>
-            <div style={{ color: 'black' }}>     
-                  <Link id='lnkProfile' to="/Profiles"></Link>
-                  <Routes>
-                    <Route exact path={this.props.linkPath} element={this.props.linkComponent}></Route>
-                  </Routes>
+            <div style={{ color: 'black' }}>
+              <Link id='lnkProfile' to="/Profiles"></Link>
+              <Routes>
+                <Route exact path={this.props.linkPath} element={this.props.linkComponent}></Route>
+              </Routes>
             </div>
             <div style={{ color: 'black' }}>
               <Link id="lnkRoute" to={this.state.linkPath}></Link>

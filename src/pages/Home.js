@@ -1,17 +1,31 @@
 import React from "react";
 import { connect } from "react-redux";
+import {
+  Row,
+  Col,
+  Card,
+  Label,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "reactstrap";
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import "../assets/CSS/style.css";
 import "../assets/CSS/mainDrawer_style.css";
 import List from "devextreme-react/list";
-import { Row, Col, Button } from "reactstrap";
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { locale } from "devextreme/localization";
 import Toolbar, { Item } from "devextreme-react/toolbar";
 import SelectBox from "devextreme-react/select-box";
-
 import { companyActions } from "../redux/reducers/company/company-slice";
 import { companyListCombo } from "../redux/reducers/company/company-actions";
+import { bakhshnamehNoneReadList } from "../redux/reducers/bakhshnameh/bakhshnameh-actions";
 import { userActions } from "../redux/reducers/user/user-slice";
 import { hubConnectionActions } from "../redux/reducers/hubConnection/hubConnection-slice"
 import MainMenu from "../components/common/MainMenu";
@@ -34,7 +48,9 @@ class Home extends React.Component {
       profile: null,
       hubConnection: null,
       stateSignalNotification: false,
-      message: ""
+      message: "",
+      noneReadBakhshnameh: false,
+      stateModalBakhshnamehNotification: false,
     };
   }
   audio = new Audio(sound)
@@ -59,7 +75,9 @@ class Home extends React.Component {
     );
     // this.audio.muted = false; // without this line it's not working although I have "muted" in HTML
     // this.audio.play();
+    this.fn_noneReadBakhshnameh();
   }
+
 
 
 
@@ -80,6 +98,13 @@ class Home extends React.Component {
     );
   };
 
+  fn_noneReadBakhshnameh = async () => {
+    var result = await bakhshnamehNoneReadList(7, this.props.User.userId, this.props.User.token)
+    if (result != null)
+      this.setState({
+        stateModalBakhshnamehNotification: true
+      })
+  }
   cmbCompany_onChange = (e) => {
     let currentCompanyId = parseInt(e);
     this.props.dispatch(
@@ -101,7 +126,7 @@ class Home extends React.Component {
     });
     // alert(this.state.linkPath)
     //if (this.state.linkPath != null)
-      document.getElementById("lnkProfile").click();
+    document.getElementById("lnkProfile").click();
   }
 
   saveUserData = (userId, token, permissions) => {
@@ -127,13 +152,20 @@ class Home extends React.Component {
     })
   }
 
+  ModalBakhshnamehNotification_onClickAway = () => {
+    this.setState({ stateModalBakhshnamehNotification: false })
+  }
+
   render() {
     locale("fa-IR");
     return (
       <div className="mainRow">
         {/* <Row style={{position:'fixed',width:'100vh',top:'0',left:'0',zIndex:'9999',width:'100%'}}> */}
         <Row>
-          <Toolbar>
+          <Toolbar style={{
+            "background-color": "#00345c",
+            "padding": "5px 10px"
+          }}>
             <Item location="center">
               <img src={logo} style={{ width: "235px", margin: "auto" }} />
             </Item>
@@ -180,6 +212,32 @@ class Home extends React.Component {
             </Row>
           </Row>
         )}
+        <Row className="text-center">
+          <Col>
+            <Modal style={{ direction: 'rtl' }}
+              isOpen={this.state.stateModalBakhshnamehNotification}
+              toggle={this.ModalBakhshnamehNotification_onClickAway}
+              centered={true}
+              size="xl"
+              className="fontStyle"
+            >
+              <ModalHeader>
+                اطلاعیه
+              </ModalHeader>
+              <ModalBody>
+                <Row className="standardPadding">
+                  <Row>
+                    <Col xs="auto">
+                      شما اسناد خوانده نشده دارید لطفا به بخشنامه ها مراجع شود
+                    </Col>
+
+                  </Row>
+                </Row>
+
+              </ModalBody>
+            </Modal>
+          </Col>
+        </Row>
       </div>
     );
   }
