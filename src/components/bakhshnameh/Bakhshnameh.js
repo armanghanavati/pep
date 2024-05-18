@@ -588,7 +588,7 @@ class Bakhshnameh extends React.Component {
                                                 )}
                                             </Col>
                                             <Col>
-                                                {this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId &&(
+                                                {(this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId) || this.state.RowSelected == null &&(
                                                     <Col xs="auto">
                                                         <label for="file-TicketAttachment">
                                                             <Button
@@ -615,33 +615,7 @@ class Bakhshnameh extends React.Component {
                                                         <p id="ErrTicketAttachments" className='errMessage' ></p>
                                                     </Col>
                                                 )}
-                                                {this.state.RowSelected == null &&(
-                                                    <Col xs="auto">
-                                                        <label for="file-TicketAttachment">
-                                                            <Button
-                                                                icon={AttachmentIcon}
-                                                                text="پیوست فایل"
-                                                                type="default"
-                                                                stylingMode="outlined"
-                                                                rtlEnabled={true}
-                                                                id="file-input"
-                                                                className="fontStyle"
-                                                            />
 
-                                                        </label>
-
-                                                        {this.state.AttachedFiles && this.state.AttachedFiles.map((item, key) =>
-                                                            <>
-                                                                <Col>{item.name}</Col>
-                                                                <Col>
-                                                                    <img src={RejectIcon} id={key} onClick={e => this.btnClearFileAttach_onClick(e)} width={10} height={10} />
-                                                                </Col>
-                                                            </>
-                                                        )}
-                                                        <input id="file-TicketAttachment" type="file" multiple style={{ display: "none" }} onChange={e => this.setFile(e)} />
-                                                        <p id="ErrTicketAttachments" className='errMessage' ></p>
-                                                    </Col>
-                                                )}
 
                                                 <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
                                                     {this.state.Attachments && this.state.Attachments.map((item, key) =>
@@ -664,7 +638,7 @@ class Bakhshnameh extends React.Component {
 
                                     </Row>
 
-                                    {this.state.RowSelected == null && (
+                                    { (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0) || this.state.RowSelected == null &&(
                                         <>
                                             <Row className="standardMargin">
                                                 {this.state.stateDisable_btnAdd && (
@@ -672,60 +646,6 @@ class Bakhshnameh extends React.Component {
                                                         <Button
                                                             icon={SaveIcon}
                                                             text="ذخیره"
-                                                            type="success"
-                                                            stylingMode="contained"
-                                                            rtlEnabled={true}
-                                                            onClick={this.btnAdd_onClick}
-                                                        />
-                                                    </Col>
-                                                )}
-                                                {this.state.stateDisable_btnUpdate && (
-                                                    <Col xs="auto">
-                                                        <Button
-                                                            icon={UpdateIcon}
-                                                            text="دخیره تغییرات"
-                                                            type="success"
-                                                            stylingMode="contained"
-                                                            rtlEnabled={true}
-                                                            onClick={this.btnUpdate_onClick}
-                                                        />
-                                                    </Col>
-                                                )}
-                                                {this.state.stateDisable_btnDelete && (
-                                                    <Col xs="auto">
-                                                        <Button
-                                                            icon={DeleteIcon}
-                                                            text="حذف"
-                                                            type="danger"
-                                                            stylingMode="contained"
-                                                            rtlEnabled={true}
-                                                            onClick={this.btnDelete_onClick}
-                                                        />
-                                                    </Col>
-                                                )}
-                                                {this.state.stateDisable_btnAdd && (
-                                                    <Col xs="auto">
-                                                        <Button
-                                                            icon={SaveIcon}
-                                                            text="انتشار"
-                                                            type="success"
-                                                            stylingMode="contained"
-                                                            rtlEnabled={true}
-                                                            onClick={this.btnAddConfirm_onClick}
-                                                        />
-                                                    </Col>
-                                                )}
-                                            </Row>
-                                        </>
-                                    )}
-                                    { (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0) && (
-                                        <>
-                                            <Row className="standardMargin">
-                                                {this.state.stateDisable_btnAdd && (
-                                                    <Col xs="auto">
-                                                        <Button
-                                                            icon={SaveIcon}
-                                                            text="ثبت"
                                                             type="success"
                                                             stylingMode="contained"
                                                             rtlEnabled={true}
@@ -761,7 +681,7 @@ class Bakhshnameh extends React.Component {
                                                     <Col xs="auto">
                                                         <Button
                                                             icon={SaveIcon}
-                                                            text="ثبت نهایی"
+                                                            text="انتشار"
                                                             type="success"
                                                             stylingMode="contained"
                                                             rtlEnabled={true}
