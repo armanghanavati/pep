@@ -588,7 +588,7 @@ class Bakhshnameh extends React.Component {
                                                 )}
                                             </Col>
                                             <Col>
-                                                {(this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId) || this.state.RowSelected == null &&(
+                                                { this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId)&&(
                                                     <Col xs="auto">
                                                         <label for="file-TicketAttachment">
                                                             <Button
@@ -638,7 +638,7 @@ class Bakhshnameh extends React.Component {
 
                                     </Row>
 
-                                    { (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0) || this.state.RowSelected == null &&(
+                                    {  this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0) &&(
                                         <>
                                             <Row className="standardMargin">
                                                 {this.state.stateDisable_btnAdd && (
