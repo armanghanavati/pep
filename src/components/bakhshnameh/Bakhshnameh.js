@@ -78,6 +78,7 @@ import { searchBakhshnamehPositionByBakhshnamehIdList } from "../../redux/reduce
 import { accordionActionsClasses } from "@mui/material";
 import { Checklist, FlashAuto } from "@mui/icons-material";
 import { personList } from "../../redux/reducers/person/person-actions";
+import { json } from "react-router";
 
 const sizeValues = ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt'];
 const fontValues = [
@@ -134,7 +135,7 @@ class Bakhshnameh extends React.Component {
             AttachedFiles: null,
             Attachments: null,
             positionId: null,
-            bakhshnamehId:null,
+            bakhshnamehId: null,
         };
     }
     async componentDidMount() {
@@ -283,7 +284,7 @@ class Bakhshnameh extends React.Component {
             Attachments: null,
             AttachedFiles: null,
             positionList: null,
-            checkList:null
+            checkList: null
         });
     };
 
@@ -338,7 +339,7 @@ class Bakhshnameh extends React.Component {
                     AttachmentName: "bakhshnameh"
                 }
                 this.setState({
-                    bakhshnamehId:RESULT.id
+                    bakhshnamehId: RESULT.id
                 })
                 this.state.AttachedFiles && await UploadFiles(attachObj, this.props.User.token);
             }
@@ -367,7 +368,7 @@ class Bakhshnameh extends React.Component {
                 Message: RESULT != null ? "وایریش با موفقیت انجام گردید" : "عدم ویرایش",
                 Type: RESULT != null ? "success" : "error",
             },
-            stateModalBakhshnameh:false,
+            stateModalBakhshnameh: false,
         });
         this.fn_updateGrid();
     }
@@ -407,13 +408,13 @@ class Bakhshnameh extends React.Component {
             };
 
             const RESULT = await updateBakhshnameh(data, this.props.User.token);
-                    const attachObj = {
-                        AttachedFile: this.state.AttachedFiles,
-                        AttachmentId: this.state.RowSelected == null ? this.state.bakhshnamehId : this.state.RowSelected.id,
-                        AttachmentType: "bk",
-                        AttachmentName: "bakhshnameh"
-                    }
-                    this.state.AttachedFiles && await UploadFiles(attachObj, this.props.User.token);
+            const attachObj = {
+                AttachedFile: this.state.AttachedFiles,
+                AttachmentId: this.state.RowSelected == null ? this.state.bakhshnamehId : this.state.RowSelected.id,
+                AttachmentType: "bk",
+                AttachmentName: "bakhshnameh"
+            }
+            this.state.AttachedFiles && await UploadFiles(attachObj, this.props.User.token);
             this.setState({
                 ToastProps: {
                     isToastVisible: true,
@@ -440,7 +441,7 @@ class Bakhshnameh extends React.Component {
                 Message: RESULT > 0 ? "حذف با موفقیت انجام گردید" : "عدم حذف",
                 Type: RESULT > 0 ? "success" : "error",
             },
-            stateModalBakhshnameh:false
+            stateModalBakhshnameh: false
         });
         this.fn_updateGrid();
     };
@@ -465,16 +466,23 @@ class Bakhshnameh extends React.Component {
             checkList = checkList.filter(id => id !== parseInt(checkedId))
         }
         var result = [];
+        alert(JSON.stringify(checkList))
         if (this.state.positionList.length > 0) {
             for (var i = 0; i < this.state.positionList.length; i++) {
                 if (checkList[i] == this.state.positionList[i].id) {
                     result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName, check: "checked" })
                 }
+                else if (typeof checkList[i] == 'undefined') {
+                    if (checkList.indexOf(this.state.positionList[i].id) === -1)
+                        result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName })
+                    else
+                        result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName, check: "checked" })
+                }
                 else {
                     result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName })
                 }
             }
-
+            alert("result" + JSON.stringify(result))
             this.setState({
                 positionList: result
             })
@@ -621,7 +629,7 @@ class Bakhshnameh extends React.Component {
                                                     id="errText"
                                                     className="standardLabelFont errMessage"
                                                 />
-                                            </Row>                     
+                                            </Row>
                                         </Col>
 
                                         <Row className="standardMargin">
