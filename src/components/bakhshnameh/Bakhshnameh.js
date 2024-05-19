@@ -76,7 +76,8 @@ import DeleteIcon from "../../assets/images/icon/delete.png";
 import { addBakhshnamehLog } from "../../redux/reducers/bakhshnameh/bakhshnamehLog-ations";
 import { searchBakhshnamehPositionByBakhshnamehIdList } from "../../redux/reducers/bakhshnameh/bakhshnamehPosition-actions";
 import { accordionActionsClasses } from "@mui/material";
-import { FlashAuto } from "@mui/icons-material";
+import { Checklist, FlashAuto } from "@mui/icons-material";
+import { personList } from "../../redux/reducers/person/person-actions";
 
 const sizeValues = ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt'];
 const fontValues = [
@@ -133,7 +134,7 @@ class Bakhshnameh extends React.Component {
             AttachedFiles: null,
             Attachments: null,
             positionId: null,
-            t:false,
+            bakhshnamehId:null,
         };
     }
     async componentDidMount() {
@@ -231,8 +232,6 @@ class Bakhshnameh extends React.Component {
     grdBakhshnameh_onClickRow = async (e) => {
         var sb = await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token) // سمت های مربوط به بخشنامه
         var stb = await searchPositionByBakhshnamehTypeIdList(e.data.bakhshnamehTypeId, this.props.User.token) // سمت های مربوط به نوع بخشنامه
-        //alert(JSON.stringify(p))
-        //alert(JSON.stringify(t))
         this.setState({
             cmbBakhshnamehTypeValue: e.data.bakhshnamehTypeId,
             txtTitleValue: e.data.title,
@@ -245,15 +244,15 @@ class Bakhshnameh extends React.Component {
         var position = [];
         for (var i = 0; i < stb.length; i++) {
             if (sb.length < i + 1) {
-                position.push({ positionId: stb[i].id, positionName: stb[i].positionName, check: false })
+                position.push({ id: stb[i].id, positionName: stb[i].positionName })
                 continue;
             }
 
             if (stb[i].id == sb[i].positionId) {
-                position.push({ positionId: stb[i].id, positionName: stb[i].positionName, check: true })
+                position.push({ id: stb[i].id, positionName: stb[i].positionName, check: "checked" })
             }
             else {
-                position.push({ positionId: stb[i].id, positionName: stb[i].positionName, check: false })
+                position.push({ id: stb[i].id, positionName: stb[i].positionName })
             }
         }
         this.setState({
@@ -264,6 +263,13 @@ class Bakhshnameh extends React.Component {
         }
         this.setState({ Attachments: await AttachmentList(obj, this.props.User.token) })
         //alert(JSON.stringify(position))
+
+        if (position != null) {
+            position.forEach((item, index) => {
+                if (checkList[index] != item.id)
+                    checkList.push(item.id); //  اضافه شدن به لیست سمت ها بعد از کلیک روی ردیف برای جلوگیری از ردیف تکراری
+            });
+        }
     };
 
     btnNew_onClick = () => {
@@ -276,7 +282,7 @@ class Bakhshnameh extends React.Component {
             RowSelected: null,
             Attachments: null,
             AttachedFiles: null,
-            t:true,
+            positionList: null
         });
     };
 
@@ -286,6 +292,8 @@ class Bakhshnameh extends React.Component {
         let flag = true;
         document.getElementById("errBakhshnamehType").innerHTML = "";
         document.getElementById("errTitle").innerHTML = "";
+        document.getElementById("errPosition").innerHTML = "";
+        document.getElementById("errText").innerHTML = "";
         if (this.state.cmbBakhshnamehTypeValue == null) {
             document.getElementById("errBakhshnamehType").innerHTML =
                 "نوع اسناد را وارد نمائید";
@@ -294,6 +302,16 @@ class Bakhshnameh extends React.Component {
         if (this.state.txtTitleValue == null) {
             document.getElementById("errTitle").innerHTML =
                 "عنوان اسناد را وارد نمائید";
+            flag = false;
+        }
+        if (checkList.length < 1) {
+            document.getElementById("errPosition").innerHTML =
+                "سمت را وارد نمائید";
+            flag = false;
+        }
+        if (this.state.txtTitleValue == null || this.state.txtTitleValue == "") {
+            document.getElementById("errText").innerHTML =
+                "متن را وارد نمائید";
             flag = false;
         }
 
@@ -318,6 +336,9 @@ class Bakhshnameh extends React.Component {
                     AttachmentType: "bk",
                     AttachmentName: "bakhshnameh"
                 }
+                this.setState({
+                    bakhshnamehId:RESULT.id
+                })
                 this.state.AttachedFiles && await UploadFiles(attachObj, this.props.User.token);
             }
             this.setState({
@@ -334,7 +355,7 @@ class Bakhshnameh extends React.Component {
     btnAddConfirm_onClick = async () => {
         var data =
         {
-            id: this.state.RowSelected.id,
+            id: this.state.RowSelected == null ? this.state.bakhshnamehId : this.state.RowSelected.id,
             status: 1 // final
         }
 
@@ -345,6 +366,7 @@ class Bakhshnameh extends React.Component {
                 Message: RESULT != null ? "وایریش با موفقیت انجام گردید" : "عدم ویرایش",
                 Type: RESULT != null ? "success" : "error",
             },
+            stateModalBakhshnameh:false,
         });
         this.fn_updateGrid();
     }
@@ -376,16 +398,21 @@ class Bakhshnameh extends React.Component {
     btnUpdate_onClick = async () => {
         if (await this.fn_CheckValidation()) {
             const data = {
-                id: this.state.CompanyId,
-                companyName: this.state.txtCompanyNameValue,
-                economicCode: this.state.txtEconomicCodeValue,
-                nationalCode: this.state.txtNationalCodeValue,
-                address: this.state.txtAddressValue,
-                companyType: this.state.txtCompanyTypeValue,
-                isActive: this.state.chkIsActive,
+                id: this.state.RowSelected == null ? this.state.bakhshnamehId : this.state.RowSelected.id,
+                bakhshnamehTypeId: this.state.cmbBakhshnamehTypeValue,
+                title: this.state.txtTitleValue,
+                text: this.state.txtTextValue,
+                bakhshnamehIds: checkList
             };
 
             const RESULT = await updateBakhshnameh(data, this.props.User.token);
+                    const attachObj = {
+                        AttachedFile: this.state.AttachedFiles,
+                        AttachmentId: this.state.RowSelected == null ? this.state.bakhshnamehId : this.state.RowSelected.id,
+                        AttachmentType: "bk",
+                        AttachmentName: "bakhshnameh"
+                    }
+                    this.state.AttachedFiles && await UploadFiles(attachObj, this.props.User.token);
             this.setState({
                 ToastProps: {
                     isToastVisible: true,
@@ -412,6 +439,7 @@ class Bakhshnameh extends React.Component {
                 Message: RESULT > 0 ? "حذف با موفقیت انجام گردید" : "عدم حذف",
                 Type: RESULT > 0 ? "success" : "error",
             },
+            stateModalBakhshnameh:false
         });
         this.fn_updateGrid();
     };
@@ -428,12 +456,31 @@ class Bakhshnameh extends React.Component {
 
     chkPosition_onChange = (event) => {
         const checkedId = event.target.value;
-
         if (event.target.checked) {
-            checkList = [...checkList, parseInt(checkedId)]
+            if (checkList.indexOf(parseInt(checkedId)) === -1) {
+                checkList = [...checkList, parseInt(checkedId)]
+
+            }
         } else {
             checkList = checkList.filter(id => id !== parseInt(checkedId))
         }
+        var result = [];
+        if (this.state.positionList.length > 0) {
+            for (var i = 0; i < this.state.positionList.length; i++) {
+                if (checkList[i] == this.state.positionList[i].id) {
+                    result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName, check: "checked" })
+                }
+                else {
+                    result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName })
+                }
+            }
+
+            this.setState({
+                positionList: result
+            })
+        }
+
+        //alert(JSON.stringify(checkList))
     }
 
     render() {
@@ -569,12 +616,19 @@ class Bakhshnameh extends React.Component {
                                                     <Item name="deleteColumn" />
                                                 </Toolbar>
                                             </HtmlEditor>
+                                            <Row>
+                                                <Label
+                                                    id="errText"
+                                                    className="standardLabelFont errMessage"
+                                                />
+                                            </Row>                     
                                         </Col>
 
                                         <Row className="standardMargin">
                                             <Col>
                                                 {this.state.positionList != null && this.state.positionList.map((item, index) => (
-                                                    <label key={item.id}>
+
+                                                    <label key={item.id} style={{ marginRight: "20px" }}>
                                                         <input
                                                             type="checkbox"
                                                             value={item.id}
@@ -586,9 +640,15 @@ class Bakhshnameh extends React.Component {
                                                     </label>
                                                 )
                                                 )}
+                                                <Row>
+                                                    <Label
+                                                        id="errPosition"
+                                                        className="standardLabelFont errMessage"
+                                                    />
+                                                </Row>
                                             </Col>
                                             <Col>
-                                                { this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId)&&(
+                                                {(this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId)) && (
                                                     <Col xs="auto">
                                                         <label for="file-TicketAttachment">
                                                             <Button
@@ -617,7 +677,7 @@ class Bakhshnameh extends React.Component {
                                                 )}
 
 
-                                                <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px', background: '#ffcdcd' }}>
+                                                <Row className="standardPadding" style={{ overflowY: 'scroll', maxHeight: '450px' }}>
                                                     {this.state.Attachments && this.state.Attachments.map((item, key) =>
 
                                                         <Card className="shadow bg-white border pointer" key={key}>
@@ -638,7 +698,7 @@ class Bakhshnameh extends React.Component {
 
                                     </Row>
 
-                                    {  this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0) &&(
+                                    {(this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0)) && (
                                         <>
                                             <Row className="standardMargin">
                                                 {this.state.stateDisable_btnAdd && (
