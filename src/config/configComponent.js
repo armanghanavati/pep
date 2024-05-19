@@ -51,6 +51,7 @@ import SnpOrderReports from '../pages/SnpOrderReports'
 import TissMapItemSSTIDs from '../pages/TissMapItemSSTIDs'
 import TissDataDocs from '../pages/TissDataDocs'
 import OrderPointSupplierConfirmReports from '../pages/OrderPointSupplierConfirmReports'
+import Bakhshnamehs from '../pages/Bakhshnamehs'
 
 export const REAL_COMPONENT = [
   {
@@ -275,6 +276,10 @@ export const REAL_COMPONENT = [
   {        
     strComponent: "OrderPointSupplierConfirmReports",
     orgComponent: <OrderPointSupplierConfirmReports />,
+  } , 
+  {        
+    strComponent: "Bakhshnamehs",
+    orgComponent: <Bakhshnamehs />,
   }                      
 ];
 
