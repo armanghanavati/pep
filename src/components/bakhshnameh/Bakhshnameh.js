@@ -377,10 +377,10 @@ class Bakhshnameh extends React.Component {
         this.setState({ txtTitleValue: e.value });
     };
     cmbBakhshnamehType_onChange = async (e) => {
-        this.setState({ positionList: await searchPositionByBakhshnamehTypeIdList(e, this.props.User.token) })
-        this.setState({
-            cmbBakhshnamehTypeValue: e
+        this.setState({ positionList: await searchPositionByBakhshnamehTypeIdList(e, this.props.User.token),
+            cmbBakhshnamehTypeValue: e,
         });
+        checkList=[];
     };
     chkIsRead_onChange = async (e) => {
         if (e.value) {
@@ -432,17 +432,17 @@ class Bakhshnameh extends React.Component {
 
     btnDelete_onClick = async () => {
         const RESULT = await deleteBakhshnameh(
-            this.state.RowSelected.id,
+            this.state.RowSelected == null ? this.state.bakhshnamehId : this.state.RowSelected.id,
             this.props.User.token
         );
         this.setState({
+            stateModalBakhshnameh: false,
             ToastProps: {
-                isToastVisible: true,
-                Message: RESULT > 0 ? "حذف با موفقیت انجام گردید" : "عدم حذف",
-                Type: RESULT > 0 ? "success" : "error",
+              isToastVisible: true,
+              Message: RESULT,
+              Type: "success",
             },
-            stateModalBakhshnameh: false
-        });
+          });
         this.fn_updateGrid();
     };
 
@@ -466,7 +466,6 @@ class Bakhshnameh extends React.Component {
             checkList = checkList.filter(id => id !== parseInt(checkedId))
         }
         var result = [];
-        alert(JSON.stringify(checkList))
         if (this.state.positionList.length > 0) {
             for (var i = 0; i < this.state.positionList.length; i++) {
                 if (checkList[i] == this.state.positionList[i].id) {
@@ -482,12 +481,10 @@ class Bakhshnameh extends React.Component {
                     result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName })
                 }
             }
-            alert("result" + JSON.stringify(result))
             this.setState({
                 positionList: result
             })
         }
-
         //alert(JSON.stringify(checkList))
     }
 
