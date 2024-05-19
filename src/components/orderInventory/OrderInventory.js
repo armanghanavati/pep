@@ -362,16 +362,16 @@ class OrderInventory extends React.Component {
     let flagCount=true;
     let errMsg = "";
     // ------------------------------------------------    
-    const OBJ_COUNT={
-      LocationId:params.oldData.locationId
-    }
-    const REMAIN_EDITORDER = await remainOfEditOPIByLocationUser(OBJ_COUNT,this.props.User.token);    
-    // const REMAIN_ZEROORDER = await remainOfEditZeroOPIByLocationUser(OBJ_COUNT,this.props.User.token);
+    // const OBJ_COUNT={
+    //   LocationId:params.oldData.locationId
+    // }
+    // const REMAIN_EDITORDER = await remainOfEditOPIByLocationUser(OBJ_COUNT,this.props.User.token);    
+    // // const REMAIN_ZEROORDER = await remainOfEditZeroOPIByLocationUser(OBJ_COUNT,this.props.User.token);
     
-    if (tempOrderPointInventoryEdited.length >= REMAIN_EDITORDER && !flagEditRowCount) {
-      flagCount = false;
-      errMsg += "کاربر گرامی ظرفیت ویرایش سفارشات فروشگاه تکمیل شده است";
-    }
+    // if (tempOrderPointInventoryEdited.length >= REMAIN_EDITORDER && !flagEditRowCount) {
+    //   flagCount = false;
+    //   errMsg += "کاربر گرامی ظرفیت ویرایش سفارشات فروشگاه تکمیل شده است";
+    // }
     // ------------------------------------------------    
     if (
       params.newData.orderUser > 0 &&
