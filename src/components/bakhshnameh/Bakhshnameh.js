@@ -282,7 +282,8 @@ class Bakhshnameh extends React.Component {
             RowSelected: null,
             Attachments: null,
             AttachedFiles: null,
-            positionList: null
+            positionList: null,
+            checkList:null
         });
     };
 
@@ -309,7 +310,7 @@ class Bakhshnameh extends React.Component {
                 "سمت را وارد نمائید";
             flag = false;
         }
-        if (this.state.txtTitleValue == null || this.state.txtTitleValue == "") {
+        if (this.state.txtTextValue == null || this.state.txtTitleValue == "") {
             document.getElementById("errText").innerHTML =
                 "متن را وارد نمائید";
             flag = false;
@@ -459,7 +460,6 @@ class Bakhshnameh extends React.Component {
         if (event.target.checked) {
             if (checkList.indexOf(parseInt(checkedId)) === -1) {
                 checkList = [...checkList, parseInt(checkedId)]
-
             }
         } else {
             checkList = checkList.filter(id => id !== parseInt(checkedId))
