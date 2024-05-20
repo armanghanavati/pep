@@ -308,7 +308,7 @@ class Bakhshnameh extends React.Component {
         }
         if (checkList.length < 1) {
             document.getElementById("errPosition").innerHTML =
-                "سمت را وارد نمائید";
+                "سمت را انتخاب نمائید";
             flag = false;
         }
         if (this.state.txtTextValue == null || this.state.txtTitleValue == "") {
