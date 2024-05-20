@@ -284,7 +284,7 @@ class Bakhshnameh extends React.Component {
             Attachments: null,
             AttachedFiles: null,
             positionList: null,
-            checkList: null
+            checkList: []
         });
     };
 
@@ -465,10 +465,11 @@ class Bakhshnameh extends React.Component {
         } else {
             checkList = checkList.filter(id => id !== parseInt(checkedId))
         }
+        alert(JSON.stringify(checkList))
         var result = [];
         if (this.state.positionList.length > 0) {
             for (var i = 0; i < this.state.positionList.length; i++) {
-                if (checkList[i] == this.state.positionList[i].id) {
+                if (checkList.indexOf(this.state.positionList[i].id) != -1) {
                     result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName, check: "checked" })
                 }
                 else if (typeof checkList[i] == 'undefined') {
