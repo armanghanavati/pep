@@ -465,7 +465,6 @@ class Bakhshnameh extends React.Component {
         } else {
             checkList = checkList.filter(id => id !== parseInt(checkedId))
         }
-        alert(JSON.stringify(checkList))
         var result = [];
         if (this.state.positionList.length > 0) {
             for (var i = 0; i < this.state.positionList.length; i++) {
