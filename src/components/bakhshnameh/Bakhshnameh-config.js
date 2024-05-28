@@ -10,7 +10,7 @@ export const DataGridBakhshnamehColumns = [
       allowEditing: false,
     },
     {
-      dataField: "date",
+      dataField: "persianDate",
       caption: "تاریخ",
       allowEditing: false,
     },

@@ -346,6 +346,10 @@ class ItemSupplier extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.ItemSupplierGridData, "ItemSupplier");
+  };
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -455,7 +459,18 @@ class ItemSupplier extends React.Component {
             <Row>
               <Label className="title">لیست تامین کننده کالا</Label>
             </Row>
-
+            <Row style={{ direction: 'ltr' }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                  className="fontStyle"
+                />
+              </Col>
+            </Row>
             <Row>
               <Col xs="auto" className="standardPadding">
                 <DataGrid
