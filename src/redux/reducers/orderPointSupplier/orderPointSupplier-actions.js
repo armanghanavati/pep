@@ -201,4 +201,26 @@ export async function orderPointSupplierConfirmReport(Object, Token){
   return null; 
 }
 
+//-------------OrderPointSupplier Last Confirm report----------------------
+export async function orderPointSupplierLastConfirmReport(Object, Token){
+  const url=window.apiAddress+"/orderPointSupplier/orderPointSupplierLastConfirmReport"              
+  const response = await fetch(
+      url,
+      {
+          method: "POST",              
+          body:JSON.stringify(Object),
+          headers: { 
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${Token}`
+          },
+      }
+    );        
+  const result= await response.json();
+  if(result.status=="Success"){
+    console.log(' OrderPointSupplier Last Confirm report='+JSON.stringify(result.data));
+    return result.data;  
+  }
+  return null; 
+}
+
 

@@ -77,7 +77,8 @@ import { locationOrderSupplierComboListByCompanyId } from "../../redux/reducers/
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import {
-    orderPointSupplierConfirmReport,
+  orderPointSupplierConfirmReport,
+  orderPointSupplierLastConfirmReport,
 } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
 import { logsOPSByOPSid } from "../../redux/reducers/logsOrderPointSupplier/logsOrderPointSupplier-actions";
 import {
@@ -106,9 +107,9 @@ const dateLabel = { 'aria-label': 'Date' };
 
 class OrderPointSupplierConfirmReport extends React.Component {
   constructor(props) {
-    super(props);    
+    super(props);
     this.state = {
-      stateWait: false,      
+      stateWait: false,
       cmbLocationGroupValue: null,
       cmbLocation: null,
       cmbLocationValue: null,
@@ -116,13 +117,14 @@ class OrderPointSupplierConfirmReport extends React.Component {
       cmbSupplierValue: null,
       cmbItems: null,
       cmbItemsValue: null,
-      OrderPointSupplierGridData: null,                  
-      stateEnable_show: false,      
+      OrderPointSupplierGridData: null,
+      stateEnable_show: false,
       stateModal_LogsOfOPS: false,
+      chkIsLastDateConfirm: true,
       FromDate: new Date(),
-        ToDate: new Date(),
-        FromDateapi: "",
-        ToDateapi: "",
+      ToDate: new Date(),
+      FromDateapi: "",
+      ToDateapi: "",
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -131,7 +133,7 @@ class OrderPointSupplierConfirmReport extends React.Component {
     };
   }
 
-  async componentDidMount() {    
+  async componentDidMount() {
     await this.fn_CheckRequireState();
     // alert('CompanyId='+this.props.Company.currentCompanyId)
   }
@@ -140,7 +142,7 @@ class OrderPointSupplierConfirmReport extends React.Component {
   }
 
   fn_CheckRequireState = async () => {
-    if(this.props.Company.currentCompanyId==null){
+    if (this.props.Company.currentCompanyId == null) {
       const companyCombo = await companyListCombo(this.props.User.token);
       if (companyCombo !== null) {
         const currentCompanyId = companyCombo[0].id;
@@ -164,11 +166,11 @@ class OrderPointSupplierConfirmReport extends React.Component {
 
     this.props.dispatch(
       locationActions.setLocationPermission({
-        locationPermission      
+        locationPermission
       })
     );
 
-    this.setState({      
+    this.setState({
       cmbSupplier: await supplierComboListByUserId(
         this.props.Company.currentCompanyId,
         this.props.User.token
@@ -177,76 +179,83 @@ class OrderPointSupplierConfirmReport extends React.Component {
   };
 
   cmbRetailStoreGroup_onChange = async (e) => {
-    const IDS = e.toString().split(",");    
+    const IDS = e.toString().split(",");
     const TEMP_LocationGroup = this.props.Location.locationPermission;
-    if(IDS.includes('0'))
+    if (IDS.includes('0'))
       this.setState({
-        cmbLocation:  TEMP_LocationGroup,
+        cmbLocation: TEMP_LocationGroup,
         cmbLocationGroupValue: 0,
       });
-    else{
+    else {
       let tempLocation = [];
       for (let i = 0; i < IDS.length; i++)
         for (let j = 0; j < TEMP_LocationGroup.length; j++)
           if (IDS[i] == TEMP_LocationGroup[j].id)
             tempLocation.push(TEMP_LocationGroup[j]);
       this.setState({
-        cmbLocation:  tempLocation,
+        cmbLocation: tempLocation,
         cmbLocationGroupValue: await Gfn_BuildValueComboMulti(e),
       });
     }
   };
 
   cmbRetailStore_onChange = async (e) => {
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbLocation)  
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbLocation)
     this.setState({ cmbLocationValue: await Gfn_BuildValueComboMulti(data) });
   };
 
-  cmbSupplier_onChange = async (e) => {    
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbSupplier)  
+  cmbSupplier_onChange = async (e) => {
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbSupplier)
     const TEMP_cmbSupplier = await Gfn_BuildValueComboMulti(data)
     this.setState({
       cmbSupplierValue: TEMP_cmbSupplier,
       // cmbItems: TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token),      
     });
-    const ITEMS=TEMP_cmbSupplier == null? null: await itemListComboBySupplierId(TEMP_cmbSupplier,this.props.User.token);
-    const LAZY=new DataSource({
+    const ITEMS = TEMP_cmbSupplier == null ? null : await itemListComboBySupplierId(TEMP_cmbSupplier, this.props.User.token);
+    const LAZY = new DataSource({
       store: ITEMS,
-      paginate:true,
-      pageSize:10
+      paginate: true,
+      pageSize: 10
     })
     this.setState({
-      cmbItems:LAZY,
-      cmbItemsOrg:ITEMS
+      cmbItems: LAZY,
+      cmbItemsOrg: ITEMS
     })
 
   };
 
-  cmbItem_onChange = async (e) => {   
-    let data=await Gfn_ConvertComboForAll(e,this.state.cmbItemsOrg)
-    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data)});
+  cmbItem_onChange = async (e) => {
+    let data = await Gfn_ConvertComboForAll(e, this.state.cmbItemsOrg)
+    this.setState({ cmbItemsValue: await Gfn_BuildValueComboMulti(data) });
   };
 
   btnSearch_onClick = async () => {
-    this.OpenCloseWait();    
+    this.OpenCloseWait();
     const OBJ = {
       locationIds: this.state.cmbLocationValue,
       supplierIds: this.state.cmbSupplierValue,
       itemIds: this.state.cmbItemsValue,
       fromDate: this.state.FromDate,
       toDate: this.state.ToDate
-    };   
-    console.log(JSON.stringify(OBJ)) 
-    this.setState({
-      OrderPointSupplierGridData: await orderPointSupplierConfirmReport(
+    };
+    var ReportData = null
+    if (this.state.chkIsLastDateConfirm)
+      ReportData = await orderPointSupplierLastConfirmReport(
         OBJ,
         this.props.User.token
-      ),
+      );
+    else
+      ReportData = await orderPointSupplierConfirmReport(
+        OBJ,
+        this.props.User.token
+      )
+    this.setState({
+      OrderPointSupplierGridData: ReportData
     });
     this.OpenCloseWait();
-  };  
+  };
 
-  
+
   // grdOrderPointSupplier_onCellDblClick = async (e) => {
   //   const LogsOfOPI = await logsOPIByOPIid(e.data.id, this.props.User.token);
   //   this.props.dispatch(
@@ -255,34 +264,40 @@ class OrderPointSupplierConfirmReport extends React.Component {
   //     })
   //   );
   // };
-  
-  btnExportExcel_onClick=()=>{
-    Gfn_ExportToExcel(this.state.OrderPointSupplierGridData,"OrderPointSupplier")
+
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.OrderPointSupplierGridData, "OrderPointSupplier")
   }
-  
-  DatePickerFrom_onChange =(params)=>{   
+
+  DatePickerFrom_onChange = (params) => {
     // alert(params) 
     this.setState({ FromDate: params, FromDateapi: Gfn_DT2StringSql(params) })
   }
 
-  DatePickerTo_onChange = (params) => {        
+  DatePickerTo_onChange = (params) => {
     this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) })
-}
+  }
 
 
-grdOrderPointSupplier_onCellDblClick = async (e) => {
-  const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);
-  this.props.dispatch(
-    logsOrderPointSupplierActions.setLogsOrderPointSupplierByOPSid({
-      LogsOfOPS,
-    })
-  );
-  this.setState({ stateModal_LogsOfOPS: true })
-};
+  grdOrderPointSupplier_onCellDblClick = async (e) => {
+    const LogsOfOPS = await logsOPSByOPSid(e.data.id, this.props.User.token);
+    this.props.dispatch(
+      logsOrderPointSupplierActions.setLogsOrderPointSupplierByOPSid({
+        LogsOfOPS,
+      })
+    );
+    this.setState({ stateModal_LogsOfOPS: true })
+  };
 
-ModalOrderSupplierLogs_onClickAway = () => {
-  this.setState({ stateModal_LogsOfOPS: false });
-};
+  chkIsLastDateConfirm_onChange = (e) => {
+    this.setState({
+      chkIsLastDateConfirm: e.value,
+    });
+  };
+
+  ModalOrderSupplierLogs_onClickAway = () => {
+    this.setState({ stateModal_LogsOfOPS: false });
+  };
 
   render() {
     locale("fa-IR");
@@ -362,33 +377,51 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   className="fontStyle"
                 />
               </Col>
-            </Row>   
+            </Row>
             <p></p>
             <Row className="standardSpaceTop">
-                <Col xs="auto">                    
+              <Col xs="auto">
+                <CheckBox
+                  value={this.state.chkIsLastDateConfirm}
+                  text="آخرین سفارشات تائید شده"
+                  rtlEnabled={true}
+                  onValueChanged={this.chkIsLastDateConfirm_onChange}
+                  className="fontStyle"
+                />
+                <Row>
+                  <Label
+                    id="errCompanyIsActive"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              {!this.state.chkIsLastDateConfirm &&
+                <>
+                  <Col xs="auto">
                     <LocalizationProvider dateAdapter={AdapterJalali}>
-                        <DesktopDatePicker 
-                            label="از تاریخ"                                      
-                            value={this.state.FromDate}
-                            onChange={this.DatePickerFrom_onChange}
-                            renderInput={(params) => <TextField {...params} />}
-                            className="fontStyle"
-                        />
+                      <DesktopDatePicker
+                        label="از تاریخ"
+                        value={this.state.FromDate}
+                        onChange={this.DatePickerFrom_onChange}
+                        renderInput={(params) => <TextField {...params} />}
+                        className="fontStyle"
+                      />
                     </LocalizationProvider>
-                </Col>
-                <Col xs="auto">
+                  </Col>
+                  <Col xs="auto">
                     <LocalizationProvider dateAdapter={AdapterJalali}>
-                        <DesktopDatePicker 
-                            label="تا تاریخ"                                    
-                            value={this.state.ToDate}
-                            onChange={this.DatePickerTo_onChange}
-                            renderInput={(params) => <TextField {...params} />}
-                            className="fontStyle"
-                        />
+                      <DesktopDatePicker
+                        label="تا تاریخ"
+                        value={this.state.ToDate}
+                        onChange={this.DatePickerTo_onChange}
+                        renderInput={(params) => <TextField {...params} />}
+                        className="fontStyle"
+                      />
                     </LocalizationProvider>
-                </Col>
-            </Row> 
-            <p></p>        
+                  </Col>
+                </>}
+            </Row>
+            <p></p>
             <Row className="standardSpaceTop">
               <Col xs="auto">
                 <Button
@@ -401,8 +434,8 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   onClick={this.btnSearch_onClick}
                 />
               </Col>
-            </Row>                    
-                
+            </Row>
+
           </Row>
         </Card>
         <p></p>
@@ -410,11 +443,11 @@ ModalOrderSupplierLogs_onClickAway = () => {
           <Row className="standardPadding">
             <Row>
               <Label className="title">لیست سفارشات قطعی تامین کننده</Label>
-            </Row>            
-            <Row style={{direction:'ltr'}}>
+            </Row>
+            <Row style={{ direction: 'ltr' }}>
               <Col xs="auto">
                 <Button
-                  icon={ExportExcelIcon}                  
+                  icon={ExportExcelIcon}
                   type="default"
                   stylingMode="contained"
                   rtlEnabled={true}
@@ -437,12 +470,12 @@ ModalOrderSupplierLogs_onClickAway = () => {
                   allowColumnResizing={true}
                   height={DataGridDefaultHeight}
                   columnResizingMode="widget"
-                  onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}  
-                  className="fontStyle"             
-                  //   onSelectionChanged={
-                  //     this.grdOrderPointInventory_onSelectionChanged
-                  //   }
-                >                                          
+                  onCellDblClick={this.grdOrderPointSupplier_onCellDblClick}
+                  className="fontStyle"
+                //   onSelectionChanged={
+                //     this.grdOrderPointInventory_onSelectionChanged
+                //   }
+                >
                   <Scrolling
                     rowRenderingMode="virtual"
                     showScrollbar="always"
@@ -464,13 +497,13 @@ ModalOrderSupplierLogs_onClickAway = () => {
                     />
                   )}
                   <Editing mode="cell" allowUpdating={true} />
-                  <FilterRow visible={true} />                  
-                  <HeaderFilter visible={true} />                  
+                  <FilterRow visible={true} />
+                  <HeaderFilter visible={true} />
                 </DataGrid>
               </Col>
-            </Row>           
+            </Row>
           </Row>
-        </Card>   
+        </Card>
         {this.state.stateModal_LogsOfOPS && (
           <Row className="text-center">
             <Col>
@@ -499,7 +532,7 @@ ModalOrderSupplierLogs_onClickAway = () => {
               </Modal>
             </Col>
           </Row>
-        )}     
+        )}
       </div>
     );
   }
