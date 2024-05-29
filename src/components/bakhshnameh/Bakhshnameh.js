@@ -377,10 +377,11 @@ class Bakhshnameh extends React.Component {
         this.setState({ txtTitleValue: e.value });
     };
     cmbBakhshnamehType_onChange = async (e) => {
-        this.setState({ positionList: await searchPositionByBakhshnamehTypeIdList(e, this.props.User.token),
+        this.setState({
+            positionList: await searchPositionByBakhshnamehTypeIdList(e, this.props.User.token),
             cmbBakhshnamehTypeValue: e,
         });
-        checkList=[];
+        checkList = [];
     };
     chkIsRead_onChange = async (e) => {
         if (e.value) {
@@ -438,17 +439,17 @@ class Bakhshnameh extends React.Component {
         this.setState({
             stateModalBakhshnameh: false,
             ToastProps: {
-              isToastVisible: true,
-              Message: RESULT,
-              Type: "success",
+                isToastVisible: true,
+                Message: RESULT,
+                Type: "success",
             },
-          });
+        });
         this.fn_updateGrid();
     };
 
     txtText_onChange = (e) => {
         this.setState({
-            txtTextValue: e.value
+            txtTextValue: e
         });
     }
 
@@ -559,14 +560,11 @@ class Bakhshnameh extends React.Component {
                                                 //defaultValue={marjup}
                                                 //valueType={editorValueType}
                                                 value={this.state.txtTextValue}
-                                                onValueChanged={this.txtText_onChange}
+                                                onValueChange={this.txtText_onChange}
                                             //rtlEnabled="true"
                                             >
                                                 <MediaResizing enabled={true} />
-                                                <ImageUpload
-                                                    tabs={tabs[0].value}
-                                                    fileUploadMode="base64"
-                                                />
+                                                <ImageUpload tabs={tabs[0].value} fileUploadMode="base64" />
                                                 <Toolbar multiline={true}>
                                                     <Item name="undo" />
                                                     <Item name="redo" />

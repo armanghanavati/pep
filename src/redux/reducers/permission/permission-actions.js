@@ -15,7 +15,6 @@ export async function permissionList(Token) {
     return null;
   }
   
-  
   export async function addPermission(Object, Token) {
     const url = window.apiAddress + "/Permission/addPermission";
     const response = await fetch(url, {

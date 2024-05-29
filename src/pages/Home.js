@@ -28,6 +28,7 @@ import { companyListCombo } from "../redux/reducers/company/company-actions";
 import { bakhshnamehNoneReadList } from "../redux/reducers/bakhshnameh/bakhshnameh-actions";
 import { userActions } from "../redux/reducers/user/user-slice";
 import { hubConnectionActions } from "../redux/reducers/hubConnection/hubConnection-slice"
+import { searchPositionByUserId } from "../redux/reducers/position/position-actions";
 import MainMenu from "../components/common/MainMenu";
 import logo from "../assets/images/LOGO.jpg";
 import LogoutIcon from "../assets/images/icon/logout.svg"
@@ -51,6 +52,7 @@ class Home extends React.Component {
       message: "",
       noneReadBakhshnameh: false,
       stateModalBakhshnamehNotification: false,
+      positionId:null,
     };
   }
   audio = new Audio(sound)
@@ -99,7 +101,7 @@ class Home extends React.Component {
   };
 
   fn_noneReadBakhshnameh = async () => {
-    var result = await bakhshnamehNoneReadList(7, this.props.User.userId, this.props.User.token)
+    var result = await bakhshnamehNoneReadList(await searchPositionByUserId(this.props.User.userId, this.props.Company.currentCompanyId, this.props.User.token), this.props.User.userId, this.props.User.token)
     if (result != null)
       this.setState({
         stateModalBakhshnamehNotification: true

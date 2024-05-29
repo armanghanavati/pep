@@ -195,3 +195,39 @@ export async function updateItemSSTID(Object, Token) {
   }
   return 0;
 }
+
+export async function itemListComboByItemGroupIds(object, Token) {
+  const url = window.apiAddress + "/Item/itemListComboByItemGroupIds";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    }
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All Items by ItemGroupId" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function itemPromotionList(object, Token) {
+  const url = window.apiAddress + "/Item/itemPromotionList";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    }
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All item promotion list" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
