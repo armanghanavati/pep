@@ -139,6 +139,11 @@ export const DataGridOrderPointInventoryReportColumns = [
         allowEditing:true    
     },
     {
+        dataField:"mojoodi" ,
+        caption:"موجودی",
+        allowEditing:false    
+    },
+    {
         dataField:"tedadErsali" ,
         caption:"تعداد ارسالی",
         allowEditing:true    
@@ -191,11 +196,6 @@ export const DataGridOrderPointInventoryReportColumns = [
     {
         dataField:"itemsPerPack2" ,
         caption:"تعداد در بسته2",
-        allowEditing:false    
-    },
-    {
-        dataField:"mojoodi" ,
-        caption:"موجودی",
         allowEditing:false    
     },
     {

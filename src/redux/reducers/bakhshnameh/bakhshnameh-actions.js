@@ -1,5 +1,5 @@
-export async function bakhshnamehList(positionId, userId, Token){
-    const url=window.apiAddress+"/Bakhshnameh/bakhshnamehList?positionId=" + positionId + "&userId=" + userId 
+export async function bakhshnamehList(positionId, userId, type, Token){
+    const url=window.apiAddress+"/Bakhshnameh/bakhshnamehList?positionId=" + positionId + "&userId=" + userId  + "&type=" + type
     const response = await fetch(
         url,
         {

@@ -15,6 +15,13 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
+import {
+  Gfn_BuildValueComboMulti,
+  Gfn_ConvertComboForAll,
+  Gfn_BuildValueComboSelectAll,
+  Gfn_ExportToExcel,
+  Gfn_DT2StringSql,
+} from "../../utiliy/GlobalMethods";
 import classnames from "classnames";
 import TextBox from "devextreme-react/text-box";
 import TextArea from "devextreme-react/text-area";
@@ -54,7 +61,7 @@ import {
   deleteSupplier,
 } from "../../redux/reducers/supplier/supplier-action";
 import { DataGridSupplierColumns } from "./Supplier-config";
-
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
@@ -86,7 +93,7 @@ class Supplier extends React.Component {
       txtSupplierMaxOrderRialiValue: null,
       txtSupplierMaxOrderNumberValue: null,
       txtSupplierMinOrderNumberValue: null,
-      txtDeliveryDateValue:null
+      txtDeliveryDateValue: null
     };
   }
 
@@ -139,7 +146,7 @@ class Supplier extends React.Component {
       chkIsActive: null,
       chkIsDirect: null,
       stateUpdateDelete: false,
-      txtDeliveryDateValue:null
+      txtDeliveryDateValue: null
     });
   };
   txtSupplierName_onChanege = (e) => {
@@ -175,8 +182,8 @@ class Supplier extends React.Component {
     this.setState({ txtSupplierMaxOrderNumberValue: e.value })
   }
 
-  txtDeliveryDate_onChanege=(e)=>{
-    this.setState({txtDeliveryDateValue: e.value})
+  txtDeliveryDate_onChanege = (e) => {
+    this.setState({ txtDeliveryDateValue: e.value })
   }
 
   chkIsActive_onChange = (e) => {
@@ -238,7 +245,7 @@ class Supplier extends React.Component {
         maxOrderRiali: this.state.txtSupplierMaxOrderRialiValue,
         minOrderNumber: this.state.txtSupplierMinOrderNumberValue,
         maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue,
-        deliveryDateDay:this.state.txtDeliveryDateValue
+        deliveryDateDay: this.state.txtDeliveryDateValue
       };
       await addSupplier(data, this.props.User.token);
       this.setState({
@@ -268,7 +275,7 @@ class Supplier extends React.Component {
         maxOrderRiali: this.state.txtSupplierMaxOrderRialiValue,
         minOrderNumber: this.state.txtSupplierMinOrderNumberValue,
         maxOrderNumber: this.state.txtSupplierMaxOrderNumberValue,
-        deliveryDateDay:this.state.txtDeliveryDateValue
+        deliveryDateDay: this.state.txtDeliveryDateValue
       };
       const RESULT = await updateSupplier(data, this.props.User.token);
       this.setState({
@@ -324,6 +331,10 @@ class Supplier extends React.Component {
       },
     });
     this.fn_updateGrid();
+  }
+
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.SupplierGridData, "supplier")
   }
 
   render() {
@@ -498,11 +509,11 @@ class Supplier extends React.Component {
                     className="fontStyle"
                   />
                   <Row>
-                  <Label
-                    id="errDeliveryDate"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
+                    <Label
+                      id="errDeliveryDate"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
                 </Col>
               </Row>
             </Row>
@@ -601,34 +612,48 @@ class Supplier extends React.Component {
               <Label className="title">لیست تامین کنندگان</Label>
             </Row>
             <Row>
-              <Col xs="auto" className="standardMarginRight">
-                <DataGrid
-                  dataSource={this.state.SupplierGridData}
-                  defaultColumns={DataGridSupplierColumns}
-                  showBorders={true}
-                  rtlEnabled={true}
-                  allowColumnResizing={true}
-                  onRowClick={this.grdSupplier_onClickRow}
-                  height={DataGridDefaultHeight}
-                  className="fontStyle"
-                >
-                  <Scrolling
-                    rowRenderingMode="virtual"
-                    showScrollbar="always"
-                    columnRenderingMode="virtual"
+              <Row style={{ direction: 'ltr' }}>
+                <Col xs="auto">
+                  <Button
+                    icon={ExportExcelIcon}
+                    type="default"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnExportExcel_onClick}
+                    className="fontStyle"
                   />
+                </Col>
+              </Row>
+              <Row className="standardSpaceTop">
+                <Col xs="auto" className="standardMarginRight">
+                  <DataGrid
+                    dataSource={this.state.SupplierGridData}
+                    defaultColumns={DataGridSupplierColumns}
+                    showBorders={true}
+                    rtlEnabled={true}
+                    allowColumnResizing={true}
+                    onRowClick={this.grdSupplier_onClickRow}
+                    height={DataGridDefaultHeight}
+                    className="fontStyle"
+                  >
+                    <Scrolling
+                      rowRenderingMode="virtual"
+                      showScrollbar="always"
+                      columnRenderingMode="virtual"
+                    />
 
-                  <Paging defaultPageSize={DataGridDefaultPageSize} />
-                  <Pager
-                    visible={true}
-                    allowedPageSizes={DataGridPageSizes}
-                    showPageSizeSelector={true}
-                    showNavigationButtons={true}
-                  />
-                  <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
-                </DataGrid>
-              </Col>
+                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                    <Pager
+                      visible={true}
+                      allowedPageSizes={DataGridPageSizes}
+                      showPageSizeSelector={true}
+                      showNavigationButtons={true}
+                    />
+                    <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
+                  </DataGrid>
+                </Col>
+              </Row>
             </Row>
           </Row>
         </Card>

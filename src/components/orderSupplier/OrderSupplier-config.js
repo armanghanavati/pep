@@ -134,6 +134,12 @@ export const DataGridOrderPointSupplierColumns = [
         allowEditing:false,
                 
     },   
+    {
+        dataField:"persianInsertDate" ,
+        caption:"تاریخ",
+        allowEditing:false,
+                
+    }
 ]
 
 // ------------------------------------------------------------------------------------------------------------------
