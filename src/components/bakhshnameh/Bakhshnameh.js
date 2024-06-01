@@ -121,7 +121,7 @@ class Bakhshnameh extends React.Component {
             stateDisable_btnAdd: false,
             stateDisable_btnUpdate: false,
             stateDisable_btnDelete: false,
-            stateDisable_btnConfirm:false,
+            stateDisable_btnConfirm: false,
             stateDisable_show: false,
             ToastProps: {
                 isToastVisible: false,
@@ -222,7 +222,7 @@ class Bakhshnameh extends React.Component {
         document.getElementById("ErrTicketAttachments").innerHTML = errMsg;
         this.setState({
             AttachedFiles: files,
-        } );
+        });
     }
 
     btnClearFileAttach_onClick = (e) => {
@@ -237,7 +237,7 @@ class Bakhshnameh extends React.Component {
     grdBakhshnameh_onClickRow = async (e) => {
         var sb = await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token) // سمت های مربوط به بخشنامه
         //var stb = await searchPositionByBakhshnamehTypeIdList(e.data.bakhshnamehTypeId, this.props.User.token) // سمت های مربوط به نوع بخشنامه
-        var stb=await positionList(this.props.Company.currentCompanyId, this.props.User.token);
+        var stb = await positionList(this.props.Company.currentCompanyId, this.props.User.token);
         this.setState({
             cmbBakhshnamehTypeValue: e.data.bakhshnamehTypeId,
             txtTitleValue: e.data.title,
@@ -248,18 +248,18 @@ class Bakhshnameh extends React.Component {
             bakhshnamehPostionList: await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token),
         });
         var position = [];
+        const t = [];
         for (var i = 0; i < stb.length; i++) {
-            if (sb.length < i + 1) {
+            for (var j = 0; j < sb.length; j++) {
+                if (stb[i].id == sb[j].positionId) {
+                    position.push({ id: stb[i].id, positionName: stb[i].positionName, check: "checked" })
+                    t.push(stb[i])
+                }
+            }
+        }
+        for (var i = 0; i < stb.length; i++) {
+            if (!stb.some(v => t.includes(v)))
                 position.push({ id: stb[i].id, positionName: stb[i].positionName })
-                continue;
-            }
-
-            if (stb[i].id == sb[i].positionId) {
-                position.push({ id: stb[i].id, positionName: stb[i].positionName, check: "checked" })
-            }
-            else {
-                position.push({ id: stb[i].id, positionName: stb[i].positionName })
-            }
         }
         this.setState({
             positionList: position
@@ -638,7 +638,7 @@ class Bakhshnameh extends React.Component {
                                                 {this.state.positionList != null && this.state.positionList.map((item, index) => (
 
                                                     <label key={item.id} style={{ marginRight: "20px" }}>
-                                                        <input style={{width:20, height:20}}
+                                                        <input style={{ width: 20, height: 20 }}
                                                             type="checkbox"
                                                             value={item.id}
                                                             text={item.positionName}

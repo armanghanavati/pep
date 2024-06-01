@@ -176,7 +176,7 @@ class Promotion extends React.Component {
     }
 
     btnItemPromotionReport_onClick=()=>{
-        window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.ItemIds, "_blank");
+        window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.ItemIds, "_blank");
     }
 
     DatePickerFrom_onChange = (params) => {

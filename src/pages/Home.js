@@ -52,7 +52,7 @@ class Home extends React.Component {
       message: "",
       noneReadBakhshnameh: false,
       stateModalBakhshnamehNotification: false,
-      positionId:null,
+      positionId: null,
     };
   }
   audio = new Audio(sound)
@@ -230,7 +230,7 @@ class Home extends React.Component {
                 <Row className="standardPadding">
                   <Row>
                     <Col xs="auto">
-                      شما اسناد خوانده نشده دارید لطفا به بخشنامه ها مراجع شود
+                      شما اسناد خوانده نشده دارید لطفا به بخش آیین نامه و دستورالعمل ها  مراجعه شود
                     </Col>
 
                   </Row>
