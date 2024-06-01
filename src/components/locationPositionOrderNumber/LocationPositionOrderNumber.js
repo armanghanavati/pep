@@ -81,6 +81,14 @@ class LocationPositionOrderNumber extends React.Component {
     this.state = {
       txtMaxOrderNumberValue: null,
       txtMaxOutRouteNumberValue: null,
+      txtMaxIncEditOrderNumberValue: null,
+      txtMaxNewInventoryOrderNumberValue: null,
+      txtMaxZeroInventoryOrderNumberValue: null,
+      txtMaxDecEditSupplierOrderNumberValue: null,
+      txtMaxIncEditSupplierOrderNumberValue: null,
+      txtMaxNewSupplierOrderNumberValue: null,
+      txtMaxZeroSupplierOrderNumberValue: null,
+      txtMaxOutRouteSupplierOrderNumberValue: null,
       LocationId: null,
       PositionId: null,
       RowSelected: null,
@@ -177,17 +185,17 @@ class LocationPositionOrderNumber extends React.Component {
 
   cmbLocationGroup_onChange = async (e) => {
     // const LOCATION=await location(e, this.props.User.token)      
-    let tempLocationGroups=this.state.LocationGroupList;
-    let tempLocations=[];
-    for(let i=0;i<tempLocationGroups.length;i++)
-      if(tempLocationGroups[i].id==e){
+    let tempLocationGroups = this.state.LocationGroupList;
+    let tempLocations = [];
+    for (let i = 0; i < tempLocationGroups.length; i++)
+      if (tempLocationGroups[i].id == e) {
         tempLocations.push(tempLocationGroups[i]);
         break;
       }
 
     this.setState({
-      LocationGroupId:e,
-      LocationList:tempLocations ,
+      LocationGroupId: e,
+      LocationList: tempLocations,
     });
 
   };
@@ -203,24 +211,32 @@ class LocationPositionOrderNumber extends React.Component {
     });
   };
 
-  grdLocationPositionOrderNumber_onClickRow = async(e) => {
+  grdLocationPositionOrderNumber_onClickRow = async (e) => {
 
-    const LOCATIONS=[{id:e.data.locationId,label:e.data.locationName}]    
+    const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }]
     this.setState({
-      LocationList:LOCATIONS, //await location(e.data.locationId, this.props.User.token),      
-    })        
-    
+      LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),      
+    })
+
     // this.fn_positionList(this.props.Company.currentCompanyId);
     // this.fn_locationGroupList(this.props.Company.currentCompanyId);
 
     this.setState({
       txtMaxOrderNumberValue: e.data.maxOrderNumber,
-      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
+      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,      
+      txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
+      txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
+      txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
+      txtMaxDecEditSupplierOrderNumberValue: e.data.maxDecEditSupplierOrderNumber,
+      txtMaxIncEditSupplierOrderNumberValue: e.data.maxIncEditSupplierOrderNumber,
+      txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
+      txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
+      txtMaxOutRouteSupplierOrderNumberValue: e.data.maxOutRouteSupplierOrderNumber,
       stateUpdateDelete: true,
       RowSelected: e.data,
       PositionId: e.data.positionId,
-      LocationGroupId: e.data.locationId, 
-      LocationId:e.data.locationId
+      LocationGroupId: e.data.locationId,
+      LocationId: e.data.locationId
     });
   };
 
@@ -240,8 +256,16 @@ class LocationPositionOrderNumber extends React.Component {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
-        maxOrderNumber:this.state.txtMaxOrderNumberValue,
-        maxOutRouteNumber:this.state.txtMaxOutRouteNumberValue
+        maxOrderNumber: parseInt(this.state.txtMaxOrderNumberValue),
+        maxOutRouteNumber: parseInt(this.state.txtMaxOutRouteNumberValue),
+        maxIncEditOrderNumber: parseInt(this.state.txtMaxIncEditOrderNumberValue),
+        maxNewInventoryOrderNumber: parseInt(this.state.txtMaxNewInventoryOrderNumberValue),
+        maxZeroInventoryOrderNumber: parseInt(this.state.txtMaxZeroInventoryOrderNumberValue),
+        maxDecEditSupplierOrderNumber: parseInt(this.state.txtMaxDecEditSupplierOrderNumberValue),
+        maxIncEditSupplierOrderNumber: parseInt(this.state.txtMaxIncEditSupplierOrderNumberValue),
+        maxNewSupplierOrderNumber: parseInt(this.state.txtMaxNewSupplierOrderNumberValue),
+        maxZeroSupplierOrderNumber: parseInt(this.state.txtMaxZeroSupplierOrderNumberValue),
+        maxOutRouteSupplierOrderNumber: parseInt(this.state.txtMaxOutRouteSupplierOrderNumberValue)
       };
 
       const RESULT = await updateLocationPositionOrderNumber(data, this.props.User.token);
@@ -262,9 +286,58 @@ class LocationPositionOrderNumber extends React.Component {
     });
   };
 
+  txtMaxIncEditOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxIncEditOrderNumberValue: e.value,
+    });
+  };
+
+  txtMaxZeroInventoryOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxZeroInventoryOrderNumberValue: e.value,
+    });
+  };
+
+  txtMaxNewInventoryOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxNewInventoryOrderNumberValue: e.value,
+    });
+  };
+
   txtMaxOutRouteNumber_onChange = (e) => {
     this.setState({
       txtMaxOutRouteNumberValue: e.value,
+    });
+  };
+
+
+  txtMaxDecEditSupplierOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxDecEditSupplierOrderNumberValue: e.value,
+    });
+  };
+
+  txtMaxIncEditSupplierOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxIncEditSupplierOrderNumberValue: e.value,
+    });
+  };
+
+  txtMaxNewSupplierOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxNewSupplierOrderNumberValue: e.value,
+    });
+  };
+
+  txtMaxZeroSupplierOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxZeroSupplierOrderNumberValue: e.value,
+    });
+  };
+
+  txtMaxOutRouteSupplierOrderNumber_onChange = (e) => {
+    this.setState({
+      txtMaxOutRouteSupplierOrderNumberValue: e.value,
     });
   };
 
@@ -312,6 +385,14 @@ class LocationPositionOrderNumber extends React.Component {
         positionId: this.state.PositionId,
         maxOrderNumber: parseInt(this.state.txtMaxOrderNumberValue),
         maxOutRouteNumber: parseInt(this.state.txtMaxOutRouteNumberValue),
+        maxIncEditOrderNumber: parseInt(this.state.txtMaxIncEditOrderNumberValue),
+        maxNewInventoryOrderNumber: parseInt(this.state.txtMaxNewInventoryOrderNumberValue),
+        maxZeroInventoryOrderNumber: parseInt(this.state.txtMaxZeroInventoryOrderNumberValue),
+        maxDecEditSupplierOrderNumber: parseInt(this.state.txtMaxDecEditSupplierOrderNumberValue),
+        maxIncEditSupplierOrderNumber: parseInt(this.state.txtMaxIncEditSupplierOrderNumberValue),
+        maxNewSupplierOrderNumber: parseInt(this.state.txtMaxNewSupplierOrderNumberValue),
+        maxZeroSupplierOrderNumber: parseInt(this.state.txtMaxZeroSupplierOrderNumberValue),
+        maxOutRouteSupplierOrderNumber: parseInt(this.state.txtMaxOutRouteSupplierOrderNumberValue)
       };
       const RESULT = await addLocationPositionOrderNumber(
         data,
@@ -441,12 +522,12 @@ class LocationPositionOrderNumber extends React.Component {
             <Row>
               <Col xs="auto">
                 <Label className="standardLabelFont">
-                  تعداد مجاز ویرایش سفارش
+                  تعداد مجاز ویرایش (کم کردن) سفارش انباری
                 </Label>
                 <TextBox
                   value={this.state.txtMaxOrderNumberValue}
                   showClearButton={true}
-                  placeholder="تعداد مجاز ویرایش سفارش"
+                  placeholder="تعداد مجاز ویرایش (کم کردن) سفارش انباری"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtMaxOrderNumber_onChange}
@@ -460,12 +541,69 @@ class LocationPositionOrderNumber extends React.Component {
               </Col>
               <Col xs="auto">
                 <Label className="standardLabelFont">
-                  تعداد مجاز ویرایش سفارشات بدون برنامه ریزی
+                  تعداد مجاز ویرایش (افزایش دادن) سفارش انباری
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxIncEditOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز ویرایش (افزایش دادن) سفارش انباری"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxIncEditOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxIncEditOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز سفارش جدید انباری
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxNewInventoryOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز سفارش جدید انباری"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxNewInventoryOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxNewInventoryOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز صفر کردن سفارشات انباری
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxZeroInventoryOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز صفر کردن سفارشات انباری"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxZeroInventoryOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxZeroInventoryOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد سفارشات خارج از مسیر انباری
                 </Label>
                 <TextBox
                   value={this.state.txtMaxOutRouteNumberValue}
                   showClearButton={true}
-                  placeholder="تعداد مجاز ویرایش  سفارشات بدون برنامه ریزی"
+                  placeholder="تعداد سفارشات خارج از مسیر انباری"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
                   onValueChanged={this.txtMaxOutRouteNumber_onChange}
@@ -473,6 +611,104 @@ class LocationPositionOrderNumber extends React.Component {
                 <Row>
                   <Label
                     id="errMaxOutRouteNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+            </Row>
+            {/* -------------------------------دایرکتی------------------------------- */}
+            <Row>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز ویرایش (کم کردن) سفارش دایرکتی
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxDecEditSupplierOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز ویرایش (کم کردن) سفارش دایرکتی"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxDecEditSupplierOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxDecEditSupplierOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز ویرایش (افزایش دادن) سفارش دایرکتی
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxIncEditSupplierOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز ویرایش  سفارشات بدون برنامه ریزی"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxIncEditSupplierOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxIncEditSupplierOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز سفارش جدید دایرکتی
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxNewSupplierOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز سفارش جدید دایرکتی"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxNewSupplierOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxNewSupplierOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز صفر کردن سفارشات دایرکتی
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxZeroSupplierOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز صفر کردن سفارشات دایرکتی"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxZeroSupplierOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxZeroSupplierOrderNumber"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">
+                  تعداد مجاز سفارشات خارج از مسیر
+                </Label>
+                <TextBox
+                  value={this.state.txtMaxOutRouteSupplierOrderNumberValue}
+                  showClearButton={true}
+                  placeholder="تعداد مجاز سفارشات خارج از مسیر"
+                  rtlEnabled={true}
+                  valueChangeEvent="keyup"
+                  onValueChanged={this.txtMaxOutRouteSupplierOrderNumber_onChange}
+                />
+                <Row>
+                  <Label
+                    id="errMaxOutRouteSupplierOrderNumber"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
