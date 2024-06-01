@@ -121,6 +121,7 @@ class Bakhshnameh extends React.Component {
             stateDisable_btnAdd: false,
             stateDisable_btnUpdate: false,
             stateDisable_btnDelete: false,
+            stateDisable_btnConfirm:false,
             stateDisable_show: false,
             ToastProps: {
                 isToastVisible: false,
@@ -155,7 +156,7 @@ class Bakhshnameh extends React.Component {
     fn_updateGrid = async () => {
         if (this.state.stateDisable_show)
             this.setState({
-                BakhshnamehGridData: await bakhshnamehList(await searchPositionByUserId(this.props.User.userId, this.props.Company.currentCompanyId, this.props.User.token), this.props.User.userId, this.props.User.token),
+                BakhshnamehGridData: await bakhshnamehList(await searchPositionByUserId(this.props.User.userId, this.props.Company.currentCompanyId, this.props.User.token), this.props.User.userId, this.state.stateDisable_btnConfirm ? 0 : 1, this.props.User.token),
             });
     };
 
@@ -181,6 +182,9 @@ class Bakhshnameh extends React.Component {
                         break;
                     case "bakhshnameh.delete":
                         this.setState({ stateDisable_btnDelete: true });
+                        break;
+                    case "bakhshnameh.confirm":
+                        this.setState({ stateDisable_btnConfirm: true });
                         break;
                 }
             }
@@ -218,7 +222,7 @@ class Bakhshnameh extends React.Component {
         document.getElementById("ErrTicketAttachments").innerHTML = errMsg;
         this.setState({
             AttachedFiles: files,
-        });
+        } );
     }
 
     btnClearFileAttach_onClick = (e) => {
@@ -232,7 +236,8 @@ class Bakhshnameh extends React.Component {
     }
     grdBakhshnameh_onClickRow = async (e) => {
         var sb = await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token) // سمت های مربوط به بخشنامه
-        var stb = await searchPositionByBakhshnamehTypeIdList(e.data.bakhshnamehTypeId, this.props.User.token) // سمت های مربوط به نوع بخشنامه
+        //var stb = await searchPositionByBakhshnamehTypeIdList(e.data.bakhshnamehTypeId, this.props.User.token) // سمت های مربوط به نوع بخشنامه
+        var stb=await positionList(this.props.Company.currentCompanyId, this.props.User.token);
         this.setState({
             cmbBakhshnamehTypeValue: e.data.bakhshnamehTypeId,
             txtTitleValue: e.data.title,
@@ -377,10 +382,12 @@ class Bakhshnameh extends React.Component {
         this.setState({ txtTitleValue: e.value });
     };
     cmbBakhshnamehType_onChange = async (e) => {
-        this.setState({ positionList: await searchPositionByBakhshnamehTypeIdList(e, this.props.User.token),
+        this.setState({
+            //positionList: await searchPositionByBakhshnamehTypeIdList(e, this.props.User.token),
+            positionList: await positionList(this.props.Company.currentCompanyId, this.props.User.token),
             cmbBakhshnamehTypeValue: e,
         });
-        checkList=[];
+        checkList = [];
     };
     chkIsRead_onChange = async (e) => {
         if (e.value) {
@@ -438,17 +445,17 @@ class Bakhshnameh extends React.Component {
         this.setState({
             stateModalBakhshnameh: false,
             ToastProps: {
-              isToastVisible: true,
-              Message: RESULT,
-              Type: "success",
+                isToastVisible: true,
+                Message: RESULT,
+                Type: "success",
             },
-          });
+        });
         this.fn_updateGrid();
     };
 
     txtText_onChange = (e) => {
         this.setState({
-            txtTextValue: e.value
+            txtTextValue: e
         });
     }
 
@@ -559,14 +566,11 @@ class Bakhshnameh extends React.Component {
                                                 //defaultValue={marjup}
                                                 //valueType={editorValueType}
                                                 value={this.state.txtTextValue}
-                                                onValueChanged={this.txtText_onChange}
+                                                onValueChange={this.txtText_onChange}
                                             //rtlEnabled="true"
                                             >
                                                 <MediaResizing enabled={true} />
-                                                <ImageUpload
-                                                    tabs={tabs[0].value}
-                                                    fileUploadMode="base64"
-                                                />
+                                                <ImageUpload tabs={tabs[0].value} fileUploadMode="base64" />
                                                 <Toolbar multiline={true}>
                                                     <Item name="undo" />
                                                     <Item name="redo" />
@@ -634,7 +638,7 @@ class Bakhshnameh extends React.Component {
                                                 {this.state.positionList != null && this.state.positionList.map((item, index) => (
 
                                                     <label key={item.id} style={{ marginRight: "20px" }}>
-                                                        <input
+                                                        <input style={{width:20, height:20}}
                                                             type="checkbox"
                                                             value={item.id}
                                                             text={item.positionName}
@@ -703,7 +707,7 @@ class Bakhshnameh extends React.Component {
 
                                     </Row>
 
-                                    {(this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0)) && (
+                                    {(this.state.RowSelected == null || this.state.stateDisable_btnConfirm || (this.state.RowSelected != null && this.state.RowSelected.userId == this.props.User.userId && this.state.RowSelected.status === 0)) && (
                                         <>
                                             <Row className="standardMargin">
                                                 {this.state.stateDisable_btnAdd && (
@@ -742,7 +746,7 @@ class Bakhshnameh extends React.Component {
                                                         />
                                                     </Col>
                                                 )}
-                                                {this.state.stateDisable_btnAdd && (
+                                                {this.state.stateDisable_btnConfirm && (
                                                     <Col xs="auto">
                                                         <Button
                                                             icon={SaveIcon}
@@ -758,7 +762,7 @@ class Bakhshnameh extends React.Component {
                                         </>
                                     )}
 
-                                    {!this.state.newState && this.state.RowSelected.userId != this.props.User.userId && (
+                                    {!this.state.newState && (this.state.RowSelected.userId != this.props.User.userId && !this.state.stateDisable_btnConfirm) && (
                                         <Row className="standardMargin">
                                             <CheckBox
                                                 value={this.state.chkIsRead}

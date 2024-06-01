@@ -52,6 +52,7 @@ import TissMapItemSSTIDs from '../pages/TissMapItemSSTIDs'
 import TissDataDocs from '../pages/TissDataDocs'
 import OrderPointSupplierConfirmReports from '../pages/OrderPointSupplierConfirmReports'
 import Bakhshnamehs from '../pages/Bakhshnamehs'
+import Promotions from '../pages/Promotions'
 
 export const REAL_COMPONENT = [
   {
@@ -88,8 +89,8 @@ export const REAL_COMPONENT = [
   },
   {
 
-    strComponent:"OrdersSupplier",
-    orgComponent:<OrdersSupplier />
+    strComponent: "OrdersSupplier",
+    orgComponent: <OrdersSupplier />
   },
   {
     strComponent: "User",
@@ -130,7 +131,7 @@ export const REAL_COMPONENT = [
   {
     strComponent: "ItemLocations",
     orgComponent: <ItemLocations />,
-  },  
+  },
   {
     strComponent: "RegisterOrderTimes",
     orgComponent: <RegisterOrderTimes />,
@@ -174,63 +175,63 @@ export const REAL_COMPONENT = [
   {
     strComponent: "OrderPointSupplierReports",
     orgComponent: <OrderPointSupplierReports />,
-  }, 
+  },
   {
     strComponent: "OrderPoints",
     orgComponent: <OrderPoints />,
   },
   {
     strComponent: "OrderSupplierConfirms",
-    orgComponent: <OrderSupplierConfirms/>,
+    orgComponent: <OrderSupplierConfirms />,
   },
   {
     strComponent: "TicketSubjectUsers",
-    orgComponent: <TicketSubjectUsers/>,
+    orgComponent: <TicketSubjectUsers />,
   },
   {
     strComponent: "TicketSubjects",
-    orgComponent: <TicketSubjects/>,
+    orgComponent: <TicketSubjects />,
   },
   {
     strComponent: "OrdersByUpload",
-    orgComponent: <OrdersByUpload/>,
+    orgComponent: <OrdersByUpload />,
   },
   {
     strComponent: "SupplierLocationContacts",
-    orgComponent: <SupplierLocationContacts/>,
+    orgComponent: <SupplierLocationContacts />,
   },
   {
     strComponent: "Opinions",
-    orgComponent: <Opinions/>,
-  } 
+    orgComponent: <Opinions />,
+  }
   ,
   {
     strComponent: "RealEstateRegisters",
-    orgComponent: <RealEstateRegisters/>,
+    orgComponent: <RealEstateRegisters />,
   },
   {
     strComponent: "RealEstates",
-    orgComponent: <RealEstateShow/>,
+    orgComponent: <RealEstateShow />,
   },
   {
     strComponent: "Questions",
-    orgComponent: <Questions/>,
+    orgComponent: <Questions />,
   },
   {
     strComponent: "Answers",
-    orgComponent: <Answers/>,
+    orgComponent: <Answers />,
   },
   {
     strComponent: "Zones",
-    orgComponent: <Zones/>,
+    orgComponent: <Zones />,
   },
   {
     strComponent: "AnswerReports",
-    orgComponent: <AnswerReports/>,
+    orgComponent: <AnswerReports />,
   },
   {
     strComponent: "QuestionTypeUsers",
-    orgComponent: <QuestionTypeUsers/>,
+    orgComponent: <QuestionTypeUsers />,
   },
   {
     strComponent: "Profiles",
@@ -243,43 +244,47 @@ export const REAL_COMPONENT = [
   {
     strComponent: "TicketReports",
     orgComponent: <TicketReports />,
-  },  
-  {        
+  },
+  {
     strComponent: "ItemsWeights",
     orgComponent: <ItemsWeights />,
-  },  
-  {        
+  },
+  {
     strComponent: "SnpOrders",
     orgComponent: <SnpOrders />,
-  },  
-  {        
+  },
+  {
     strComponent: "ItemJets",
     orgComponent: <ItemJets />,
-  },  
-  {        
+  },
+  {
     strComponent: "SnpOrderReports",
     orgComponent: <SnpOrderReports />,
-  }                 
-  ,  
-  {        
+  }
+  ,
+  {
     strComponent: "ItemLocationSnapps",
     orgComponent: <ItemLocationSnapps />,
-  },             
-  {        
+  },
+  {
     strComponent: "TissMapItemSSTIDs",
     orgComponent: <TissMapItemSSTIDs />,
-  },             
-  {        
+  },
+  {
     strComponent: "TissDataDocs",
     orgComponent: <TissDataDocs />,
-  } , 
-  {        
+  },
+  {
     strComponent: "OrderPointSupplierConfirmReports",
     orgComponent: <OrderPointSupplierConfirmReports />,
-  } , 
-  {        
+  },
+  {
     strComponent: "Bakhshnamehs",
     orgComponent: <Bakhshnamehs />,
-  }                      
+  },
+  {
+    strComponent: "Promotions",
+    orgComponent: <Promotions />,
+  }
 ];
 
