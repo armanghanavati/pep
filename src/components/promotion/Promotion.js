@@ -68,7 +68,7 @@ import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import { DataGridPromotionColumns } from "./Promotion-config";
 import {
-    itemListCombo, itemListComboByItemGroupId, itemListComboByItemGroupIds, itemListComboByItemGroupWithAll, itemPromotionList
+    itemListCombo, itemListComboByItemGroupId, itemListComboByItemGroupIds, itemListComboByItemGroupWithAll, itemPromotionList, promotionNameList
 } from "../../redux/reducers/item/item-action";
 import { supplierOrderInventoryComboList } from "../../redux/reducers/supplier/supplier-action";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
@@ -109,13 +109,16 @@ class Promotion extends React.Component {
             FromDate: new Date(),
             ToDate: new Date(),
             ItemGroupIds: null,
-            ItemIds: null,
+            cmbPromotion:null,
+            cmbPromotionValue:null,
+            promotionNameList:null,
         };
     }
 
     async componentDidMount() {
         await this.fn_CheckRequireState();
         this.fn_itemGroupList();
+        this.fn_promotionNameList();
     }
     OpenCloseWait() {
         this.setState({ stateWait: !this.state.stateWait });
@@ -146,6 +149,12 @@ class Promotion extends React.Component {
         });
     };
 
+    fn_promotionNameList = async () => {
+        this.setState({
+            cmbPromotion: await promotionNameList(this.props.User.token),
+        });
+    };
+
     cmbItemGroup_onChange = async (e) => {
         this.setState({
             ItemGroupIds: e,
@@ -155,16 +164,24 @@ class Promotion extends React.Component {
 
     cmbItem_onChange = async (e) => {
         this.setState({
-            ItemIds: e
+            cmbItemValue: e
         });
-
     };
+    cmbPromotion_onChange=async(e)=>{
+        this.setState({
+            cmbPromotionValue:e
+        });
+    }
 
     btnSearch_onClick = async () => {
         this.OpenCloseWait();
+        var data={
+            itemIds:this.state.cmbItemValue,
+            promotionIds:this.state.cmbPromotionValue
+        }
         this.setState({
             promotionGridData: await itemPromotionList(
-                this.state.ItemIds,
+                data,
                 this.props.User.token
             ),
         });
@@ -175,8 +192,8 @@ class Promotion extends React.Component {
         Gfn_ExportToExcel(this.state.promotionGridData, "Promotion")
     }
 
-    btnItemPromotionReport_onClick=()=>{
-        window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.ItemIds, "_blank");
+    btnItemPromotionReport_onClick = () => {
+        window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue, "_blank");
     }
 
     DatePickerFrom_onChange = (params) => {
@@ -237,6 +254,19 @@ class Promotion extends React.Component {
                                     valueExpr="id"
                                     rtlEnabled={true}
                                     onValueChange={this.cmbItem_onChange}
+                                    className="fontStyle"
+                                />
+                            </Col>
+                            <Col>
+                                <Label className="standardLabelFont">تخفیف</Label>
+                                <TagBox
+                                    dataSource={this.state.cmbPromotion}
+                                    searchEnabled={true}
+                                    displayExpr="label"
+                                    placeholder="تخفیف"
+                                    valueExpr="id"
+                                    rtlEnabled={true}
+                                    onValueChange={this.cmbPromotion_onChange}
                                     className="fontStyle"
                                 />
                             </Col>
