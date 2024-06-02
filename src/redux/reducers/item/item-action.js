@@ -231,3 +231,20 @@ export async function itemPromotionList(object, Token) {
   }
   return null;
 }
+
+export async function promotionNameList(Token) {
+  const url = window.apiAddress + "/Item/promotionNameList";
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    }
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All promotion Name list" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
