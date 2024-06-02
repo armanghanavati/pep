@@ -56,11 +56,13 @@ import {
     ticketSubjectParentList,
 } from "../../redux/reducers/ticketSubject/ticketSubject-actions";
 import { DataGridTicketSubjectColumns } from "./TicketSubject-config";
+import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 
 class TicketSubject extends React.Component {
     constructor(props) {
@@ -224,6 +226,12 @@ class TicketSubject extends React.Component {
         });
         this.fn_updateGrid();
     };
+
+    btnExportExcel_onClick = () => {
+        Gfn_ExportToExcel(this.state.TicketSubjectGridData, "TicketSubject");
+    };
+
+
     render() {
         return (
             <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -367,7 +375,18 @@ class TicketSubject extends React.Component {
                         <Row>
                             <Label className="title">لیست موضوعات تیکت</Label>
                         </Row>
-                        <Row>
+                        <Row style={{ direction: 'ltr' }}>
+                            <Col xs="auto">
+                                <Button
+                                    icon={ExportExcelIcon}
+                                    type="default"
+                                    stylingMode="contained"
+                                    rtlEnabled={true}
+                                    onClick={this.btnExportExcel_onClick}
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="standardSpaceTop">
                             <Col xs="auto" className="standardMarginRight">
                                 <DataGrid
                                     dataSource={this.state.TicketSubjectGridData}
@@ -377,6 +396,7 @@ class TicketSubject extends React.Component {
                                     allowColumnResizing={true}
                                     onRowClick={this.grdTicketSubject_onClickRow}
                                     height={DataGridDefaultHeight}
+                                    className="fontStyle"
                                 >
                                     <Scrolling
                                         rowRenderingMode="virtual"

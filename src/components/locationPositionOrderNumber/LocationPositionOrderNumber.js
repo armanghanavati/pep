@@ -48,6 +48,7 @@ import {
   ToastTime,
   ToastWidth,
 } from "../../config/config";
+import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 import {
   pepObjectList,
   addPepObject,
@@ -72,6 +73,7 @@ import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import { ElevenMp } from "@mui/icons-material";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 
@@ -429,6 +431,10 @@ class LocationPositionOrderNumber extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.LocationPositionOrderNumberGridData, "LocationPositionOrderNumber");
+  };
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -778,7 +784,18 @@ class LocationPositionOrderNumber extends React.Component {
                 لیست تعداد مجاز ثبت درخواست فروشگاه
               </Label>
             </Row>
-            <Row>
+            <Row style={{ direction: 'ltr' }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
+            </Row>
+            <Row className="standardSpaceTop">
               <Col xs="auto" className="standardMarginRight">
                 <DataGrid
                   dataSource={this.state.LocationPositionOrderNumberGridData}

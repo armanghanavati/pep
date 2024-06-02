@@ -625,7 +625,7 @@ class Supplier extends React.Component {
                 </Col>
               </Row>
               <Row className="standardSpaceTop">
-                <Col xs="auto" className="standardMarginRight">
+                <Col xs="auto">
                   <DataGrid
                     dataSource={this.state.SupplierGridData}
                     defaultColumns={DataGridSupplierColumns}

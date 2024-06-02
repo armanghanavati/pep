@@ -54,6 +54,7 @@ import DataGrid, {
 
 import Wait from "../common/Wait";
 
+import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
@@ -234,6 +235,10 @@ class ItemWeight extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.ItemsGridData, "bseItems");
+  };
+
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -316,8 +321,19 @@ class ItemWeight extends React.Component {
               <Label className="title">لیست کالاها</Label>
             </Row>            
 
-            <Row>
-              <Col xs="auto" className="standardPadding">
+            <Row style={{ direction: 'ltr' }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
+            </Row>
+            <Row className="standardSpaceTop">
+              <Col xs="auto">
                 <DataGrid
                   dataSource={this.state.ItemsGridData}
                   defaultColumns={DataGridItemColumns}
@@ -326,6 +342,7 @@ class ItemWeight extends React.Component {
                   allowColumnResizing={true}
                   onRowUpdated={this.ItemsDataGrd_onUpdateRow}
                   height={DataGridDefaultHeight}
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"

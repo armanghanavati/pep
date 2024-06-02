@@ -43,11 +43,16 @@ export const DataGridSnpOrderColumns = [
         caption: "مشتری",
         allowEditing: false,
     },
-    // {
-    //     dataField: "phone",
-    //     caption: "شماره همراه",
-    //     allowEditing: true,
-    // },    
+    {
+        dataField: "phone",
+        caption: "شماره همراه",
+        allowEditing: false,
+    },
+    {
+        dataField: "deliverAddress",
+        caption: "آدرس تحویل",
+        allowEditing: false,
+    },    
 ];
 
 

@@ -65,7 +65,7 @@ import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
 import { supplierComboListByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
-import { orderPointListByLSI ,orderPointUpdate} from "../../redux/reducers/orderPoint/orderPoint-actions";
+import { orderPointListByLSI, orderPointUpdate } from "../../redux/reducers/orderPoint/orderPoint-actions";
 
 import {
   Gfn_BuildValueComboMulti,
@@ -96,8 +96,8 @@ class OrderPoint extends React.Component {
       stateEnable_btnAdd: false,
       stateEnable_btnUpdate: false,
       stateEnable_show: false,
-      OrderPointGridData:null,
-      OrderPointEdited:[],
+      OrderPointGridData: null,
+      OrderPointEdited: [],
       ToastProps: {
         isToastVisible: false,
         Message: "",
@@ -208,9 +208,9 @@ class OrderPoint extends React.Component {
       TEMP_cmbSupplier == null
         ? null
         : await itemListComboBySupplierId(
-            TEMP_cmbSupplier,
-            this.props.User.token
-          );
+          TEMP_cmbSupplier,
+          this.props.User.token
+        );
     const LAZY = new DataSource({
       store: ITEMS,
       paginate: true,
@@ -231,10 +231,10 @@ class OrderPoint extends React.Component {
 
   btnSearch_onClick = async () => {
     let flagSend = true;
-    
+
     document.getElementById("errLocation").innerHTML = "";
     document.getElementById("errItem").innerHTML = "";
-    document.getElementById("errSupplier").innerHTML = "";    
+    document.getElementById("errSupplier").innerHTML = "";
     if (
       this.state.cmbLocationValue === null ||
       this.state.cmbLocationValue == ""
@@ -257,7 +257,7 @@ class OrderPoint extends React.Component {
       const msg = "تامین کننده را انتخاب نمائید.";
       document.getElementById("errSupplier").innerHTML = msg;
       flagSend = false;
-    }    
+    }
 
     if (flagSend) {
       this.OpenCloseWait();
@@ -267,49 +267,52 @@ class OrderPoint extends React.Component {
         itemIds: this.state.cmbItemsValue,
         inventoryId: this.state.cmbInventoryvalue,
       };
-    //   alert(JSON.stringify(OBJ))
-        this.setState({
-          OrderPointGridData: await orderPointListByLSI(
-            OBJ,
-            this.props.User.token
-          ),
-        });
-      
+      //   alert(JSON.stringify(OBJ))
+      this.setState({
+        OrderPointGridData: await orderPointListByLSI(
+          OBJ,
+          this.props.User.token
+        ),
+      });
+
       this.OpenCloseWait();
     }
   };
 
-  grdOrderPoint_onRowUpdated=(params)=>{        
-    if(this.state.stateEnable_btnUpdate)
-        this.api_UpdateOrderPoint(params.data.id,params.data.maxMojoodiRooz,params.data.minMojoodiRooz,params.data.ledTime)
+  grdOrderPoint_onRowUpdated = (params) => {
+    if (this.state.stateEnable_btnUpdate)
+      this.api_UpdateOrderPoint(params.data.id, params.data.maxMojoodiRooz, params.data.minMojoodiRooz, params.data.ledTime)
     else
-        alert('کاربر گرامی شما دسترسی ویرایش ندارید. لطفا با ادمین تماس بگیرید.')
+      alert('کاربر گرامی شما دسترسی ویرایش ندارید. لطفا با ادمین تماس بگیرید.')
 
+  }
+
+  async api_UpdateOrderPoint(orderPintId, maxMojoodiRooz, minMojoodiRooz, ledTime) {
+    this.OpenCloseWait();
+    let data = {
+      orderPointId: orderPintId,
+      maxMojoodiRooz: maxMojoodiRooz,
+      minMojoodiRooz: minMojoodiRooz,
+      ledTime: ledTime
     }
+    const RTN = await orderPointUpdate(data, this.props.User.token);
+    this.setState({
+      ToastProps: {
+        isToastVisible: true,
+        Message: RTN == 1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
+        Type: RTN == 1 ? "success" : "error",
+      },
+    });
+    this.OpenCloseWait();
+  }
 
-    async api_UpdateOrderPoint(orderPintId,maxMojoodiRooz,minMojoodiRooz,ledTime) {
-        this.OpenCloseWait();        
-        let data = {
-            orderPointId: orderPintId,
-            maxMojoodiRooz: maxMojoodiRooz,
-            minMojoodiRooz: minMojoodiRooz,
-            ledTime: ledTime
-        }
-        const RTN=await orderPointUpdate(data,this.props.User.token);
-        this.setState({
-            ToastProps: {
-              isToastVisible: true,
-              Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
-              Type:RTN==1 ? "success" : "error",
-            },
-          });
-        this.OpenCloseWait();        
-    }
+  onHidingToast = () => {
+    this.setState({ ToastProps: { isToastVisible: false } });
+  };
 
-    onHidingToast = () => {
-        this.setState({ ToastProps: { isToastVisible: false } });
-      };
-
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(this.state.OrderPointGridData, "OrderPoint");
+  };
 
   render() {
     return (
@@ -363,7 +366,7 @@ class OrderPoint extends React.Component {
                   id="errLocation"
                   className="standardLabelFont errMessage"
                 />
-              </Col>              
+              </Col>
               <Col>
                 <Label className="standardLabelFont">تامین کننده</Label>
                 <TagBox
@@ -417,11 +420,11 @@ class OrderPoint extends React.Component {
           <Row className="standardPadding">
             <Row>
               <Label className="title">لیست نقطه سفارشات</Label>
-            </Row>            
-            <Row style={{direction:'ltr'}}>
+            </Row>
+            <Row style={{ direction: 'ltr' }}>
               <Col xs="auto">
                 <Button
-                  icon={ExportExcelIcon}                  
+                  icon={ExportExcelIcon}
                   type="default"
                   stylingMode="contained"
                   rtlEnabled={true}
@@ -442,8 +445,8 @@ class OrderPoint extends React.Component {
                   rtlEnabled={true}
                   allowColumnResizing={true}
                   columnResizingMode="widget"
-                  onRowUpdated={this.grdOrderPoint_onRowUpdated}                                              
-                >                                          
+                  onRowUpdated={this.grdOrderPoint_onRowUpdated}
+                >
                   <Scrolling
                     rowRenderingMode="virtual"
                     showScrollbar="always"
@@ -465,13 +468,13 @@ class OrderPoint extends React.Component {
                     />
                   )}
                   <Editing mode="cell" allowUpdating={true} />
-                  <FilterRow visible={true} />                  
-                  <HeaderFilter visible={true} />                  
+                  <FilterRow visible={true} />
+                  <HeaderFilter visible={true} />
                 </DataGrid>
               </Col>
-            </Row>           
+            </Row>
           </Row>
-        </Card>     
+        </Card>
       </div>
     );
   }
