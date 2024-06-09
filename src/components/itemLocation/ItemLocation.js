@@ -147,6 +147,7 @@ class ItemLocation extends React.Component {
       cmbStateValue: null,
       cmbItemGroupIds:null,
       cmbItemIds:null,
+      cmbSupplierIds:null,
     };
   }
 
@@ -296,14 +297,20 @@ class ItemLocation extends React.Component {
     })
     const IDS = e.toString().split(",");
     if (IDS.includes('0')) {
+      var temp = [];
+      for (var i = 0; i < this.state.cmbSupplier.length; i++) {
+        temp.push(this.state.cmbSupplier[i].id)
+      }
       this.setState({
         cmbSupplier: this.state.cmbSupplier,
-        cmbSupplierValue: e
+        cmbSupplierValue: e,
+        cmbSupplierIds:temp
       });
     }
     else {
       this.setState({
         cmbSupplierValue: e,
+        cmbSupplierIds:e
       })
     }
   }
@@ -412,7 +419,7 @@ class ItemLocation extends React.Component {
     var data = {
       locationIds: this.state.LocationIds,
       itemIds: this.state.cmbItemIds,
-      supplierIds: this.state.cmbSupplierValue,
+      supplierIds: this.state.cmbSupplierIds,
       itemGroupIds: this.state.cmbItemGroupIds,
       inventoryId: this.state.cmbInventoryvalue,
       stateIds: this.state.cmbStateValue
