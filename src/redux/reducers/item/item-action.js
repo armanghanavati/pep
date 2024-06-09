@@ -248,3 +248,21 @@ export async function promotionNameList(Token) {
   }
   return null;
 }
+
+export async function itemListByItemGroupIds(object, Token) {
+  const url = window.apiAddress + "/Item/itemListByItemGroupIds";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    }
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All Items by ItemGroupId" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}

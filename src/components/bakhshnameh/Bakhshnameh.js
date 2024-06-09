@@ -73,7 +73,7 @@ import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
-import { addBakhshnamehLog } from "../../redux/reducers/bakhshnameh/bakhshnamehLog-ations";
+import { addBakhshnamehLog, searchBakhshnamehLogByUserId } from "../../redux/reducers/bakhshnameh/bakhshnamehLog-ations";
 import { searchBakhshnamehPositionByBakhshnamehIdList } from "../../redux/reducers/bakhshnameh/bakhshnamehPosition-actions";
 import { accordionActionsClasses } from "@mui/material";
 import { Checklist, FlashAuto } from "@mui/icons-material";
@@ -244,7 +244,7 @@ class Bakhshnameh extends React.Component {
             txtTextValue: e.data.text,
             RowSelected: e.data,
             stateModalBakhshnameh: true,
-            newState: e.data.statusLog == 1 && e.data.userIdLog == this.props.User.userId ? true : false, // چک کردن اینکه کاربر برای این بخشنامه  مطالعه کردم را کلیک کرده یا خیر
+            newState: (e.data.statusLog == 1 && searchBakhshnamehLogByUserId(e.data.id, this.props.User.userId, this.props.User.token) != null) ? true : false, // چک کردن اینکه کاربر برای این بخشنامه  مطالعه کردم را کلیک کرده یا خیر
             bakhshnamehPostionList: await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token),
         });
         var position = [];
@@ -256,9 +256,10 @@ class Bakhshnameh extends React.Component {
                     t.push(stb[i])
                 }
             }
+
         }
         for (var i = 0; i < stb.length; i++) {
-            if (!stb.some(v => t.includes(v)))
+            if (stb.indexOf(t[i]) == -1)
                 position.push({ id: stb[i].id, positionName: stb[i].positionName })
         }
         this.setState({
@@ -635,7 +636,7 @@ class Bakhshnameh extends React.Component {
 
                                         <Row className="standardMargin">
                                             <Col>
-                                                {this.state.positionList != null && this.state.positionList.map((item, index) => (
+                                                {this.state.positionList != null && (this.state.RowSelected.userId == this.props.User.userId || this.state.stateDisable_btnConfirm) && this.state.positionList.map((item, index) => (
 
                                                     <label key={item.id} style={{ marginRight: "20px" }}>
                                                         <input style={{ width: 20, height: 20 }}
