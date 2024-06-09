@@ -636,7 +636,7 @@ class Bakhshnameh extends React.Component {
 
                                         <Row className="standardMargin">
                                             <Col>
-                                                {this.state.positionList != null && (this.state.RowSelected.userId == this.props.User.userId || this.state.stateDisable_btnConfirm) && this.state.positionList.map((item, index) => (
+                                                {this.state.positionList != null && (this.state.RowSelected == null ? true : (this.state.RowSelected.userId == this.props.User.userId  || this.state.stateDisable_btnConfirm)) && this.state.positionList.map((item, index) => (
 
                                                     <label key={item.id} style={{ marginRight: "20px" }}>
                                                         <input style={{ width: 20, height: 20 }}
