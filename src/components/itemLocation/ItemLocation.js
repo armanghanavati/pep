@@ -73,14 +73,14 @@ import {
 } from "../../redux/reducers/itemLocation/itemLocation-actions";
 import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
-import { itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
+import { itemListComboByItemGroupId, itemListByItemGroupIds, itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
 import { inventoryComboListByCompanyId } from "../../redux/reducers/inventory/inventory-actions";
 import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
 import {
   supplierListComboByCompanyId,
   supplierOrderInventoryComboList,
 } from "../../redux/reducers/supplier/supplier-action";
-import { itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
+import { itemGroupListBySupplierId, itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { inventoryListByLocationId } from "../../redux/reducers/inventory/inventory-actions";
 import { DataGridItemLocationColumns } from "./ItemLocation-config";
 
@@ -107,8 +107,10 @@ class ItemLocation extends React.Component {
     this.state = {
       LocationGroupIds: null,
       LocationIds: null,
-      SupplierId: null,
-      ItemGroupId: null,
+      cmbSupplier: null,
+      cmbSupplierValue: null,
+      cmbItemGroup: null,
+      cmbItemGroupValue: null,
       cmbItemValue: null,
       ItemLocationGridData: null,
 
@@ -142,7 +144,10 @@ class ItemLocation extends React.Component {
       cmbInventoryvalue: null,
       stateWait: false,
       cmbState: null,
-      cmbStateValue: null
+      cmbStateValue: null,
+      cmbItemGroupIds:null,
+      cmbItemIds:null,
+      cmbSupplierIds:null,
     };
   }
 
@@ -168,7 +173,7 @@ class ItemLocation extends React.Component {
 
   fn_supplierList = async () => {
     this.setState({
-      SupplierList: await supplierListComboByCompanyId(
+      cmbSupplier: await supplierListComboByCompanyId(
         this.props.Company.currentCompanyId,
         this.props.User.token
       ),
@@ -287,29 +292,82 @@ class ItemLocation extends React.Component {
   }
 
   cmbSupplier_onChange = async (e) => {
-    var data = await Gfn_BuildValueComboMulti(e);
-    const ITEMS = await itemListComboBySupplierId(data, this.props.User.token);
-
-    const LAZY = new DataSource({
-      store: ITEMS,
-      paginate: true,
-      pageSize: 10,
-    });
     this.setState({
-      cmbItem: LAZY,
-      SupplierId: e,
-    });
-  };
-
+      cmbItemGroup: await itemGroupListBySupplierId(e, this.props.User.token)
+    })
+    const IDS = e.toString().split(",");
+    if (IDS.includes('0')) {
+      var temp = [];
+      for (var i = 0; i < this.state.cmbSupplier.length; i++) {
+        temp.push(this.state.cmbSupplier[i].id)
+      }
+      this.setState({
+        cmbSupplier: this.state.cmbSupplier,
+        cmbSupplierValue: e,
+        cmbSupplierIds:temp
+      });
+    }
+    else {
+      this.setState({
+        cmbSupplierValue: e,
+        cmbSupplierIds:e
+      })
+    }
+  }
   cmbItemGroup_onChange = async (e) => {
-    this.setState({
-      ItemGroupId: e,
-    });
+    const IDS = e.toString().split(",");
+    if (IDS.includes('0')) {
+      var temp = [];
+      for (var i = 0; i < this.state.cmbItemGroup.length; i++) {
+        temp.push(this.state.cmbItemGroup[i].id)
+      }
+      const ITEMS=await itemListByItemGroupIds(temp, this.props.User.token)
+      const LAZY = new DataSource({
+        store: ITEMS,
+        paginate: true,
+        pageSize: 10
+      })
+      this.setState({
+        cmbItem: ITEMS,
+        cmbItemGroup: this.state.cmbItemGroup,
+        cmbItemGroupValue: e,
+        cmbItemGroupIds:temp,
+      })
+    }
+    else {
+      const ITEMS=await itemListByItemGroupIds(e, this.props.User.token)
+      const LAZY = new DataSource({
+        store: ITEMS,
+        paginate: true,
+        pageSize: 10
+      })
+      this.setState({
+        cmbItemGroupValue: e,
+        cmbItem: ITEMS,
+        cmbItemGroupIds:e,
+      })
+    }
   };
+
   cmbItem_onChange = async (e) => {
-    this.setState({
-      cmbItemValue: e,
-    });
+    const IDS = e.toString().split(",");
+    if (IDS.includes('0')) {
+      var temp = [];
+      for (var i = 0; i < this.state.cmbItem.length; i++) {
+        temp.push(this.state.cmbItem[i].id)
+      }
+      this.setState({
+        cmbItem: this.state.cmbItem,
+        cmbItemIds:temp,
+        cmbItemValue: e
+      });
+    }
+    else {
+      this.setState({
+        cmbItemValue: e,
+        cmbItemIds:e,
+      })
+    }
   };
 
   cmbState_onChange = async (e) => {
@@ -360,13 +418,12 @@ class ItemLocation extends React.Component {
   btnSearch_onClick = async () => {
     var data = {
       locationIds: this.state.LocationIds,
-      itemId: this.state.cmbItemValue,
-      supplierId: this.state.SupplierId,
-      itemGroupId: this.state.ItemGroupId,
+      itemIds: this.state.cmbItemIds,
+      supplierIds: this.state.cmbSupplierIds,
+      itemGroupIds: this.state.cmbItemGroupIds,
       inventoryId: this.state.cmbInventoryvalue,
       stateIds: this.state.cmbStateValue
     };
-    //alert(JSON.stringify(data))
     var RESULT = 0;
     this.OpenCloseWait();
     RESULT = await itemLocationList(data, this.props.User.token);
@@ -382,7 +439,6 @@ class ItemLocation extends React.Component {
           Type: "error",
         },
       });
-
   };
 
   fn_ActiveDeactiveAll(Status) {
@@ -587,7 +643,7 @@ class ItemLocation extends React.Component {
 
               <Col>
                 <Label className="standardLabelFont">تامین کننده</Label>
-                <SelectBox
+                {/* <SelectBox
                   dataSource={this.state.SupplierList}
                   displayExpr="label"
                   placeholder="تامین کننده"
@@ -596,6 +652,17 @@ class ItemLocation extends React.Component {
                   rtlEnabled={true}
                   onValueChange={this.cmbSupplier_onChange}
                   value={this.state.SupplierId}
+                  className="fontStyle"
+                /> */}
+                <TagBox
+                  dataSource={this.state.cmbSupplier}
+                  searchEnabled={true}
+                  displayExpr="label"
+                  placeholder="تامین کننده"
+                  valueExpr="id"
+                  rtlEnabled={true}
+                  onValueChange={this.cmbSupplier_onChange}
+                  value={this.state.cmbSupplierValue}
                   className="fontStyle"
                 />
                 <Label
@@ -606,30 +673,26 @@ class ItemLocation extends React.Component {
               <Row className="standardPadding">
                 <Col xs={3}>
                   <Label className="standardLabelFont">گروه کالا</Label>
-                  <SelectBox
-                    dataSource={this.state.ItemGroupList}
+                  <TagBox
+                    dataSource={this.state.cmbItemGroup}
+                    searchEnabled={true}
                     displayExpr="label"
                     placeholder="گروه کالا"
                     valueExpr="id"
-                    searchEnabled={true}
                     rtlEnabled={true}
                     onValueChange={this.cmbItemGroup_onChange}
-                    value={this.state.ItemGroupId}
+                    value={this.state.cmbItemGroupValue}
                     className="fontStyle"
-                  />
-                  <Label
-                    id="errItemGroup"
-                    className="standardLabelFont errMessage"
                   />
                 </Col>
                 <Col xs={3}>
                   <Label className="standardLabelFont">کالا</Label>
-                  <SelectBox
+                  <TagBox
                     dataSource={this.state.cmbItem}
+                    searchEnabled={true}
                     displayExpr="label"
                     placeholder="کالا"
                     valueExpr="id"
-                    searchEnabled={true}
                     rtlEnabled={true}
                     onValueChange={this.cmbItem_onChange}
                     value={this.state.cmbItemValue}
