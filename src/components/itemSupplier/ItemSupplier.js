@@ -209,7 +209,9 @@ class ItemSupplier extends React.Component {
   btnUpdate_onClick = async () => {
     if (this.state.ItemListUpdated.length > 0) {
       const data = this.state.ItemListUpdated;
-      const RESULT = await updateItemSupplier(data, this.props.User.token);
+      const RESULT = await updateItemSupplier(data, this.props.User.token);      
+      if (RESULT>0)
+        this.setState({ItemListUpdated:[]})
       this.setState({
         ToastProps: {
           isToastVisible: true,

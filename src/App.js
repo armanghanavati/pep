@@ -29,6 +29,7 @@ class App extends React.Component {
   componentDidMount = async () => {
     // await this.getParamsFromUrl();    
     //await this.fn_CheckUrlProtocol();
+    alert(Math.ceil(8.928))
     let token = this.props.User.token
     await checkTokenExpire(token);
     await this.fn_CheckIsLogin();
