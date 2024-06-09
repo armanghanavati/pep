@@ -656,6 +656,7 @@ class Location extends React.Component {
                   allowColumnResizing={true}
                   onRowClick={this.grdLocation_onClickRow}
                   height={DataGridDefaultHeight}
+                  className="fontStyle"
                 >
                   <Scrolling
                     rowRenderingMode="virtual"

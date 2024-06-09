@@ -170,13 +170,23 @@ class OrderInventoryNewGroup extends React.Component {
     let data = {
         values: JSON.stringify(this.state.NewDataGroup)
     }
-    const RTN=await insertNewDataGroupOrderPointInventory(data,this.props.User.token)
-    
+    const RTN=await insertNewDataGroupOrderPointInventory(data,this.props.User.token)    
+
+    const OBJ = {
+      SupplierId: this.state.cmbSupplierValue,
+      LocationId: this.state.cmbLocationValue,
+    };
+    this.setState({      
+      ItemsGridData: await itemListRemainBySupplierId(
+        OBJ,
+        this.props.User.token
+      ),
+    });    
     this.OpenCloseWait();
     this.setState({        
       ToastProps: {
         isToastVisible: true,        
-        Message: RTN.MSG,
+        Message: RTN.msg,
         Type: "info" ,
       },
     });    

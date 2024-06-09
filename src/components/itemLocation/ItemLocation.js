@@ -763,6 +763,7 @@ class ItemLocation extends React.Component {
             </Row>
           </Row>
           <Row className="standardPadding">
+<<<<<<< HEAD
             <Row>
               <Label className="title">لیست کالا فروشگاه</Label>
             </Row>
@@ -814,19 +815,76 @@ class ItemLocation extends React.Component {
             </Col>
             <Row style={{ paddingRight: "10px", paddingBottom: "10px" }}>
               {this.state.stateDisable_btnUpdate && (
+=======
+            <Col>
+              <Row>
+                <Label className="title">لیست کالا فروشگاه</Label>
+              </Row>
+              <Row style={{ direction: 'ltr' }}>
+>>>>>>> 87f97b08ecd7702eeb436c4840b2b784f0cd3483
                 <Col xs="auto">
                   <Button
-                    icon={UpdateIcon}
-                    text="ذخیره تغییرات"
-                    type="success"
+                    icon={ExportExcelIcon}
+                    type="default"
                     stylingMode="contained"
                     rtlEnabled={true}
-                    onClick={this.btnUpdate_onClick}
+                    onClick={this.btnExportExcel_onClick}
                     className="fontStyle"
                   />
                 </Col>
-              )}
-            </Row>
+              </Row>
+              <Row className="standardSpaceTop">
+                <Col xs="auto">
+                  <DataGrid
+                    dataSource={this.state.ItemLocationGridData}
+                    defaultColumns={DataGridItemLocationColumns}
+                    showBorders={true}
+                    onRowUpdated={this.grdItemLocation_onUpdateRow}
+                    rtlEnabled={true}
+                    allowColumnResizing={true}
+                    height={DataGridDefaultHeight}
+                    className="fontStyle"
+                    valueExpr="id"
+                    columnAutoWidth={true}
+                    allowColumnReordering={true}
+                    columnResizingMode="widget"
+                  >
+                    <Scrolling
+                      rowRenderingMode="virtual"
+                      showScrollbar="always"
+                      columnRenderingMode="virtual"
+                    />
+
+                    <Paging defaultPageSize={DataGridDefaultPageSize} />
+                    <Pager
+                      visible={true}
+                      allowedPageSizes={DataGridPageSizes}
+                      showPageSizeSelector={true}
+                      showNavigationButtons={true}
+                    />
+                    <Editing mode="cell" allowUpdating={true} />
+                    <FilterRow visible={true} />
+                    <FilterPanel visible={true} />
+                    <HeaderFilter visible={true} />
+                  </DataGrid>
+                </Col>
+              </Row>
+              <Row style={{ paddingRight: "10px", paddingBottom: "10px" }}>
+                {this.state.stateDisable_btnUpdate && (
+                  <Col xs="auto">
+                    <Button
+                      icon={UpdateIcon}
+                      text="ذخیره تغییرات"
+                      type="success"
+                      stylingMode="contained"
+                      rtlEnabled={true}
+                      onClick={this.btnUpdate_onClick}
+                      className="fontStyle"
+                    />
+                  </Col>
+                )}
+              </Row>
+            </Col>
           </Row>
         </Card>
       </div>
