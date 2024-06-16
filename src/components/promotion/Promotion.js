@@ -177,7 +177,8 @@ class Promotion extends React.Component {
         this.OpenCloseWait();
         var data={
             itemIds:this.state.cmbItemValue,
-            promotionIds:this.state.cmbPromotionValue
+            promotionIds:this.state.cmbPromotionValue,
+            userId: this.props.User.userId
         }
         this.setState({
             promotionGridData: await itemPromotionList(
@@ -193,7 +194,7 @@ class Promotion extends React.Component {
     }
 
     btnItemPromotionReport_onClick = () => {
-        window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue, "_blank");
+        window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId, "_blank");
     }
 
     DatePickerFrom_onChange = (params) => {
