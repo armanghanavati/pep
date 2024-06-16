@@ -107,7 +107,7 @@ const headerOptions = {
         'aria-label': 'Font family',
     },
 };
-var checkList = [];
+
 class Bakhshnameh extends React.Component {
     constructor(props) {
         super(props);
@@ -137,6 +137,7 @@ class Bakhshnameh extends React.Component {
             Attachments: null,
             positionId: null,
             bakhshnamehId: null,
+            enablePositions:null,
         };
     }
     async componentDidMount() {
@@ -235,9 +236,7 @@ class Bakhshnameh extends React.Component {
         })
     }
     grdBakhshnameh_onClickRow = async (e) => {
-        var sb = await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token) // سمت های مربوط به بخشنامه
-        //var stb = await searchPositionByBakhshnamehTypeIdList(e.data.bakhshnamehTypeId, this.props.User.token) // سمت های مربوط به نوع بخشنامه
-        var stb = await positionList(this.props.Company.currentCompanyId, this.props.User.token);
+        var positions = await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token);
         this.setState({
             cmbBakhshnamehTypeValue: e.data.bakhshnamehTypeId,
             txtTitleValue: e.data.title,
@@ -245,38 +244,12 @@ class Bakhshnameh extends React.Component {
             RowSelected: e.data,
             stateModalBakhshnameh: true,
             newState: (e.data.statusLog == 1 && searchBakhshnamehLogByUserId(e.data.id, this.props.User.userId, this.props.User.token) != null) ? true : false, // چک کردن اینکه کاربر برای این بخشنامه  مطالعه کردم را کلیک کرده یا خیر
-            bakhshnamehPostionList: await searchBakhshnamehPositionByBakhshnamehIdList(e.data.id, this.props.User.token),
+            positionList: positions
         });
-        var position = [];
-        const t = [];
-        for (var i = 0; i < stb.length; i++) {
-            for (var j = 0; j < sb.length; j++) {
-                if (stb[i].id == sb[j].positionId) {
-                    position.push({ id: stb[i].id, positionName: stb[i].positionName, check: "checked" })
-                    t.push(stb[i])
-                }
-            }
-
-        }
-        for (var i = 0; i < stb.length; i++) {
-            if (stb.indexOf(t[i]) == -1)
-                position.push({ id: stb[i].id, positionName: stb[i].positionName })
-        }
-        this.setState({
-            positionList: position
-        })
         const obj = {
             AttachmentId: e.data.id
         }
         this.setState({ Attachments: await AttachmentList(obj, this.props.User.token) })
-        //alert(JSON.stringify(position))
-
-        if (position != null) {
-            position.forEach((item, index) => {
-                if (checkList[index] != item.id)
-                    checkList.push(item.id); //  اضافه شدن به لیست سمت ها بعد از کلیک روی ردیف برای جلوگیری از ردیف تکراری
-            });
-        }
     };
 
     btnNew_onClick = () => {
@@ -290,7 +263,6 @@ class Bakhshnameh extends React.Component {
             Attachments: null,
             AttachedFiles: null,
             positionList: null,
-            checkList: []
         });
     };
 
@@ -312,7 +284,7 @@ class Bakhshnameh extends React.Component {
                 "عنوان اسناد را وارد نمائید";
             flag = false;
         }
-        if (checkList.length < 1) {
+        if (this.state.enablePositions == null) {
             document.getElementById("errPosition").innerHTML =
                 "سمت را انتخاب نمائید";
             flag = false;
@@ -333,7 +305,7 @@ class Bakhshnameh extends React.Component {
                 title: this.state.txtTitleValue,
                 text: this.state.txtTextValue,
                 status: 0,
-                bakhshnamehIds: checkList
+                bakhshnamehIds: this.state.enablePositions
             };
             //alert(JSON.stringify(data))
             const RESULT = await addBakhshnameh(data, this.props.User.token);
@@ -384,11 +356,9 @@ class Bakhshnameh extends React.Component {
     };
     cmbBakhshnamehType_onChange = async (e) => {
         this.setState({
-            //positionList: await searchPositionByBakhshnamehTypeIdList(e, this.props.User.token),
-            positionList: await positionList(this.props.Company.currentCompanyId, this.props.User.token),
+            positionList: await searchBakhshnamehPositionByBakhshnamehIdList(0, this.props.User.token),
             cmbBakhshnamehTypeValue: e,
         });
-        checkList = [];
     };
     chkIsRead_onChange = async (e) => {
         if (e.value) {
@@ -412,7 +382,7 @@ class Bakhshnameh extends React.Component {
                 bakhshnamehTypeId: this.state.cmbBakhshnamehTypeValue,
                 title: this.state.txtTitleValue,
                 text: this.state.txtTextValue,
-                bakhshnamehIds: checkList
+                bakhshnamehIds: this.state.enablePositions
             };
 
             const RESULT = await updateBakhshnameh(data, this.props.User.token);
@@ -464,38 +434,20 @@ class Bakhshnameh extends React.Component {
         this.setState({ stateModalBakhshnameh: false })
     }
 
-    chkPosition_onChange = (event) => {
-        const checkedId = event.target.value;
-        if (event.target.checked) {
-            if (checkList.indexOf(parseInt(checkedId)) === -1) {
-                checkList = [...checkList, parseInt(checkedId)]
-            }
-        } else {
-            checkList = checkList.filter(id => id !== parseInt(checkedId))
+    chkPosition_onChange = (id, e) => {
+        let tempPositionList=this.state.positionList;
+        let tempEnablePositions=[];
+        for (let i=0;i<tempPositionList.length;i++){
+            if(tempPositionList[i].positionId==id)
+                tempPositionList[i].positionFlag=!tempPositionList[i].positionFlag        
+            if(tempPositionList[i].positionFlag)
+                tempEnablePositions.push(tempPositionList[i].positionId)
         }
-        var result = [];
-        if (this.state.positionList.length > 0) {
-            for (var i = 0; i < this.state.positionList.length; i++) {
-                if (checkList.indexOf(this.state.positionList[i].id) != -1) {
-                    result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName, check: "checked" })
-                }
-                else if (typeof checkList[i] == 'undefined') {
-                    if (checkList.indexOf(this.state.positionList[i].id) === -1)
-                        result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName })
-                    else
-                        result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName, check: "checked" })
-                }
-                else {
-                    result.push({ id: this.state.positionList[i].id, positionName: this.state.positionList[i].positionName })
-                }
-            }
-            this.setState({
-                positionList: result
-            })
-        }
-        //alert(JSON.stringify(checkList))
+        this.setState({
+            positionList:tempPositionList,
+            enablePositions:tempEnablePositions
+        })        
     }
-
     render() {
         return (
             <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -635,28 +587,28 @@ class Bakhshnameh extends React.Component {
                                         </Col>
 
                                         <Row className="standardMargin">
-                                            <Col>
-                                                {this.state.positionList != null && (this.state.RowSelected == null ? true : (this.state.RowSelected.userId == this.props.User.userId  || this.state.stateDisable_btnConfirm)) && this.state.positionList.map((item, index) => (
 
+                                            {this.state.positionList != null && (this.state.RowSelected == null ? true : (this.state.RowSelected.userId == this.props.User.userId || this.state.stateDisable_btnConfirm)) && this.state.positionList.map((item, index) => (
+                                                <Col xs={3}>
                                                     <label key={item.id} style={{ marginRight: "20px" }}>
-                                                        <input style={{ width: 20, height: 20 }}
-                                                            type="checkbox"
-                                                            value={item.id}
+                                                        <CheckBox
+                                                            value={item.positionFlag}
+                                                            rtlEnabled={true}
+                                                            id={item.id}
                                                             text={item.positionName}
-                                                            checked={item.check}
-                                                            onChange={(event) => { this.chkPosition_onChange(event) }}
+                                                            onValueChange={(e) => this.chkPosition_onChange(item.positionId, e)}
                                                         />
-                                                        {item.positionName}
                                                     </label>
-                                                )
-                                                )}
-                                                <Row>
-                                                    <Label
-                                                        id="errPosition"
-                                                        className="standardLabelFont errMessage"
-                                                    />
-                                                </Row>
-                                            </Col>
+                                                </Col>
+                                            )
+                                            )}
+                                            <Row>
+                                                <Label
+                                                    id="errPosition"
+                                                    className="standardLabelFont errMessage"
+                                                />
+                                            </Row>
+
                                             <Col>
                                                 {(this.state.RowSelected == null || (this.state.RowSelected != null && this.state.RowSelected.status == 0 && this.state.RowSelected.userId == this.props.User.userId)) && (
                                                     <Col xs="auto">
