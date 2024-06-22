@@ -299,7 +299,7 @@ class Supplier extends React.Component {
       txtSupplierNamePersianValue: e.data.persianName,
       txtSupplierDescValue: e.data.desc,
       chkIsActive: e.data.isActive,
-      chkIsDirect: e.data.isDirect == null && false,
+      chkIsDirect: e.data.isDirect == null ? false : (e.data.isDirect == 0 ? false : true),
       stateUpdateDelete: true,
       RowSelected: e.data,
       txtSupplierMinOrderWeightValue: e.data.minOrderWeight,
