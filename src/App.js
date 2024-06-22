@@ -29,11 +29,46 @@ class App extends React.Component {
   componentDidMount = async () => {
     // await this.getParamsFromUrl();    
     //await this.fn_CheckUrlProtocol();
-    // alert(Math.ceil(8.928))
+    // alert(this.fn_counterDecimal(421.56))
     let token = this.props.User.token
     await checkTokenExpire(token);
     await this.fn_CheckIsLogin();
   };
+
+  // -----------------------------------------------------------------------------------
+  fn_IntPart(num){    
+    let sah=0;
+    let mod=1;
+    while(mod>=1){
+      sah=Math.floor(num/10);
+      mod=num % 10;
+      if(mod>=1){
+        sah=num-mod;        
+        sah=sah+Math.floor(mod/1);
+        mod=num % 1;
+      }
+      else
+        sah=sah*10;
+    }
+    return sah;
+  }
+
+  fn_counterDecimal(num){
+    let sah=this.fn_IntPart(num)                
+    let dec=num-sah;       
+    let counterDecimal=0;
+    let strDec='';
+    while(dec>0){
+      var newNum=dec*10;
+      var sahNew=this.fn_IntPart(newNum);      
+      strDec+=sahNew
+      dec=newNum-sahNew;
+      counterDecimal++;
+    }
+    alert(strDec)
+    return counterDecimal;
+  }
+  // -----------------------------------------------------------------------------------
 
   fn_CheckUrlProtocol = () => {
     const HOST_NAME = window.location.hostname;

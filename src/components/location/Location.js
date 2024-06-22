@@ -296,7 +296,7 @@ class Location extends React.Component {
       this.fn_updateGrid();
     }
   };
-  txtCode_onChange = (e) => {
+  txtCode_onChange = (e) => {    
     this.setState({ txtCodeValue: e.value });
   };
   txtLocationName_onChange = (e) => {
