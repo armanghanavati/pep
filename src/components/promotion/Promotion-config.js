@@ -20,11 +20,6 @@ export const DataGridPromotionColumns = [
         allowEditing: false,
     },
     {
-        dataField: "itemCost",
-        caption: "هزینه کالا",
-        allowEditing: false,
-    },
-    {
         dataField: "itemPrice",
         caption: "قیمت کالا",
         allowEditing: false,
