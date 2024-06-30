@@ -87,6 +87,7 @@ import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import PrintIcon from "../../assets/images/icon/print.png";
+import { printTypeList } from "../../redux/reducers/printType/printType-actions";
 
 const dateLabel = { 'aria-label': 'Date' };
 
@@ -109,9 +110,11 @@ class Promotion extends React.Component {
             FromDate: new Date(),
             ToDate: new Date(),
             ItemGroupIds: null,
-            cmbPromotion:null,
-            cmbPromotionValue:null,
-            promotionNameList:null,
+            cmbPromotion: null,
+            cmbPromotionValue: null,
+            promotionNameList: null,
+            cmbPrintType: null,
+            cmbPrintTypeValue: null,
         };
     }
 
@@ -119,6 +122,7 @@ class Promotion extends React.Component {
         await this.fn_CheckRequireState();
         this.fn_itemGroupList();
         this.fn_promotionNameList();
+        this.fn_printTypeList();
     }
     OpenCloseWait() {
         this.setState({ stateWait: !this.state.stateWait });
@@ -155,6 +159,12 @@ class Promotion extends React.Component {
         });
     };
 
+    fn_printTypeList = async () => {
+        this.setState({
+            cmbPrintType: await printTypeList(this.props.User.token)
+        })
+    }
+
     cmbItemGroup_onChange = async (e) => {
         this.setState({
             ItemGroupIds: e,
@@ -167,17 +177,21 @@ class Promotion extends React.Component {
             cmbItemValue: e
         });
     };
-    cmbPromotion_onChange=async(e)=>{
+    cmbPromotion_onChange = async (e) => {
         this.setState({
-            cmbPromotionValue:e
+            cmbPromotionValue: e
         });
     }
-
+    cmbPrintType_onChange = async (e) => {
+        this.setState({
+            cmbPrintTypeValue: e
+        })
+    }
     btnSearch_onClick = async () => {
         this.OpenCloseWait();
-        var data={
-            itemIds:this.state.cmbItemValue,
-            promotionIds:this.state.cmbPromotionValue,
+        var data = {
+            itemIds: this.state.cmbItemValue,
+            promotionIds: this.state.cmbPromotionValue,
             userId: this.props.User.userId
         }
         this.setState({
@@ -194,7 +208,13 @@ class Promotion extends React.Component {
     }
 
     btnItemPromotionReport_onClick = () => {
-        window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId, "_blank");
+        if(this.state.cmbPrintTypeValue == "1")
+                window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=null", "_blank");
+        else if(this.state.cmbPrintTypeValue == "2")
+                window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
+        //window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
+        //window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
+
     }
 
     DatePickerFrom_onChange = (params) => {
@@ -329,16 +349,6 @@ class Promotion extends React.Component {
                                     className="fontStyle"
                                 />
                             </Col>
-                            <Col xs="auto">
-                                <Button
-                                    icon={PrintIcon}
-                                    type="default"
-                                    stylingMode="contained"
-                                    rtlEnabled={true}
-                                    onClick={this.btnItemPromotionReport_onClick}
-                                    className="fontStyle"
-                                />
-                            </Col>
                         </Row>
                         <Row className="standardSpaceTop">
                             <Col xs="auto" className="standardMarginRight">
@@ -377,6 +387,30 @@ class Promotion extends React.Component {
                                 </DataGrid>
                             </Col>
                         </Row>
+                    </Row>
+                    <Row className="standardPadding">
+                        <Col xs="auto">
+                            <SelectBox
+                                dataSource={this.state.cmbPrintType}
+                                displayExpr="name"
+                                placeholder="نوع چاپ"
+                                valueExpr="id"
+                                searchEnabled={true}
+                                rtlEnabled={true}
+                                onValueChange={this.cmbPrintType_onChange}
+                                value={this.state.cmbPrintTypeValue}
+                            />
+                        </Col>
+                        <Col xs="auto">
+                            <Button
+                                icon={PrintIcon}
+                                text="چاپ"
+                                type="default"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                onClick={this.btnItemPromotionReport_onClick}
+                            />
+                        </Col>
                     </Row>
                 </Card>
             </div>
