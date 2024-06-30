@@ -139,6 +139,13 @@ export function Gfn_NumberDetect(number) {
     return flag;
 }
 
+//----------Format Number----------
+export function Gfn_FormatNumber(value) {
+    return value && value != 0
+      ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      : "0";
+  }
+
 //----------Check token expiration----------
 export function checkTokenExpire(token) {
     if (token != null) {

@@ -85,3 +85,37 @@ export const DataGridItemColumns = [
   //   allowEditing: false,
   // },
 ];
+
+
+export const DataGridItemReportColumns = [
+  {
+    dataField: "row",
+    caption: "ردیف",
+    allowEditing: false,
+  },
+  {
+    dataField: "groupName",
+    caption: "گروه کالا",
+    allowEditing: false,
+  },
+  {
+    dataField: "itemName",
+    caption: "نام کالا",
+    allowEditing: false,
+  },
+  {
+    dataField: "barcode1",
+    caption: "بارکد 1",
+    allowEditing: false,
+  },
+  {
+    dataField: "unitWeight",
+    caption: "وزن واحد",
+    allowEditing: false,
+  },
+  {
+    dataField: "qtyPerPack",
+    caption: "تعداد در کارتن",
+    allowEditing: false,
+  },
+];
