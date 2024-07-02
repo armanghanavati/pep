@@ -69,8 +69,3 @@ const index = ({ DataGridCompanyColumns, allListRF }) => {
 };
 
 export default index;
-
-{
-  /* <Paging defaultPageSize={DataGridDefaultPageSize} /> */
-}
-// allowedPageSizes={DataGridPageSizes}

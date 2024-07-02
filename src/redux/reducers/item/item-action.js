@@ -310,7 +310,7 @@ export const storeGroup = async () => {
 
 // جستجوی لیست کالا
 export const slaPromotionList = async (object) => {
-  const url = window.apiAddress + "/SlaPromotion/slaPromotionList";
+  const url = window.apiAddress + "/item/itemDiscountList";
   const response = await axios.post(url, object);
   console.log(response);
   return response?.data;
