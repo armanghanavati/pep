@@ -30,6 +30,11 @@ export const DataGridOrderPointInventoryColumns = [
         allowEditing:true    
     },
     {
+        dataField:"mojoodi" ,
+        caption:"موجودی",
+        allowEditing:false    
+    },
+    {
         dataField:"productId" ,
         caption:"کد کالا",
         allowEditing:false    
@@ -63,12 +68,7 @@ export const DataGridOrderPointInventoryColumns = [
         dataField:"cityName" ,
         caption:"شهر",
         allowEditing:false
-    },
-    {
-        dataField:"mojoodi" ,
-        caption:"موجودی",
-        allowEditing:false    
-    },
+    },    
     {
         dataField:"mojoodiAccessable" ,
         caption:"موجودی در دسترس",
@@ -142,7 +142,7 @@ export const DataGridOrderPointInventoryReportColumns = [
         dataField:"mojoodi" ,
         caption:"موجودی",
         allowEditing:false    
-    },
+    },    
     {
         dataField:"tedadErsali" ,
         caption:"تعداد ارسالی",

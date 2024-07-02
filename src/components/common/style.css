@@ -29,3 +29,8 @@
     padding-left: 0;
   }
   
+  .border-double-bottom {
+    border-style: double;
+    border-width: 0 0 6px 0; 
+    border-color: rgb(255, 101, 46);
+  }

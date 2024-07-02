@@ -16,9 +16,9 @@ table {
 } */
 
 tr:nth-child(even) {
-  background-color: #f5dede;
+  /* background-color: #f5dede; */
+  background-color: rgba(124, 153, 210, 0.24);
 }
-
 
 .css_fish_td{
   background: white;

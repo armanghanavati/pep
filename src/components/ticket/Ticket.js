@@ -43,6 +43,8 @@ import {
     updateTicket,
     getTicketExecuters,
 } from '../../redux/reducers/ticket/ticket-actions';
+
+import { Gfn_AddHours } from '../../utiliy/GlobalMethods';
 import { UploadFiles, AttachmentList } from '../../redux/reducers/Attachments/attachment-action';
 import { ticketActions } from '../../redux/reducers/ticket/ticket-slice';
 import { ticketSubjectActions } from '../../redux/reducers/ticketSubject/ticketSubject-slice';
@@ -255,9 +257,11 @@ class Ticket extends React.Component {
                 // insertDate:null,
                 desc: this.state.txtDescValue,
                 applicationUserId: this.props.User.userId,
-                locationId: this.state.cmbLocationValue
+                locationId: this.state.cmbLocationValue,
+                expectedDoneTime: Gfn_AddHours(new Date(this.state.ExpectedDoneTime), 3, 30)
             }
-            // alert(JSON.stringify(obj))
+            console.log(JSON.stringify(obj))
+
             var result = await RegisterNewTicket(obj, this.props.User.token);
             this.setState({
                 txtTilteValue: null,
@@ -628,6 +632,9 @@ class Ticket extends React.Component {
                                             <Col>شماره تیکت : {this.state.TicketData.id}</Col>
                                             <Col>تاریخ ثبت : {this.state.TicketData.persianDate}</Col>
                                         </Row>
+                                        <Row className="standardPadding">
+                                            <Col>تاریخ و ساعت مورد انتظار انجام: {this.state.TicketData.persianExpectedDoneTime}</Col>
+                                        </Row>
                                         <div className="line"></div>
                                         <Row className="standardPadding">
                                             <Col>نام درخواست دهنده: {this.state.FullName}</Col>
@@ -864,14 +871,14 @@ class Ticket extends React.Component {
                                     </Col>
                                 </Row>
                                 <Row className="standardPadding">
-                                    <Col>                                        
+                                    <Col>
                                         <LocalizationProvider dateAdapter={AdapterJalali}>
                                             <DateTimePicker
                                                 label="تاریخ مورد انتظار انجام"
                                                 value={this.state.ExpectedDoneTime}
                                                 onChange={this.DatePickerExpectedDoneTime_onChange}
-                                                renderInput={(params) => <TextField {...params} style={{color:'red'}} />}                                                
-                                                className='fontStyle'
+                                                renderInput={(params) => <TextField {...params} style={{ color: 'red' }} />}
+                                                rtlEnabled={true}
                                             />
                                         </LocalizationProvider>
                                     </Col>
