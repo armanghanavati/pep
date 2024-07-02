@@ -129,9 +129,9 @@ export function Gfn_convertToMeter(lat1, lon1, lat2, lon2) {
   var a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c;
   return d * 1000; // meters
@@ -143,30 +143,15 @@ export function Gfn_numberWithCommas(x) {
 }
 
 export function Gfn_num3Seperator(customString, every) {
-<<<<<<< HEAD
-    customString = customString.toString();
-    var result = [], counter = every;
-    for (var i = counter; counter <= customString.length; counter += every) {
-        result.unshift(customString.substr(customString.length - counter, every))
-    }
-    var diff = counter - customString.length;
-    var remainder = every - diff;
-    if (remainder > 0) { result.unshift(customString.substr(0, remainder)) }
-    return result.toString();
-=======
   customString = customString.toString();
-  var result = [],
-    counter = every;
+  var result = [], counter = every;
   for (var i = counter; counter <= customString.length; counter += every) {
-    result.unshift(customString.substr(customString.length - counter, every));
+    result.unshift(customString.substr(customString.length - counter, every))
   }
   var diff = counter - customString.length;
   var remainder = every - diff;
-  if (remainder > 0) {
-    result.unshift(customString.substr(0, remainder));
-  }
+  if (remainder > 0) { result.unshift(customString.substr(0, remainder)) }
   return result.toString();
->>>>>>> 0d1d5d4e99b0f3e1af9ba31454b86583830eb95b
 }
 
 //----------Convert Arabic letter to Persian Letter----------
@@ -205,6 +190,12 @@ export function checkTokenExpire(token) {
   }
 }
 
+export function Gfn_AddHours (date, hours, minutes) {
+  date.setHours(date.getHours() + hours);
+  date.setMinutes(date.getMinutes() + minutes);
+  return date;
+}
+
 export default class StringHelpers {
   static convertNumbersToLatin(input) {
     if (!input) {
@@ -234,11 +225,7 @@ export default class StringHelpers {
   }
   static formatNumber(value) {
     return value && value != 0
-<<<<<<< HEAD
-        ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        : "0";
-}
-=======
+
       ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       : "0";
   }
@@ -261,7 +248,6 @@ export default class StringHelpers {
       <div className="text-justify"> {item} </div>
     ));
   }
->>>>>>> 0d1d5d4e99b0f3e1af9ba31454b86583830eb95b
 
   static fixComboListId(field, data) {
     console.log(field, data);
@@ -275,16 +261,8 @@ export default class StringHelpers {
     } else {
       return field?.map((item) => item?.id);
     }
-<<<<<<< HEAD
-}
-
-
-export function Gfn_AddHours (date, hours, minutes) {
-    date.setHours(date.getHours() + hours);
-    date.setMinutes(date.getMinutes() + minutes);
-    return date;
-}
-=======
   }
 }
->>>>>>> 0d1d5d4e99b0f3e1af9ba31454b86583830eb95b
+
+
+
