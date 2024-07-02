@@ -1,25 +1,14 @@
 import React from "react";
 import DataGrid, {
   Column,
-  Editing,
   Paging,
-  Lookup,
   Scrolling,
   FilterRow,
-  HeaderFilter,
-  FilterPanel,
-  FilterBuilderPopup,
   Pager,
-  Selection,
-  Grouping,
-  GroupPanel,
-  SearchPanel,
-  ColumnChooser,
 } from "devextreme-react/data-grid";
 import { Col } from "reactstrap";
 
-const index = ({ DataGridCompanyColumns, allListRF }) => {
-
+const Table = ({ DataGridCompanyColumns, allListRF, defaultPageSize = 50 }) => {
   return (
     <Col className="mt-4">
       <DataGrid
@@ -31,7 +20,6 @@ const index = ({ DataGridCompanyColumns, allListRF }) => {
         allowColumnResizing
         className="fontStyle"
         // onRowClick={states}
-        
         height={500}
       >
         <Scrolling
@@ -39,13 +27,13 @@ const index = ({ DataGridCompanyColumns, allListRF }) => {
           showScrollbar="always"
           columnRenderingMode="virtual"
         />
-        <Paging pageSize={10} pageIndex={10} defaultPageSize={50} />
-        <Pager
+        <Paging defaultPageSize={defaultPageSize} />
+        {/* <Pager
           visible={true}
           allowedPageSizes={10}
           showPageSizeSelector={true}
           showNavigationButtons={true}
-        />
+        /> */}
         <FilterRow visible={true} />
         <Column
           allowGrouping={false}
@@ -63,4 +51,4 @@ const index = ({ DataGridCompanyColumns, allListRF }) => {
   );
 };
 
-export default index;
+export default Table;
