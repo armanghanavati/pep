@@ -18,6 +18,12 @@ export const DataGridOrderPointSupplierColumns = [
             
     },
     {
+        dataField:"mojoodi" ,
+        caption:"موجودی",
+        allowEditing:false,
+                
+    },
+    {
         dataField:"retailStoreName" ,
         caption:"نام فروشگاه",
         allowEditing:false,
@@ -73,13 +79,7 @@ export const DataGridOrderPointSupplierColumns = [
         caption:"شماره سفارش",
         allowEditing:false,   
             
-    },
-    {
-        dataField:"mojoodi" ,
-        caption:"موجودی",
-        allowEditing:false,
-                
-    },
+    },    
     {
         dataField:"mojoodiAccessable" ,
         caption:"موجودی در دسترس",

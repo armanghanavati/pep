@@ -132,6 +132,7 @@ class ItemLocation extends React.Component {
       ItemLocation: null,
       ItemGroupList: null,
       cmbItem: null,
+      cmbItemOrg:null,
       ItemLocationGroupId: null,
       ItemLocationId: null,
       ActiveAll: false,
@@ -314,7 +315,8 @@ class ItemLocation extends React.Component {
       })
     }
   }
-  cmbItemGroup_onChange = async (e) => {
+  cmbItemGroup_onChange = async (e) => {  
+
     const IDS = e.toString().split(",");
     if (IDS.includes('0')) {
       var temp = [];
@@ -328,7 +330,8 @@ class ItemLocation extends React.Component {
         pageSize: 10
       })
       this.setState({
-        cmbItem: ITEMS,
+        cmbItem: LAZY,
+        cmbItemOrg:ITEMS,
         cmbItemGroup: this.state.cmbItemGroup,
         cmbItemGroupValue: e,
         cmbItemGroupIds:temp,
@@ -343,21 +346,22 @@ class ItemLocation extends React.Component {
       })
       this.setState({
         cmbItemGroupValue: e,
-        cmbItem: ITEMS,
+        cmbItem: LAZY,
+        cmbItemOrg:ITEMS,
         cmbItemGroupIds:e,
       })
     }
   };
 
-  cmbItem_onChange = async (e) => {
+  cmbItem_onChange = async (e) => {    
     const IDS = e.toString().split(",");
     if (IDS.includes('0')) {
       var temp = [];
-      for (var i = 0; i < this.state.cmbItem.length; i++) {
-        temp.push(this.state.cmbItem[i].id)
+      for (var i = 0; i < this.state.cmbItemOrg.length; i++) {
+        temp.push(this.state.cmbItemOrg[i].id)
       }
       this.setState({
-        cmbItem: this.state.cmbItem,
+        // cmbItem: this.state.cmbItemOrg,
         cmbItemIds:temp,
         cmbItemValue: e
       });
