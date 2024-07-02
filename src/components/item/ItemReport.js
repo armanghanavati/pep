@@ -1,4 +1,4 @@
-import "./master_Style.css";
+import "../../assets/CSS/master_Style.css";
 import React, { useEffect, useState } from "react";
 import { Card, Col, Container, Form, Row } from "reactstrap";
 import RangeSlider from "../../components/common/RangeSlider";

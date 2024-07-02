@@ -1041,21 +1041,13 @@
   }
   
   .dx-tag-content {
+    margin-right: 10px;
     background-color: #0053ff21 !important;
   }
   
-  /* snipper */
-  .dx-loadindicator-icon .dx-loadindicator-segment {
-    background: white !important;
-  }
-  
-  #error_handler_style {
-    border: 1px solid rgb(255, 70, 57);
-    background-color: red;
-  }
-  
-  .border-double-bottom {
-    border-style: double;
-    border-width: 0 0 6px 0; 
-    border-color: rgb(124 153 210) !important;
-  }
+  .dx-datagrid .dx-header-filter-empty {
+    display: flex;
+    color: rgba(255, 255, 255, 0.5) !important;
+    justify-content: space-between;
+    margin-left: 10px;
+}
