@@ -50,6 +50,7 @@ import {
   Gfn_BuildValueComboSelectAll,
   Gfn_ExportToExcel,
   Gfn_DT2StringSql,
+  Gfn_AddHours
 } from "../../utiliy/GlobalMethods";
 
 import PlusNewIcon from "../../assets/images/icon/plus.png";
@@ -204,8 +205,8 @@ class RegisterOrderTime extends React.Component {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
-        startDate: this.addHours(new Date(this.state.FromDate), 3, 30),
-        endDate:  this.addHours(new Date(this.state.ToDate), 3, 30),
+        startDate: Gfn_AddHours(new Date(this.state.FromDate), 3, 30),
+        endDate:  Gfn_AddHours(new Date(this.state.ToDate), 3, 30),
       };
       const RESULT = await addPositionApproveOrderTime(
         data,
@@ -219,13 +220,7 @@ class RegisterOrderTime extends React.Component {
         },
       });
     }
-  };
-
-   addHours=(date, hours, minutes)=> {
-    date.setHours(date.getHours() + hours);
-    date.setMinutes(date.getMinutes() + minutes);
-    return date;
-  }
+  };   
 
   DatePickerFrom_onChange = (params) => {
     this.setState({ FromDate: params});

@@ -116,7 +116,7 @@ export function Gfn_num3Seperator(customString, every) {
     var diff = counter - customString.length;
     var remainder = every - diff;
     if (remainder > 0) { result.unshift(customString.substr(0, remainder)) }
-    return result.toString();    
+    return result.toString();
 }
 
 
@@ -142,9 +142,9 @@ export function Gfn_NumberDetect(number) {
 //----------Format Number----------
 export function Gfn_FormatNumber(value) {
     return value && value != 0
-      ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      : "0";
-  }
+        ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        : "0";
+}
 
 //----------Check token expiration----------
 export function checkTokenExpire(token) {
@@ -155,4 +155,11 @@ export function checkTokenExpire(token) {
             window.location.reload();
         }
     }
+}
+
+
+export function Gfn_AddHours (date, hours, minutes) {
+    date.setHours(date.getHours() + hours);
+    date.setMinutes(date.getMinutes() + minutes);
+    return date;
 }
