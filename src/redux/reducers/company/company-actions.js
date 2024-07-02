@@ -31,7 +31,6 @@ export async function companyListCombo(Token){
     );        
   const result= await response.json();
   if(result.status=="Success"){
-    console.log('All company'+JSON.stringify(result.data));
     return result.data;  
   }
   return null;

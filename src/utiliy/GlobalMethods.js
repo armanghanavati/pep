@@ -181,13 +181,17 @@ export function Gfn_FormatNumber(value) {
 
 //----------Check token expiration----------
 export function checkTokenExpire(token) {
+  let rtn=false;
   if (token != null) {
+    rtn=true;
     const jwtToken = jwtdecode(token);
     if (jwtToken.exp * 1000 < Date.now()) {
       sessionStorage.clear();
       window.location.reload();
+      rtn=false;
     }
   }
+  return rtn;
 }
 
 export function Gfn_AddHours (date, hours, minutes) {
