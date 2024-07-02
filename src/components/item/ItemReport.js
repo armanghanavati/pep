@@ -15,7 +15,7 @@ import {
 import StringHelpers from "../../utiliy/GlobalMethods";
 import DataSource from "devextreme/data/data_source";
 import Validation from "../../utiliy/validations";
-import MainTitle from "../common/MainTitle";
+import MainTitle from "../common/MainTitles/MailTitle";
 
 const ItemReport = () => {
   const [storeList, setStoreList] = useState([]);
