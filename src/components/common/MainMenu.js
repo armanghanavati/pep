@@ -13,6 +13,8 @@ import { checkTokenExpire } from '../../utiliy/GlobalMethods.js'
 import Profiles from '../../pages/Profiles.js';
 import { ElectricScooterTwoTone } from '@mui/icons-material';
 //import test from "../../assets/images/icon/confirm.png";
+import "../../redux/config/axios.js"
+
 var permTest = [
   {
     "id": 0,
