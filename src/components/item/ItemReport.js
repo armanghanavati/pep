@@ -10,8 +10,8 @@ import {
   groupIds,
   groupProductList,
   slaPromotionList,
-  storeGroup,
 } from "../../redux/reducers/item/item-action";
+import { storeGroup } from "../../redux/reducers/location/location-actions";
 import StringHelpers from "../../utiliy/GlobalMethods";
 import DataSource from "devextreme/data/data_source";
 import Validation from "../../utiliy/validations";
