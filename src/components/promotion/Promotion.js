@@ -209,9 +209,9 @@ class Promotion extends React.Component {
 
     btnItemPromotionReport_onClick = () => {
         if(this.state.cmbPrintTypeValue == "1")
-                window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=null", "_blank");
+                window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=null", "_blank");
         else if(this.state.cmbPrintTypeValue == "2")
-                window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
+                window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
         //window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
         //window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
 
