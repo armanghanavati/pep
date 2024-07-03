@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export async function locationList(comapnyId, Token) {
   const url =
     window.apiAddress + "/Location/locationList?companyId=" + comapnyId;
@@ -256,3 +258,14 @@ export async function locationByUserId(userId, Token) {
   }
   return null;
 }
+
+
+// گروه فروشگاه
+export const storeGroup = async () => {
+  const url =
+    window.apiAddress + "/User/userLocationListCombo?userId=250&companyId=2";
+  const response = await axios(url, {
+    method: "GET",
+  });
+  return response?.data;
+};

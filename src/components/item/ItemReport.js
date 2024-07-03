@@ -10,8 +10,8 @@ import {
   groupIds,
   groupProductList,
   slaPromotionList,
-  storeGroup,
 } from "../../redux/reducers/item/item-action";
+import { storeGroup } from "../../redux/reducers/location/location-actions";
 import StringHelpers from "../../utiliy/GlobalMethods";
 import DataSource from "devextreme/data/data_source";
 import Validation from "../../utiliy/validations";
@@ -195,22 +195,12 @@ const ItemReport = () => {
       dataField: "itemName",
       caption: "نام کالا",
       allowEditing: false,
-    },
-    {
-      dataField: "price",
-      caption: "قیمت خرید",
-      allowEditing: false,
-    },
+    },    
     {
       dataField: "consumerPrice",
       caption: "قیمت مصرف کننده",
       allowEditing: false,
-    },
-    {
-      dataField: "totalPrice",
-      caption: "قیمت صندوق",
-      allowEditing: false,
-    },
+    },    
     {
       dataField: "discountPrice",
       caption: "مبلغ تخفیف",

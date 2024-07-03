@@ -297,17 +297,6 @@ export const groupProductList = async () => {
   return response?.data;
 };
 
-
-// گروه فروشگاه
-export const storeGroup = async () => {
-  const url =
-    window.apiAddress + "/User/userLocationListCombo?userId=250&companyId=2";
-  const response = await axios(url, {
-    method: "GET",
-  });
-  return response?.data;
-};
-
 // جستجوی لیست کالا
 export const slaPromotionList = async (object) => {
   const url = window.apiAddress + "/item/itemDiscountList";
