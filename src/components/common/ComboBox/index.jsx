@@ -28,17 +28,15 @@ export default function ComboBox({
 
   return (
     <Col xs={xs} md={md} xl={xl} className={className}>
-      <Label>{label}</Label>
+      {/* <Label>{label}</Label> */}
       {multi ? (
         <TagBox
           disabled={disabled}
           value={value}
-          // items={options}
           dataSource={options}
           searchEnabled
           displayExpr="label"
-          placeholder={placeholder}
-          // valueExpr={valueExpr}
+          placeholder={label}
           name={name}
           valueExpr="id"
           rtlEnabled={true}
@@ -50,7 +48,7 @@ export default function ComboBox({
           valueExpr="id"
           dataSource={options}
           searchEnabled
-          placeholder={placeholder}
+          placeholder={label}
           name={name}
           value={value}
           onValueChange={onChange}

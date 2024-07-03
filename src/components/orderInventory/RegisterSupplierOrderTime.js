@@ -21,7 +21,7 @@ import TextArea from "devextreme-react/text-area";
 import SelectBox from "devextreme-react/select-box";
 import { Button } from "devextreme-react/button";
 import AdapterJalali from "@date-io/date-fns-jalali";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import TextField from "@mui/material/TextField";
@@ -34,9 +34,7 @@ import {
   positionSupplierApproveOrderTime,
   addPositionSupplierApproveOrderTime,
 } from "../../redux/reducers/positionSupplierApproveOrderTime/positionSupplierApproveOrderTime-actions";
-import {
-    supplierListComboByCompanyId
-} from "../../redux/reducers/supplier/supplier-action";
+import { supplierListComboByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
 import {
@@ -151,7 +149,7 @@ class RegisterSupplierOrderTime extends React.Component {
         })
       );
     }
-  }
+  };
 
   cmbLocation_onChange = (e) => {
     this.setState({ LocationId: e });
@@ -198,16 +196,15 @@ class RegisterSupplierOrderTime extends React.Component {
       flag = false;
     }
     if (this.state.PositionId == null) {
-      document.getElementById("errPosition").innerHTML =
-        "سمت را انتخاب نمایید";
+      document.getElementById("errPosition").innerHTML = "سمت را انتخاب نمایید";
       flag = false;
     }
 
     if (this.state.PositionId == null) {
-        document.getElementById("errSupplier").innerHTML =
-          "تامین کننده را انتخاب نمایید";
-        flag = false;
-      }
+      document.getElementById("errSupplier").innerHTML =
+        "تامین کننده را انتخاب نمایید";
+      flag = false;
+    }
 
     if (this.state.FromDate == null) {
       document.getElementById("errStartDate").innerHTML =
@@ -228,9 +225,9 @@ class RegisterSupplierOrderTime extends React.Component {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
-        supplierId:this.state.SupplierId,
+        supplierId: this.state.SupplierId,
         startDate: this.addHours(new Date(this.state.FromDate), 3, 30),
-        endDate: this.addHours(new Date(this.state.ToDate), 3, 30)
+        endDate: this.addHours(new Date(this.state.ToDate), 3, 30),
       };
       const RESULT = await addPositionSupplierApproveOrderTime(
         data,
@@ -246,14 +243,14 @@ class RegisterSupplierOrderTime extends React.Component {
     }
   };
 
-  addHours=(date, hours, minutes)=> {
+  addHours = (date, hours, minutes) => {
     date.setHours(date.getHours() + hours);
     date.setMinutes(date.getMinutes() + minutes);
     return date;
-  }
+  };
 
   DatePickerFrom_onChange = (params) => {
-    this.setState({ FromDate: params});
+    this.setState({ FromDate: params });
   };
 
   DatePickerTo_onChange = (params) => {

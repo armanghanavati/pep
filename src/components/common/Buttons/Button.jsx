@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, LoadIndicator } from "devextreme-react";
 import { Col } from "reactstrap";
+import "../../../assets/CSS/button_style.css";
 
 const index = ({
   style,
@@ -11,9 +12,10 @@ const index = ({
   xs = 12,
   md = 2,
   xl = 5,
-  stylingMode = "contained",
+  stylingMode = "Contained",
   onClick,
   text = "Contained",
+  loading = false,
 }) => {
   return (
     // <Col xs={xs} md={md} xl={xl}>
@@ -25,20 +27,20 @@ const index = ({
       onClick={onClick}
       style={style}
     >
-      {/* {true ? ( */}
-      {/* <LoadIndicator
-        className="button-indicator"
-        height={20}
-        width={20}
-        style={{ backgroundColor: "white", color: "red" }}
-        visible={true}
-      /> */}
-      {/* ) : ( */}
-      <>
-        <span>{icon}</span>
-        {label}
-      </>
-      {/* )} */}
+      {loading ? (
+        <LoadIndicator
+          className="button-indicator"
+          height={20}
+          width={20}
+          style={{ color: "red" }}
+          visible={true}
+        />
+      ) : (
+        <>
+          <span>{icon}</span>
+          {label}
+        </>
+      )}
     </Button>
     // </Col>
   );

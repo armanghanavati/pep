@@ -5,22 +5,36 @@ import DataGrid, {
   Scrolling,
   FilterRow,
   Pager,
+  Editing,
+  HeaderFilter,
 } from "devextreme-react/data-grid";
 import { Col } from "reactstrap";
 
-const Table = ({ DataGridCompanyColumns, allListRF, defaultPageSize = 10 }) => {
-  const DataGridPageSizes = [10, 20, 30, 50, 100];
+const Table = ({
+  onRowClick,
+  headerFilter,
+  filterRow,
+  columns = [],
+  allListRF = [],
+  defaultPageSize = 10,
+  deleteRow,
+}) => {
+  const DataGridPageSizes =
+    allListRF?.length < 0 ? 0 : allListRF?.length >= 25 ? 50 : 100;
   return (
     <Col className="mt-4">
       <DataGrid
+        columnResizingMode="widget"
+        columnAutoWidth={true}
+        allowColumnReordering={true}
+        onRowClick={onRowClick}
         dataField="Price"
         dataSource={allListRF}
-        defaultColumns={DataGridCompanyColumns}
+        defaultColumns={columns}
         showBorders
         rtlEnabled
         allowColumnResizing
         className="fontStyle"
-        // onRowClick={states}
         height={500}
       >
         <Scrolling
@@ -28,14 +42,16 @@ const Table = ({ DataGridCompanyColumns, allListRF, defaultPageSize = 10 }) => {
           showScrollbar="always"
           columnRenderingMode="virtual"
         />
-        <Paging defaultPageSize={defaultPageSize} />
+        <Paging pageSize={25} pageIndex={10} defaultPageSize={50} />
+        <Editing mode="cell" allowUpdating allowDeleting={deleteRow} />
+        <HeaderFilter visible={headerFilter} />
         <Pager
-          visible={true}
+          visible
           allowedPageSizes={DataGridPageSizes}
-          showPageSizeSelector={true}
-          showNavigationButtons={true}
+          showPageSizeSelector
+          showNavigationButtons
         />
-        <FilterRow visible={true} />
+        <FilterRow visible={filterRow} />
         <Column
           allowGrouping={false}
           dataField="OrderNumber"
