@@ -266,10 +266,19 @@ export async function locationByUserId(userId, Token) {
 
 // گروه فروشگاه
 export const storeGroup = async (userId, comapnyId) => {
-  console.log(userId, comapnyId);
   const url =
     window.apiAddress +
     `/User/userLocationListCombo?userId=${userId}&companyId=${comapnyId}`;
   const response = await axios.get(url);
+  return response?.data;
+};
+
+// گروه فروشگاه2
+export const locationPromotionList = async (userId, permitionId) => {
+  const url =
+    window.apiAddress +
+    `/Location/locationPromotionList?promotionId=${permitionId}&userId=${userId}`;
+  const response = await axios.get(url);
+  console.log(response);
   return response?.data;
 };

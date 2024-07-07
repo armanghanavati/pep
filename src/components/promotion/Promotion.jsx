@@ -5,15 +5,23 @@ import asyncWrapper from "../../utiliy/asyncWrapper";
 import Modal from "../common/Modals/Modal";
 import PromotionDetail from "./PromotionDetail";
 import Button from "../common/Buttons/Button";
-import { slaPromotionByUserIdList } from "../../redux/reducers/promotion/promotion-action";
+import {
+  itemPromotionList,
+  slaPromotionByUserIdList,
+  slaPromotionPlatformList,
+  slaPromotionTypeList,
+} from "../../redux/reducers/promotion/promotion-action";
 import { useSelector } from "react-redux";
 import AddIcon from "@mui/icons-material/Add";
 import { render } from "@testing-library/react";
+import MainTitle from "../common/MainTitles/MailTitle";
 
 const Promotion = () => {
   const [showDetail, setShowDetail] = useState(false);
+  const [detailRow, setDetailRow] = useState({});
   const { users } = useSelector((state) => state);
   const [promotionList, setPromotionList] = useState([]);
+  const [productList, setProductList] = useState([]);
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
@@ -162,16 +170,30 @@ const Promotion = () => {
   //   </DataGrid>
   // );
 
-  const handleOnRowClick = (id) => {
-    console.log(id);
-    setShowDetail(!showDetail);
+  const handleOnRowClick = (data) => {
+    console.log(data);
+    setDetailRow(data);
+    handleGetPromotionList(data?.data?.id);
   };
+
+  const handleGetPromotionList = asyncWrapper(async (id) => {
+    console.log(detailRow);
+    const res = await itemPromotionList(id);
+    console.log(res);
+    const { data, statusCode } = res;
+    console.log(data, statusCode);
+    if (statusCode == 200) {
+      setProductList(data);
+      setShowDetail(!showDetail);
+    }
+  });
 
   return (
     <>
       <Container fluid className="mt-4">
-        <Card className="shadow bg-white border pointer">
-          <div className="m-2">
+        <MainTitle label="پروموشن" />
+        <Card className=" shadow bg-white border pointer">
+          <div className="mt-3 mx-3">
             <Button
               type="success"
               icon={<AddIcon className="ms-1 fw-bold" />}
@@ -188,13 +210,89 @@ const Promotion = () => {
             />
           </Row>
         </Card>
-        <PromotionDetail
-          showDetail={showDetail}
-          setShowDetail={setShowDetail}
-        />
+        {showDetail && (
+          <PromotionDetail
+            setProductList={setProductList}
+            detailRow={detailRow}
+            productList={productList}
+            showDetail={showDetail}
+            setShowDetail={setShowDetail}
+            handleGetPromotionList={handleGetPromotionList}
+          />
+        )}
       </Container>
     </>
   );
 };
 
 export default Promotion;
+
+// const Table = ({
+//   onRowClick,
+//   headerFilter,
+//   filterRow,
+//   allListRF = [],
+//   defaultPageSize = 25,
+//   deleteRow,
+//   editRow,
+// }) => {
+//   const DataGridPageSizes =
+//     allListRF?.length < 25
+//       ? []
+//       : allListRF?.length > 25
+//       ? [25, 50]
+//       : [25, 50, 100];
+
+//   const columns = [
+//     {
+//       dataField: "code",
+//       caption: "کد",
+//       allowEditing: false,
+//     },
+//     {
+//       dataField: "operations",
+//       caption: "عملیات",
+//       allowEditing: false,
+//       cellRender: (cellData) => (
+//         <div>
+//           <FontAwesomeIcon
+//             icon={faEdit}
+//             style={{ marginRight: 10, cursor: "pointer" }}
+//             onClick={() => editRow(cellData.data)}
+//           />
+//           <FontAwesomeIcon
+//             icon={faTrash}
+//             style={{ cursor: "pointer" }}
+//             onClick={() => deleteRow(cellData.data)}
+//           />
+//         </div>
+//       ),
+//     },
+//   ];
+
+//         <Scrolling
+//           rowRenderingMode="virtual"
+//           showScrollbar="always"
+//           columnRenderingMode="virtual"
+//         />
+//         <Paging defaultPageSize={defaultPageSize} />
+//         <Editing
+//           mode="row"
+//           allowUpdating={true}
+//           allowDeleting={true}
+//           allowAdding={true}
+//         />
+//         <HeaderFilter visible={headerFilter} />
+//         <Pager
+//           visible
+//           allowedPageSizes={DataGridPageSizes}
+//           showPageSizeSelector
+//           showNavigationButtons
+//         />
+//         <FilterRow visible={filterRow} />
+//       </DataGrid>
+//     </Col>
+//   );
+// };
+
+// export default Table;

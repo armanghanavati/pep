@@ -5,6 +5,7 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import persian_fa from "react-date-object/locales/persian_fa";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import "react-multi-date-picker/styles/colors/green.css";
+import Validation from "../../../utiliy/validations";
 
 const index = ({
   xs = 12,
@@ -37,6 +38,10 @@ const index = ({
   ];
 
   // const isSmallScreen = useMediaQuery({ query: "(max-width: 750px)" });
+  // const handleChange = (value) => {
+  //   console.log("index index index index index", value, name);
+  //   onChange(name, value || undefined, index);
+  // };
 
   return (
     <Col className="my-2" xxl={xxl} xs={xs} md={md} xl={xl}>

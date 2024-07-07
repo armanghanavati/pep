@@ -282,6 +282,7 @@ export async function itemListByItemGroupIds(object, Token) {
 
 // کالا
 export const groupIds = async (object) => {
+  console.log(object, window.apiAddress);
   const url = window.apiAddress + "/Item/itemListComboByItemGroupIds";
   const response = await axios.post(url, object);
   console.log(response);
@@ -304,3 +305,13 @@ export const slaPromotionList = async (object) => {
   console.log(response);
   return response?.data;
 };
+
+// صرویس گروه کالا برای 
+export const itemComboByItemGroupIdList = async (object) => {
+  const url = window.apiAddress + "/Item/itemComboByItemGroupIdList";
+  const response = await axios.post(url, object);
+  console.log(response);
+  return response?.data;
+};
+
+

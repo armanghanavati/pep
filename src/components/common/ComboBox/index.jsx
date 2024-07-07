@@ -19,10 +19,11 @@ export default function ComboBox({
   error,
   multi,
   valueExpr = "id",
+  displayExpr = "label",
   index = "",
 }) {
   const handleChange = (value) => {
-    console.log(value, name);
+    console.log("index index index index index", value, name);
     onChange(name, value, Validations || undefined, index);
   };
 
@@ -36,16 +37,19 @@ export default function ComboBox({
           dataSource={options}
           searchEnabled
           displayExpr="label"
+          valueExpr="id"
           placeholder={label}
           name={name}
-          valueExpr="id"
           rtlEnabled={true}
           onValueChange={onChange}
           className={`${error && "border border-danger"} `}
         />
       ) : (
         <SelectBox
-          valueExpr="id"
+          // labelMode=""
+          // onValueChanged={}
+          valueExpr={valueExpr}
+          displayExpr={displayExpr}
           dataSource={options}
           searchEnabled
           placeholder={label}
@@ -53,7 +57,6 @@ export default function ComboBox({
           value={value}
           onValueChange={onChange}
           rtlEnabled={true}
-          displayExpr="label"
           className="fontStyle"
         />
       )}

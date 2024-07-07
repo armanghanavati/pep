@@ -6,7 +6,7 @@ import "../../../assets/CSS/button_style.css";
 const index = ({
   style,
   type = "default",
-  className = "bg-danger",
+  className = "",
   label,
   icon,
   xs = 12,
@@ -20,6 +20,7 @@ const index = ({
   return (
     // <Col xs={xs} md={md} xl={xl}>
     <Button
+      className={className}
       width={120}
       text={text}
       type={type}

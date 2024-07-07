@@ -21,6 +21,7 @@ const SwitchCase = ({
   trueLabel,
   falseLabel,
 }) => {
+
   return (
     <>
       {switcher ? (
@@ -31,6 +32,7 @@ const SwitchCase = ({
               type="switch"
               label={trueLabel}
               name={name}
+              checked={checked}
               min={min}
               max={max}
               value={value}
