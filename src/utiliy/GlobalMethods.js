@@ -1,5 +1,8 @@
 import exportFromJSON from "export-from-json";
 import jwtdecode from "jwt-decode";
+import { DateObject } from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 export function Gfn_ExportToExcel(data, file_name) {
   if (data !== null) {
@@ -129,9 +132,9 @@ export function Gfn_convertToMeter(lat1, lon1, lat2, lon2) {
   var a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c;
   return d * 1000; // meters
@@ -144,13 +147,16 @@ export function Gfn_numberWithCommas(x) {
 
 export function Gfn_num3Seperator(customString, every) {
   customString = customString.toString();
-  var result = [], counter = every;
+  var result = [],
+    counter = every;
   for (var i = counter; counter <= customString.length; counter += every) {
-    result.unshift(customString.substr(customString.length - counter, every))
+    result.unshift(customString.substr(customString.length - counter, every));
   }
   var diff = counter - customString.length;
   var remainder = every - diff;
-  if (remainder > 0) { result.unshift(customString.substr(0, remainder)) }
+  if (remainder > 0) {
+    result.unshift(customString.substr(0, remainder));
+  }
   return result.toString();
 }
 
@@ -181,20 +187,20 @@ export function Gfn_FormatNumber(value) {
 
 //----------Check token expiration----------
 export function checkTokenExpire(token) {
-  let rtn=false;
+  let rtn = false;
   if (token != null) {
-    rtn=true;
+    rtn = true;
     const jwtToken = jwtdecode(token);
     if (jwtToken.exp * 1000 < Date.now()) {
       sessionStorage.clear();
       window.location.reload();
-      rtn=false;
+      rtn = false;
     }
   }
   return rtn;
 }
 
-export function Gfn_AddHours (date, hours, minutes) {
+export function Gfn_AddHours(date, hours, minutes) {
   date.setHours(date.getHours() + hours);
   date.setMinutes(date.getMinutes() + minutes);
   return date;
@@ -229,7 +235,6 @@ export default class StringHelpers {
   }
   static formatNumber(value) {
     return value && value != 0
-
       ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       : "0";
   }
@@ -252,7 +257,18 @@ export default class StringHelpers {
       <div className="text-justify"> {item} </div>
     ));
   }
+  static convertDateEn(date) {
+    const getDate = new DateObject();
+    const fixDate = new DateObject(new Date(date));
 
+    return fixDate?.format("YYYY-MM-DDTHH:mm:ss.SSS");
+  }
+  static convertDateFa(date) {
+    const fixDate = new DateObject(new Date(date))
+      ?.convert(persian, persian_fa)
+      ?.format("YYYY/MM/DD");
+    return fixDate;
+  }
   static fixComboListId(field, data) {
     console.log(field, data);
     const test = data?.some((item) => {
@@ -267,6 +283,3 @@ export default class StringHelpers {
     }
   }
 }
-
-
-

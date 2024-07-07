@@ -171,22 +171,9 @@ const Promotion = () => {
   // );
 
   const handleOnRowClick = (data) => {
-    console.log(data);
     setDetailRow(data);
-    handleGetPromotionList(data?.data?.id);
+    setShowDetail(true);
   };
-
-  const handleGetPromotionList = asyncWrapper(async (id) => {
-    console.log(detailRow);
-    const res = await itemPromotionList(id);
-    console.log(res);
-    const { data, statusCode } = res;
-    console.log(data, statusCode);
-    if (statusCode == 200) {
-      setProductList(data);
-      setShowDetail(!showDetail);
-    }
-  });
 
   return (
     <>
@@ -212,12 +199,12 @@ const Promotion = () => {
         </Card>
         {showDetail && (
           <PromotionDetail
+            promotionList={promotionList}
             setProductList={setProductList}
             detailRow={detailRow}
             productList={productList}
             showDetail={showDetail}
             setShowDetail={setShowDetail}
-            handleGetPromotionList={handleGetPromotionList}
           />
         )}
       </Container>

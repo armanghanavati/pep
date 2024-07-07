@@ -13,6 +13,8 @@ import TextArea from "devextreme-react/text-area";
 import Table from "../common/Tables/Table";
 import AddIcon from "@mui/icons-material/Add";
 import {
+  addSlaPromotion,
+  itemPromotionList,
   slaPromotionPlatformList,
   slaPromotionTypeList,
 } from "../../redux/reducers/promotion/promotion-action";
@@ -20,7 +22,10 @@ import asyncWrapper from "../../utiliy/asyncWrapper";
 import CheckIcon from "@mui/icons-material/Check";
 import PromotionProduct from "./PromotionProduct";
 import StringHelpers from "../../utiliy/GlobalMethods";
-import { groupIds } from "../../redux/reducers/item/item-action";
+import {
+  groupIds,
+  itemComboByItemGroupIdList,
+} from "../../redux/reducers/item/item-action";
 import { useSelector } from "react-redux";
 import {
   locationPromotionList,
@@ -29,10 +34,10 @@ import {
 
 const PromotionDetail = ({
   detailRow,
-  handleGetPromotionList,
   productList,
   showDetail,
   handleShowDetail,
+  promotionList,
   setProductList,
   setShowDetail,
 }) => {
@@ -83,7 +88,7 @@ const PromotionDetail = ({
 
   const handleGroupIds = asyncWrapper(async (e) => {
     const eventFix = [e];
-    const res = await groupIds(eventFix);
+    const res = await itemComboByItemGroupIdList(eventFix);
     const { data, statusCode } = res;
     if (statusCode == 200) {
       setAllProduct(data);
@@ -104,9 +109,18 @@ const PromotionDetail = ({
     }
   });
 
-  const handleGroupStore = asyncWrapper(async () => {
-    const res = await locationPromotionList(detailRow?.data?.id, users?.userId);
+  const handleGetPromotionList = asyncWrapper(async (id) => {
+    const res = await itemPromotionList(id);
     const { data, statusCode } = res;
+    if (statusCode == 200) {
+      setProductList(data);
+    }
+  });
+
+  const handleGroupStore = asyncWrapper(async () => {
+    const res = await locationPromotionList(users?.userId, detailRow?.data?.id);
+    const { data, statusCode } = res;
+    console.log(res);
     if (statusCode === 200) {
       setStoreList(data);
     }
@@ -214,8 +228,11 @@ const PromotionDetail = ({
 
   useEffect(() => {
     handleGetslaPromotionTypeList();
-    handleSlaPromotionPlatformList(detailRow?.data?.id);
+    handleSlaPromotionPlatformList(detailRow?.data?.promotionTypeId);
+    handleGetPromotionList(detailRow?.data?.id);
   }, []);
+
+  console.log(detailRow?.data);
 
   useEffect(() => {
     if (companies?.currentCompanyId !== null) handleGroupStore();
@@ -248,30 +265,32 @@ const PromotionDetail = ({
         bseLocationId: item,
       };
     });
+    const fixMapProduct = productList?.map((item) => {
+      return {
+        itemId: item?.id,
+        discount: item?.discount,
+        consumerPrice: 0,
+        priceWithDiscount: 0,
+      };
+    });
     const postData = {
       code: inputFields?.code,
       title: inputFields?.title,
-      fromDate: inputFields?.fromDate,
-      toDate: inputFields?.toDate,
+      fromDate: StringHelpers?.convertDateEn(inputFields?.fromDate),
+      toDate: StringHelpers?.convertDateEn(inputFields?.toDate),
       isActive: inputFields?.isActive,
       desc: inputFields?.desc,
       daysOffer: null,
       slaPromotionTypeId: inputFields?.typePromotion,
-      slaPromotionDetails: [
-        {
-          itemId: 0,
-          discount: 0,
-          consumerPrice: 0,
-          priceWithDiscount: 0,
-        },
-      ],
+      slaPromotionDetails: fixMapProduct,
       slaPromotionPlatformPromotions: fixPlatform,
       accLocationPromotions: fixLocationPromotions,
     };
-    // const res = await
+    const res = await addSlaPromotion(postData);
+    console.log(res);
   });
 
-  console.log(inputFields);
+  console.log(StringHelpers?.convertDateEn(inputFields?.itsFromDate));
 
   return (
     <Modal
@@ -335,7 +354,7 @@ const PromotionDetail = ({
         <DatePicker
           onChange={(e) => handleChangeInputs("itsFromDate", e)}
           name="itsFromDate"
-          value={inputFields?.fromDate}
+          value={inputFields?.itsFromDate}
           className="my-3"
           minDate={Date.now()}
           xxl={4}

@@ -306,12 +306,10 @@ export const slaPromotionList = async (object) => {
   return response?.data;
 };
 
-// صرویس گروه کالا برای 
+// صرویس کالا برای پروموشن 
 export const itemComboByItemGroupIdList = async (object) => {
   const url = window.apiAddress + "/Item/itemComboByItemGroupIdList";
   const response = await axios.post(url, object);
   console.log(response);
   return response?.data;
 };
-
-

@@ -60,7 +60,7 @@ const PromotionProduct = ({
     const res = await addSlaPromotionDetail(postData);
     const { data, statusCode } = res;
     if (statusCode === 200) {
-      handleGetPromotionList();
+      handleGetPromotionList(detailRow?.data?.id);
     }
     console.log(res);
   };
