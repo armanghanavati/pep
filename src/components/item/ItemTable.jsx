@@ -19,11 +19,15 @@ import DataGrid, {
 import { Col } from "reactstrap";
 
 const index = ({ DataGridCompanyColumns, allListRF }) => {
-
   return (
     <Col className="mt-4">
       <DataGrid
         dataField="Price"
+        id="grdTicket"
+        columnResizingMode="widget"
+        columnAutoWidth={true}
+        allowColumnReordering={true}
+        keyExpr="itemId"
         dataSource={allListRF}
         defaultColumns={DataGridCompanyColumns}
         showBorders
@@ -31,7 +35,6 @@ const index = ({ DataGridCompanyColumns, allListRF }) => {
         allowColumnResizing
         className="fontStyle"
         // onRowClick={states}
-        
         height={500}
       >
         <Scrolling
@@ -46,6 +49,8 @@ const index = ({ DataGridCompanyColumns, allListRF }) => {
           showPageSizeSelector={true}
           showNavigationButtons={true}
         />
+        <Editing mode="cell" allowUpdating={true} />
+        <HeaderFilter visible={true} />
         <FilterRow visible={true} />
         <Column
           allowGrouping={false}

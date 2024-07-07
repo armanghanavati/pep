@@ -1,4 +1,4 @@
-import "./master_Style.css";
+import "../../assets/CSS/master_Style.css";
 import React, { useEffect, useState } from "react";
 import { Card, Col, Container, Form, Row } from "reactstrap";
 import RangeSlider from "../../components/common/RangeSlider";
@@ -10,12 +10,13 @@ import {
   groupIds,
   groupProductList,
   slaPromotionList,
-  storeGroup,
 } from "../../redux/reducers/item/item-action";
+import { storeGroup } from "../../redux/reducers/location/location-actions";
 import StringHelpers from "../../utiliy/GlobalMethods";
 import DataSource from "devextreme/data/data_source";
 import Validation from "../../utiliy/validations";
-import MainTitle from "../common/MainTitle";
+import MainTitle from "../common/MainTitles/MailTitle";
+import Wait from "../common/Wait";
 
 const ItemReport = () => {
   const [storeList, setStoreList] = useState([]);
@@ -29,6 +30,7 @@ const ItemReport = () => {
   });
   const [productGroupList, setProductGroupList] = useState([]);
   const [productList, setProductList] = useState([]);
+  const [stateWait, setStateWait] = useState(false);
   const [productListWithoutLazyLoading, setProductListWithoutLazyLoading] =
     useState([]);
   const [allListRF, setAllListRF] = useState([]);
@@ -182,43 +184,8 @@ const ItemReport = () => {
       ),
     },
     {
-      dataField: "barcode",
-      caption: "بارکد",
-      allowEditing: false,
-    },
-    {
-      dataField: "itemPerPack",
-      caption: "تعداد در کارتن",
-      allowEditing: false,
-    },
-    {
-      dataField: "itemName",
-      caption: "نام کالا",
-      allowEditing: false,
-    },
-    {
-      dataField: "price",
-      caption: "قیمت خرید",
-      allowEditing: false,
-    },
-    {
-      dataField: "consumerPrice",
-      caption: "قیمت مصرف کننده",
-      allowEditing: false,
-    },
-    {
-      dataField: "totalPrice",
-      caption: "قیمت صندوق",
-      allowEditing: false,
-    },
-    {
-      dataField: "discountPrice",
-      caption: "مبلغ تخفیف",
-      allowEditing: false,
-    },
-    {
-      dataField: "discount",
-      caption: "درصد تخفیف",
+      dataField: "locationName",
+      caption: "فروشگاه",
       allowEditing: false,
     },
     {
@@ -227,20 +194,52 @@ const ItemReport = () => {
       allowEditing: false,
     },
     {
-      dataField: "weight",
-      caption: "وزن واحد",
+      dataField: "itemName",
+      caption: "نام کالا",
+      allowEditing: false,
+    }, 
+    {
+      dataField: "barcode1",
+      caption: "بارکد1",
       allowEditing: false,
     },
     {
-      dataField: "vat",
-      caption: "مالیات بر ارزش افزوده",
+      dataField: "barcode2",
+      caption: "بارکد2",
       allowEditing: false,
     },
     {
-      dataField: "isActive",
-      caption: "عملیات",
+      dataField: "itemPerPack",
+      caption: "تعداد در کارتن",
       allowEditing: false,
     },
+       
+    {
+      dataField: "consumerPrice",
+      caption: "قیمت مصرف کننده",
+      allowEditing: false,
+    },  
+    {
+      dataField: "discountPercent",
+      caption: "درصد تخفیف",
+      allowEditing: false,
+    },  
+    {
+      dataField: "discountPrice",
+      caption: "مبلغ تخفیف",
+      allowEditing: false,
+    }, 
+    
+    // {
+    //   dataField: "weight",
+    //   caption: "وزن واحد",
+    //   allowEditing: false,
+    // },
+    // {
+    //   dataField: "vat",
+    //   caption: "مالیات بر ارزش افزوده",
+    //   allowEditing: false,
+    // },   
   ];
 
   useEffect(() => {
@@ -249,35 +248,7 @@ const ItemReport = () => {
   }, []);
 
   const handleSearching = asyncWrapper(async () => {
-    // const searchedList = dataTestGoods.filter((item) => {
-    //   const productNameFix = inputFields.productName
-    //     ? item?.productName?.includes(inputFields.productName)
-    //     : true;
-    //   const barcodeFix = inputFields.productBarcode
-    //     ? item?.productBarcode?.includes(inputFields.productBarcode)
-    //     : true;
-    //   const discountPriceFix = inputFields.discountPrice
-    //     ? item?.discountPrice?.includes(inputFields.discountPrice)
-    //     : true;
-    //   const discountPercentFix = inputFields.discountPercent
-    //     ? item?.discountPercent?.includes(inputFields.discountPercent)
-    //     : true;
-    //   const fixGroupProduct = groupList.label
-    //     ? item?.productGroup === groupList.label
-    //     : true;
-    //   const priceInRange =
-    //     item.consumerPrice >= rangeSlider[0] &&
-    //     item.consumerPrice <= rangeSlider[1];
-
-    //   return (
-    //     productNameFix &&
-    //     barcodeFix &&
-    //     discountPriceFix &&
-    //     discountPercentFix &&
-    //     fixGroupProduct &&
-    //     priceInRange
-    //   );
-    // });
+    setStateWait(true)
     const postData = {
       itemIds: inputFields?.itsProductName?.includes(0)
         ? StringHelpers.fixComboListId(
@@ -300,15 +271,25 @@ const ItemReport = () => {
       },
     };
     const res = await slaPromotionList(postData);
-    const { statusCode, data } = res;
-    console.log(res);
+    setStateWait(false)
+    const { statusCode, data } = res;    
     setAllListRF(data);
+    
   });
+
+
 
   return (
     <Container fluid>
       <div className="bg-white px-2 rounded shadow">
         {/* <MainTitle label="ایجاد کالا" /> */}
+        {stateWait && (
+          <Row className="text-center">
+            <Col style={{ textAlign: "center", marginTop: "10px" }}>
+              <Wait />
+            </Col>
+          </Row>
+        )}
         <Row className="mt-2">
           <Row>
             <ComboBox

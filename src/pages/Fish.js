@@ -67,8 +67,8 @@ class PrintData4 extends React.Component {
                 <td className="fishBorderData">
                     {this.props.resValue}
                 </td>
-                <td className="fishBorderData">
-                    {this.props.resMande}
+                <td style={{border:'2px solid red',color:'red'}} className="fishBorderData">
+                   مانده: {this.props.resMande}
                 </td>
             </tr>
         );

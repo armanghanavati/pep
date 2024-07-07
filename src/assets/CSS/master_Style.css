@@ -979,7 +979,8 @@
   }
   
   .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
-    background-color: rgb(124 153 210) !important;
+    background-color: rgb(37 111 169) !important;
+    border-left: 1px solid rgb(196, 196, 196) !important;
     color: white !important;
   }
 
@@ -1000,7 +1001,7 @@
   .dx-pager .dx-pages .dx-page {
     padding: 8px 16px 8px;
     background-color: white;
-    border: 1px solid rgb(124 153 210);
+    border: 1px solid rgb(37 111 169);
     display: inline-block;
     cursor: pointer;
     margin-left: 3px !important;
@@ -1016,7 +1017,7 @@
   .dx-pager .dx-page-sizes .dx-page-size {
     padding: 8px 12px;
     background-color: white;
-    border: 1px solid rgb(124 153 210);
+    border: 1px solid rgb(37 111 169);
     display: inline-block;
     cursor: pointer;
     margin: 0 8px;
@@ -1031,7 +1032,7 @@
   .dx-pager .dx-pages .dx-selection {
     color: white !important;
     border-color: transparent;
-    background-color: rgb(124 153 210) !important;
+    background-color: rgb(37 111 169) !important;
     font-weight: bold !important;
     margin: 0 10px 0 10px;
   }
@@ -1041,21 +1042,13 @@
   }
   
   .dx-tag-content {
+    margin-right: 10px;
     background-color: #0053ff21 !important;
   }
   
-  /* snipper */
-  .dx-loadindicator-icon .dx-loadindicator-segment {
-    background: white !important;
-  }
-  
-  #error_handler_style {
-    border: 1px solid rgb(255, 70, 57);
-    background-color: red;
-  }
-  
-  .border-double-bottom {
-    border-style: double;
-    border-width: 0 0 6px 0; 
-    border-color: rgb(124 153 210) !important;
-  }
+  .dx-datagrid .dx-header-filter-empty {
+    display: flex;
+    color: rgba(255, 255, 255, 0.5) !important;
+    justify-content: space-between;
+    margin-left: 10px;
+}

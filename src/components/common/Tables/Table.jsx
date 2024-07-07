@@ -8,7 +8,8 @@ import DataGrid, {
 } from "devextreme-react/data-grid";
 import { Col } from "reactstrap";
 
-const Table = ({ DataGridCompanyColumns, allListRF, defaultPageSize = 50 }) => {
+const Table = ({ DataGridCompanyColumns, allListRF, defaultPageSize = 10 }) => {
+  const DataGridPageSizes = [10, 20, 30, 50, 100];
   return (
     <Col className="mt-4">
       <DataGrid
@@ -28,12 +29,12 @@ const Table = ({ DataGridCompanyColumns, allListRF, defaultPageSize = 50 }) => {
           columnRenderingMode="virtual"
         />
         <Paging defaultPageSize={defaultPageSize} />
-        {/* <Pager
+        <Pager
           visible={true}
-          allowedPageSizes={10}
+          allowedPageSizes={DataGridPageSizes}
           showPageSizeSelector={true}
           showNavigationButtons={true}
-        /> */}
+        />
         <FilterRow visible={true} />
         <Column
           allowGrouping={false}

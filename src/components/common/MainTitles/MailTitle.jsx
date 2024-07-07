@@ -1,6 +1,6 @@
 import React from "react";
 import { Col } from "reactstrap";
-import "./style.css"
+import "../../../assets/CSS/main_tiltle.css"
 
 const MainTitle = ({ label }) => {
   return (
