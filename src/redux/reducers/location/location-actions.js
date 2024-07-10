@@ -274,7 +274,7 @@ export const storeGroup = async (userId, comapnyId) => {
 };
 
 // گروه فروشگاه2
-export const locationPromotionList = async (userId, permitionId) => {
+export const locationPromotionList = async (userId, permitionId = 0) => {
   const url =
     window.apiAddress +
     `/Location/locationPromotionList?promotionId=${permitionId}&userId=${userId}`;

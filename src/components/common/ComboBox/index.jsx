@@ -48,6 +48,7 @@ export default function ComboBox({
         <SelectBox
           // labelMode=""
           // onValueChanged={}
+          disabled={disabled}
           valueExpr={valueExpr}
           displayExpr={displayExpr}
           dataSource={options}

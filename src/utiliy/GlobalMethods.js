@@ -1,8 +1,9 @@
 import exportFromJSON from "export-from-json";
 import jwtdecode from "jwt-decode";
 import { DateObject } from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import gregorian_fa from "react-date-object/locales/gregorian_fa";
+import gregorian from "react-date-object/calendars/gregorian";
+import moment from "jalali-moment";
 
 export function Gfn_ExportToExcel(data, file_name) {
   if (data !== null) {
@@ -252,27 +253,46 @@ export default class StringHelpers {
     // const fixTitle = title?.split("\n")
     if (!title?.includes("\\n\\r")) return title;
     const fixTitle = title?.split("\\n\\r");
-    console.log(fixTitle);
     return fixTitle?.map((item) => (
       <div className="text-justify"> {item} </div>
     ));
   }
   static convertDateEn(date) {
-    const getDate = new DateObject();
+    // const getDate = new DateObject();
     const fixDate = new DateObject(new Date(date));
-
     return fixDate?.format("YYYY-MM-DDTHH:mm:ss.SSS");
   }
-  static convertDateFa(date) {
-    const fixDate = new DateObject(new Date(date))
-      ?.convert(persian, persian_fa)
-      ?.format("YYYY/MM/DD");
-    return fixDate;
-  }
+  static convertJalaliDateToGregorian = (date) => {
+    const fixDate = new DateObject(new Date(date));
+    if (date) {
+      const temp = moment
+        .from(
+          `${fixDate?.year}/${fixDate?.month}/${fixDate?.day}`,
+          "fa",
+          "YYYY/MM/DD"
+        )
+        .format("YYYY-MM-DDTHH:mm:ss.SSS");
+      return temp;
+    } else {
+      return undefined;
+    }
+  };
+
   static fixComboListId(field, data) {
     console.log(field, data);
     const test = data?.some((item) => {
-      console.log("some , some ,some some some some", data);
+      return item?.id === 0;
+    });
+    console.log(test);
+    if (test) {
+      return data?.map((item) => item?.id);
+    } else {
+      return field?.map((item) => item?.id);
+    }
+  }
+  static comboId(field, data) {
+    console.log(field, data);
+    const test = data?.some((item) => {
       return item?.id === 0;
     });
     console.log(test);

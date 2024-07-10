@@ -38,6 +38,8 @@ const TableMultiSelect = ({
 }) => {
   const [showTable, setShowTable] = useState(false);
 
+  const fixPlaceHolder = allListRF?.filter((item) => item?.isChecked);
+
   const handleSubmit = () => {
     setShowTable(false);
     submit();
@@ -48,8 +50,12 @@ const TableMultiSelect = ({
       <Label> {label} </Label>
       <div
         onClick={() => setShowTable(true)}
-        className="d-flex justify-content-end py-1 bg-white-multi  cursorPointer px-2 border rounded-2"
+        className="d-flex justify-content-between py-1 bg-white-multi  cursorPointer px-2 border rounded-2"
       >
+        <span className="font15 mt-1">
+          {fixPlaceHolder?.length !== 0 &&
+            `${fixPlaceHolder?.length} ${label} انتخاب شد`}
+        </span>
         <span>
           <MenuIcon className="text-secondary" />
         </span>

@@ -24,10 +24,10 @@ export const slaPromotionTypeList = async () => {
 };
 
 // لیست دسته پروموشن
-export const slaPromotionPlatformList = async (id) => {
+export const slaPromotionPlatformList = async (id = 0) => {
   const url =
     window?.apiAddress +
-    `/SlaPromotionPlatform/slaPromotionPlatformList?promotionId=${id}`;
+    `/SlaPromotionPlatform/slaPromotionPlatformList?slaPromotionId=${id}`;
   const response = await axios.get(url);
   return response?.data;
 };
@@ -43,5 +43,21 @@ export const addSlaPromotion = async (data) => {
 export const addSlaPromotionDetail = async (data) => {
   const url = window?.apiAddress + `/SlaPromotionDetail/addSlaPromotionDetail`;
   const response = await axios.post(url, data);
+  return response?.data;
+};
+
+// آپدیت اقلام
+export const updateSlaPromotionDetail = async (promotionDetailId, discount) => {
+  const url =
+    window?.apiAddress +
+    `/SlaPromotionDetail/updateSlaPromotionDetail?promotionDetailId=${promotionDetailId}&discount=${discount}`;
+  const response = await axios.patch(url);
+  return response?.data;
+};
+
+// آپدیت پروموشن
+export const updateSlaPromotion = async (postData) => {
+  const url = window?.apiAddress + `/SlaPromotion/updateSlaPromotion`;
+  const response = await axios.patch(url, postData);
   return response?.data;
 };

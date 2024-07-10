@@ -114,6 +114,7 @@ const Input = ({
       >
         <Label> {label} </Label>
         <TextBox
+          className={`${error?.[name] && "border border-danger"}`}
           rtlEnabled
           id={name}
           placeholder={placeholder}
@@ -150,7 +151,7 @@ const Input = ({
             error.map((err, index) => (
               <span
                 key={`${name}-errors-${index}`}
-                className="input--error-message"
+                className="text-danger font12"
               >
                 {err}
               </span>
