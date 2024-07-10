@@ -262,7 +262,7 @@ const PromotionDetail = ({
     {
       dataField: "barcode",
       caption: "بارکد‌ کالا",
-      allowEditing: false,
+      allowEditing: true,
     },
     {
       dataField: "itemGroupName",
@@ -277,7 +277,7 @@ const PromotionDetail = ({
     {
       dataField: "discount",
       caption: "درصد‌تخفیف‌ کالا",
-      allowEditing: false,
+      allowEditing: true,
     },
   ];
 
@@ -724,9 +724,11 @@ const PromotionDetail = ({
         </Col>
         <Col xxl="12" className="">
           <Table
-            onRowClick={handleEditRowProduct}
+            // onRowClick={handleEditRowProduct}
             allListRF={productList}
             allowDeleting
+            // allowEditing
+            allowUpdating
             columns={columnsProduct}
             filterRow
           />
