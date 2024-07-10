@@ -79,46 +79,6 @@ const ItemReport = () => {
     });
   };
 
-  // const permitForNextStep = (inputsName = []) => {
-  //   const error = handleValidation(inputsName);
-  //   for (let key in error) {
-  //     if (error[key]?.length > 0) {
-  //       if (inputsName.includes(key)) {
-  //         return false;
-  //       }
-  //     }
-  //   }
-  //   return true;
-  // };
-
-  // const handleValidation = (inputsName = []) => {
-  //   const err = { ...errors };
-  //   inputsName.map((item) => {
-  //     if (
-  //       inputFields[item] === undefined ||
-  //       inputFields[item] === null ||
-  //       JSON.stringify(inputFields[item])?.trim() === ""
-  //     ) {
-  //       err[item] = ["پرکردن این فیلد الزامی است"];
-  //     }
-  //   });
-  //   setErrors(err);
-  //   return err;
-  // };
-
-  // const handleQuestionToAcceptEdit = () => {
-  //   if (
-  //     permitForNextStep([
-  //       "itProductGroup",
-  //       "storeGroup",
-  //       "itsProductName",
-  //       "store",
-  //     ]) === true
-  //   ) {
-  //     console.log("Successssssssssssssssssssssssssss");
-  //   }
-  // };
-
   const handleChangeInputs = (
     name,
     value,
@@ -406,7 +366,6 @@ const ItemReport = () => {
         <div className="d-flex justify-content-end mt-2">
           <Button
             onClick={handleSearching}
-            // onClick={handleQuestionToAcceptEdit}
             icon={<i className="d-flex ms-2 bi bi-search" />}
             label="جستجو"
           />

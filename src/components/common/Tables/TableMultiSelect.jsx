@@ -3,7 +3,7 @@ import BlurOnIcon from "@mui/icons-material/BlurOn";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import "../../../assets/CSS/table_multi_select.css";
-import { Col } from "reactstrap";
+import { Col, Label } from "reactstrap";
 import DataGrid, {
   Column,
   Paging,
@@ -45,11 +45,11 @@ const TableMultiSelect = ({
 
   return (
     <Col className={className} xxl={xxl} xs={xs} md={md} xl={xl}>
+      <Label> {label} </Label>
       <div
         onClick={() => setShowTable(true)}
-        className="d-flex justify-content-between py-1 bg-white-multi  cursorPointer px-2 border rounded-2"
+        className="d-flex justify-content-end py-1 bg-white-multi  cursorPointer px-2 border rounded-2"
       >
-        <span className="text-secondary ms-2">{label}</span>
         <span>
           <MenuIcon className="text-secondary" />
         </span>

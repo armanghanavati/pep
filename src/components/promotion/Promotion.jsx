@@ -19,8 +19,12 @@ import MainTitle from "../common/MainTitles/MailTitle";
 const Promotion = () => {
   const [showDetail, setShowDetail] = useState(false);
   const [detailRow, setDetailRow] = useState({});
+  const [inputFields, setInputFields] = useState({});
   const { users } = useSelector((state) => state);
   const [promotionList, setPromotionList] = useState([]);
+
+  const [itsEditRow, setItsEditRow] = useState(false);
+
   const [productList, setProductList] = useState([]);
   const [tableParams, setTableParams] = useState({
     pagination: {
@@ -39,6 +43,7 @@ const Promotion = () => {
 
   const handleShowDetail = () => {
     setShowDetail(true);
+    setItsEditRow(false);
   };
 
   const handleChangePageSize = (event) => {
@@ -173,7 +178,10 @@ const Promotion = () => {
   const handleOnRowClick = (data) => {
     setDetailRow(data);
     setShowDetail(true);
+    setItsEditRow(true);
   };
+
+  
 
   return (
     <>
@@ -199,6 +207,9 @@ const Promotion = () => {
         </Card>
         {showDetail && (
           <PromotionDetail
+            itsEditRow={itsEditRow}
+            inputFields={inputFields}
+            setInputFields={setInputFields}
             promotionList={promotionList}
             setProductList={setProductList}
             detailRow={detailRow}

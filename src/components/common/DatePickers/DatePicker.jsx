@@ -6,6 +6,7 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import "react-multi-date-picker/styles/colors/green.css";
 import Validation from "../../../utiliy/validations";
+import { Label } from "reactstrap";
 
 const index = ({
   xs = 12,
@@ -26,6 +27,7 @@ const index = ({
   important,
   errors,
   range,
+  placeholder
 }) => {
   const weekDays = [
     ["شنبه", "ش"],
@@ -45,12 +47,13 @@ const index = ({
 
   return (
     <Col className="my-2" xxl={xxl} xs={xs} md={md} xl={xl}>
+      <Label> {label} </Label>
       <DatePicker
         format={format}
         onlyMonthPicker={onlyMonthPicker}
         weekDays={weekDays}
         className={className}
-        placeholder={label}
+        placeholder={placeholder}
         // className={`${isSmallScreen && "rmdp-mobile"} ${className} `}
         editable={false}
         name={name}

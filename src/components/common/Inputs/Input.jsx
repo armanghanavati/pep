@@ -1,5 +1,5 @@
 import TextBox from "devextreme-react/text-box";
-import { Col } from "reactstrap";
+import { Col, Label } from "reactstrap";
 
 const Input = ({
   value = "",
@@ -112,10 +112,11 @@ const Input = ({
         sm={sm}
         xs={xs}
       >
+        <Label> {label} </Label>
         <TextBox
           rtlEnabled
           id={name}
-          placeholder={label}
+          placeholder={placeholder}
           name={name}
           maxLength={maxLength}
           pattern={

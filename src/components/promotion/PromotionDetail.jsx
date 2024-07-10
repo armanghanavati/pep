@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row } from "reactstrap";
+import { Col, Container, Label, Row } from "reactstrap";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
 import Input from "../common/Inputs/Input";
@@ -34,6 +34,9 @@ import {
 
 const PromotionDetail = ({
   detailRow,
+  itsEditRow,
+  inputFields,
+  setInputFields,
   productList,
   showDetail,
   handleShowDetail,
@@ -42,7 +45,6 @@ const PromotionDetail = ({
   setShowDetail,
 }) => {
   const { users, companies } = useSelector((state) => state);
-  const [inputFields, setInputFields] = useState({});
   const [errors, setErrors] = useState({});
   const [promotionTypeList, setPromotionTypeList] = useState([]);
   const [showAddProduct, setShowAddProduct] = useState(false);
@@ -84,6 +86,7 @@ const PromotionDetail = ({
         return handleGroupIds(value);
       }
     }
+    console.log(name, value);
   };
 
   const handleGroupIds = asyncWrapper(async (e) => {
@@ -110,10 +113,14 @@ const PromotionDetail = ({
   });
 
   const handleGetPromotionList = asyncWrapper(async (id) => {
-    const res = await itemPromotionList(id);
-    const { data, statusCode } = res;
-    if (statusCode == 200) {
-      setProductList(data);
+    if (itsEditRow) {
+      const res = await itemPromotionList(id);
+      const { data, statusCode } = res;
+      if (statusCode == 200) {
+        setProductList(data);
+      }
+    } else {
+      setProductList([]);
     }
   });
 
@@ -226,17 +233,26 @@ const PromotionDetail = ({
     },
   ];
 
-  useEffect(() => {
-    handleGetslaPromotionTypeList();
-    handleSlaPromotionPlatformList(detailRow?.data?.promotionTypeId);
-    handleGetPromotionList(detailRow?.data?.id);
-  }, []);
+  console.log(detailRow?.data, itsEditRow);
 
-  console.log(detailRow?.data);
-
-  useEffect(() => {
-    if (companies?.currentCompanyId !== null) handleGroupStore();
-  }, []);
+  const handleGetDataEditFields = () => {
+    if (itsEditRow) {
+      const getEditRow = detailRow?.data;
+      const fixEdit = {
+        title: getEditRow?.title,
+        isActive: getEditRow?.isActive,
+        itsFromDate: getEditRow?.fromDate,
+        itsToDate: getEditRow?.toDate,
+        // daysOffer: "",
+        typePromotion: getEditRow?.promotionTypeId,
+        desc: getEditRow?.desc,
+        code: getEditRow?.code,
+      };
+      setInputFields((prev) => ({ ...prev, ...fixEdit }));
+    } else {
+      setInputFields({});
+    }
+  };
 
   const handleAcceptGroup = () => {
     const fixAllPlatform = allPlatform
@@ -251,8 +267,6 @@ const PromotionDetail = ({
       .map((item) => item.id);
     setTypeAndPlatform((prev) => ({ ...prev, fixStoreList }));
   };
-
-  console.log(typeAndPlatform, inputFields);
 
   const handleAcceptPromotion = asyncWrapper(async () => {
     const fixPlatform = typeAndPlatform?.fixAllPlatform?.map((item) => {
@@ -274,7 +288,7 @@ const PromotionDetail = ({
       };
     });
     const postData = {
-      code: inputFields?.code,
+      // code: inputFields?.code,
       title: inputFields?.title,
       fromDate: StringHelpers?.convertDateEn(inputFields?.fromDate),
       toDate: StringHelpers?.convertDateEn(inputFields?.toDate),
@@ -290,7 +304,51 @@ const PromotionDetail = ({
     console.log(res);
   });
 
-  console.log(StringHelpers?.convertDateEn(inputFields?.itsFromDate));
+  useEffect(() => {
+    handleGetslaPromotionTypeList();
+    handleSlaPromotionPlatformList(detailRow?.data?.promotionTypeId);
+    handleGetPromotionList(detailRow?.data?.id);
+    handleGroupStore();
+  }, []);
+
+  useEffect(() => {
+    handleGetDataEditFields();
+  }, [detailRow]);
+
+  const permitForNextStep = (inputsName = []) => {
+    const error = handleValidation(inputsName);
+    for (let key in error) {
+      if (error[key]?.length > 0) {
+        if (inputsName.includes(key)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const handleValidation = (inputsName = []) => {
+    const err = { ...errors };
+    inputsName.map((item) => {
+      if (
+        inputFields[item] === undefined ||
+        inputFields[item] === null ||
+        JSON.stringify(inputFields[item])?.trim() === ""
+      ) {
+        err[item] = ["پرکردن این فیلد الزامی است"];
+      }
+    });
+    setErrors(err);
+    return err;
+  };
+
+  const handleQuestionToAcceptEdit = () => {
+    if (
+      permitForNextStep(["code", "title", "itsFromDate", "itsToDate"]) === true
+    ) {
+      console.log("Successssssssssssssssssssssssssss");
+    }
+  };
 
   return (
     <Modal
@@ -308,7 +366,7 @@ const PromotionDetail = ({
             label="لغو"
           />
           <Button
-            onClick={handleAcceptPromotion}
+            onClick={handleQuestionToAcceptEdit}
             text="success"
             stylingMode="success"
             type="success"
@@ -320,6 +378,7 @@ const PromotionDetail = ({
     >
       <Row className="d-flex justify-content-center">
         <Input
+          errors={errors}
           xxl={4}
           className="my-3"
           name="code"
@@ -338,7 +397,7 @@ const PromotionDetail = ({
         <Col
           xl="3"
           xxl="3"
-          className="d-flex align-items-center justify-content-center"
+          className="d-flex mt-4 align-items-center justify-content-center"
         >
           <SwitchCase
             className="my-3"
@@ -410,18 +469,18 @@ const PromotionDetail = ({
             onChange={(e) => handleChangeInputs("typePromotion", e)}
             placeholder="نوع"
             label="نوع"
-            className="me-2 my-3 d-flex align-items-start"
+            className="me-2 my-3"
             xl={3}
             xxl={5}
           />
         </Row>
         <Col className="my-3" xxl="11">
+          <Label> توضیحات </Label>
           <TextArea
             name="desc"
             value={inputFields?.desc}
-            onChange={(e) => handleChangeInputs("desc", e)}
+            onChange={(e) => handleChangeInputs("desc", e?.event?.target.value)}
             rtlEnabled
-            placeholder="توضیحات"
           />
         </Col>
         <Col xxl="11" className="">
