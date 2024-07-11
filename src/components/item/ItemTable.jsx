@@ -27,7 +27,7 @@ const index = ({ DataGridCompanyColumns, allListRF }) => {
         columnResizingMode="widget"
         columnAutoWidth={true}
         allowColumnReordering={true}
-        keyExpr="id"
+        keyExpr="itemId"
         dataSource={allListRF}
         defaultColumns={DataGridCompanyColumns}
         showBorders
