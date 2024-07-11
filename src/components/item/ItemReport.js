@@ -15,8 +15,13 @@ import { storeGroup } from "../../redux/reducers/location/location-actions";
 import StringHelpers from "../../utiliy/GlobalMethods";
 import DataSource from "devextreme/data/data_source";
 import Validation from "../../utiliy/validations";
+<<<<<<< HEAD
 import MainTitle from "../common/MainTitles/MailTitle";
 import Wait from "../common/Wait";
+=======
+import Table from "../common/Tables/Table";
+import { useSelector } from "react-redux";
+>>>>>>> dev
 
 const ItemReport = () => {
   const [storeList, setStoreList] = useState([]);
@@ -28,23 +33,32 @@ const ItemReport = () => {
       pageSize: 25,
     },
   });
+  const { users, companies } = useSelector((state) => state);
+  console.log(companies);
   const [productGroupList, setProductGroupList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [stateWait, setStateWait] = useState(false);
   const [productListWithoutLazyLoading, setProductListWithoutLazyLoading] =
     useState([]);
   const [allListRF, setAllListRF] = useState([]);
+  useEffect(() => {
+    handleGroupProductList();
+  }, []);
+  useEffect(() => {
+    if (companies?.currentCompanyId !== null) handleGroupStore();
+  }, []);
 
   const handleGroupProductList = async () => {
     const res = await groupProductList();
     const { statusCode, data } = res;
-    console.log(statusCode, data);
     if (statusCode === 200) {
       setProductGroupList(data);
     }
   };
+
   const handleGroupStore = asyncWrapper(async () => {
-    const res = await storeGroup();
+    console.log(users?.userId, companies?.currentCompanyId);
+    const res = await storeGroup(users?.userId, companies?.currentCompanyId);
     const { data, statusCode } = res;
     if (statusCode === 200) {
       setStoreList(data);
@@ -242,11 +256,6 @@ const ItemReport = () => {
     // },   
   ];
 
-  useEffect(() => {
-    handleGroupProductList();
-    handleGroupStore();
-  }, []);
-
   const handleSearching = asyncWrapper(async () => {
     setStateWait(true)
     const postData = {
@@ -387,7 +396,7 @@ const ItemReport = () => {
             label="جستجو"
           />
         </div>
-        <TableRF
+        <Table
           DataGridCompanyColumns={DataGridCompanyColumns}
           allListRF={allListRF}
         />

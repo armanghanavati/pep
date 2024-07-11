@@ -19,43 +19,44 @@ export default function ComboBox({
   error,
   multi,
   valueExpr = "id",
+  displayExpr = "label",
   index = "",
 }) {
   const handleChange = (value) => {
-    console.log(value, name);
+    console.log("index index index index index", value, name);
     onChange(name, value, Validations || undefined, index);
   };
 
   return (
     <Col xs={xs} md={md} xl={xl} className={className}>
-      <Label>{label}</Label>
+      {/* <Label>{label}</Label> */}
       {multi ? (
         <TagBox
           disabled={disabled}
           value={value}
-          // items={options}
           dataSource={options}
           searchEnabled
           displayExpr="label"
-          placeholder={placeholder}
-          // valueExpr={valueExpr}
-          name={name}
           valueExpr="id"
+          placeholder={label}
+          name={name}
           rtlEnabled={true}
           onValueChange={onChange}
           className={`${error && "border border-danger"} `}
         />
       ) : (
         <SelectBox
-          valueExpr="id"
+          // labelMode=""
+          // onValueChanged={}
+          valueExpr={valueExpr}
+          displayExpr={displayExpr}
           dataSource={options}
           searchEnabled
-          placeholder={placeholder}
+          placeholder={label}
           name={name}
           value={value}
           onValueChange={onChange}
           rtlEnabled={true}
-          displayExpr="label"
           className="fontStyle"
         />
       )}

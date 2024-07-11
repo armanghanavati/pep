@@ -19,45 +19,45 @@ export async function locationList(comapnyId, Token) {
 }
 
 // ----------------------------------------------------------------------------------------
-export async function locationOrderSupplierComboListByCompanyId(comapnyId, Token){
-  const url=window.apiAddress+"/Location/locationOrderSupplierComboListByCompanyId?companyId=" + comapnyId;  
-  const response = await fetch(
-      url,
-      {
-          method: "GET",                        
-          headers: { 
-            'Content-Type': 'application/json' ,
-            'Authorization': `Bearer ${Token}`
-          },
-      }
-    );        
-  const result= await response.json();
-  if(result.status=="Success"){
-    console.log('All location OrderSupplier'+JSON.stringify(result.data));
-    return result.data;  
+export async function locationOrderSupplierComboListByCompanyId(
+  comapnyId,
+  Token
+) {
+  const url =
+    window.apiAddress +
+    "/Location/locationOrderSupplierComboListByCompanyId?companyId=" +
+    comapnyId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("All location OrderSupplier" + JSON.stringify(result.data));
+    return result.data;
   }
   return null;
 }
 
 // ----------------------------------------------------------------------------------------
-export async function addLocation(Object,Token){
-  const url=window.apiAddress+"/Location/addLocation"              
-  const response = await fetch(
-      url,
-      {
-          method: "POST",              
-          body:JSON.stringify(Object),
-          headers: { 
-            'Content-Type': 'application/json' ,
-            'Authorization': `Bearer ${Token}`
-          },
-      }
-    );   
-  
-  const result= await response.json();
-  if(result.status=="Success"){
-    console.log('RESULT OF ADD NEW Location='+JSON.stringify(result.data));
-    return result.data;  
+export async function addLocation(Object, Token) {
+  const url = window.apiAddress + "/Location/addLocation";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(Object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("RESULT OF ADD NEW Location=" + JSON.stringify(result.data));
+    return result.data;
   }
 }
 
@@ -104,7 +104,10 @@ export async function locationListOrderInventoryComboNew(comapnyId, Token) {
 }
 
 // ----------------------------------------------------------------------------------------
-export async function locationListOrderInventoryComboNewOutRoute(comapnyId, Token) {
+export async function locationListOrderInventoryComboNewOutRoute(
+  comapnyId,
+  Token
+) {
   const url =
     window.apiAddress +
     "/Location/locationListComboOPINewOutRoute?companyId=" +
@@ -146,7 +149,10 @@ export async function locationListOrderSupplierComboNew(comapnyId, Token) {
 }
 
 // ----------------------------------------------------------------------------------------
-export async function locationListOrderSupplierComboNewOutRoute(comapnyId, Token) {
+export async function locationListOrderSupplierComboNewOutRoute(
+  comapnyId,
+  Token
+) {
   const url =
     window.apiAddress +
     "/Location/locationListComboOPSNewOutRoute?companyId=" +
@@ -224,8 +230,7 @@ export async function location(locationId, Token) {
 }
 
 export async function allLocation(Token) {
-  const url =
-    window.apiAddress + "/Location/allLocation";
+  const url = window.apiAddress + "/Location/allLocation";
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -259,13 +264,21 @@ export async function locationByUserId(userId, Token) {
   return null;
 }
 
-
 // گروه فروشگاه
-export const storeGroup = async () => {
+export const storeGroup = async (userId, comapnyId) => {
   const url =
-    window.apiAddress + "/User/userLocationListCombo?userId=250&companyId=2";
-  const response = await axios(url, {
-    method: "GET",
-  });
+    window.apiAddress +
+    `/User/userLocationListCombo?userId=${userId}&companyId=${comapnyId}`;
+  const response = await axios.get(url);
+  return response?.data;
+};
+
+// گروه فروشگاه2
+export const locationPromotionList = async (userId, permitionId) => {
+  const url =
+    window.apiAddress +
+    `/Location/locationPromotionList?promotionId=${permitionId}&userId=${userId}`;
+  const response = await axios.get(url);
+  console.log(response);
   return response?.data;
 };

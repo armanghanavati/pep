@@ -1031,7 +1031,6 @@ class OrderSupplier extends React.Component {
             </Col>
           </Row>
         )}
-
         {this.state.stateModal_OrderSupplierNewGroup && (
           <Row className="text-center">
             <Col>

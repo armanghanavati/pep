@@ -17,6 +17,8 @@ import Login from "./pages/Login";
 import { userActions } from "./redux/reducers/user/user-slice";
 import { authUser } from "./redux/reducers/user/user-actions";
 import { checkTokenExpire } from "./utiliy/GlobalMethods";
+import { companyListCombo } from "./redux/reducers/company/company-actions";
+import { companyActions } from "./redux/reducers/company/company-slice";
 
 class App extends React.Component {
   constructor(props) {
@@ -30,10 +32,10 @@ class App extends React.Component {
     // await this.getParamsFromUrl();    
     //await this.fn_CheckUrlProtocol();
     // alert(this.fn_counterDecimal(421.56))
-    let token = this.props.User.token
-    await checkTokenExpire(token);
+    let token = this.props.User.token    
+    const ISVLAID_TOKEN=await checkTokenExpire(token);        
     await this.fn_CheckIsLogin();
-  };
+  };  
 
   // -----------------------------------------------------------------------------------
   fn_IntPart(num){    
@@ -83,13 +85,34 @@ class App extends React.Component {
     const TOKEN = sessionStorage.getItem("Token");
     const PERMISSIONS = JSON.parse(sessionStorage.getItem("Permissions"));
     if (USER_ID != null && TOKEN != null && PERMISSIONS != null) {
-      await this.saveUserData();
+      await this.saveUserData();  
+      await this.fn_CheckCompanyState(TOKEN);    
       this.setState({
         stateRedirectLogin: false,
         stateRedirectHome: true,
       });
     }
   };
+
+  fn_CheckCompanyState = async (token) => {
+    if (this.props.Company.currentCompanyId == null) {
+      const companyCombo = await companyListCombo(token);
+      if (companyCombo !== null) {
+        const currentCompanyId = companyCombo[0].id;
+        this.props.dispatch(
+          companyActions.setCurrentCompanyId({
+            currentCompanyId,
+          })
+        );
+      }
+      this.props.dispatch(
+        companyActions.setCompanyCombo({
+          companyCombo,
+        })
+      );
+    }
+  }
+  
 
   getParamsFromUrl = async () => {
     // const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -132,7 +155,7 @@ class App extends React.Component {
   //   }));
   // }
 
-  saveUserData = () => {
+  saveUserData = async () => {
     const userId = sessionStorage.getItem("UserId");
     const token = sessionStorage.getItem("Token");
     const permissions = JSON.parse(sessionStorage.getItem("Permissions"));
@@ -144,6 +167,7 @@ class App extends React.Component {
         permissions,
       })
     );
+    
   };
 
   render() {
@@ -159,6 +183,7 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => ({
   User: state.users,
+  Company: state.companies,
   //Hub_conneciton: state.hubConnections
 });
 
