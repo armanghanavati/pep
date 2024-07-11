@@ -11,27 +11,42 @@ import {
   slaPromotionPlatformList,
   slaPromotionTypeList,
 } from "../../redux/reducers/promotion/promotion-action";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddIcon from "@mui/icons-material/Add";
 import { render } from "@testing-library/react";
 import MainTitle from "../common/MainTitles/MailTitle";
+import Toastify from "../common/Toasts/Toastify";
+import { RsetShowToast } from "../../redux/reducers/main/main-slice";
 
 const Promotion = () => {
+  const { users, main } = useSelector((state) => state);
+  const dispatch = useDispatch();
   const [showDetail, setShowDetail] = useState(false);
   const [detailRow, setDetailRow] = useState({});
-  const { users } = useSelector((state) => state);
+  const [inputFields, setInputFields] = useState({});
   const [promotionList, setPromotionList] = useState([]);
-  const [productList, setProductList] = useState([]);
+  const [itsEditRow, setItsEditRow] = useState(false);
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
       pageSize: 25,
     },
   });
+
   const handleGetAllList = asyncWrapper(async () => {
     const res = await slaPromotionByUserIdList(users?.userId);
-    const { data, status } = res;
-    setPromotionList(data);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setPromotionList(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
   });
   useEffect(() => {
     handleGetAllList();
@@ -39,6 +54,7 @@ const Promotion = () => {
 
   const handleShowDetail = () => {
     setShowDetail(true);
+    setItsEditRow(false);
   };
 
   const handleChangePageSize = (event) => {
@@ -71,7 +87,7 @@ const Promotion = () => {
       dataField: 1,
       caption: "ردیف",
       allowEditing: false,
-      render: (item, record, index) => (
+      cellRender: (item, record, index) => (
         <>
           {index +
             1 +
@@ -79,11 +95,6 @@ const Promotion = () => {
               Number(tableParams.pagination.pageSize || 1)}
         </>
       ),
-    },
-    {
-      dataField: "code",
-      caption: "کد",
-      allowEditing: false,
     },
     {
       dataField: "title",
@@ -171,22 +182,20 @@ const Promotion = () => {
   // );
 
   const handleOnRowClick = (data) => {
-    console.log(data);
     setDetailRow(data);
-    handleGetPromotionList(data?.data?.id);
+    setShowDetail(true);
+    setItsEditRow(true);
   };
 
-  const handleGetPromotionList = asyncWrapper(async (id) => {
-    console.log(detailRow);
-    const res = await itemPromotionList(id);
-    console.log(res);
-    const { data, statusCode } = res;
-    console.log(data, statusCode);
-    if (statusCode == 200) {
-      setProductList(data);
-      setShowDetail(!showDetail);
-    }
-  });
+  // const handleShowToast = () => {
+  //   dispatch(
+  //     RsetShowToast({
+  //       isToastVisible: true,
+  //       Message: "ثبت با موفقیت انجام گردید" || "عدم ثبت",
+  //       Type: "success" || "error",
+  //     })
+  //   );
+  // };
 
   return (
     <>
@@ -212,14 +221,17 @@ const Promotion = () => {
         </Card>
         {showDetail && (
           <PromotionDetail
-            setProductList={setProductList}
+            handleGetAllList={handleGetAllList}
+            itsEditRow={itsEditRow}
+            inputFields={inputFields}
+            setInputFields={setInputFields}
+            promotionList={promotionList}
             detailRow={detailRow}
-            productList={productList}
             showDetail={showDetail}
             setShowDetail={setShowDetail}
-            handleGetPromotionList={handleGetPromotionList}
           />
         )}
+        <Toastify />
       </Container>
     </>
   );

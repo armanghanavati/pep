@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row } from "reactstrap";
+import { Col, Container, Label, Row, Toast } from "reactstrap";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
 import Input from "../common/Inputs/Input";
@@ -12,32 +12,43 @@ import ComboBox from "../common/ComboBox";
 import TextArea from "devextreme-react/text-area";
 import Table from "../common/Tables/Table";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  addSlaPromotion,
+  itemPromotionList,
   slaPromotionPlatformList,
   slaPromotionTypeList,
+  updateSlaPromotion,
 } from "../../redux/reducers/promotion/promotion-action";
 import asyncWrapper from "../../utiliy/asyncWrapper";
 import CheckIcon from "@mui/icons-material/Check";
 import PromotionProduct from "./PromotionProduct";
 import StringHelpers from "../../utiliy/GlobalMethods";
-import { groupIds } from "../../redux/reducers/item/item-action";
-import { useSelector } from "react-redux";
+import {
+  groupIds,
+  itemComboByItemGroupIdList,
+} from "../../redux/reducers/item/item-action";
+import { useDispatch, useSelector } from "react-redux";
 import {
   locationPromotionList,
   storeGroup,
 } from "../../redux/reducers/location/location-actions";
+import { slaCustomerGroupList } from "../../redux/reducers/customer/customer-action";
+import { RsetShowToast } from "../../redux/reducers/main/main-slice";
 
 const PromotionDetail = ({
   detailRow,
-  handleGetPromotionList,
-  productList,
+  handleGetAllList,
+  itsEditRow,
+  inputFields,
+  setInputFields,
   showDetail,
   handleShowDetail,
-  setProductList,
+  promotionList,
   setShowDetail,
 }) => {
   const { users, companies } = useSelector((state) => state);
-  const [inputFields, setInputFields] = useState({});
+  const dispatch = useDispatch();
   const [errors, setErrors] = useState({});
   const [promotionTypeList, setPromotionTypeList] = useState([]);
   const [showAddProduct, setShowAddProduct] = useState(false);
@@ -46,6 +57,49 @@ const PromotionDetail = ({
   const [allPlatform, setAllPlatform] = useState([]);
   const [storeList, setStoreList] = useState([]);
   const [typeAndPlatform, setTypeAndPlatform] = useState({});
+  const [editProductRow, setEditProductRow] = useState({});
+  const [itsEditProductRow, setItsEditProductRow] = useState(false);
+  const [toast, setToast] = useState({});
+  const [allCustomer, setAllCustomer] = useState([]);
+  const [productList, setProductList] = useState([]);
+
+  const handleIdForList = (data, postProps, id) => {
+    const dataFixed = data?.map((item) => {
+      if (id) {
+        return {
+          slaPromotionId: id,
+          [postProps]: item,
+        };
+      } else {
+        return {
+          [postProps]: item,
+        };
+      }
+    });
+    return dataFixed;
+  };
+
+  const fixMapProduct = (itemId, discount, id) => {
+    const fixData = productList?.map((item) => {
+      if (id) {
+        return {
+          slaPromotionId: id,
+          [itemId]: item?.productId || item?.itemId,
+          [discount]: item?.discount,
+          consumerPrice: 0,
+          priceWithDiscount: 0,
+        };
+      } else {
+        return {
+          [itemId]: item?.itemId || item?.productId,
+          [discount]: item?.discount,
+          consumerPrice: 0,
+          priceWithDiscount: 0,
+        };
+      }
+    });
+    return fixData;
+  };
 
   const handleChangeInputs = (
     name,
@@ -53,6 +107,31 @@ const PromotionDetail = ({
     validationNameList = undefined,
     index
   ) => {
+    // if (name === "itsFromDate") {
+    //   if (Validation.minimumDate(inputFields?.itsToDate, value) === true) {
+    //     setErrors({
+    //       ...errors,
+    //       itsToDate: [],
+    //     });
+    //   } else {
+    //     setErrors({
+    //       ...errors,
+    //       itsToDate: Validation.minimumDate(inputFields?.itsToDate, value),
+    //     });
+    //   }
+    // } else if (name === "itsToDate") {
+    //   if (Validation.maximumDate(inputFields?.itsFromDate, value) === true) {
+    //     setErrors({
+    //       ...errors,
+    //       itsFromDate: [],
+    //     });
+    //   } else {
+    //     setErrors({
+    //       ...errors,
+    //       itsFromDate: Validation.maximumDate(inputFields?.itsFromDate, value),
+    //     });
+    //   }
+    // }
     const temp = [];
     validationNameList &&
       validationNameList.map((item) => {
@@ -79,49 +158,111 @@ const PromotionDetail = ({
         return handleGroupIds(value);
       }
     }
+    console.log(name, value);
   };
 
   const handleGroupIds = asyncWrapper(async (e) => {
     const eventFix = [e];
-    const res = await groupIds(eventFix);
-    const { data, statusCode } = res;
-    if (statusCode == 200) {
+    const res = await itemComboByItemGroupIdList(eventFix);
+    const { data, status, message } = res;
+    if (status == "Success") {
       setAllProduct(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
     }
   });
 
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
     const res = await slaPromotionTypeList();
-    const { data, statusCode } = res;
-    setPromotionTypeList(data);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setPromotionTypeList(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
   });
 
   const handleSlaPromotionPlatformList = asyncWrapper(async (id) => {
     const res = await slaPromotionPlatformList(id);
-    const { data, statusCode } = res;
-    if (statusCode == 200) {
+    const { data, status, message } = res;
+    if (status == "Success") {
       setAllPlatform(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+
+  const handleGetProductList = asyncWrapper(async (id) => {
+    if (itsEditRow) {
+      const res = await itemPromotionList(id);
+      const { data, status, message } = res;
+      const fixIdToItemId = data?.map((item) => {
+        return {
+          itemId: item?.id,
+          barcode: item?.barcode,
+          code: item?.code,
+          discount: item?.discount,
+          itemGroupName: item?.itemGroupName,
+          itemName: item?.itemName,
+        };
+      });
+      if (status == "Success") {
+        setProductList(fixIdToItemId);
+        console.log(fixIdToItemId);
+      } else {
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      }
+    } else {
+      setProductList([]);
     }
   });
 
   const handleGroupStore = asyncWrapper(async () => {
-    const res = await locationPromotionList(detailRow?.data?.id, users?.userId);
-    const { data, statusCode } = res;
-    if (statusCode === 200) {
+    const res = await locationPromotionList(users?.userId, detailRow?.data?.id);
+    const { data, status, message } = res;
+    console.log(res);
+    if (status == "Success") {
       setStoreList(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
     }
   });
 
   const columnsProduct = [
     {
-      dataField: "code",
-      caption: "کد‌ کالا",
-      allowEditing: false,
-    },
-    {
       dataField: "barcode",
       caption: "بارکد‌ کالا",
-      allowEditing: false,
+      allowEditing: true,
     },
     {
       dataField: "itemGroupName",
@@ -136,43 +277,7 @@ const PromotionDetail = ({
     {
       dataField: "discount",
       caption: "درصد‌تخفیف‌ کالا",
-      allowEditing: false,
-    },
-    {
-      dataField: "operations",
-      caption: "عملیات",
-      allowEditing: false,
-      cellRender: (cellData) => (
-        <div>
-          <span
-            style={{ marginRight: 10, cursor: "pointer" }}
-            onClick={() => alert("ssssss")}
-          >
-            sdfsdf
-          </span>
-          <span style={{ cursor: "pointer" }} onClick={() => alert("ssssss")}>
-            gggggg
-          </span>
-        </div>
-      ),
-    },
-    {
-      dataField: "operations",
-      caption: "dddd",
-      allowEditing: false,
-      render: (cellData) => (
-        <div>
-          <span
-            style={{ marginRight: 10, cursor: "pointer" }}
-            onClick={() => alert("ssssss")}
-          >
-            sdfsdf
-          </span>
-          <span style={{ cursor: "pointer" }} onClick={() => alert("ssssss")}>
-            gggggg
-          </span>
-        </div>
-      ),
+      allowEditing: true,
     },
   ];
 
@@ -212,16 +317,45 @@ const PromotionDetail = ({
     },
   ];
 
-  useEffect(() => {
-    handleGetslaPromotionTypeList();
-    handleSlaPromotionPlatformList(detailRow?.data?.id);
-  }, []);
+  const customerColumns = [
+    {
+      dataField: "isChecked",
+      caption: "",
+      allowEditing: true,
+    },
+    {
+      dataField: "code",
+      caption: "کد‌",
+      allowEditing: false,
+    },
+    {
+      dataField: "customerGroupName",
+      caption: "عنوان",
+      allowEditing: false,
+    },
+  ];
 
-  useEffect(() => {
-    if (companies?.currentCompanyId !== null) handleGroupStore();
-  }, []);
+  const handleGetDataEditFields = () => {
+    if (itsEditRow) {
+      const getEditRow = detailRow?.data;
+      const fixEdit = {
+        title: getEditRow?.title,
+        isActive: getEditRow?.isActive,
+        itsFromDate: getEditRow?.fromDate,
+        itsToDate: getEditRow?.toDate,
+        daysOffer: getEditRow?.daysOffer,
+        typePromotion: getEditRow?.promotionTypeId,
+        desc: getEditRow?.desc,
+        code: getEditRow?.code,
+      };
+      setInputFields((prev) => ({ ...prev, ...fixEdit }));
+    } else {
+      setInputFields({});
+    }
+  };
 
   const handleAcceptGroup = () => {
+    console.log(allPlatform);
     const fixAllPlatform = allPlatform
       ?.filter((platform) => platform?.isChecked === true)
       .map((item) => item.id);
@@ -235,43 +369,195 @@ const PromotionDetail = ({
     setTypeAndPlatform((prev) => ({ ...prev, fixStoreList }));
   };
 
-  console.log(typeAndPlatform, inputFields);
+  const handleAcceptCustomer = () => {
+    const fixAllCustomer = allCustomer
+      ?.filter((store) => store?.isChecked === true)
+      .map((item) => item.id);
+    setTypeAndPlatform((prev) => ({ ...prev, fixAllCustomer }));
+  };
 
   const handleAcceptPromotion = asyncWrapper(async () => {
-    const fixPlatform = typeAndPlatform?.fixAllPlatform?.map((item) => {
-      return {
-        slaPromotionPlatformId: item,
-      };
-    });
-    const fixLocationPromotions = typeAndPlatform?.fixStoreList?.map((item) => {
-      return {
-        bseLocationId: item,
-      };
-    });
-    const postData = {
-      code: inputFields?.code,
+    const postAddPromotion = {
       title: inputFields?.title,
-      fromDate: inputFields?.fromDate,
-      toDate: inputFields?.toDate,
+      fromDate: StringHelpers?.convertDateEn(inputFields?.itsFromDate),
+      toDate: StringHelpers?.convertDateEn(inputFields?.itsToDate),
       isActive: inputFields?.isActive,
       desc: inputFields?.desc,
-      daysOffer: null,
+      daysOffer: inputFields?.daysOffer,
       slaPromotionTypeId: inputFields?.typePromotion,
-      slaPromotionDetails: [
-        {
-          itemId: 0,
-          discount: 0,
-          consumerPrice: 0,
-          priceWithDiscount: 0,
-        },
-      ],
-      slaPromotionPlatformPromotions: fixPlatform,
-      accLocationPromotions: fixLocationPromotions,
+      slaPromotionDetails: fixMapProduct("itemId", "discount"),
+      slaPromotionPlatformPromotions: handleIdForList(
+        typeAndPlatform?.fixAllPlatform,
+        "slaPromotionPlatformId"
+      ),
+      accLocationPromotions: handleIdForList(
+        typeAndPlatform?.fixStoreList,
+        "bseLocationId"
+      ),
+      slaPromotionCustomerGroups: handleIdForList(
+        typeAndPlatform?.fixAllCustomer,
+        "slaCustomerGroupId"
+      ),
     };
-    // const res = await
+    const updatePromotion = {
+      id: detailRow?.data?.id,
+      title: inputFields?.title,
+      daysOffer: inputFields?.daysOffer,
+      fromDate:
+        typeof inputFields?.itsFromDate === "string"
+          ? StringHelpers?.convertJalaliDateToGregorian(
+              inputFields?.itsFromDate
+            )
+          : StringHelpers?.convertDateEn(inputFields?.itsFromDate),
+      toDate:
+        typeof inputFields?.itsToDate === "string"
+          ? StringHelpers?.convertJalaliDateToGregorian(inputFields?.itsToDate)
+          : StringHelpers?.convertDateEn(inputFields?.itsToDate),
+      isActive: inputFields?.isActive,
+      desc: inputFields?.desc,
+      slaPromotionTypeId: inputFields?.typePromotion,
+      slaPromotionDetails: fixMapProduct(
+        "itemId",
+        "discount",
+        detailRow?.data?.id
+      ),
+      slaPromotionPlatformPromotions: handleIdForList(
+        typeAndPlatform?.fixAllPlatform,
+        "slaPromotionPlatformId",
+        detailRow?.data?.id
+      ),
+      accLocationPromotions: handleIdForList(
+        typeAndPlatform?.fixStoreList,
+        "bseLocationId",
+        detailRow?.data?.id
+      ),
+      slaPromotionCustomerGroups: handleIdForList(
+        typeAndPlatform?.fixAllCustomer,
+        "slaCustomerGroupId",
+        detailRow?.data?.id
+      ),
+    };
+    console.log(updatePromotion);
+    if (itsEditRow) {
+      const res = await updateSlaPromotion(updatePromotion);
+      const { data, status, message } = res;
+      if (status == "Success") {
+        handleGetAllList();
+        setShowDetail(false);
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      } else {
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      }
+      console.log(res);
+    } else {
+      const res = await addSlaPromotion(postAddPromotion);
+      const { data, status, message } = res;
+      if (status == "Success") {
+        handleGetAllList();
+        setShowDetail(false);
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      } else {
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      }
+      console.log(res);
+    }
   });
 
-  console.log(inputFields);
+  useEffect(() => {
+    handleGetslaPromotionTypeList();
+    handleSlaCustomerGroupList();
+    handleSlaPromotionPlatformList(detailRow?.data?.id);
+    handleGetProductList(detailRow?.data?.id);
+    handleGroupStore();
+    if (detailRow?.data?.id) {
+      handleGetDataEditFields();
+    }
+  }, []);
+
+  useEffect(() => {
+    handleAcceptStore();
+    handleAcceptCustomer();
+    handleAcceptGroup();
+  }, [allPlatform, storeList, allCustomer]);
+
+  const permitForNextStep = (inputsName = []) => {
+    const error = handleValidation(inputsName);
+    for (let key in error) {
+      if (error[key]?.length > 0) {
+        if (inputsName.includes(key)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const handleValidation = (inputsName = []) => {
+    const err = { ...errors };
+    inputsName.map((item) => {
+      if (
+        inputFields[item] === undefined ||
+        inputFields[item] === null ||
+        JSON.stringify(inputFields[item])?.trim() === ""
+      ) {
+        err[item] = ["پرکردن این فیلد الزامی است"];
+      }
+    });
+    setErrors(err);
+    return err;
+  };
+
+  const handleQuestionToAcceptEdit = () => {
+    if (permitForNextStep(["title", "itsFromDate", "itsToDate"]) === true) {
+      handleAcceptPromotion();
+    }
+  };
+
+  const handleEditRowProduct = (data) => {
+    setShowAddProduct(true);
+    setItsEditProductRow(true);
+    setEditProductRow(data);
+  };
+
+  const handleSlaCustomerGroupList = asyncWrapper(async () => {
+    const res = await slaCustomerGroupList(detailRow?.data?.id);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setAllCustomer(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
 
   return (
     <Modal
@@ -289,7 +575,7 @@ const PromotionDetail = ({
             label="لغو"
           />
           <Button
-            onClick={handleAcceptPromotion}
+            onClick={handleQuestionToAcceptEdit}
             text="success"
             stylingMode="success"
             type="success"
@@ -299,16 +585,20 @@ const PromotionDetail = ({
         </>,
       ]}
     >
-      <Row className="d-flex justify-content-center">
-        <Input
+      <Row className="d-flex">
+        {/* <Input
+          error={errors.code}
+          validations={[["required"]]}
           xxl={4}
           className="my-3"
           name="code"
           onChange={handleChangeInputs}
           value={inputFields?.code}
           label="کد"
-        />
+        /> */}
         <Input
+          error={errors.title}
+          validations={[["required"]]}
           xxl={4}
           className="my-3"
           name="title"
@@ -316,10 +606,87 @@ const PromotionDetail = ({
           value={inputFields?.title}
           label="عنوان"
         />
+        <DatePicker
+          onChange={(e) => handleChangeInputs("itsFromDate", e)}
+          name="itsFromDate"
+          error={errors.itsFromDate}
+          value={inputFields?.itsFromDate}
+          className="my-3"
+          minDate={Date.now()}
+          xxl={4}
+          validations={[["required", "maximumDate", inputFields?.itsToDate]]}
+          label="از تاریخ"
+        />
+        <DatePicker
+          minDate={Date.now()}
+          name="itsToDate"
+          value={inputFields?.itsToDate}
+          validations={[["required", "minimumDate", inputFields?.itsFromDate]]}
+          onChange={(e) => handleChangeInputs("itsToDate", e)}
+          className="my-3"
+          xxl={4}
+          error={errors.itsToDate}
+          label="تا تاریخ"
+        />
+        <Col className="d-flex justify-content-start" xxl={4} xl={12}>
+          <TableMultiSelect
+            submit={handleAcceptGroup}
+            allListRF={allPlatform}
+            columns={platformColumns}
+            className="my-3"
+            xxl={12}
+            xl={2}
+            label="دسته"
+          />
+        </Col>
+        <Col className="d-flex justify-content-start" xxl={4} xl={12}>
+          <TableMultiSelect
+            submit={handleAcceptStore}
+            allListRF={storeList}
+            columns={storeColumns}
+            className="my-3"
+            xxl={12}
+            xl={2}
+            label="فروشگاه"
+          />
+        </Col>
+        <Col className="d-flex justify-content-start" xxl={4} xl={12}>
+          <TableMultiSelect
+            submit={handleAcceptCustomer}
+            allListRF={allCustomer}
+            columns={customerColumns}
+            className="my-3"
+            xxl={12}
+            xl={2}
+            label="گروه مشتری"
+          />
+        </Col>
+        <Input
+          type="number"
+          name="daysOffer"
+          value={inputFields?.daysOffer}
+          onChange={handleChangeInputs}
+          maxLength={2}
+          className="my-3"
+          xxl={4}
+          label="روز‌مجاز‌ ویرایش"
+        />
+        <ComboBox
+          name="typePromotion"
+          displayExpr="typeName"
+          options={promotionTypeList}
+          value={inputFields?.typePromotion}
+          onChange={(e) => handleChangeInputs("typePromotion", e)}
+          placeholder="نوع"
+          label="نوع"
+          className="my-3"
+          xl={4}
+          xxl={4}
+        />
         <Col
-          xl="3"
-          xxl="3"
-          className="d-flex align-items-center justify-content-center"
+          xl="4"
+          xxl="4"
+          className="d-flex mt-4 align-items-center justify-content-center"
         >
           <SwitchCase
             className="my-3"
@@ -332,82 +699,22 @@ const PromotionDetail = ({
             // value={inputFields?.isActive}
           />
         </Col>
-        <DatePicker
-          onChange={(e) => handleChangeInputs("itsFromDate", e)}
-          name="itsFromDate"
-          value={inputFields?.fromDate}
-          className="my-3"
-          minDate={Date.now()}
-          xxl={4}
-          label="از تاریخ"
-        />
-        <DatePicker
-          minDate={Date.now()}
-          name="itsToDate"
-          value={inputFields?.itsToDate}
-          onChange={(e) => handleChangeInputs("itsToDate", e)}
-          className="my-3"
-          xxl={4}
-          label="تا تاریخ"
-        />
-        <Input
-          type="number"
-          name="daysOffer"
-          value={inputFields?.daysOffer}
-          onChange={handleChangeInputs}
-          maxLength={1}
-          className="my-2"
-          xxl={3}
-          label="روز‌مجاز‌ ویرایش"
-        />
-        <Row className="">
-          <Col className=" me-4 d-flex justify-content-start" xxl={4} xl={12}>
-            <TableMultiSelect
-              submit={handleAcceptGroup}
-              allListRF={allPlatform}
-              columns={platformColumns}
-              className="m-3"
-              xxl={12}
-              xl={2}
-              label="دسته"
-            />
-          </Col>
-          <Col className=" me-3 d-flex justify-content-start" xxl={4} xl={12}>
-            <TableMultiSelect
-              submit={handleAcceptStore}
-              allListRF={storeList}
-              columns={storeColumns}
-              className="my-3"
-              xxl={12}
-              xl={2}
-              label="فروشگاه"
-            />
-          </Col>
-          <ComboBox
-            name="typePromotion"
-            displayExpr="typeName"
-            options={promotionTypeList}
-            value={inputFields?.typePromotion}
-            onChange={(e) => handleChangeInputs("typePromotion", e)}
-            placeholder="نوع"
-            label="نوع"
-            className="me-2 my-3 d-flex align-items-start"
-            xl={3}
-            xxl={5}
-          />
-        </Row>
-        <Col className="my-3" xxl="11">
+        <Col className="my-3" xxl="12">
+          <Label> توضیحات </Label>
           <TextArea
             name="desc"
             value={inputFields?.desc}
-            onChange={(e) => handleChangeInputs("desc", e)}
+            onChange={(e) => handleChangeInputs("desc", e?.event?.target.value)}
             rtlEnabled
-            placeholder="توضیحات"
           />
         </Col>
+
         <Col xxl="11" className="">
           <Button
-            onClick={() => setShowAddProduct(true)}
+            onClick={() => {
+              setItsEditProductRow(false);
+              setShowAddProduct(true);
+            }}
             icon={<AddIcon className="ms-1 fw-bold" />}
             text="success"
             stylingMode="success"
@@ -415,14 +722,26 @@ const PromotionDetail = ({
             label="افزودن کالا"
           />
         </Col>
-        <Col xxl="11" className="">
-          <Table allListRF={productList} columns={columnsProduct} filterRow />
+        <Col xxl="12" className="">
+          <Table
+            // onRowClick={handleEditRowProduct}
+            allListRF={productList}
+            allowDeleting
+            // allowEditing
+            allowUpdating
+            columns={columnsProduct}
+            filterRow
+          />
         </Col>
       </Row>
       {showAddProduct && (
         <PromotionProduct
-          handleGetPromotionList={handleGetPromotionList}
+          productList={productList}
           detailRow={detailRow}
+          itsEditProductRow={itsEditProductRow}
+          setInputFields={setInputFields}
+          editProductRow={editProductRow}
+          handleGetProductList={handleGetProductList}
           setProductList={setProductList}
           allProduct={allProduct}
           handleChangeInputs={handleChangeInputs}
@@ -433,6 +752,17 @@ const PromotionDetail = ({
           setAllgroupProduct={setAllgroupProduct}
         />
       )}
+      {/* {toast.isToastVisible && (
+        <Toast
+          visible={toast.isToastVisible}
+          message={toast.Message}
+          type={toast.Type}
+          onHiding={() => setToast({ isToastVisible: false })}
+          displayTime={10000}
+          width={600}
+          rtlEnabled={true}
+        />
+      )} */}
     </Modal>
   );
 };

@@ -12,12 +12,21 @@ import {
   slaPromotionList,
 } from "../../redux/reducers/item/item-action";
 import Validation from "../../utiliy/validations";
-import { addSlaPromotionDetail } from "../../redux/reducers/promotion/promotion-action";
+import {
+  addSlaPromotionDetail,
+  updateSlaPromotionDetail,
+} from "../../redux/reducers/promotion/promotion-action";
+import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import { useDispatch } from "react-redux";
 
 const PromotionProduct = ({
-  showAddProduct,
-  handleGetPromotionList,
+  editProductRow,
+  productList,
+  itsEditProductRow,
   setProductList,
+  showAddProduct,
+  handleGetProductList,
+  setInputFields,
   allProduct,
   setShowAddProduct,
   handleChangeInputs,
@@ -27,42 +36,153 @@ const PromotionProduct = ({
   detailRow,
 }) => {
   const [toast, setToast] = useState({});
+  const dispatch = useDispatch();
+  const filterProductGroup = allgroupProduct?.filter((item) => {
+    return item?.id === inputFields?.productGroup;
+  });
+
+  const filterProduct = allProduct?.filter((item) => {
+    return item?.id === inputFields?.product;
+  });
 
   const handleGroupProductList = asyncWrapper(async () => {
     const res = await groupProductList();
-    const { data, statusCode, RESULT } = res;
-    if (statusCode == 200) {
+    const { data, status, message } = res;
+    if (status == "Success") {
       setAllgroupProduct(data);
+      console.log(data);
     } else {
-      setToast({
-        ToastProps: {
+      dispatch(
+        RsetShowToast({
           isToastVisible: true,
-          Message: !!RESULT ? "ثبت با موفقیت انجام گردید" : "عدم ثبت",
-          Type: !!RESULT ? "success" : "error",
-        },
-      });
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
     }
   });
 
   useEffect(() => {
     handleGroupProductList();
+    if (itsEditProductRow) {
+      setInputFields((...prev) => {
+        return {
+          ...prev,
+          productGroup: editProductRow?.data?.itemGroupName,
+          product: editProductRow?.data?.itemName,
+          discount: editProductRow?.data?.discount,
+        };
+      });
+    }
+    // else {
+    //   setInputFields((...prev) => ({
+    //     ...prev,
+    //     productGroup: {},
+    //     product: {},
+    //     discount: "",
+    //   }));
+    // }
   }, []);
 
-  const handleSubmitProduct = async () => {
-    setShowAddProduct(false);
-    const postData = {
-      slapromotionId: detailRow?.data?.id,
-      itemId: inputFields?.product,
-      discount: Number(inputFields?.discount),
-      consumerPrice: 10,
-      priceWithDiscount: 10,
-    };
-    const res = await addSlaPromotionDetail(postData);
-    const { data, statusCode } = res;
-    if (statusCode === 200) {
-      handleGetPromotionList();
+  // const handleSubmitProduct = async () => {
+  //   const postData = {
+  //     slapromotionId: editProductRow?.data?.id,
+  //     itemId: inputFields?.product,
+  //     discount: Number(inputFields?.discount),
+  //     consumerPrice: null,
+  //     priceWithDiscount: null,
+  //   };
+  //   if (itsEditProductRow) {
+  //     const resUpdate = await updateSlaPromotionDetail(
+  //       editProductRow?.data?.id,
+  //       postData?.discount
+  //     );
+  //     handleGetProductList(detailRow?.data?.id);
+  //     setShowAddProduct(false);
+  //     console.log(resUpdate);
+  //   } else {
+  //     const resAdd = await addSlaPromotionDetail(postData);
+  //     const { data, statusCode } = resAdd;
+  //     if (statusCode === 200) {
+  //       handleGetProductList(detailRow?.data?.id);
+  //     }
+  //   }
+  // };
+  // const columnsProduct = [
+  //   {
+  //     dataField: "barcode",
+  //     caption: "بارکد‌ کالا",
+  //     allowEditing: false,
+  //   },
+  //   {
+  //     dataField: "itemGroupName",
+  //     caption: "گروه‌ کالا",
+  //     allowEditing: true,
+  //   },
+  //   {
+  //     dataField: "itemName",
+  //     caption: "نام‌ کالا",
+  //     allowEditing: true,
+  //   },
+  //   {
+  //     dataField: "discount",
+  //     caption: "درصد‌تخفیف‌ کالا",
+  //     allowEditing: true,
+  //   },
+  //   {
+  //     caption: "عملیات",
+  //     allowEditing: true,
+  //     cellRender: (e) => {
+  //       return (
+  //         <>
+  //           <DeleteIcon />
+  //         </>
+  //       );
+  //     },
+  //   },
+  // ];
+
+  const findBarcode = filterProduct?.[0]?.label?.split(" ");
+  const getBarcode = findBarcode?.[findBarcode?.length - 1];
+  const productItem = {
+    productId: inputFields?.product,
+    groupId: inputFields?.productGroup,
+    itemName: filterProduct?.[0]?.label,
+    barcode: getBarcode,
+    discount: Number(inputFields?.discount),
+    itemGroupName: filterProductGroup?.[0]?.label,
+    code: null,
+    id: productList.length + 1,
+  };
+  const handleCheckProductList = () => {
+    const test = productList?.some((item) => {
+      return (
+        item?.productId === productItem?.productId &&
+        item?.discount == productItem?.discount
+      );
+    });
+    return test;
+  };
+
+  const handleSubmitProduct = () => {
+    if (handleCheckProductList()) {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: "این کالا با همین درصد تخفیف در لیست موجود است",
+          Type: "Unsuccess",
+        })
+      );
+    } else {
+      setProductList((prev) => [...prev, productItem]);
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: "کالا با موفقیت به لیست اضافه شد",
+          Type: "Success",
+        })
+      );
     }
-    console.log(res);
   };
 
   return (
@@ -77,7 +197,7 @@ const PromotionProduct = ({
             stylingMode="outlined"
             type="danger"
             onClick={() => setShowAddProduct(false)}
-            label="لغو"
+            label="بستن"
           />,
           <Button
             className=""
@@ -91,6 +211,7 @@ const PromotionProduct = ({
       >
         <Row>
           <ComboBox
+            disabled={itsEditProductRow ? true : false}
             name="productGroup"
             onChange={(e) => handleChangeInputs("productGroup", e)}
             value={inputFields?.productGroup}
@@ -100,6 +221,7 @@ const PromotionProduct = ({
             label="گروه کالا"
           />
           <ComboBox
+            disabled={itsEditProductRow ? true : false}
             name="product"
             onChange={(e) => handleChangeInputs("product", e)}
             value={inputFields?.product}
