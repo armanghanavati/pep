@@ -280,6 +280,24 @@ export async function itemListByItemGroupIds(object, Token) {
   return null;
 }
 
+//-------------itemListOfPromotionsNotFactor----------------------
+export async function itemListOfPromotionsNotFactor(object,Token) {
+  const url = window.apiAddress + "/Item/itemListOfPromotionsNotFactor?personId="+object.personId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("show Item" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+
 // کالا
 export const groupIds = async (object) => {
   const url = window.apiAddress + "/Item/itemListComboByItemGroupIds";
@@ -304,3 +322,4 @@ export const slaPromotionList = async (object) => {
   console.log(response);
   return response?.data;
 };
+
