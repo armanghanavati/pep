@@ -130,9 +130,11 @@ class NewAnswer extends React.Component {
       oldParam: null,
       stateWait: false,
       InspectionDate:new Date(),
+      itsLocation:null
     };
   }
   async componentDidMount() {
+    this.getLocation()
     await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
     await this.fn_questionTypeList();
@@ -311,7 +313,7 @@ class NewAnswer extends React.Component {
     return flag;
   };
 
-  btnAdd_onClick = async () => {
+  btnAdd_onClick = async () => { 
     if (await this.fn_CheckValidation()) {
       const data = {
         questionTypeId: this.state.cmbQuestionTypeValue,
@@ -319,7 +321,9 @@ class NewAnswer extends React.Component {
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
         userId: this.props.User.userId,
-        date: this.addHours(new Date(this.state.InspectionDate), 3, 30)
+        date: this.addHours(new Date(this.state.InspectionDate), 3, 30),
+        latitude:this.state.itsLocation.lat,
+        longitude:this.state.itsLocation.long,
       };
       const RESULT = await addAnswer(data, this.props.User.token);
       this.setState({
@@ -523,6 +527,18 @@ class NewAnswer extends React.Component {
     date.setHours(date.getHours() + hours);
     date.setMinutes(date.getMinutes() + minutes);
     return date;
+  }
+
+  getLocation() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        this.setState({itsLocation : { lat: latitude, long: longitude} });
+      },
+      (error) => {
+        console.error("Error getting geolocation:", error.message);
+      }
+    );
   }
 
   render() {
