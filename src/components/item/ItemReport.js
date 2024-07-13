@@ -15,22 +15,11 @@ import { storeGroup } from "../../redux/reducers/location/location-actions";
 import StringHelpers from "../../utiliy/GlobalMethods";
 import DataSource from "devextreme/data/data_source";
 import Validation from "../../utiliy/validations";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import MainTitle from "../common/MainTitles/MailTitle";
 import Wait from "../common/Wait";
-=======
 import Table from "../common/Tables/Table";
 import { useSelector } from "react-redux";
->>>>>>> dev
-=======
-import Table from "../common/Tables/Table";
-import { useSelector } from "react-redux";
-=======
-import MainTitle from "../common/MainTitles/MailTitle";
-import Wait from "../common/Wait";
->>>>>>> 0d786d6d1bcf1eeb8f8cdacc066cdf7bc13663a4
->>>>>>> dev
+
 
 const ItemReport = () => {
   const [storeList, setStoreList] = useState([]);
