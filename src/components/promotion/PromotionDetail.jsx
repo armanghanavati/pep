@@ -34,7 +34,10 @@ import {
   storeGroup,
 } from "../../redux/reducers/location/location-actions";
 import { slaCustomerGroupList } from "../../redux/reducers/customer/customer-action";
-import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import {
+  RsetIsLoading,
+  RsetShowToast,
+} from "../../redux/reducers/main/main-slice";
 
 const PromotionDetail = ({
   detailRow,
@@ -62,6 +65,7 @@ const PromotionDetail = ({
   const [toast, setToast] = useState({});
   const [allCustomer, setAllCustomer] = useState([]);
   const [productList, setProductList] = useState([]);
+  const [inputsProduct, setInputsProduct] = useState({});
 
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
@@ -107,31 +111,6 @@ const PromotionDetail = ({
     validationNameList = undefined,
     index
   ) => {
-    // if (name === "itsFromDate") {
-    //   if (Validation.minimumDate(inputFields?.itsToDate, value) === true) {
-    //     setErrors({
-    //       ...errors,
-    //       itsToDate: [],
-    //     });
-    //   } else {
-    //     setErrors({
-    //       ...errors,
-    //       itsToDate: Validation.minimumDate(inputFields?.itsToDate, value),
-    //     });
-    //   }
-    // } else if (name === "itsToDate") {
-    //   if (Validation.maximumDate(inputFields?.itsFromDate, value) === true) {
-    //     setErrors({
-    //       ...errors,
-    //       itsFromDate: [],
-    //     });
-    //   } else {
-    //     setErrors({
-    //       ...errors,
-    //       itsFromDate: Validation.maximumDate(inputFields?.itsFromDate, value),
-    //     });
-    //   }
-    // }
     const temp = [];
     validationNameList &&
       validationNameList.map((item) => {
@@ -161,9 +140,46 @@ const PromotionDetail = ({
     console.log(name, value);
   };
 
+  const handleChangeInputsProduct = (
+    name,
+    value,
+    validationNameList = undefined,
+    index
+  ) => {
+    const temp = [];
+    validationNameList &&
+      validationNameList.map((item) => {
+        if (Validation[item[0]](value, item[1]) === true) {
+          return null;
+        } else {
+          temp.push(Validation[item[0]](value, item[1]));
+        }
+      });
+    setErrors((prevstate) => {
+      return { ...prevstate, [name]: [...temp] };
+    });
+    setInputsProduct((prevstate) => {
+      return { ...prevstate, [name]: value };
+    });
+    if (name === "productGroup" && !!value) {
+      if (value === 0) {
+        const fixLoop = StringHelpers.fixComboListId(
+          inputFields?.productGroup,
+          allgroupProduct
+        );
+        return handleGroupIds(fixLoop);
+      } else {
+        return handleGroupIds(value);
+      }
+    }
+  };
+
   const handleGroupIds = asyncWrapper(async (e) => {
+    dispatch(RsetIsLoading({ stateWait: true }));
     const eventFix = [e];
     const res = await itemComboByItemGroupIdList(eventFix);
+    dispatch(RsetIsLoading({ stateWait: false }));
+
     const { data, status, message } = res;
     if (status == "Success") {
       setAllProduct(data);
@@ -179,7 +195,9 @@ const PromotionDetail = ({
   });
 
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
+    dispatch(RsetIsLoading({ stateWait: true }));
     const res = await slaPromotionTypeList();
+    dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
       setPromotionTypeList(data);
@@ -195,7 +213,10 @@ const PromotionDetail = ({
   });
 
   const handleSlaPromotionPlatformList = asyncWrapper(async (id) => {
-    const res = await slaPromotionPlatformList(id);
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const fixId = itsEditRow ? detailRow?.data?.id : 0;
+    const res = await slaPromotionPlatformList(fixId);
+    dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
       setAllPlatform(data);
@@ -211,8 +232,10 @@ const PromotionDetail = ({
   });
 
   const handleGetProductList = asyncWrapper(async (id) => {
+    dispatch(RsetIsLoading({ stateWait: true }));
     if (itsEditRow) {
       const res = await itemPromotionList(id);
+      dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       const fixIdToItemId = data?.map((item) => {
         return {
@@ -242,7 +265,11 @@ const PromotionDetail = ({
   });
 
   const handleGroupStore = asyncWrapper(async () => {
-    const res = await locationPromotionList(users?.userId, detailRow?.data?.id);
+    const fixId = itsEditRow ? detailRow?.data?.id : 0;
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const res = await locationPromotionList(users?.userId, fixId);
+    dispatch(RsetIsLoading({ stateWait: false }));
+
     const { data, status, message } = res;
     console.log(res);
     if (status == "Success") {
@@ -339,18 +366,27 @@ const PromotionDetail = ({
     if (itsEditRow) {
       const getEditRow = detailRow?.data;
       const fixEdit = {
-        title: getEditRow?.title,
-        isActive: getEditRow?.isActive,
-        itsFromDate: getEditRow?.fromDate,
-        itsToDate: getEditRow?.toDate,
-        daysOffer: getEditRow?.daysOffer,
-        typePromotion: getEditRow?.promotionTypeId,
-        desc: getEditRow?.desc,
-        code: getEditRow?.code,
+        title: getEditRow?.title || "",
+        isActive: getEditRow?.isActive || false,
+        itsFromDate: getEditRow?.fromDate || "",
+        itsToDate: getEditRow?.toDate || "",
+        daysOffer: getEditRow?.daysOffer || "",
+        typePromotion: getEditRow?.promotionTypeId || "",
+        desc: getEditRow?.desc || "",
+        code: getEditRow?.code || "",
       };
       setInputFields((prev) => ({ ...prev, ...fixEdit }));
     } else {
-      setInputFields({});
+      setInputFields({
+        title: "",
+        isActive: false,
+        itsFromDate: "",
+        itsToDate: "",
+        daysOffer: "",
+        typePromotion: "",
+        desc: "",
+        code: "",
+      });
     }
   };
 
@@ -439,7 +475,9 @@ const PromotionDetail = ({
     };
     console.log(updatePromotion);
     if (itsEditRow) {
+      dispatch(RsetIsLoading({ stateWait: true }));
       const res = await updateSlaPromotion(updatePromotion);
+      dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       if (status == "Success") {
         handleGetAllList();
@@ -462,7 +500,9 @@ const PromotionDetail = ({
       }
       console.log(res);
     } else {
+      dispatch(RsetIsLoading({ stateWait: true }));
       const res = await addSlaPromotion(postAddPromotion);
+      dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       if (status == "Success") {
         handleGetAllList();
@@ -544,7 +584,10 @@ const PromotionDetail = ({
   };
 
   const handleSlaCustomerGroupList = asyncWrapper(async () => {
-    const res = await slaCustomerGroupList(detailRow?.data?.id);
+    const fixId = itsEditRow ? detailRow?.data?.id : 0;
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const res = await slaCustomerGroupList(fixId);
+    dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
       setAllCustomer(data);
@@ -708,7 +751,6 @@ const PromotionDetail = ({
             rtlEnabled
           />
         </Col>
-
         <Col xxl="11" className="">
           <Button
             onClick={() => {
@@ -736,6 +778,9 @@ const PromotionDetail = ({
       </Row>
       {showAddProduct && (
         <PromotionProduct
+          handleChangeInputsProduct={handleChangeInputsProduct}
+          setInputsProduct={setInputsProduct}
+          inputsProduct={inputsProduct}
           productList={productList}
           detailRow={detailRow}
           itsEditProductRow={itsEditProductRow}

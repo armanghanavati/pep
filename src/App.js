@@ -6,9 +6,16 @@ import {
   Col,
   Card,
   Label,
-  TabContent, TabPane, Nav, NavItem, NavLink,
-  Modal, ModalHeader, ModalBody, ModalFooter
-} from 'reactstrap';
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "reactstrap";
 import { connect } from "react-redux";
 import jwt from "jwt-decode";
 import Home from "./pages/Home";
@@ -19,6 +26,7 @@ import { authUser } from "./redux/reducers/user/user-actions";
 import { checkTokenExpire } from "./utiliy/GlobalMethods";
 import { companyListCombo } from "./redux/reducers/company/company-actions";
 import { companyActions } from "./redux/reducers/company/company-slice";
+import Wait from "./components/common/Wait";
 
 class App extends React.Component {
   constructor(props) {
@@ -29,45 +37,43 @@ class App extends React.Component {
     };
   }
   componentDidMount = async () => {
-    // await this.getParamsFromUrl();    
+    // await this.getParamsFromUrl();
     //await this.fn_CheckUrlProtocol();
     // alert(this.fn_counterDecimal(421.56))
-    let token = this.props.User.token    
-    const ISVLAID_TOKEN=await checkTokenExpire(token);        
+    let token = this.props.User.token;
+    const ISVLAID_TOKEN = await checkTokenExpire(token);
     await this.fn_CheckIsLogin();
-  };  
+  };
 
   // -----------------------------------------------------------------------------------
-  fn_IntPart(num){    
-    let sah=0;
-    let mod=1;
-    while(mod>=1){
-      sah=Math.floor(num/10);
-      mod=num % 10;
-      if(mod>=1){
-        sah=num-mod;        
-        sah=sah+Math.floor(mod/1);
-        mod=num % 1;
-      }
-      else
-        sah=sah*10;
+  fn_IntPart(num) {
+    let sah = 0;
+    let mod = 1;
+    while (mod >= 1) {
+      sah = Math.floor(num / 10);
+      mod = num % 10;
+      if (mod >= 1) {
+        sah = num - mod;
+        sah = sah + Math.floor(mod / 1);
+        mod = num % 1;
+      } else sah = sah * 10;
     }
     return sah;
   }
 
-  fn_counterDecimal(num){
-    let sah=this.fn_IntPart(num)                
-    let dec=num-sah;       
-    let counterDecimal=0;
-    let strDec='';
-    while(dec>0){
-      var newNum=dec*10;
-      var sahNew=this.fn_IntPart(newNum);      
-      strDec+=sahNew
-      dec=newNum-sahNew;
+  fn_counterDecimal(num) {
+    let sah = this.fn_IntPart(num);
+    let dec = num - sah;
+    let counterDecimal = 0;
+    let strDec = "";
+    while (dec > 0) {
+      var newNum = dec * 10;
+      var sahNew = this.fn_IntPart(newNum);
+      strDec += sahNew;
+      dec = newNum - sahNew;
       counterDecimal++;
     }
-    alert(strDec)
+    alert(strDec);
     return counterDecimal;
   }
   // -----------------------------------------------------------------------------------
@@ -75,18 +81,22 @@ class App extends React.Component {
   fn_CheckUrlProtocol = () => {
     const HOST_NAME = window.location.hostname;
     const PROTOCOL = window.location.protocol;
-    if (HOST_NAME !== "localhost"  && HOST_NAME !== "127.0.0.1" && PROTOCOL !== "https:") {
+    if (
+      HOST_NAME !== "localhost" &&
+      HOST_NAME !== "127.0.0.1" &&
+      PROTOCOL !== "https:"
+    ) {
       window.location.replace(window.location.href.replace("http:", "https:"));
     }
-  }
+  };
 
   fn_CheckIsLogin = async () => {
     const USER_ID = sessionStorage.getItem("UserId");
     const TOKEN = sessionStorage.getItem("Token");
     const PERMISSIONS = JSON.parse(sessionStorage.getItem("Permissions"));
     if (USER_ID != null && TOKEN != null && PERMISSIONS != null) {
-      await this.saveUserData();  
-      await this.fn_CheckCompanyState(TOKEN);    
+      await this.saveUserData();
+      await this.fn_CheckCompanyState(TOKEN);
       this.setState({
         stateRedirectLogin: false,
         stateRedirectHome: true,
@@ -111,8 +121,7 @@ class App extends React.Component {
         })
       );
     }
-  }
-  
+  };
 
   getParamsFromUrl = async () => {
     // const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -167,12 +176,20 @@ class App extends React.Component {
         permissions,
       })
     );
-    
   };
+
+  // console.log(main)
 
   render() {
     return (
       <div className="mainBack">
+        {this.props.main.isLoading.stateWait && (
+          <Row className="text-center">
+            <Col style={{ textAlign: "center", marginTop: "10px" }}>
+              <Wait />
+            </Col>
+          </Row>
+        )}
         {/* <ComThree /> */}
         {this.state.stateRedirectHome && <Home />}
         {this.state.stateRedirectLogin && <Login />}
@@ -184,6 +201,7 @@ class App extends React.Component {
 const mapStateToProps = (state) => ({
   User: state.users,
   Company: state.companies,
+  main: state.main,
   //Hub_conneciton: state.hubConnections
 });
 

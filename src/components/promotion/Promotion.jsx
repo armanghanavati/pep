@@ -16,7 +16,11 @@ import AddIcon from "@mui/icons-material/Add";
 import { render } from "@testing-library/react";
 import MainTitle from "../common/MainTitles/MailTitle";
 import Toastify from "../common/Toasts/Toastify";
-import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import {
+  RsetIsLoading,
+  RsetShowToast,
+} from "../../redux/reducers/main/main-slice";
+import QuestionModal from "../common/QuestionModal/index";
 
 const Promotion = () => {
   const { users, main } = useSelector((state) => state);
@@ -34,7 +38,9 @@ const Promotion = () => {
   });
 
   const handleGetAllList = asyncWrapper(async () => {
+    dispatch(RsetIsLoading({ stateWait: true }));
     const res = await slaPromotionByUserIdList(users?.userId);
+    dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
       setPromotionList(data);
@@ -187,15 +193,7 @@ const Promotion = () => {
     setItsEditRow(true);
   };
 
-  // const handleShowToast = () => {
-  //   dispatch(
-  //     RsetShowToast({
-  //       isToastVisible: true,
-  //       Message: "ثبت با موفقیت انجام گردید" || "عدم ثبت",
-  //       Type: "success" || "error",
-  //     })
-  //   );
-  // };
+  console.log(inputFields);
 
   return (
     <>
