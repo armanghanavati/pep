@@ -1052,3 +1052,11 @@
     justify-content: space-between;
     margin-left: 10px;
 }
+
+.bg-dev-blue{
+  background-color:rgb(37 111 169) ;
+}
+
+.text-dev-blue{
+  color:rgb(37 111 169) ;
+}

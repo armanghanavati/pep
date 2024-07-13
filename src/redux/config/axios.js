@@ -1,5 +1,6 @@
 import axios from "axios";
 import store from "../reducers/store";
+import { RsetMessageModal, RsetShowToast } from "../reducers/main/main-slice";
 
 axios.interceptors.request.use(
   function (config) {
@@ -19,6 +20,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   async function (response) {
+    console.log(response);
     // const rowMsgMod = response?.data?.message?.split("//");
     // const allRowMsgMod = rowMsgMod?.map((item) => (
     //   <ul className="px-4 py-2">
@@ -44,47 +46,35 @@ axios.interceptors.response.use(
     return response;
   },
   function (error) {
-    // if (error.response.status === 401) {
-    //   store.dispatch(
-    //     RsetMessageModal({
-    //       show: true,
-    //       title:
-    //         error.response.data.message || "مشکلی در سرور به وجود آمده است.",
-    //     })
-    //   );
-    //   localStorage.clear();
-    //   window.location = "/login";
-    // }
-    // try {
-    //   const expectedErrors =
-    //     error?.response &&
-    //     error?.response?.status !== 401 &&
-    //     error?.response?.status >= 400 &&
-    //     error?.response?.status < 500;
-
-    //   if (expectedErrors) {
-    //     store.dispatch(
-    //       RsetMessageModal({
-    //         show: true,
-    //         title:
-    //           error.response.data.message || "مشکلی در سرور به وجود آمده است.",
-    //       })
-    //     );
-    //     return;
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    //   const { message } = error;
-    //   // Do something with response error
-    //   store.dispatch(
-    //     RsetMessageModal({
-    //       show: true,
-    //       title:
-    //         error.response.data.message || "مشکلی در سرور به وجود آمده است.",
-    //     })
-    //   );
-    //   return Promise.reject(message);
-    // }
+    console.log(error);
+    try {
+      const expectedErrors =
+        error?.response &&
+        error?.response?.status !== 401 &&
+        error?.response?.status >= 400 &&
+        error?.response?.status < 500;
+      if (expectedErrors) {
+        store.dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: "مشکلی در سرور به وجود آمده است",
+            Type: "Unsuccess",
+          })
+        );
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      const { message } = error;
+      store.dispatch(
+        RsetMessageModal({
+          show: true,
+          title:
+            error.response.data.message || "مشکلی در سرور به وجود آمده است.",
+        })
+      );
+      return Promise.reject(message);
+    }
   }
 );
 //   async function (error) {

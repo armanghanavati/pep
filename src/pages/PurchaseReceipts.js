@@ -1,31 +1,29 @@
 import React from "react";
-import { Scanner } from '@yudiel/react-qr-scanner';
-import PurchaseReceipt from "../components/itemJet/ItemJet";
+import PurchaseReceipt from "../components/sale/PurchaseReceipt";
 class PurchaseReceipts extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            QrValue: null
+            scanValue: null,
+            stateCamera: false,
         };
     }
 
-    onScanQR=(result)=>{
-        this.setState({QrValue:result[0].rawValue})
-        // alert(JSON.stringify(result))
+    Barcode_onScan = (data) => {
+        this.setState({ scanValue: data[0].rawValue })
     }
+
+    btnOnOffCamera_onClick = () => {
+        this.setState({ stateCamera: !this.state.stateCamera })
+    }
+
+
     render() {
         return (
             <div>
-                <h3>بارکد را در کادر قرمز رنگ قرار دهید</h3>
-                {this.state.QrValue}
-                <Scanner
-                    // onScan={(result) => this.state({ QrValue: result })}
-                    onScan={this.onScanQR}
-                    scanDelay={1000}
-                />                
+                <PurchaseReceipt />               
             </div>
-        );
+        )
     }
 }
-
 export default PurchaseReceipts;

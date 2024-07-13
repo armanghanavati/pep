@@ -28,9 +28,23 @@
   .dx-list-item-content {
     padding-left: 0;
   }
-  
+    
   .border-double-bottom {
     border-style: double;
     border-width: 0 0 6px 0; 
-    border-color: rgb(255, 101, 46);
+    border-color: rgb(37 111 169);
+    /* background-color: rgba(0, 85, 255, 0.055); */
   }
+
+  .border-solid-bottom {
+    border-style: solid;
+    border-width: 0 0 2px 0; 
+    border-color: rgb(37 111 169);
+    /* background-color: rgba(0, 85, 255, 0.055); */
+  }
+
+  /* .border-double-bottom {
+    border-style: double;
+    border-width: 0 0 6px 0; 
+    border-color: rgb(255, 101, 46);
+  } */

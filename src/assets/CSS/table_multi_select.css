@@ -1,0 +1,18 @@
+.bg-white-multi{
+   background-color: white; 
+}
+
+.bg-white-multi:hover{
+    transition: all 0.4s;
+    background-color: rgb(232, 240, 245); 
+ }
+
+ #dx-datagrid-rowsview .dx-select-checkboxes-hidden > tbody > tr > td > .dx-select-checkbox {
+   display: inline !important;
+}
+
+
+.dx-editor-cell .dx-texteditor, .dx-editor-cell .dx-texteditor .dx-texteditor-input {
+   /* background: #e5edff; */
+   border: 1px solid #d7d7d7;
+}
