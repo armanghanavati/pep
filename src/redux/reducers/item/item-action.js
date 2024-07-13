@@ -280,6 +280,42 @@ export async function itemListByItemGroupIds(object, Token) {
   return null;
 }
 
+//-------------itemListOfPromotionsNotFactor----------------------
+export async function itemListOfPromotionsNotFactor(object,Token) {
+  const url = window.apiAddress + "/Item/itemListOfPromotionsNotFactor?personId="+object.personId;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("show Item" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+export async function checkItemsAndSendSmsToPerson(object, Token) {
+  const url = window.apiAddress + "/Item/checkItemsAndSendSmsToPerson";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("checkItems=" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
+
 // کالا
 export const groupIds = async (object) => {
   console.log(object, window.apiAddress);
@@ -306,10 +342,10 @@ export const slaPromotionList = async (object) => {
   return response?.data;
 };
 
-// صرویس کالا برای پروموشن 
 export const itemComboByItemGroupIdList = async (object) => {
   const url = window.apiAddress + "/Item/itemComboByItemGroupIdList";
   const response = await axios.post(url, object);
   console.log(response);
   return response?.data;
 };
+

@@ -208,16 +208,16 @@ class Person extends React.Component {
   fn_CheckValidation = () => {
     let errMsg = "";
     let flag = true;
-    document.getElementById("errPersonalCode").innerHTML = "";
+    //document.getElementById("errPersonalCode").innerHTML = "";
     document.getElementById("errPosition").innerHTML = "";
     document.getElementById("errLocation").innerHTML = "";
     document.getElementById("errPersonIsActive").innerHTML = "";
 
-    if (this.state.txtPersonalCodeValue == null) {
-      document.getElementById("errPersonalCode").innerHTML =
-        "کد کاربری را وارد نمائید";
-      flag = false;
-    }
+    // if (this.state.txtPersonalCodeValue == null) {
+    //   document.getElementById("errPersonalCode").innerHTML =
+    //     "کد کاربری را وارد نمائید";
+    //   flag = false;
+    // }
     if (this.state.PositionId == null) {
       document.getElementById("errPosition").innerHTML = "سمت را مشخص نمائید.";
       flag = false;
@@ -383,12 +383,12 @@ class Person extends React.Component {
                   onValueChanged={this.txtPersonalCode_onChange}
                   disabled={this.state.stateDisable_txtPersonalCode}
                 />
-                <Row>
+                {/* <Row>
                   <Label
                     id="errPersonalCode"
                     className="standardLabelFont errMessage"
                   />
-                </Row>
+                </Row> */}
               </Col>
               <Col xs="auto">
                 <Label className="standardLabelFont">سمت</Label>

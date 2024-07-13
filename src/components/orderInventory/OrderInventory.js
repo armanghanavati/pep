@@ -478,7 +478,7 @@ class OrderInventory extends React.Component {
           isToastVisible: true,
           //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
           //Type:RTN==1 ? "success" : "error",
-          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.\n."+RTN.messageOfTime,
+          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است.\n."+RTN.messageOfTime,
           Type: RTN.id.length==0 ? "success" : "error",
         },
       });
