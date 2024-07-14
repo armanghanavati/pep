@@ -66,7 +66,7 @@ import {
 
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
-import { DataGridPromotionColumns } from "./Promotion-config";
+import { DataGridPromotionColumns } from "./PrintLabel-config";
 import {
     itemListCombo, itemListComboByItemGroupId, itemListComboByItemGroupIds, itemListComboByItemGroupWithAll, itemPromotionList, promotionNameList
 } from "../../redux/reducers/item/item-action";
@@ -91,7 +91,7 @@ import { printTypeList } from "../../redux/reducers/printType/printType-actions"
 
 const dateLabel = { 'aria-label': 'Date' };
 
-class Promotion extends React.Component {
+class PrintLabel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -442,4 +442,4 @@ const mapStateToProps = (state) => ({
     Company: state.companies
 });
 
-export default connect(mapStateToProps)(Promotion);
+export default connect(mapStateToProps)(PrintLabel);

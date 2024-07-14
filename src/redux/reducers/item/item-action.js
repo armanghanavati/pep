@@ -297,6 +297,24 @@ export async function itemListOfPromotionsNotFactor(object,Token) {
   return null;
 }
 
+export async function checkItemsAndSendSmsToPerson(object, Token) {
+  const url = window.apiAddress + "/Item/checkItemsAndSendSmsToPerson";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(object),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Token}`,
+    },
+  });
+  const result = await response.json();
+  if (result.status == "Success") {
+    console.log("checkItems=" + JSON.stringify(result.data));
+    return result.data;
+  }
+  return null;
+}
+
 
 // کالا
 export const groupIds = async (object) => {

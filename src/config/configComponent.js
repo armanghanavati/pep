@@ -55,6 +55,7 @@ import Bakhshnamehs from '../pages/Bakhshnamehs'
 import Promotions from '../pages/Promotions';
 import ItemReports from '../pages/ItemReports'
 import PurchaseReceipts from '../pages/PurchaseReceipts'
+import PrintLabels from '../pages/PrintLabels'
 
 export const REAL_COMPONENT = [
   {
@@ -296,6 +297,11 @@ export const REAL_COMPONENT = [
   {
     strComponent: "PurchaseReceipts",
     orgComponent: <PurchaseReceipts />,
+  }
+  ,
+  {
+    strComponent: "PrintLabels",
+    orgComponent: <PrintLabels />,
   }
 ];
 

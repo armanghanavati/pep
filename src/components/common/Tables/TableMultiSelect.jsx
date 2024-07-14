@@ -38,7 +38,7 @@ const TableMultiSelect = ({
 }) => {
   const [showTable, setShowTable] = useState(false);
 
-  const fixPlaceHolder = allListRF?.filter((item) => item?.isChecked);
+   const fixPlaceHolder = allListRF?.filter((item) => item?.isChecked);
 
   const handleSubmit = () => {
     setShowTable(false);
