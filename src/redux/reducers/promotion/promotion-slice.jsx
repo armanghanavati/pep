@@ -1,28 +1,52 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  multiSelect: {},
+};
+
 const promotionSlice = createSlice({
-  name: "items",
-  initialState: {
-    allItems: null,
-    toast: {
-      isToastVisible: false,
-      Message: "",
-      Type: "",
-    },
-  },
+  name: "promotion",
+  initialState,
   reducers: {
-    setAllItems(state, action) {
-      state.allItems = action.payload.allItems;
+    RsetMultiSelect: (state, actions) => {
+      return { ...state, multiSelect: actions.payload };
     },
-    setItemCombo(state, action) {
-      state.itemCombo = action.payload.itemCombo;
-    },
-    // RsetToast(state, payload) {
-    //   return ...state = payload.toast
-    // },
   },
 });
 
-export const itemActions = promotionSlice.actions;
-
+export const { RsetMultiSelect } = promotionSlice.actions;
 export default promotionSlice;
+
+// const initialState = {
+//   messageModal: { title: "", show: false },
+//   showToast: { Message: "", Type: "", isToastVisible: false },
+//   questionModal: { show: false, answer: false },
+//   isLoading: { btnName: "", stateWait: false },
+// };
+
+// const mainSlice = createSlice({
+//   name: "main",
+//   initialState,
+//   reducers: {
+//     RsetMultiSelect: (state, actions) => {
+//       return { ...state, messageModal: actions.payload };
+//     },
+//     RsetShowToast: (state, actions) => {
+//       return { ...state, showToast: actions.payload };
+//     },
+//     RsetQuestionModal: (state, actions) => {
+//       return { ...state, questionModal: actions.payload };
+//     },
+//     RsetIsLoading: (state, actions) => {
+//       return { ...state, isLoading: actions.payload };
+//     },
+//   },
+// });
+
+// export const {
+//   RsetIsLoading,
+//   RsetShowToast,
+//   RsetMultiSelect,
+//   RsetQuestionModal,
+// } = mainSlice.actions;
+// export default mainSlice;

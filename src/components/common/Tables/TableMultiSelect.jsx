@@ -16,6 +16,7 @@ import DataGrid, {
 } from "devextreme-react/data-grid";
 import Modal from "../../common/Modals/Modal";
 import Button from "../Buttons/Button";
+import { useSelector } from "react-redux";
 
 const TableMultiSelect = ({
   xs = 12,
@@ -32,17 +33,24 @@ const TableMultiSelect = ({
   className,
   deleteRow,
   selectedRowKeys,
-  onSelectionChanged,
-  setSelectedRowKeys,
+  // onSelectionChanged,
+  // setSelectedRowKeys,
   submit,
 }) => {
   const [showTable, setShowTable] = useState(false);
+  const { promotion } = useSelector((state) => state);
 
-   const fixPlaceHolder = allListRF?.filter((item) => item?.isChecked);
+  const fixPlaceHolder = allListRF?.filter((item) => item?.isChecked);
 
   const handleSubmit = () => {
     setShowTable(false);
     submit();
+  };
+
+  const onSelectionChanged = (e) => {
+    let test = [];
+    console.log(e);
+    const fixed = e;
   };
 
   return (
