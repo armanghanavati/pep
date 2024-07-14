@@ -95,6 +95,7 @@ class Person extends React.Component {
       Position: null,
       PositionId: null,
       LocationId: null,
+      txtBonePasswordValue:null,
     };
   }
 
@@ -181,6 +182,7 @@ class Person extends React.Component {
       RowSelected: e.data,
       PositionId: e.data.positionId,
       LocationId: e.data.locationId,
+      txtBonePasswordValue: e.data.bonePassword
     });
   };
 
@@ -196,6 +198,7 @@ class Person extends React.Component {
       stateUpdateDelete: false,
       PositionId: null,
       LocationId: null,
+      txtBonePasswordValue:null,
     });
   };
 
@@ -280,6 +283,10 @@ class Person extends React.Component {
     this.setState({ txtElateGhateHamkariValue: e.value });
   };
 
+  txtBonePassword_onChange=(e)=>{
+    this.setState({txtBonePasswordValue:e.value})
+  }
+
   btnUpdate_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
@@ -290,10 +297,12 @@ class Person extends React.Component {
         mobile: this.state.txtMobileValue,
         tarikhGhateHamkari: this.state.txtTarikhGhateHamkariValue,
         elateGhateHamkari: this.state.txtElateGhateHamkariValue,
+        bonePassword:this.state.txtBonePasswordValue,
         isActive: this.state.chkIsActive,
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
       };
+      
       const RESULT = await updatePerson(data, this.props.User.token);
       this.setState({
         ToastProps: {
@@ -482,6 +491,17 @@ class Person extends React.Component {
                     rtlEnabled={true}
                     valueChangeEvent="keyup"
                     onValueChanged={this.txtElateGhateHamkari_onChange}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">رمز بن خرید</Label>
+                  <TextBox
+                    value={this.state.txtBonePasswordValue}
+                    showClearButton={true}
+                    placeholder="رمز بن خرید"
+                    rtlEnabled={true}
+                    valueChangeEvent="keyup"
+                    onValueChanged={this.txtBonePassword_onChange}
                   />
                 </Col>
               </Row>
