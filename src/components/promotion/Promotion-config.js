@@ -1,5 +1,10 @@
 export const DataGridPromotionColumns = [
     {
+        dataField:"id" ,
+        caption:"ردیف",
+        allowEditing:false    
+    },
+    {
         dataField: "promotionName",
         caption: "نام تخفیف",
         allowEditing: false,
