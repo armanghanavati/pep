@@ -66,7 +66,7 @@ import {
 
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
-import { DataGridPromotionColumns } from "./Promotion-config";
+import { DataGridPromotionColumns } from "./PrintLabel-config";
 import {
     itemListCombo, itemListComboByItemGroupId, itemListComboByItemGroupIds, itemListComboByItemGroupWithAll, itemPromotionList, promotionNameList
 } from "../../redux/reducers/item/item-action";
@@ -91,7 +91,7 @@ import { printTypeList } from "../../redux/reducers/printType/printType-actions"
 
 const dateLabel = { 'aria-label': 'Date' };
 
-class Promotion extends React.Component {
+class PrintLabel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -109,12 +109,12 @@ class Promotion extends React.Component {
             },
             FromDate: new Date(),
             ToDate: new Date(),
-            ItemGroupIds: null,
             cmbPromotion: null,
             cmbPromotionValue: null,
             promotionNameList: null,
             cmbPrintType: null,
             cmbPrintTypeValue: null,
+            PromotionSelected: [],
         };
     }
 
@@ -167,7 +167,7 @@ class Promotion extends React.Component {
 
     cmbItemGroup_onChange = async (e) => {
         this.setState({
-            ItemGroupIds: e,
+            cmbItemGroupValue: e,
             cmbItem: await itemListComboByItemGroupIds(e, this.props.User.token),
         })
     };
@@ -191,6 +191,7 @@ class Promotion extends React.Component {
         this.OpenCloseWait();
         var data = {
             itemIds: this.state.cmbItemValue,
+            itemGroupIds: this.state.cmbItemGroupValue,
             promotionIds: this.state.cmbPromotionValue,
             userId: this.props.User.userId
         }
@@ -209,14 +210,16 @@ class Promotion extends React.Component {
 
     btnItemPromotionReport_onClick = () => {
         if (this.state.cmbPrintTypeValue == "1")
-            window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=null", "_blank");
+            window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + (this.state.PromotionSelected.length > 0 ?  this.state.PromotionSelected : this.state.cmbItemValue) + "&itemGroupId=" + this.state.cmbItemGroupValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=null", "_blank");
         else if (this.state.cmbPrintTypeValue == "2")
-            window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
+            window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + (this.state.PromotionSelected.length > 0 ?  this.state.PromotionSelected : this.state.cmbItemValue) + "&itemGroupId=" + this.state.cmbItemGroupValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
         else if (this.state.cmbPrintTypeValue == "3")
-            window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A6", "_blank");
+            window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + (this.state.PromotionSelected.length > 0 ?  this.state.PromotionSelected : this.state.cmbItemValue) + "&itemGroupId=" + this.state.cmbItemGroupValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A6", "_blank");
         //window.open("http://localhost:7086/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
         //window.open("https://pepreports.minoomart.ir/itemPromotionReport/itemPromotion?itemId=" + this.state.cmbItemValue + "&promotionId=" + this.state.cmbPromotionValue + "&userId=" + this.props.User.userId + "&type=A4", "_blank");
-
+        this.setState({
+            PromotionSelected:[]
+        })
     }
 
     DatePickerFrom_onChange = (params) => {
@@ -226,6 +229,15 @@ class Promotion extends React.Component {
 
     DatePickerTo_onChange = (params) => {
         this.setState({ ToDate: params, ToDateapi: Gfn_DT2StringSql(params) })
+    }
+
+    grdPromotion_onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
+        console.log(JSON.stringify(selectedRowsData))
+        let temp = []
+        for (let i = 0; i < selectedRowsData.length; i++) {
+            temp.push(selectedRowsData[i].itemId)
+        }
+        this.setState({ PromotionSelected: temp })
     }
 
     render() {
@@ -355,7 +367,7 @@ class Promotion extends React.Component {
                         <Row className="standardSpaceTop">
                             <Col xs="auto" className="standardMarginRight">
                                 <DataGrid
-                                    id="grdOrderPointInventory"
+                                    id="grdPromotion"
                                     dataSource={this.state.promotionGridData}
                                     defaultColumns={DataGridPromotionColumns}
                                     valueExpr="id"
@@ -366,9 +378,9 @@ class Promotion extends React.Component {
                                     allowColumnResizing={true}
                                     columnResizingMode="widget"
                                     className="fontStyle"
-                                //   onSelectionChanged={
-                                //     this.grdOrderPointInventory_onSelectionChanged
-                                //   }
+                                    onSelectionChanged={
+                                        this.grdPromotion_onSelectionChanged
+                                    }
                                 >
                                     <Scrolling
                                         rowRenderingMode="virtual"
@@ -382,6 +394,11 @@ class Promotion extends React.Component {
                                         allowedPageSizes={DataGridPageSizes}
                                         showPageSizeSelector={true}
                                         showNavigationButtons={true}
+                                    />
+                                    <Selection
+                                        mode="multiple"
+                                        selectAllMode={ALL_MOD}
+                                        showCheckBoxesMode={CHECK_BOXES_MOD}
                                     />
                                     <Editing mode="cell" allowUpdating={true} />
                                     <FilterRow visible={true} />
@@ -425,4 +442,4 @@ const mapStateToProps = (state) => ({
     Company: state.companies
 });
 
-export default connect(mapStateToProps)(Promotion);
+export default connect(mapStateToProps)(PrintLabel);
