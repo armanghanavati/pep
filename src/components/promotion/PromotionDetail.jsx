@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Col, Container, Label, Row, Toast } from "reactstrap";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
@@ -66,6 +66,8 @@ const PromotionDetail = ({
   const [allCustomer, setAllCustomer] = useState([]);
   const [productList, setProductList] = useState([]);
   const [inputsProduct, setInputsProduct] = useState({});
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  let storeFixed = [];
 
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
@@ -305,15 +307,13 @@ const PromotionDetail = ({
       dataField: "discount",
       caption: "درصد‌تخفیف‌ کالا",
       allowEditing: true,
+      cellRender: (item) => {
+        return <>{item?.key?.discount + "%"}</>;
+      },
     },
   ];
 
   const platformColumns = [
-    {
-      dataField: "isChecked",
-      caption: "",
-      allowEditing: true,
-    },
     {
       dataField: "code",
       caption: "کد‌",
@@ -328,11 +328,6 @@ const PromotionDetail = ({
 
   const storeColumns = [
     {
-      dataField: "isChecked",
-      caption: "",
-      allowEditing: true,
-    },
-    {
       dataField: "code",
       caption: "کد‌",
       allowEditing: false,
@@ -345,11 +340,6 @@ const PromotionDetail = ({
   ];
 
   const customerColumns = [
-    {
-      dataField: "isChecked",
-      caption: "",
-      allowEditing: true,
-    },
     {
       dataField: "code",
       caption: "کد‌",
@@ -396,13 +386,6 @@ const PromotionDetail = ({
       ?.filter((platform) => platform?.isChecked === true)
       .map((item) => item.id);
     setTypeAndPlatform((prev) => ({ ...prev, fixAllPlatform }));
-  };
-
-  const handleAcceptStore = () => {
-    const fixStoreList = storeList
-      ?.filter((store) => store?.isChecked === true)
-      .map((item) => item.id);
-    setTypeAndPlatform((prev) => ({ ...prev, fixStoreList }));
   };
 
   const handleAcceptCustomer = () => {
@@ -527,23 +510,6 @@ const PromotionDetail = ({
     }
   });
 
-  useEffect(() => {
-    handleGetslaPromotionTypeList();
-    handleSlaCustomerGroupList();
-    handleSlaPromotionPlatformList(detailRow?.data?.id);
-    handleGetProductList(detailRow?.data?.id);
-    handleGroupStore();
-    if (detailRow?.data?.id) {
-      handleGetDataEditFields();
-    }
-  }, []);
-
-  useEffect(() => {
-    handleAcceptStore();
-    handleAcceptCustomer();
-    handleAcceptGroup();
-  }, [allPlatform, storeList, allCustomer]);
-
   const permitForNextStep = (inputsName = []) => {
     const error = handleValidation(inputsName);
     for (let key in error) {
@@ -601,6 +567,41 @@ const PromotionDetail = ({
       );
     }
   });
+
+  // const onSelectionChanged = (e) => {
+  // console.log(e);
+  // const fixed = e?.selectedRowsData?.map((row) => row?.id);
+  // storeFixed?.push(e);
+  // setSelectedRowKeys({ fixed });
+  // };
+
+  const handleAcceptStore = () => {
+    console.log(storeFixed);
+    // const fixStoreList = storeList
+    //   ?.filter((store) => store?.isChecked === true)
+    //   .map((item) => item.id);
+    // setTypeAndPlatform((prev) => ({ ...prev, selectedRowKeys }));
+    // setSelectedRowKeys([]);
+  };
+
+  // console.log(selectedRowKeys);
+
+  useEffect(() => {
+    handleGetslaPromotionTypeList();
+    handleSlaCustomerGroupList();
+    handleSlaPromotionPlatformList(detailRow?.data?.id);
+    handleGetProductList(detailRow?.data?.id);
+    handleGroupStore();
+    if (detailRow?.data?.id) {
+      handleGetDataEditFields();
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   handleAcceptStore();
+  //   handleAcceptCustomer();
+  //   handleAcceptGroup();
+  // }, [allPlatform, storeList, allCustomer]);
 
   return (
     <Modal
@@ -673,6 +674,9 @@ const PromotionDetail = ({
         />
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
+            // onSelectionChanged={onSelectionChanged}
+            filterRow
+            headerFilter
             submit={handleAcceptGroup}
             allListRF={allPlatform}
             columns={platformColumns}
@@ -684,6 +688,11 @@ const PromotionDetail = ({
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
+            // setSelectedRowKeys={setSelectedRowKeys}
+            // selectedRowKeys={selectedRowKeys}
+            // onSelectionChanged={onSelectionChanged}
+            filterRow
+            headerFilter
             submit={handleAcceptStore}
             allListRF={storeList}
             columns={storeColumns}
@@ -695,6 +704,8 @@ const PromotionDetail = ({
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
+            filterRow
+            headerFilter
             submit={handleAcceptCustomer}
             allListRF={allCustomer}
             columns={customerColumns}

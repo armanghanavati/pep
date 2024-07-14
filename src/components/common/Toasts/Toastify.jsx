@@ -8,8 +8,6 @@ const Toastify = ({ size = "lg" }) => {
   const { main } = useSelector((state) => state);
   const dispatch = useDispatch();
 
-  console.log(main?.showToast);
-
   return (
     <>
       <Row className="d-flex toastContainer">

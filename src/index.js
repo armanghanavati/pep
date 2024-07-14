@@ -22,7 +22,6 @@ window.apiAddress = "http://10.0.10.48:9092/api";
 // alirezayi
 // window.apiAddress = "http://10.0.10.41:7142/api";
 
-// window.apiAddress="http://localhost:7142/api";
 window.siteAddress = "https://pepapi.minoomart.ir";
 
 window.confirmPayment = "https://pepapi.minoomart.ir/api";

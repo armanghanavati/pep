@@ -21,6 +21,8 @@ import {
   RsetShowToast,
 } from "../../redux/reducers/main/main-slice";
 import QuestionModal from "../common/QuestionModal/index";
+import { DashboardCustomizeOutlined } from "@mui/icons-material";
+import { Behavior } from "devextreme-react/range-selector";
 
 const Promotion = () => {
   const { users, main } = useSelector((state) => state);
@@ -30,6 +32,7 @@ const Promotion = () => {
   const [inputFields, setInputFields] = useState({});
   const [promotionList, setPromotionList] = useState([]);
   const [itsEditRow, setItsEditRow] = useState(false);
+  const [selectedRowKeys, setselectedRowKeys] = useState(null);
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
@@ -93,19 +96,20 @@ const Promotion = () => {
       dataField: 1,
       caption: "ردیف",
       allowEditing: false,
-      cellRender: (item, record, index) => (
-        <>
-          {index +
-            1 +
-            (Number(tableParams?.pagination?.current || 1) - 1) *
-              Number(tableParams.pagination.pageSize || 1)}
-        </>
-      ),
+      cellRender: (item) => {
+        console.log(item);
+        return <>{item?.row?.dataIndex + 1}</>;
+      },
     },
     {
       dataField: "title",
       caption: "عنوان",
       allowEditing: false,
+      renderGridCell: (item) => {
+        if (item === "title") {
+          return <>{"یییی"}</>;
+        }
+      },
     },
     {
       dataField: "fromDate",
@@ -121,6 +125,9 @@ const Promotion = () => {
       dataField: "isActive",
       caption: "فعال/غیر فعال",
       allowEditing: false,
+      cellRender: (item) => {
+        return <>{`${item?.key?.isActive ? "فعال" : "غیرفعال"}`}</>;
+      },
     },
     {
       dataField: "desc",
@@ -193,7 +200,11 @@ const Promotion = () => {
     setItsEditRow(true);
   };
 
-  console.log(inputFields);
+  const onSelectionChanged = (e) => {
+    console.log(e);
+    // const fixed = e?.selectedRowsData?.map((row) => row?.id);
+    setselectedRowKeys(e);
+  };
 
   return (
     <>
@@ -210,6 +221,9 @@ const Promotion = () => {
           </div>
           <Row className="standardPadding">
             <Table
+              selection
+              selectedRowKeys={selectedRowKeys}
+              onSelectionChanged={onSelectionChanged}
               headerFilter
               onRowClick={handleOnRowClick}
               columns={columns}
