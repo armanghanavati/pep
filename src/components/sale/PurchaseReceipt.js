@@ -70,9 +70,9 @@ const PurchaseReceipt = () => {
     // }, [ItemsList]);
 
     const Barcode_onScan = async (data) => {
-        setScanValue(data[0].rawValue)
+        await setScanValue(data[0].rawValue)
         const DATA = {
-            personId: parseInt(ScanValue)
+            personId: parseInt(data[0].rawValue)
         }
         setItemList(await itemListOfPromotionsNotFactor(DATA, users.token));
         setShowItems(true)
@@ -168,6 +168,7 @@ const PurchaseReceipt = () => {
                 <Row className="standardPadding">
                     <Scanner
                         onScan={Barcode_onScan}
+                        scanDelay={200}
                     />
                 </Row>
             }
