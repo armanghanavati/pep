@@ -370,7 +370,7 @@ class PrintLabel extends React.Component {
                                     id="grdPromotion"
                                     dataSource={this.state.promotionGridData}
                                     defaultColumns={DataGridPromotionColumns}
-                                    valueExpr="id"
+                                    keyExpr="id"
                                     columnAutoWidth={true}
                                     allowColumnReordering={true}
                                     showBorders={true}
