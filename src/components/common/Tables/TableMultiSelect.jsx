@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import BlurOnIcon from "@mui/icons-material/BlurOn";
 import MenuIcon from "@mui/icons-material/Menu";
-
+import themes from "devextreme/ui/themes";
 import "../../../assets/CSS/table_multi_select.css";
 import { Col, Label } from "reactstrap";
 import DataGrid, {
@@ -16,6 +16,7 @@ import DataGrid, {
 } from "devextreme-react/data-grid";
 import Modal from "../../common/Modals/Modal";
 import Button from "../Buttons/Button";
+import { useSelector } from "react-redux";
 
 const TableMultiSelect = ({
   xs = 12,
@@ -33,16 +34,28 @@ const TableMultiSelect = ({
   deleteRow,
   selectedRowKeys,
   onSelectionChanged,
-  setSelectedRowKeys,
+  selection,
+  handleAcceptAll,
+  onRowUpdating,
+  setSelectedRowKeys = () => {},
   submit,
+  selected,
+  handleCancelRow,
 }) => {
   const [showTable, setShowTable] = useState(false);
+  const { promotion } = useSelector((state) => state);
 
   const fixPlaceHolder = allListRF?.filter((item) => item?.isChecked);
 
   const handleSubmit = () => {
     setShowTable(false);
+    // setSelectedRowKeys([]);
     submit();
+  };
+
+  const handleCancel = () => {
+    // setSelectedRowKeys([]);
+    setShowTable(false);
   };
 
   return (
@@ -53,8 +66,9 @@ const TableMultiSelect = ({
         className="d-flex justify-content-between py-1 bg-white-multi  cursorPointer px-2 border rounded-2"
       >
         <span className="font15 mt-1">
-          {fixPlaceHolder?.length !== 0 &&
-            `${fixPlaceHolder?.length} ${label} انتخاب شد`}
+          {selected !== 0 && selected !== undefined
+            ? `${selected} ${label} انتخاب شد`
+            : ""}
         </span>
         <span>
           <MenuIcon className="text-secondary" />
@@ -69,7 +83,7 @@ const TableMultiSelect = ({
             text="Outlined"
             stylingMode="outlined"
             type="danger"
-            onClick={() => setShowTable(false)}
+            onClick={handleCancel}
             label="لغو"
           />,
           <Button onClick={handleSubmit} label="افزودن" />,
@@ -77,22 +91,22 @@ const TableMultiSelect = ({
       >
         <Col className="mt-4">
           <DataGrid
-            id="grdTicket"
+            // valueExpr="id"
+            keyExpr="id"
+            onSelectionChanged={onSelectionChanged}
             columnResizingMode="widget"
             selectedRowKeys={selectedRowKeys}
-            onSelectionChanged={onSelectionChanged}
             columnAutoWidth={true}
             allowColumnReordering={true}
-            // keyExpr="id"
             onRowClick={onRowClick}
-            dataField="Price"
             dataSource={allListRF}
-            defaultColumns={columns}
+            // defaultColumns={columns}
             showBorders
             rtlEnabled
             allowColumnResizing
             className="fontStyle"
             height={500}
+            onRowUpdating={onRowUpdating}
           >
             <Paging defaultPageSize={10000000} />
             <Scrolling
@@ -100,9 +114,19 @@ const TableMultiSelect = ({
               showScrollbar="always"
               columnRenderingMode="virtual"
             />
+            {selection && (
+              <Selection
+                showCheckBoxesMode="always"
+                selectAllMode="allPages"
+                mode="multiple"
+              />
+            )}
             <Editing mode="cell" allowUpdating allowDeleting={deleteRow} />
             <HeaderFilter visible={headerFilter} />
             <FilterRow visible={filterRow} />
+            {columns.map((col, index) => (
+              <Column key={index} {...col} />
+            ))}
           </DataGrid>
         </Col>
       </Modal>
@@ -111,83 +135,3 @@ const TableMultiSelect = ({
 };
 
 export default TableMultiSelect;
-
-// import React, { useState, useEffect } from "react";
-// import DataGrid, {
-//   Column,
-//   Paging,
-//   Scrolling,
-//   Selection,
-//   FilterRow,
-//   Pager,
-//   Editing,
-//   HeaderFilter,
-// } from "devextreme-react/data-grid";
-// import { Col } from "reactstrap";
-
-// const Table = ({
-//   onRowClick,
-//   headerFilter,
-//   filterRow,
-//   columns = [],
-//   allListRF = [],
-//   defaultPageSize = 10,
-//   deleteRow,
-// }) => {
-//   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-//   useEffect(() => {
-//     const initialSelectedKeys = allListRF
-//       .filter(row => row.check) // فیلتر کردن سطرهایی که `check` آن‌ها `true` است
-//       .map(row => row.id); // استخراج کلیدهای آن سطرها (فرض کنید `id` کلید سطر است)
-//     setSelectedRowKeys(initialSelectedKeys);
-//   }, [allListRF]);
-
-//   const handleSelectionChanged = (e) => {
-//     setSelectedRowKeys(e.selectedRowKeys);
-//     console.log("Selected Row Keys:", e.selectedRowKeys);
-//   };
-
-//   const DataGridPageSizes =
-//     allListRF?.length < 25 ? [10, 25, 50, 100] : [25, 50, 100];
-
-//   return (
-//     <Col className="mt-4">
-//       <DataGrid
-//         id="grdTicket"
-//         columnResizingMode="widget"
-//         selectedRowKeys={selectedRowKeys}
-//         onSelectionChanged={handleSelectionChanged}
-//         columnAutoWidth={true}
-//         allowColumnReordering={true}
-//         onRowClick={onRowClick}
-//         dataSource={allListRF}
-//         showBorders
-//         rtlEnabled
-//         allowColumnResizing
-//         className="fontStyle"
-//         height={500}
-//       >
-//         <Scrolling
-//           rowRenderingMode="virtual"
-//           showScrollbar="always"
-//           columnRenderingMode="virtual"
-//         />
-//         <Selection mode="multiple" />
-//         <Paging defaultPageSize={defaultPageSize} />
-//         <Editing mode="cell" allowUpdating allowDeleting={deleteRow} />
-//         <HeaderFilter visible={headerFilter} />
-//         <Pager
-//           visible
-//           allowedPageSizes={DataGridPageSizes}
-//           showPageSizeSelector
-//           showNavigationButtons
-//         />
-//         <FilterRow visible={filterRow} />
-//         {columns.map((col, index) => (
-//           <Column key={index} {...col} />
-//         ))}
-//       </DataGrid>
-//     </Col>
-//   );
-// };

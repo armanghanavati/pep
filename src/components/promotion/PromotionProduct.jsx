@@ -16,10 +16,15 @@ import {
   addSlaPromotionDetail,
   updateSlaPromotionDetail,
 } from "../../redux/reducers/promotion/promotion-action";
-import { RsetShowToast } from "../../redux/reducers/main/main-slice";
-import { useDispatch } from "react-redux";
-
+import {
+  RsetQuestionModal,
+  RsetShowToast,
+} from "../../redux/reducers/main/main-slice";
+import { useDispatch, useSelector } from "react-redux";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 const PromotionProduct = ({
+  setInputsProduct,
+  inputsProduct,
   editProductRow,
   productList,
   itsEditProductRow,
@@ -29,20 +34,21 @@ const PromotionProduct = ({
   setInputFields,
   allProduct,
   setShowAddProduct,
-  handleChangeInputs,
+  handleChangeInputsProduct,
   inputFields,
   allgroupProduct,
   setAllgroupProduct,
   detailRow,
 }) => {
-  const [toast, setToast] = useState({});
+  const [questionModal, setQuestionModal] = useState({});
+  const { main } = useSelector((state) => state);
   const dispatch = useDispatch();
   const filterProductGroup = allgroupProduct?.filter((item) => {
-    return item?.id === inputFields?.productGroup;
+    return item?.id === inputsProduct?.productGroup;
   });
 
   const filterProduct = allProduct?.filter((item) => {
-    return item?.id === inputFields?.product;
+    return item?.id === inputsProduct?.product;
   });
 
   const handleGroupProductList = asyncWrapper(async () => {
@@ -64,8 +70,8 @@ const PromotionProduct = ({
 
   useEffect(() => {
     handleGroupProductList();
-    if (itsEditProductRow) {
-      setInputFields((...prev) => {
+    if (!itsEditProductRow) {
+      setInputsProduct((...prev) => {
         return {
           ...prev,
           productGroup: editProductRow?.data?.itemGroupName,
@@ -73,15 +79,14 @@ const PromotionProduct = ({
           discount: editProductRow?.data?.discount,
         };
       });
+    } else {
+      setInputsProduct((...prev) => ({
+        ...prev,
+        productGroup: {},
+        product: {},
+        discount: "",
+      }));
     }
-    // else {
-    //   setInputFields((...prev) => ({
-    //     ...prev,
-    //     productGroup: {},
-    //     product: {},
-    //     discount: "",
-    //   }));
-    // }
   }, []);
 
   // const handleSubmitProduct = async () => {
@@ -108,71 +113,50 @@ const PromotionProduct = ({
   //     }
   //   }
   // };
-  // const columnsProduct = [
-  //   {
-  //     dataField: "barcode",
-  //     caption: "بارکد‌ کالا",
-  //     allowEditing: false,
-  //   },
-  //   {
-  //     dataField: "itemGroupName",
-  //     caption: "گروه‌ کالا",
-  //     allowEditing: true,
-  //   },
-  //   {
-  //     dataField: "itemName",
-  //     caption: "نام‌ کالا",
-  //     allowEditing: true,
-  //   },
-  //   {
-  //     dataField: "discount",
-  //     caption: "درصد‌تخفیف‌ کالا",
-  //     allowEditing: true,
-  //   },
-  //   {
-  //     caption: "عملیات",
-  //     allowEditing: true,
-  //     cellRender: (e) => {
-  //       return (
-  //         <>
-  //           <DeleteIcon />
-  //         </>
-  //       );
-  //     },
-  //   },
-  // ];
-
   const findBarcode = filterProduct?.[0]?.label?.split(" ");
   const getBarcode = findBarcode?.[findBarcode?.length - 1];
   const productItem = {
-    productId: inputFields?.product,
-    groupId: inputFields?.productGroup,
-    itemName: filterProduct?.[0]?.label,
-    barcode: getBarcode,
-    discount: Number(inputFields?.discount),
-    itemGroupName: filterProductGroup?.[0]?.label,
+    productId: inputsProduct?.product || "",
+    groupId: inputsProduct?.productGroup || "",
+    itemName: filterProduct?.[0]?.label || "",
+    barcode: getBarcode || "",
+    discount: Number(inputsProduct?.discount) || "",
+    itemGroupName: filterProductGroup?.[0]?.label || "",
     code: null,
     id: productList.length + 1,
   };
   const handleCheckProductList = () => {
     const test = productList?.some((item) => {
       return (
-        item?.productId === productItem?.productId &&
-        item?.discount == productItem?.discount
+        item?.productId === productItem?.productId
+        // &&
+        // item?.discount == productItem?.discount
       );
     });
     return test;
   };
 
+  const handleAcceptProduct = () => {
+    const index = allProduct.findIndex(
+      (item) => item?.id === inputsProduct?.id
+    );
+
+    if (index !== -1) {
+      // const newItem = {
+      //   id: itemId,
+      //   productId: inputsProduct?.product,
+      //   itemName: filterProduct?.[0]?.label,
+      //   groupId: inputsProduct?.productGroup,
+      // };
+      const newProducts = [...allProduct];
+      newProducts?.splice(index, 1, productItem);
+      setProductList([...newProducts]);
+    }
+  };
+
   const handleSubmitProduct = () => {
     if (handleCheckProductList()) {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: "این کالا با همین درصد تخفیف در لیست موجود است",
-          Type: "Unsuccess",
-        })
-      );
+      setQuestionModal({ show: true });
     } else {
       setProductList((prev) => [...prev, productItem]);
       dispatch(
@@ -211,38 +195,36 @@ const PromotionProduct = ({
       >
         <Row>
           <ComboBox
-            disabled={itsEditProductRow ? true : false}
             name="productGroup"
-            onChange={(e) => handleChangeInputs("productGroup", e)}
-            value={inputFields?.productGroup}
+            onChange={(e) => handleChangeInputsProduct("productGroup", e)}
+            value={inputsProduct?.productGroup}
             options={allgroupProduct}
             xxl={6}
             xl={6}
             label="گروه کالا"
           />
           <ComboBox
-            disabled={itsEditProductRow ? true : false}
             name="product"
-            onChange={(e) => handleChangeInputs("product", e)}
-            value={inputFields?.product}
+            onChange={(e) => handleChangeInputsProduct("product", e)}
+            value={inputsProduct?.product}
             options={allProduct}
             xxl={6}
             xl={6}
             label="کالا"
           />
           <Input
-            maxLength={2}
+            maxLength={3}
             label="درصد تخفیف"
             type="number"
             xxl={6}
             className="my-3"
             name="discount"
-            onChange={handleChangeInputs}
-            value={inputFields?.discount}
+            onChange={handleChangeInputsProduct}
+            value={inputsProduct?.discount}
             // value={inputFields?.discount  "%"}
           />
         </Row>
-        {toast.isToastVisible && (
+        {/* {toast.isToastVisible && (
           <Toast
             visible={toast.isToastVisible}
             message={toast.Message}
@@ -252,8 +234,38 @@ const PromotionProduct = ({
             width={600}
             rtlEnabled={true}
           />
-        )}
+        )} */}
       </Modal>
+      {questionModal?.show && (
+        <Modal
+          size="sm"
+          classHeader="bg-white"
+          isOpen={questionModal?.show}
+          footerButtons={[
+            <Button
+              text="Outlined"
+              stylingMode="outlined"
+              type="danger"
+              onClick={() => setQuestionModal(false)}
+              label="لغو"
+            />,
+            <Button
+              className=""
+              onClick={handleAcceptProduct}
+              text="success"
+              stylingMode="success"
+              type="success"
+              label="تایید"
+            />,
+          ]}
+        >
+          <div className="d-flex justify-content-center mb-3">
+            <ReportProblemIcon className="text-danger font45" />
+          </div>
+          یک کالا مشابه به همین کالا در لیست اقلام وجود دارد. آیا تمایل به
+          جایگزین آن کالا را دارید؟
+        </Modal>
+      )}
     </>
   );
 };

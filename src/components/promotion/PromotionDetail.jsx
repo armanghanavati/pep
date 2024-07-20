@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Col, Container, Label, Row, Toast } from "reactstrap";
+import React, { useCallback, useEffect, useState } from "react";
+import { Col, Container, Form, Label, Row, Toast } from "reactstrap";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
 import Input from "../common/Inputs/Input";
@@ -34,7 +34,11 @@ import {
   storeGroup,
 } from "../../redux/reducers/location/location-actions";
 import { slaCustomerGroupList } from "../../redux/reducers/customer/customer-action";
-import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import {
+  RsetIsLoading,
+  RsetShowToast,
+} from "../../redux/reducers/main/main-slice";
+import { CheckBox } from "devextreme-react";
 
 const PromotionDetail = ({
   detailRow,
@@ -59,9 +63,14 @@ const PromotionDetail = ({
   const [typeAndPlatform, setTypeAndPlatform] = useState({});
   const [editProductRow, setEditProductRow] = useState({});
   const [itsEditProductRow, setItsEditProductRow] = useState(false);
+  const [selectedAllStore, setSelectedAllStore] = useState(false);
   const [toast, setToast] = useState({});
   const [allCustomer, setAllCustomer] = useState([]);
   const [productList, setProductList] = useState([]);
+  const [inputsProduct, setInputsProduct] = useState({});
+  const [selectedRowKeys, setSelectedRowKeys] = useState({});
+
+  let storeFixed = [];
 
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
@@ -107,31 +116,6 @@ const PromotionDetail = ({
     validationNameList = undefined,
     index
   ) => {
-    // if (name === "itsFromDate") {
-    //   if (Validation.minimumDate(inputFields?.itsToDate, value) === true) {
-    //     setErrors({
-    //       ...errors,
-    //       itsToDate: [],
-    //     });
-    //   } else {
-    //     setErrors({
-    //       ...errors,
-    //       itsToDate: Validation.minimumDate(inputFields?.itsToDate, value),
-    //     });
-    //   }
-    // } else if (name === "itsToDate") {
-    //   if (Validation.maximumDate(inputFields?.itsFromDate, value) === true) {
-    //     setErrors({
-    //       ...errors,
-    //       itsFromDate: [],
-    //     });
-    //   } else {
-    //     setErrors({
-    //       ...errors,
-    //       itsFromDate: Validation.maximumDate(inputFields?.itsFromDate, value),
-    //     });
-    //   }
-    // }
     const temp = [];
     validationNameList &&
       validationNameList.map((item) => {
@@ -161,9 +145,46 @@ const PromotionDetail = ({
     console.log(name, value);
   };
 
+  const handleChangeInputsProduct = (
+    name,
+    value,
+    validationNameList = undefined,
+    index
+  ) => {
+    const temp = [];
+    validationNameList &&
+      validationNameList.map((item) => {
+        if (Validation[item[0]](value, item[1]) === true) {
+          return null;
+        } else {
+          temp.push(Validation[item[0]](value, item[1]));
+        }
+      });
+    setErrors((prevstate) => {
+      return { ...prevstate, [name]: [...temp] };
+    });
+    setInputsProduct((prevstate) => {
+      return { ...prevstate, [name]: value };
+    });
+    if (name === "productGroup" && !!value) {
+      if (value === 0) {
+        const fixLoop = StringHelpers.fixComboListId(
+          inputFields?.productGroup,
+          allgroupProduct
+        );
+        return handleGroupIds(fixLoop);
+      } else {
+        return handleGroupIds(value);
+      }
+    }
+  };
+
   const handleGroupIds = asyncWrapper(async (e) => {
+    dispatch(RsetIsLoading({ stateWait: true }));
     const eventFix = [e];
     const res = await itemComboByItemGroupIdList(eventFix);
+    dispatch(RsetIsLoading({ stateWait: false }));
+
     const { data, status, message } = res;
     if (status == "Success") {
       setAllProduct(data);
@@ -179,7 +200,9 @@ const PromotionDetail = ({
   });
 
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
+    dispatch(RsetIsLoading({ stateWait: true }));
     const res = await slaPromotionTypeList();
+    dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
       setPromotionTypeList(data);
@@ -195,7 +218,10 @@ const PromotionDetail = ({
   });
 
   const handleSlaPromotionPlatformList = asyncWrapper(async (id) => {
-    const res = await slaPromotionPlatformList(id);
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const fixId = itsEditRow ? detailRow?.data?.id : 0;
+    const res = await slaPromotionPlatformList(fixId);
+    dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
       setAllPlatform(data);
@@ -211,8 +237,10 @@ const PromotionDetail = ({
   });
 
   const handleGetProductList = asyncWrapper(async (id) => {
+    dispatch(RsetIsLoading({ stateWait: true }));
     if (itsEditRow) {
       const res = await itemPromotionList(id);
+      dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       const fixIdToItemId = data?.map((item) => {
         return {
@@ -242,7 +270,11 @@ const PromotionDetail = ({
   });
 
   const handleGroupStore = asyncWrapper(async () => {
-    const res = await locationPromotionList(users?.userId, detailRow?.data?.id);
+    const fixId = itsEditRow ? detailRow?.data?.id : 0;
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const res = await locationPromotionList(users?.userId, fixId);
+    dispatch(RsetIsLoading({ stateWait: false }));
+
     const { data, status, message } = res;
     console.log(res);
     if (status == "Success") {
@@ -278,15 +310,13 @@ const PromotionDetail = ({
       dataField: "discount",
       caption: "درصد‌تخفیف‌ کالا",
       allowEditing: true,
+      cellRender: (item) => {
+        return <>{item?.key?.discount + "%"}</>;
+      },
     },
   ];
 
   const platformColumns = [
-    {
-      dataField: "isChecked",
-      caption: "",
-      allowEditing: true,
-    },
     {
       dataField: "code",
       caption: "کد‌",
@@ -301,11 +331,6 @@ const PromotionDetail = ({
 
   const storeColumns = [
     {
-      dataField: "isChecked",
-      caption: "",
-      allowEditing: true,
-    },
-    {
       dataField: "code",
       caption: "کد‌",
       allowEditing: false,
@@ -319,9 +344,9 @@ const PromotionDetail = ({
 
   const customerColumns = [
     {
-      dataField: "isChecked",
-      caption: "",
-      allowEditing: true,
+      dataField: "id",
+      caption: "کد‌",
+      allowEditing: false,
     },
     {
       dataField: "code",
@@ -339,41 +364,28 @@ const PromotionDetail = ({
     if (itsEditRow) {
       const getEditRow = detailRow?.data;
       const fixEdit = {
-        title: getEditRow?.title,
-        isActive: getEditRow?.isActive,
-        itsFromDate: getEditRow?.fromDate,
-        itsToDate: getEditRow?.toDate,
-        daysOffer: getEditRow?.daysOffer,
-        typePromotion: getEditRow?.promotionTypeId,
-        desc: getEditRow?.desc,
-        code: getEditRow?.code,
+        title: getEditRow?.title || "",
+        isActive: getEditRow?.isActive || false,
+        itsFromDate: getEditRow?.fromDate || "",
+        itsToDate: getEditRow?.toDate || "",
+        daysOffer: getEditRow?.daysOffer || "",
+        typePromotion: getEditRow?.promotionTypeId || "",
+        desc: getEditRow?.desc || "",
+        code: getEditRow?.code || "",
       };
       setInputFields((prev) => ({ ...prev, ...fixEdit }));
     } else {
-      setInputFields({});
+      setInputFields({
+        title: "",
+        isActive: false,
+        itsFromDate: "",
+        itsToDate: "",
+        daysOffer: "",
+        typePromotion: "",
+        desc: "",
+        code: "",
+      });
     }
-  };
-
-  const handleAcceptGroup = () => {
-    console.log(allPlatform);
-    const fixAllPlatform = allPlatform
-      ?.filter((platform) => platform?.isChecked === true)
-      .map((item) => item.id);
-    setTypeAndPlatform((prev) => ({ ...prev, fixAllPlatform }));
-  };
-
-  const handleAcceptStore = () => {
-    const fixStoreList = storeList
-      ?.filter((store) => store?.isChecked === true)
-      .map((item) => item.id);
-    setTypeAndPlatform((prev) => ({ ...prev, fixStoreList }));
-  };
-
-  const handleAcceptCustomer = () => {
-    const fixAllCustomer = allCustomer
-      ?.filter((store) => store?.isChecked === true)
-      .map((item) => item.id);
-    setTypeAndPlatform((prev) => ({ ...prev, fixAllCustomer }));
   };
 
   const handleAcceptPromotion = asyncWrapper(async () => {
@@ -439,7 +451,9 @@ const PromotionDetail = ({
     };
     console.log(updatePromotion);
     if (itsEditRow) {
+      dispatch(RsetIsLoading({ stateWait: true }));
       const res = await updateSlaPromotion(updatePromotion);
+      dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       if (status == "Success") {
         handleGetAllList();
@@ -462,7 +476,9 @@ const PromotionDetail = ({
       }
       console.log(res);
     } else {
+      dispatch(RsetIsLoading({ stateWait: true }));
       const res = await addSlaPromotion(postAddPromotion);
+      dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       if (status == "Success") {
         handleGetAllList();
@@ -486,23 +502,6 @@ const PromotionDetail = ({
       console.log(res);
     }
   });
-
-  useEffect(() => {
-    handleGetslaPromotionTypeList();
-    handleSlaCustomerGroupList();
-    handleSlaPromotionPlatformList(detailRow?.data?.id);
-    handleGetProductList(detailRow?.data?.id);
-    handleGroupStore();
-    if (detailRow?.data?.id) {
-      handleGetDataEditFields();
-    }
-  }, []);
-
-  useEffect(() => {
-    handleAcceptStore();
-    handleAcceptCustomer();
-    handleAcceptGroup();
-  }, [allPlatform, storeList, allCustomer]);
 
   const permitForNextStep = (inputsName = []) => {
     const error = handleValidation(inputsName);
@@ -544,7 +543,10 @@ const PromotionDetail = ({
   };
 
   const handleSlaCustomerGroupList = asyncWrapper(async () => {
-    const res = await slaCustomerGroupList(detailRow?.data?.id);
+    const fixId = itsEditRow ? detailRow?.data?.id : 0;
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const res = await slaCustomerGroupList(fixId);
+    dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
       setAllCustomer(data);
@@ -558,6 +560,72 @@ const PromotionDetail = ({
       );
     }
   });
+
+  const onSelectionChanged = (e) => {
+    // const { currentSelectedRowKeys, currentDeselectedRowKeys } = e;
+    // let updatedSelectedKeys = [...selectedRowKeys, ...currentSelectedRowKeys];
+    // currentDeselectedRowKeys.forEach((key) => {
+    //   updatedSelectedKeys = updatedSelectedKeys.filter(
+    //     (selectedKey) => selectedKey !== key
+    //   );
+    // });
+    console.log(e?.selectedRowKeys);
+    setSelectedRowKeys(e?.selectedRowKeys);
+    // let temp = [];
+    // for (let i = 0; i < e?.selectedRowsData.length; i++) {
+    //   console.log(e?.selectedRowsData[i].id);
+    //   temp.push(e?.selectedRowsData[i].id);
+    // }
+    // setSelectedRowKeys({ temp });
+  };
+
+  const handleAcceptGroup = () => {
+    // const fixAllPlatform = allPlatform
+    //   ?.filter((platform) => platform?.isChecked === true)
+    //   .map((item) => item.id);
+
+    setTypeAndPlatform((prev) => ({ ...prev, group: selectedRowKeys }));
+  };
+
+  const handleAcceptStore = () => {
+    // const fixStoreList = storeList
+    //   ?.filter((store) => store?.isChecked === true)
+    //   .map((item) => item.id);
+    setTypeAndPlatform((prev) => ({ ...prev, store: selectedRowKeys }));
+    setSelectedRowKeys([]);
+  };
+
+  const handleAcceptCustomer = () => {
+    // const fixAllCustomer = allCustomer
+    //   ?.filter((store) => store?.isChecked === true)
+    //   .map((item) => item.id);
+    setTypeAndPlatform((prev) => ({ ...prev, customer: selectedRowKeys }));
+  };
+
+  useEffect(() => {
+    handleGetslaPromotionTypeList();
+    handleSlaCustomerGroupList();
+    handleSlaPromotionPlatformList(detailRow?.data?.id);
+    handleGetProductList(detailRow?.data?.id);
+    handleGroupStore();
+    if (detailRow?.data?.id) {
+      handleGetDataEditFields();
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   handleAcceptStore();
+  //   handleAcceptCustomer();
+  //   handleAcceptGroup();
+  // }, [typeAndPlatform]);
+
+  // const onSelectionChanged = (e) => {
+  //   console.log(e);
+  //   const selectedKeys = e.selectedRowKeys;
+  //   setSelectedRowKeys(selectedKeys);
+  // };
+
+  console.log(typeAndPlatform);
 
   return (
     <Modal
@@ -630,6 +698,13 @@ const PromotionDetail = ({
         />
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
+            selection
+            selected={typeAndPlatform?.group?.temp?.length}
+            onSelectionChanged={onSelectionChanged}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            filterRow
+            headerFilter
             submit={handleAcceptGroup}
             allListRF={allPlatform}
             columns={platformColumns}
@@ -641,6 +716,14 @@ const PromotionDetail = ({
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
+            selected={typeAndPlatform?.store?.temp?.length}
+            selection
+            onSelectionChanged={onSelectionChanged}
+            // selectedRowKeys={selectedRowKeys}
+            // setSelectedRowKeys={setSelectedRowKeys}
+            // handleAcceptAll={handleAcceptAllStore}
+            filterRow
+            headerFilter
             submit={handleAcceptStore}
             allListRF={storeList}
             columns={storeColumns}
@@ -652,6 +735,13 @@ const PromotionDetail = ({
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
+            selection
+            selected={typeAndPlatform?.customer?.temp?.length}
+            onSelectionChanged={onSelectionChanged}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            filterRow
+            headerFilter
             submit={handleAcceptCustomer}
             allListRF={allCustomer}
             columns={customerColumns}
@@ -708,7 +798,6 @@ const PromotionDetail = ({
             rtlEnabled
           />
         </Col>
-
         <Col xxl="11" className="">
           <Button
             onClick={() => {
@@ -736,6 +825,9 @@ const PromotionDetail = ({
       </Row>
       {showAddProduct && (
         <PromotionProduct
+          handleChangeInputsProduct={handleChangeInputsProduct}
+          setInputsProduct={setInputsProduct}
+          inputsProduct={inputsProduct}
           productList={productList}
           detailRow={detailRow}
           itsEditProductRow={itsEditProductRow}

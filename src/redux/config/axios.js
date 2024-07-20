@@ -20,7 +20,6 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   async function (response) {
-    console.log(response);
     // const rowMsgMod = response?.data?.message?.split("//");
     // const allRowMsgMod = rowMsgMod?.map((item) => (
     //   <ul className="px-4 py-2">

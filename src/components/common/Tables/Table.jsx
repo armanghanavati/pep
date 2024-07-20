@@ -7,6 +7,7 @@ import DataGrid, {
   Pager,
   Editing,
   HeaderFilter,
+  Selection,
 } from "devextreme-react/data-grid";
 import { Col } from "reactstrap";
 
@@ -21,6 +22,9 @@ const Table = ({
   allowDeleting = false,
   allowUpdating = false,
   allowAdding = false,
+  onSelectionChanged,
+  selectedRowKeys,
+  selection,
 }) => {
   const DataGridPageSizes =
     allListRF?.length < 25
@@ -38,12 +42,15 @@ const Table = ({
         onRowClick={onRowClick}
         dataField="Price"
         dataSource={allListRF}
-        defaultColumns={columns}
+        // defaultColumns={columns}
+        // columns={columns}
         showBorders
         rtlEnabled
         allowColumnResizing
         className="fontStyle"
         height={500}
+        onSelectionChanged={onSelectionChanged}
+        selectedRowKeys={selectedRowKeys}
       >
         <Scrolling
           rowRenderingMode="virtual"
@@ -62,6 +69,13 @@ const Table = ({
           //   confirmDeleteMessage: "آیا از حذف آن اطمینان لازم را دارد؟",
           // }}
         />
+        {selection && (
+          <Selection
+            showCheckBoxesMode="always"
+            selectAllMode="allPages"
+            mode="multiple"
+          />
+        )}
         <HeaderFilter
           texts={{ cancel: "لغو", ok: "تایید" }}
           visible={headerFilter}
@@ -80,7 +94,6 @@ const Table = ({
     </Col>
   );
 };
-
 export default Table;
 
 // import React from "react";

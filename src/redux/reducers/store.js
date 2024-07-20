@@ -16,9 +16,11 @@ import logsOrderPointSupplierSlice from "./logsOrderPointSupplier/logsOrderPoint
 import inventorySlice from "./inventory/inventory-slice";
 import hubConnectionSlice from "./hubConnection/hubConnection-slice";
 import mainSlice from "./main/main-slice";
+import promotionSlice from "./promotion/promotion-slice";
 
 const store = configureStore({
   reducer: {
+    promotion: promotionSlice.reducer,
     main: mainSlice.reducer,
     ticket: ticketSlice.reducer,
     users: userSlice.reducer,
