@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import BlurOnIcon from "@mui/icons-material/BlurOn";
 import MenuIcon from "@mui/icons-material/Menu";
 import themes from "devextreme/ui/themes";
-
 import "../../../assets/CSS/table_multi_select.css";
 import { Col, Label } from "reactstrap";
 import DataGrid, {
@@ -34,13 +33,13 @@ const TableMultiSelect = ({
   className,
   deleteRow,
   selectedRowKeys,
-  // onSelectionChanged,
-  // setSelectedRowKeys,
-  // selectedRowKeys,
-  // onSelectionChanged,
+  onSelectionChanged,
+  selection,
+  handleAcceptAll,
   onRowUpdating,
-  // setSelectedRowKeys,
+  setSelectedRowKeys = () => {},
   submit,
+  selected,
   handleCancelRow,
 }) => {
   const [showTable, setShowTable] = useState(false);
@@ -50,13 +49,13 @@ const TableMultiSelect = ({
 
   const handleSubmit = () => {
     setShowTable(false);
-    // setSelectedRowKeys([]);
+    setSelectedRowKeys([]);
+    submit();
   };
 
-  const onSelectionChanged = (e) => {
-    let test = [];
-    console.log(e);
-    const fixed = e;
+  const handleCancel = () => {
+    setSelectedRowKeys([]);
+    setShowTable(false);
   };
 
   return (
@@ -67,8 +66,9 @@ const TableMultiSelect = ({
         className="d-flex justify-content-between py-1 bg-white-multi  cursorPointer px-2 border rounded-2"
       >
         <span className="font15 mt-1">
-          {fixPlaceHolder?.length !== 0 &&
-            `${fixPlaceHolder?.length} ${label} انتخاب شد`}
+          {selected !== 0 && selected !== undefined
+            ? `${selected} ${label} انتخاب شد`
+            : ""}
         </span>
         <span>
           <MenuIcon className="text-secondary" />
@@ -91,6 +91,8 @@ const TableMultiSelect = ({
       >
         <Col className="mt-4">
           <DataGrid
+            // valueExpr="id"
+            keyExpr="id"
             onSelectionChanged={onSelectionChanged}
             columnResizingMode="widget"
             selectedRowKeys={selectedRowKeys}
@@ -98,7 +100,7 @@ const TableMultiSelect = ({
             allowColumnReordering={true}
             onRowClick={onRowClick}
             dataSource={allListRF}
-            defaultColumns={columns}
+            // defaultColumns={columns}
             showBorders
             rtlEnabled
             allowColumnResizing
@@ -112,15 +114,19 @@ const TableMultiSelect = ({
               showScrollbar="always"
               columnRenderingMode="virtual"
             />
-            <Selection
-              showCheckBoxesMode="always"
-              selectAllMode="allPages"
-              mode="multiple"
-            />
-
+            {selection && (
+              <Selection
+                showCheckBoxesMode="always"
+                selectAllMode="allPages"
+                mode="multiple"
+              />
+            )}
             <Editing mode="cell" allowUpdating allowDeleting={deleteRow} />
             <HeaderFilter visible={headerFilter} />
             <FilterRow visible={filterRow} />
+            {columns.map((col, index) => (
+              <Column key={index} {...col} />
+            ))}
           </DataGrid>
         </Col>
       </Modal>

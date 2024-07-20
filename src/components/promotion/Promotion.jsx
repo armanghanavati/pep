@@ -97,7 +97,6 @@ const Promotion = () => {
       caption: "ردیف",
       allowEditing: false,
       cellRender: (item) => {
-        console.log(item);
         return <>{item?.row?.dataIndex + 1}</>;
       },
     },
@@ -205,6 +204,8 @@ const Promotion = () => {
     // const fixed = e?.selectedRowsData?.map((row) => row?.id);
     setselectedRowKeys(e);
   };
+
+  console.log(selectedRowKeys);
 
   return (
     <>

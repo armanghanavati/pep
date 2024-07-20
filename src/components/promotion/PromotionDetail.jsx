@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Col, Container, Label, Row, Toast } from "reactstrap";
+import { Col, Container, Form, Label, Row, Toast } from "reactstrap";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
 import Input from "../common/Inputs/Input";
@@ -38,6 +38,7 @@ import {
   RsetIsLoading,
   RsetShowToast,
 } from "../../redux/reducers/main/main-slice";
+import { CheckBox } from "devextreme-react";
 
 const PromotionDetail = ({
   detailRow,
@@ -62,11 +63,13 @@ const PromotionDetail = ({
   const [typeAndPlatform, setTypeAndPlatform] = useState({});
   const [editProductRow, setEditProductRow] = useState({});
   const [itsEditProductRow, setItsEditProductRow] = useState(false);
+  const [selectedAllStore, setSelectedAllStore] = useState(false);
   const [toast, setToast] = useState({});
   const [allCustomer, setAllCustomer] = useState([]);
   const [productList, setProductList] = useState([]);
   const [inputsProduct, setInputsProduct] = useState({});
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   let storeFixed = [];
 
   const handleIdForList = (data, postProps, id) => {
@@ -341,6 +344,11 @@ const PromotionDetail = ({
 
   const customerColumns = [
     {
+      dataField: "id",
+      caption: "کد‌",
+      allowEditing: false,
+    },
+    {
       dataField: "code",
       caption: "کد‌",
       allowEditing: false,
@@ -378,21 +386,6 @@ const PromotionDetail = ({
         code: "",
       });
     }
-  };
-
-  const handleAcceptGroup = () => {
-    console.log(allPlatform);
-    const fixAllPlatform = allPlatform
-      ?.filter((platform) => platform?.isChecked === true)
-      .map((item) => item.id);
-    setTypeAndPlatform((prev) => ({ ...prev, fixAllPlatform }));
-  };
-
-  const handleAcceptCustomer = () => {
-    const fixAllCustomer = allCustomer
-      ?.filter((store) => store?.isChecked === true)
-      .map((item) => item.id);
-    setTypeAndPlatform((prev) => ({ ...prev, fixAllCustomer }));
   };
 
   const handleAcceptPromotion = asyncWrapper(async () => {
@@ -568,23 +561,49 @@ const PromotionDetail = ({
     }
   });
 
-  // const onSelectionChanged = (e) => {
-  // console.log(e);
-  // const fixed = e?.selectedRowsData?.map((row) => row?.id);
-  // storeFixed?.push(e);
-  // setSelectedRowKeys({ fixed });
-  // };
+  const onSelectionChanged = ({
+    currentSelectedRowKeys,
+    currentDeselectedRowKeys,
+    selectedRowsData,
+  }) => {
+    // const { currentSelectedRowKeys, currentDeselectedRowKeys } = e;
+    // let updatedSelectedKeys = [...selectedRowKeys, ...currentSelectedRowKeys];
+    // currentDeselectedRowKeys.forEach((key) => {
+    //   updatedSelectedKeys = updatedSelectedKeys.filter(
+    //     (selectedKey) => selectedKey !== key
+    //   );
+    // });
+    // setSelectedRowKeys(updatedSelectedKeys);
+    let temp = [];
+    for (let i = 0; i < selectedRowsData.length; i++) {
+      console.log(selectedRowsData[i].id);
+      temp.push(selectedRowsData[i].id);
+    }
+    setSelectedRowKeys({ temp });
+  };
+
+  const handleAcceptGroup = () => {
+    // const fixAllPlatform = allPlatform
+    //   ?.filter((platform) => platform?.isChecked === true)
+    //   .map((item) => item.id);
+
+    setTypeAndPlatform((prev) => ({ ...prev, group: selectedRowKeys }));
+  };
 
   const handleAcceptStore = () => {
-    console.log(storeFixed);
     // const fixStoreList = storeList
     //   ?.filter((store) => store?.isChecked === true)
     //   .map((item) => item.id);
-    // setTypeAndPlatform((prev) => ({ ...prev, selectedRowKeys }));
-    // setSelectedRowKeys([]);
+    setTypeAndPlatform((prev) => ({ ...prev, store: selectedRowKeys }));
+    setSelectedRowKeys([]);
   };
 
-  // console.log(selectedRowKeys);
+  const handleAcceptCustomer = () => {
+    // const fixAllCustomer = allCustomer
+    //   ?.filter((store) => store?.isChecked === true)
+    //   .map((item) => item.id);
+    setTypeAndPlatform((prev) => ({ ...prev, customer: selectedRowKeys }));
+  };
 
   useEffect(() => {
     handleGetslaPromotionTypeList();
@@ -602,6 +621,14 @@ const PromotionDetail = ({
   //   handleAcceptCustomer();
   //   handleAcceptGroup();
   // }, [allPlatform, storeList, allCustomer]);
+
+  // const onSelectionChanged = (e) => {
+  //   console.log(e);
+  //   const selectedKeys = e.selectedRowKeys;
+  //   setSelectedRowKeys(selectedKeys);
+  // };
+
+  console.log(typeAndPlatform);
 
   return (
     <Modal
@@ -674,7 +701,11 @@ const PromotionDetail = ({
         />
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
-            // onSelectionChanged={onSelectionChanged}
+            selection
+            selected={typeAndPlatform?.group?.temp?.length}
+            onSelectionChanged={onSelectionChanged}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
             filterRow
             headerFilter
             submit={handleAcceptGroup}
@@ -688,9 +719,12 @@ const PromotionDetail = ({
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
-            // setSelectedRowKeys={setSelectedRowKeys}
-            // selectedRowKeys={selectedRowKeys}
-            // onSelectionChanged={onSelectionChanged}
+            selected={typeAndPlatform?.store?.temp?.length}
+            selection
+            onSelectionChanged={onSelectionChanged}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            // handleAcceptAll={handleAcceptAllStore}
             filterRow
             headerFilter
             submit={handleAcceptStore}
@@ -704,6 +738,11 @@ const PromotionDetail = ({
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <TableMultiSelect
+            selection
+            selected={typeAndPlatform?.customer?.temp?.length}
+            onSelectionChanged={onSelectionChanged}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
             filterRow
             headerFilter
             submit={handleAcceptCustomer}
