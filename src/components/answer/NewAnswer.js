@@ -95,6 +95,8 @@ import { locationByUserId, locationList } from "../../redux/reducers/location/lo
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { Gfn_convertENunicode } from "../../utiliy/GlobalMethods";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
+import { questionTypeUserDevice } from "../../redux/reducers/question/questionTypeUser-actions";
+import { TenMp } from "@mui/icons-material";
 
 class NewAnswer extends React.Component {
   constructor(props) {
@@ -129,12 +131,21 @@ class NewAnswer extends React.Component {
       disable_questionType: null,
       oldParam: null,
       stateWait: false,
-      InspectionDate:new Date(),
-      itsLocation:null
+      InspectionDate: new Date(),
+      itsLocation: null,
+      isMobile: null
     };
   }
   async componentDidMount() {
-    this.getLocation()
+    var deviceIsMobile = (await questionTypeUserDevice(this.props.User.userId, this.props.User.token)); // device mobile
+    if (deviceIsMobile != null) {
+      if (deviceIsMobile.isMobile){
+        this.getLocation();
+        this.setState({
+          isMobile: deviceIsMobile.isMobile
+        })
+      }
+    }
     await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
     await this.fn_questionTypeList();
@@ -142,6 +153,7 @@ class NewAnswer extends React.Component {
       this.fn_loadData(this.props.answerId);
     else
       this.fn_locationList();
+   
   }
 
   fn_loadData = async (answerId) => {
@@ -313,7 +325,7 @@ class NewAnswer extends React.Component {
     return flag;
   };
 
-  btnAdd_onClick = async () => { 
+  btnAdd_onClick = async () => {
     if (await this.fn_CheckValidation()) {
       const data = {
         questionTypeId: this.state.cmbQuestionTypeValue,
@@ -322,9 +334,10 @@ class NewAnswer extends React.Component {
         storeManagerId: this.state.cmbManagerValue,
         userId: this.props.User.userId,
         date: this.addHours(new Date(this.state.InspectionDate), 3, 30),
-        latitude:this.state.itsLocation.lat,
-        longitude:this.state.itsLocation.long,
+        latitude: this.state.isMobile ? this.state.itsLocation.lat : 0,
+        longitude: this.state.isMobile ? this.state.itsLocation.lon : 0,
       };
+      
       const RESULT = await addAnswer(data, this.props.User.token);
       this.setState({
         ToastProps: {
@@ -350,7 +363,7 @@ class NewAnswer extends React.Component {
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
         id: this.props.answerId,
-        date:this.addHours(new Date(this.state.InspectionDate), 3, 30),
+        date: this.addHours(new Date(this.state.InspectionDate), 3, 30),
       };
       const RESULT = await updateAnswer(data, this.props.User.token);
       this.setState({
@@ -523,7 +536,7 @@ class NewAnswer extends React.Component {
     this.setState({ InspectionDate: params })
   }
 
-  addHours=(date, hours, minutes)=> {
+  addHours = (date, hours, minutes) => {
     date.setHours(date.getHours() + hours);
     date.setMinutes(date.getMinutes() + minutes);
     return date;
@@ -533,7 +546,7 @@ class NewAnswer extends React.Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        this.setState({itsLocation : { lat: latitude, long: longitude} });
+        this.setState({ itsLocation: { lat: latitude, long: longitude } });
       },
       (error) => {
         console.error("Error getting geolocation:", error.message);
@@ -652,7 +665,7 @@ class NewAnswer extends React.Component {
               <Row>
                 <Col xs="auto">
                   <LocalizationProvider dateAdapter={AdapterJalali}>
-                  <DateTimePicker
+                    <DateTimePicker
                       label="تاریخ بازرسی"
                       value={this.state.InspectionDate}
                       onChange={this.DatePickerInspectionDate_onChange}
