@@ -6,7 +6,6 @@ import { Button } from "devextreme-react";
 import Modal from '../common/Modals/Modal';
 import TableMultiSelect from "../common/Tables/TableMultiSelect";
 import OnOffIcon from '../../assets/images/icon/onOff.png';
-import CheckIcon from "@mui/icons-material/Check";
 import {
     Row,
     Col,
@@ -49,12 +48,14 @@ import {
     FILTER_BUILDER_POPUP_POSITION,
 } from "../../config/config";
 import { purchaseItemsColumns } from './Sale-config'
+import TextBox from "devextreme-react/text-box";
 import { checkItemsAndSendSmsToPerson, itemList, itemListOfPromotionsNotFactor } from "../../redux/reducers/item/item-action";
+import { finalConfirmPurchaseReceipt } from "../../redux/reducers/slaSale/slaSale-actions";
 
 
 
 const PurchaseReceipt = () => {
-    const { users, main } = useSelector((state) => state);
+    const { users, main, companies } = useSelector((state) => state);
     const dispatch = useDispatch();
     const [ShowItems, setShowItems] = useState(false);
     const [ItemsList, setItemList] = useState([]);
@@ -62,22 +63,28 @@ const PurchaseReceipt = () => {
     const [ShowCamera, setShowCamera] = useState(false);
     const [SelectedItems, setSelectedItems] = useState(null);
     const [ShowInputCode, setShowInputCode] = useState(false);
+    const [TxtConfirmCode, setTxtConfirmCode] = useState(null);
 
     // useEffect(() => {
     //     handleAcceptGroup();
     // }, [ItemsList]);
 
     const Barcode_onScan = async (data) => {
-        this.setState({ scanValue: data[0].rawValue })
-    }
-
-    const btnOnOffCamera_onClick = async () => {
-        // setShowCamera(true)
+        setScanValue(data[0].rawValue)
         const DATA = {
-            personId: 869
+            personId: parseInt(ScanValue)
         }
         setItemList(await itemListOfPromotionsNotFactor(DATA, users.token));
         setShowItems(true)
+    }
+
+    const btnOnOffCamera_onClick = async () => {
+        setShowCamera(!ShowCamera)
+        // const DATA = {
+        //     personId: parseInt(ScanValue)
+        // }
+        // setItemList(await itemListOfPromotionsNotFactor(DATA, users.token));
+        // setShowItems(true)
     }
 
     const btnCancelItems_onClick = () => {
@@ -88,43 +95,58 @@ const PurchaseReceipt = () => {
         alert('test')
     }
 
-    const handleAcceptGroup = async () => {
-        // console.log(ItemsList);
-        let tempSelectedItems = [];
-        // ItemsList.forEach(element => {
-        //     if (element.isChecked)
-        //         tempSelectedItems.push(element.id)
-        // });
-
-        const OBJ = {
-            personId: 869,
-            promotionPlatformCode: "206",
-            itemIds: tempSelectedItems
-        }
-        let result = await checkItemsAndSendSmsToPerson(OBJ, users.token);      
-        // const result =[];
-        if(result.length===0)
-            setShowInputCode(true);        
-
-    };
-
-    const btnFinalConfirm_onClick = () => {
-
-    }
-
-    const btnCancelConfirm_onClick = () => {
-
-    }
-
     // const handleAcceptGroup = () => {
     //     console.log(ItemsList);
     //     const fix = ItemsList?.filter((store) => store?.isChecked === true)?.map((item) => item?.id);
     //     setSelectedItems((prev) => ({ ...prev, fix }));
     // };
+    const handleAcceptGroup = async () => {
+        console.log(ItemsList);
+        let tempSelectedItems = [];
+        ItemsList.forEach(element => {
+            if (element.isChecked)
+                tempSelectedItems.push(element.id)
+        });
+
+        // setSelectedItems((prev) => ({ ...prev, tempSelectedItems }));
+        setSelectedItems(tempSelectedItems);
+        console.log(JSON.stringify(tempSelectedItems));
+
+        const OBJ = {
+            personId: parseInt(ScanValue),
+            promotionPlatformCode: "206",
+            itemIds: tempSelectedItems
+        }
+        let result = await checkItemsAndSendSmsToPerson(OBJ, users.token);
+        if (result.length === 0)
+            setShowInputCode(true)
+    };
+
+    const btnFinalConfirm_onClick = async () => {
+        const OBJ = {
+            companyId: companies.currentCompanyId,
+            personId: parseInt(ScanValue),
+            authCode: TxtConfirmCode,
+            itemIds: SelectedItems
+        }
+        var result = await finalConfirmPurchaseReceipt(OBJ, users.token);
+        setShowInputCode(false);
+        setShowItems(false);
+        alert(result);
+    }
+
+    const btnCancelConfirm_onClick = () => {
+        setShowInputCode(false);
+
+    }
+
+    const txtConfirmCodePassword_onChanege = (e) => {
+        setTxtConfirmCode(e.value);
+    }
 
     return (
         <div>
-            <Card className="shadow bg-white border pointer">
+            <Card className="shadow bg-white border pointer text-center">
                 <Row className="standardPadding">
                     <Col>
                         <Button
@@ -138,7 +160,9 @@ const PurchaseReceipt = () => {
                         />
                     </Col>
                 </Row>
-                <p>{ScanValue}</p>
+                {ShowCamera &&
+                    <p>بارکد را در کادر قرمز رنگ قرار دهید</p>
+                }                
             </Card>
             {ShowCamera &&
                 <Row className="standardPadding">
@@ -166,8 +190,7 @@ const PurchaseReceipt = () => {
                                 className="fontStyle"
                             />
                             <Button
-                                // icon={OnOffIcon}
-                                icon={<CheckIcon className="ms-1 font18 fw-bold" />}
+                                // icon={OnOffIcon}                                
                                 onClick={btnConfirmItems_onClick}
                                 text="تائید"
                                 type="default"
@@ -185,7 +208,7 @@ const PurchaseReceipt = () => {
                         columns={purchaseItemsColumns}
                         className="my-3"
                         xxl={12}
-                        xl={2}
+                        xl={12}
                         label="کالا"
                     />
                 </Modal>
@@ -195,7 +218,7 @@ const PurchaseReceipt = () => {
                     size="l"
                     // onClose={handleShowDetail}
                     label="کالاها"
-                    isOpen={ShowInputCode}
+                    isOpen={ShowItems}
                     footerButtons={[
                         <>
                             <Button
@@ -208,8 +231,7 @@ const PurchaseReceipt = () => {
                                 className="fontStyle"
                             />
                             <Button
-                                // icon={OnOffIcon}
-                                icon={<CheckIcon className="ms-1 font18 fw-bold" />}
+                                // icon={OnOffIcon}                                
                                 onClick={btnFinalConfirm_onClick}
                                 text="تائید نهایی و تحویل"
                                 type="default"
@@ -220,7 +242,15 @@ const PurchaseReceipt = () => {
                         </>,
                     ]}
                 >
-
+                    <TextBox
+                        value={TxtConfirmCode}
+                        showClearButton={true}
+                        placeholder="کد تائید یا رمز"
+                        rtlEnabled={true}
+                        valueChangeEvent="keyup"
+                        onValueChanged={txtConfirmCodePassword_onChanege}
+                        className="fontStyle"
+                    />
                 </Modal>
             }
         </div>
