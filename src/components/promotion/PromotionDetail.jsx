@@ -68,7 +68,7 @@ const PromotionDetail = ({
   const [allCustomer, setAllCustomer] = useState([]);
   const [productList, setProductList] = useState([]);
   const [inputsProduct, setInputsProduct] = useState({});
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState({});
 
   let storeFixed = [];
 
@@ -561,11 +561,7 @@ const PromotionDetail = ({
     }
   });
 
-  const onSelectionChanged = ({
-    currentSelectedRowKeys,
-    currentDeselectedRowKeys,
-    selectedRowsData,
-  }) => {
+  const onSelectionChanged = (e) => {
     // const { currentSelectedRowKeys, currentDeselectedRowKeys } = e;
     // let updatedSelectedKeys = [...selectedRowKeys, ...currentSelectedRowKeys];
     // currentDeselectedRowKeys.forEach((key) => {
@@ -573,13 +569,14 @@ const PromotionDetail = ({
     //     (selectedKey) => selectedKey !== key
     //   );
     // });
-    // setSelectedRowKeys(updatedSelectedKeys);
-    let temp = [];
-    for (let i = 0; i < selectedRowsData.length; i++) {
-      console.log(selectedRowsData[i].id);
-      temp.push(selectedRowsData[i].id);
-    }
-    setSelectedRowKeys({ temp });
+    console.log(e?.selectedRowKeys);
+    setSelectedRowKeys(e?.selectedRowKeys);
+    // let temp = [];
+    // for (let i = 0; i < e?.selectedRowsData.length; i++) {
+    //   console.log(e?.selectedRowsData[i].id);
+    //   temp.push(e?.selectedRowsData[i].id);
+    // }
+    // setSelectedRowKeys({ temp });
   };
 
   const handleAcceptGroup = () => {
@@ -620,7 +617,7 @@ const PromotionDetail = ({
   //   handleAcceptStore();
   //   handleAcceptCustomer();
   //   handleAcceptGroup();
-  // }, [allPlatform, storeList, allCustomer]);
+  // }, [typeAndPlatform]);
 
   // const onSelectionChanged = (e) => {
   //   console.log(e);
@@ -722,8 +719,8 @@ const PromotionDetail = ({
             selected={typeAndPlatform?.store?.temp?.length}
             selection
             onSelectionChanged={onSelectionChanged}
-            selectedRowKeys={selectedRowKeys}
-            setSelectedRowKeys={setSelectedRowKeys}
+            // selectedRowKeys={selectedRowKeys}
+            // setSelectedRowKeys={setSelectedRowKeys}
             // handleAcceptAll={handleAcceptAllStore}
             filterRow
             headerFilter

@@ -49,12 +49,12 @@ const TableMultiSelect = ({
 
   const handleSubmit = () => {
     setShowTable(false);
-    setSelectedRowKeys([]);
+    // setSelectedRowKeys([]);
     submit();
   };
 
   const handleCancel = () => {
-    setSelectedRowKeys([]);
+    // setSelectedRowKeys([]);
     setShowTable(false);
   };
 
