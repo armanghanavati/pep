@@ -5,8 +5,7 @@ import { connect } from "react-redux";
 import { Button } from "devextreme-react";
 import Modal from "../common/Modals/Modal";
 import TableMultiSelect from "../common/Tables/TableMultiSelect";
-import OnOffIcon from "../../assets/images/icon/onOff.png";
-import CheckIcon from "@mui/icons-material/Check";
+import OnOffIcon from '../../assets/images/icon/onOff.png';
 import {
   Row,
   Col,
@@ -48,39 +47,45 @@ import {
   CHECK_BOXES_MOD,
   FILTER_BUILDER_POPUP_POSITION,
 } from "../../config/config";
-import { purchaseItemsColumns } from "./Sale-config";
-import {
-  checkItemsAndSendSmsToPerson,
-  itemList,
-  itemListOfPromotionsNotFactor,
-} from "../../redux/reducers/item/item-action";
+import { purchaseItemsColumns } from './Sale-config'
+import TextBox from "devextreme-react/text-box";
+import { checkItemsAndSendSmsToPerson, itemList, itemListOfPromotionsNotFactor } from "../../redux/reducers/item/item-action";
+import { finalConfirmPurchaseReceipt } from "../../redux/reducers/slaSale/slaSale-actions";
+
+
 
 const PurchaseReceipt = () => {
-  const { users, main } = useSelector((state) => state);
-  const dispatch = useDispatch();
-  const [ShowItems, setShowItems] = useState(false);
-  const [ItemsList, setItemList] = useState([]);
-  const [ScanValue, setScanValue] = useState(null);
-  const [ShowCamera, setShowCamera] = useState(false);
-  const [SelectedItems, setSelectedItems] = useState(null);
-  const [ShowInputCode, setShowInputCode] = useState(false);
+    const { users, main, companies } = useSelector((state) => state);
+    const dispatch = useDispatch();
+    const [ShowItems, setShowItems] = useState(false);
+    const [ItemsList, setItemList] = useState([]);
+    const [ScanValue, setScanValue] = useState(null);
+    const [ShowCamera, setShowCamera] = useState(false);
+    const [SelectedItems, setSelectedItems] = useState(null);
+    const [ShowInputCode, setShowInputCode] = useState(false);
+    const [TxtConfirmCode, setTxtConfirmCode] = useState(null);
 
   // useEffect(() => {
   //     handleAcceptGroup();
   // }, [ItemsList]);
 
-  const Barcode_onScan = async (data) => {
-    this.setState({ scanValue: data[0].rawValue });
-  };
+    const Barcode_onScan = async (data) => {
+        await setScanValue(data[0].rawValue)
+        const DATA = {
+            personId: parseInt(data[0].rawValue)
+        }
+        setItemList(await itemListOfPromotionsNotFactor(DATA, users.token));
+        setShowItems(true)
+    }
 
-  const btnOnOffCamera_onClick = async () => {
-    // setShowCamera(true)
-    const DATA = {
-      personId: 869,
-    };
-    setItemList(await itemListOfPromotionsNotFactor(DATA, users.token));
-    setShowItems(true);
-  };
+    const btnOnOffCamera_onClick = async () => {
+        setShowCamera(!ShowCamera)
+        // const DATA = {
+        //     personId: parseInt(ScanValue)
+        // }
+        // setItemList(await itemListOfPromotionsNotFactor(DATA, users.token));
+        // setShowItems(true)
+    }
 
   const btnCancelItems_onClick = () => {
     setShowItems(false);
@@ -90,133 +95,168 @@ const PurchaseReceipt = () => {
     alert("test");
   };
 
-  const handleAcceptGroup = async () => {
-    // console.log(ItemsList);
-    let tempSelectedItems = [];
-    // ItemsList.forEach(element => {
-    //     if (element.isChecked)
-    //         tempSelectedItems.push(element.id)
-    // });
+    // const handleAcceptGroup = () => {
+    //     console.log(ItemsList);
+    //     const fix = ItemsList?.filter((store) => store?.isChecked === true)?.map((item) => item?.id);
+    //     setSelectedItems((prev) => ({ ...prev, fix }));
+    // };
+    const handleAcceptGroup = async () => {
+        console.log(ItemsList);
+        let tempSelectedItems = [];
+        ItemsList.forEach(element => {
+            if (element.isChecked)
+                tempSelectedItems.push(element.id)
+        });
 
-    const OBJ = {
-      personId: 869,
-      promotionPlatformCode: "206",
-      itemIds: tempSelectedItems,
+        // setSelectedItems((prev) => ({ ...prev, tempSelectedItems }));
+        setSelectedItems(tempSelectedItems);
+        console.log(JSON.stringify(tempSelectedItems));
+
+        const OBJ = {
+            personId: parseInt(ScanValue),
+            promotionPlatformCode: "206",
+            itemIds: tempSelectedItems
+        }
+        let result = await checkItemsAndSendSmsToPerson(OBJ, users.token);
+        if (result.length === 0)
+            setShowInputCode(true)
     };
-    let result = await checkItemsAndSendSmsToPerson(OBJ, users.token);
-    // const result =[];
-    if (result.length === 0) setShowInputCode(true);
-  };
 
-  const btnFinalConfirm_onClick = () => {};
+    const btnFinalConfirm_onClick = async () => {
+        const OBJ = {
+            companyId: companies.currentCompanyId,
+            personId: parseInt(ScanValue),
+            authCode: TxtConfirmCode,
+            itemIds: SelectedItems
+        }
+        var result = await finalConfirmPurchaseReceipt(OBJ, users.token);
+        setShowInputCode(false);
+        setShowItems(false);
+        alert(result);
+    }
 
-  const btnCancelConfirm_onClick = () => {};
+    const btnCancelConfirm_onClick = () => {
+        setShowInputCode(false);
 
-  // const handleAcceptGroup = () => {
-  //     console.log(ItemsList);
-  //     const fix = ItemsList?.filter((store) => store?.isChecked === true)?.map((item) => item?.id);
-  //     setSelectedItems((prev) => ({ ...prev, fix }));
-  // };
+    }
 
-  return (
-    <div>
-      <Card className="shadow bg-white border pointer">
-        <Row className="standardPadding">
-          <Col>
-            <Button
-              icon={OnOffIcon}
-              onClick={btnOnOffCamera_onClick}
-              text="دوربین"
-              type="default"
-              stylingMode="contained"
-              rtlEnabled={true}
-              className="fontStyle"
-            />
-          </Col>
-        </Row>
-        <p>{ScanValue}</p>
-      </Card>
-      {ShowCamera && (
-        <Row className="standardPadding">
-          <Scanner onScan={Barcode_onScan} />
-        </Row>
-      )}
+    const txtConfirmCodePassword_onChanege = (e) => {
+        setTxtConfirmCode(e.value);
+    }
 
-      {ShowItems && (
-        <Modal
-          size="l"
-          // onClose={handleShowDetail}
-          label="کالاها"
-          isOpen={ShowItems}
-          footerButtons={[
-            <>
-              <Button
-                // icon={OnOffIcon}
-                onClick={btnCancelItems_onClick}
-                text="انصراف"
-                type="default"
-                stylingMode="contained"
-                rtlEnabled={true}
-                className="fontStyle"
-              />
-              <Button
-                // icon={OnOffIcon}
-                icon={<CheckIcon className="ms-1 font18 fw-bold" />}
-                onClick={btnConfirmItems_onClick}
-                text="تائید"
-                type="default"
-                stylingMode="contained"
-                rtlEnabled={true}
-                className="fontStyle"
-              />
-            </>,
-          ]}
-        >
-          <TableMultiSelect
-            submit={handleAcceptGroup}
-            allListRF={ItemsList}
-            columns={purchaseItemsColumns}
-            className="my-3"
-            xxl={12}
-            xl={2}
-            label="کالا"
-          />
-        </Modal>
-      )}
-      {ShowInputCode && (
-        <Modal
-          size="l"
-          // onClose={handleShowDetail}
-          label="کالاها"
-          isOpen={ShowInputCode}
-          footerButtons={[
-            <>
-              <Button
-                // icon={OnOffIcon}
-                onClick={btnCancelConfirm_onClick}
-                text="انصراف"
-                type="default"
-                stylingMode="contained"
-                rtlEnabled={true}
-                className="fontStyle"
-              />
-              <Button
-                // icon={OnOffIcon}
-                icon={<CheckIcon className="ms-1 font18 fw-bold" />}
-                onClick={btnFinalConfirm_onClick}
-                text="تائید نهایی و تحویل"
-                type="default"
-                stylingMode="contained"
-                rtlEnabled={true}
-                className="fontStyle"
-              />
-            </>,
-          ]}
-        ></Modal>
-      )}
-    </div>
-  );
-};
+    return (
+        <div>
+            <Card className="shadow bg-white border pointer text-center">
+                <Row className="standardPadding">
+                    <Col>
+                        <Button
+                            icon={OnOffIcon}
+                            onClick={btnOnOffCamera_onClick}
+                            text="دوربین"
+                            type="default"
+                            stylingMode="contained"
+                            rtlEnabled={true}
+                            className="fontStyle"
+                        />
+                    </Col>
+                </Row>
+                {ShowCamera &&
+                    <p>بارکد را در کادر قرمز رنگ قرار دهید</p>
+                }                
+            </Card>
+            {ShowCamera &&
+                <Row className="standardPadding">
+                    <Scanner
+                        onScan={Barcode_onScan}
+                        scanDelay={200}
+                    />
+                </Row>
+            }
+
+            {ShowItems &&
+                <Modal
+                    size="l"
+                    // onClose={handleShowDetail}
+                    label="کالاها"
+                    isOpen={ShowItems}
+                    footerButtons={[
+                        <>
+                            <Button
+                                // icon={OnOffIcon}
+                                onClick={btnCancelItems_onClick}
+                                text="انصراف"
+                                type="default"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                className="fontStyle"
+                            />
+                            <Button
+                                // icon={OnOffIcon}                                
+                                onClick={btnConfirmItems_onClick}
+                                text="تائید"
+                                type="default"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                className="fontStyle"
+                            />
+                        </>,
+                    ]}
+                >
+
+                    <TableMultiSelect
+                        submit={handleAcceptGroup}
+                        allListRF={ItemsList}
+                        columns={purchaseItemsColumns}
+                        className="my-3"
+                        xxl={12}
+                        xl={12}
+                        label="کالا"
+                    />
+                </Modal>
+            }
+            {ShowInputCode &&
+                <Modal
+                    size="l"
+                    // onClose={handleShowDetail}
+                    label="کالاها"
+                    isOpen={ShowItems}
+                    footerButtons={[
+                        <>
+                            <Button
+                                // icon={OnOffIcon}
+                                onClick={btnCancelConfirm_onClick}
+                                text="انصراف"
+                                type="default"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                className="fontStyle"
+                            />
+                            <Button
+                                // icon={OnOffIcon}                                
+                                onClick={btnFinalConfirm_onClick}
+                                text="تائید نهایی و تحویل"
+                                type="default"
+                                stylingMode="contained"
+                                rtlEnabled={true}
+                                className="fontStyle"
+                            />
+                        </>,
+                    ]}
+                >
+                    <TextBox
+                        value={TxtConfirmCode}
+                        showClearButton={true}
+                        placeholder="کد تائید یا رمز"
+                        rtlEnabled={true}
+                        valueChangeEvent="keyup"
+                        onValueChanged={txtConfirmCodePassword_onChanege}
+                        className="fontStyle"
+                    />
+                </Modal>
+            }
+        </div>
+    );
+}
 
 export default PurchaseReceipt;
 

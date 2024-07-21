@@ -101,6 +101,8 @@ import {
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import { Gfn_convertENunicode } from "../../utiliy/GlobalMethods";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
+import { questionTypeUserDevice } from "../../redux/reducers/question/questionTypeUser-actions";
+import { TenMp } from "@mui/icons-material";
 
 class NewAnswer extends React.Component {
   constructor(props) {
@@ -136,14 +138,28 @@ class NewAnswer extends React.Component {
       oldParam: null,
       stateWait: false,
       InspectionDate: new Date(),
+      itsLocation: null,
+      isMobile: null
     };
   }
   async componentDidMount() {
+    var deviceIsMobile = (await questionTypeUserDevice(this.props.User.userId, this.props.User.token)); // device mobile
+    if (deviceIsMobile != null) {
+      if (deviceIsMobile.isMobile){
+        this.getLocation();
+        this.setState({
+          isMobile: deviceIsMobile.isMobile
+        })
+      }
+    }
     await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
     await this.fn_questionTypeList();
-    if (this.props.answerId != null) this.fn_loadData(this.props.answerId);
-    else this.fn_locationList();
+    if (this.props.answerId != null)
+      this.fn_loadData(this.props.answerId);
+    else
+      this.fn_locationList();
+   
   }
 
   fn_loadData = async (answerId) => {
@@ -365,7 +381,10 @@ class NewAnswer extends React.Component {
         storeManagerId: this.state.cmbManagerValue,
         userId: this.props.User.userId,
         date: this.addHours(new Date(this.state.InspectionDate), 3, 30),
+        latitude: this.state.isMobile ? this.state.itsLocation.lat : 0,
+        longitude: this.state.isMobile ? this.state.itsLocation.lon : 0,
       };
+      
       const RESULT = await addAnswer(data, this.props.User.token);
       this.setState({
         ToastProps: {
@@ -391,6 +410,7 @@ class NewAnswer extends React.Component {
         locationId: this.state.cmbLocationValue,
         storeManagerId: this.state.cmbManagerValue,
         id: this.props.answerId,
+        date: this.addHours(new Date(this.state.InspectionDate), 3, 30),
         date: this.addHours(new Date(this.state.InspectionDate), 3, 30),
       };
       const RESULT = await updateAnswer(data, this.props.User.token);
@@ -577,162 +597,176 @@ class NewAnswer extends React.Component {
   };
 
   addHours = (date, hours, minutes) => {
+  addHours = (date, hours, minutes) => {
     date.setHours(date.getHours() + hours);
     date.setMinutes(date.getMinutes() + minutes);
     return date;
-  };
+  }
+
+  getLocation() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        this.setState({ itsLocation: { lat: latitude, long: longitude } });
+      },
+      (error) => {
+        console.error("Error getting geolocation:", error.message);
+      }
+    );
+  }
 
   render() {
-    return this.state.stateAnswer_show == false ? (
-      <div className="standardMargin" style={{ direction: "rtl" }}>
-        <Toast
-          visible={this.state.ToastProps.isToastVisible}
-          message={this.state.ToastProps.Message}
-          type={this.state.ToastProps.Type}
-          onHiding={this.onHidingToast}
-          displayTime={ToastTime}
-          width={ToastWidth}
-          rtlEnabled={true}
-        />
-        {this.state.stateWait && (
-          <Row className="text-center">
-            <Col style={{ textAlign: "center", marginTop: "10px" }}>
-              <Wait />
-            </Col>
-          </Row>
-        )}
-        <Card className="shadow bg-white border pointer">
-          <Row className="standardPadding">
-            <Row>
-              <Label>بازرسی</Label>
+    return (
+      this.state.stateAnswer_show == false ? (
+        <div className="standardMargin" style={{ direction: "rtl" }}>
+          <Toast
+            visible={this.state.ToastProps.isToastVisible}
+            message={this.state.ToastProps.Message}
+            type={this.state.ToastProps.Type}
+            onHiding={this.onHidingToast}
+            displayTime={ToastTime}
+            width={ToastWidth}
+            rtlEnabled={true}
+          />
+          {this.state.stateWait && (
+            <Row className="text-center">
+              <Col style={{ textAlign: "center", marginTop: "10px" }}>
+                <Wait />
+              </Col>
             </Row>
+          )}
+          <Card className="shadow bg-white border pointer">
             <Row className="standardPadding">
-              <Col xs="auto">
-                <Label className="standardLabelFont">نوع بازرسی</Label>
-                <SelectBox
-                  dataSource={this.state.cmbQuestionType}
-                  displayExpr="name"
-                  placeholder="نوع بازرسی"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbQuestionType_onChange}
-                  value={this.state.cmbQuestionTypeValue}
-                  className="fontStyle"
-                  disabled={this.state.disable_questionType}
-                />
-                <Row>
-                  <Label
-                    id="errQuestionType"
-                    className="standardLabelFont errMessage"
+              <Row>
+                <Label>بازرسی</Label>
+              </Row>
+              <Row className="standardPadding">
+                <Col xs="auto">
+                  <Label className="standardLabelFont">نوع بازرسی</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbQuestionType}
+                    displayExpr="name"
+                    placeholder="نوع بازرسی"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbQuestionType_onChange}
+                    value={this.state.cmbQuestionTypeValue}
+                    className="fontStyle"
+                    disabled={this.state.disable_questionType}
                   />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">فروشگاه</Label>
-                <SelectBox
-                  dataSource={this.state.cmbLocation}
-                  displayExpr="label"
-                  placeholder="فروشگاه"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbLocation_onChange}
-                  value={this.state.cmbLocationValue}
-                  className="fontStyle"
-                />
-                <Row>
-                  <Label
-                    id="errLocation"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">سوپروایزر</Label>
-                <SelectBox
-                  dataSource={this.state.cmbSupervisor}
-                  displayExpr="fullName"
-                  placeholder="سوپروایزر"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbSupervisor_onChange}
-                  value={this.state.cmbSupervisorValue}
-                  className="fontStyle"
-                />
-                <Row>
-                  <Label
-                    id="errSupervisor"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-              <Col xs="auto">
-                <Label className="standardLabelFont">سرپرست فروشگاه</Label>
-                <SelectBox
-                  dataSource={this.state.cmbManager}
-                  displayExpr="fullName"
-                  placeholder="سرپرست فروشگاه"
-                  valueExpr="id"
-                  searchEnabled={true}
-                  rtlEnabled={true}
-                  onValueChange={this.cmbManager_onChange}
-                  value={this.state.cmbManagerValue}
-                  className="fontStyle"
-                />
-                <Row>
-                  <Label
-                    id="errManager"
-                    className="standardLabelFont errMessage"
-                  />
-                </Row>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs="auto">
-                <LocalizationProvider dateAdapter={AdapterJalali}>
-                  <DateTimePicker
-                    label="تاریخ بازرسی"
-                    value={this.state.InspectionDate}
-                    onChange={this.DatePickerInspectionDate_onChange}
-                    renderInput={(params) => <TextField {...params} />}
+                  <Row>
+                    <Label
+                      id="errQuestionType"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">فروشگاه</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbLocation}
+                    displayExpr="label"
+                    placeholder="فروشگاه"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbLocation_onChange}
+                    value={this.state.cmbLocationValue}
                     className="fontStyle"
                   />
-                </LocalizationProvider>
-                <Row>
-                  <Label
-                    id="errInspectionDate"
-                    className="standardLabelFont errMessage"
+                  <Row>
+                    <Label
+                      id="errLocation"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">سوپروایزر</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbSupervisor}
+                    displayExpr="fullName"
+                    placeholder="سوپروایزر"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbSupervisor_onChange}
+                    value={this.state.cmbSupervisorValue}
+                    className="fontStyle"
                   />
-                </Row>
-              </Col>
-            </Row>
-            <Row className="standardSpaceTop">
-              <Col xs="auto">
-                <Button
-                  text="لیست بازرسی"
-                  type="success"
-                  stylingMode="contained"
-                  rtlEnabled={true}
-                  onClick={this.btnInsList_onClick}
-                  className="fontStyle"
-                />
-              </Col>
-              {this.state.stateDisable_btnAdd &&
-                this.props.answerId == null && (
-                  <Col xs="auto">
-                    <Button
-                      icon={StartIcon}
-                      text="شروع بازرسی"
-                      type="default"
-                      stylingMode="contained"
-                      rtlEnabled={true}
-                      onClick={this.btnAdd_onClick}
+                  <Row>
+                    <Label
+                      id="errSupervisor"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+                <Col xs="auto">
+                  <Label className="standardLabelFont">سرپرست فروشگاه</Label>
+                  <SelectBox
+                    dataSource={this.state.cmbManager}
+                    displayExpr="fullName"
+                    placeholder="سرپرست فروشگاه"
+                    valueExpr="id"
+                    searchEnabled={true}
+                    rtlEnabled={true}
+                    onValueChange={this.cmbManager_onChange}
+                    value={this.state.cmbManagerValue}
+                    className="fontStyle"
+                  />
+                  <Row>
+                    <Label
+                      id="errManager"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs="auto">
+                  <LocalizationProvider dateAdapter={AdapterJalali}>
+                    <DateTimePicker
+                      label="تاریخ بازرسی"
+                      value={this.state.InspectionDate}
+                      onChange={this.DatePickerInspectionDate_onChange}
+                      renderInput={(params) => <TextField {...params} />}
                       className="fontStyle"
                     />
-                  </Col>
-                )}
+                  </LocalizationProvider>
+                  <Row>
+                    <Label
+                      id="errInspectionDate"
+                      className="standardLabelFont errMessage"
+                    />
+                  </Row>
+                </Col>
+              </Row>
+              <Row className="standardSpaceTop">
+                <Col xs="auto">
+                  <Button
+                    text="لیست بازرسی"
+                    type="success"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnInsList_onClick}
+                    className="fontStyle"
+                  />
+                </Col>
+                {this.state.stateDisable_btnAdd && (
+                  this.props.answerId == null && (
+                    <Col xs="auto">
+                      <Button
+                        icon={StartIcon}
+                        text="شروع بازرسی"
+                        type="default"
+                        stylingMode="contained"
+                        rtlEnabled={true}
+                        onClick={this.btnAdd_onClick}
+                        className="fontStyle"
+                      />
+                    </Col>
+                  ))}
 
               {this.state.stateDisable_btnUpdate && (
                 <Col xs="auto">
