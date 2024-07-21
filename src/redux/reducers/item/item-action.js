@@ -281,8 +281,11 @@ export async function itemListByItemGroupIds(object, Token) {
 }
 
 //-------------itemListOfPromotionsNotFactor----------------------
-export async function itemListOfPromotionsNotFactor(object,Token) {
-  const url = window.apiAddress + "/Item/itemListOfPromotionsNotFactor?personId="+object.personId;
+export async function itemListOfPromotionsNotFactor(object, Token) {
+  const url =
+    window.apiAddress +
+    "/Item/itemListOfPromotionsNotFactor?personId=" +
+    object.personId;
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -314,7 +317,6 @@ export async function checkItemsAndSendSmsToPerson(object, Token) {
   }
   return null;
 }
-
 
 // کالا
 export const groupIds = async (object) => {
@@ -348,4 +350,3 @@ export const itemComboByItemGroupIdList = async (object) => {
   console.log(response);
   return response?.data;
 };
-

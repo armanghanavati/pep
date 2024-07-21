@@ -9,6 +9,7 @@ import asyncWrapper from "../../utiliy/asyncWrapper";
 import {
   groupIds,
   groupProductList,
+  itemComboByItemGroupIdList,
   slaPromotionList,
 } from "../../redux/reducers/item/item-action";
 import { storeGroup } from "../../redux/reducers/location/location-actions";
@@ -117,7 +118,7 @@ const ItemReport = () => {
   };
 
   const handleProductGP = asyncWrapper(async (e) => {
-    const res = await groupIds(e);
+    const res = await itemComboByItemGroupIdList(e);
     console.log(res);
     const { data, statusCode } = res;
     console.log(data, statusCode);
