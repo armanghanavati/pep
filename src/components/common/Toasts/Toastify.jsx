@@ -17,7 +17,7 @@ const Toastify = ({ size = "lg" }) => {
             // position="top-center"
             visible={main?.showToast?.isToastVisible}
             message={main?.showToast?.Message}
-            type={main?.showToast?.Type}
+            type={main?.showToast?.Type === "Success" ? "success" : "error"}
             onHiding={() => dispatch(RsetShowToast({ isToastVisible: false }))}
             displayTime={10000}
             width={size}

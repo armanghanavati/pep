@@ -255,6 +255,10 @@
   .minWidth50 {
     min-width: 50px;
   }
+
+  .minWidth50 {
+    min-width: 50px;
+  }
   
   .maxWidth400 {
     max-width: 400px;
@@ -266,6 +270,10 @@
   
   .width15 {
     width: 15%;
+  }
+
+  .maxWidth10 {
+    max-width: 10px;
   }
   
   .font60 {

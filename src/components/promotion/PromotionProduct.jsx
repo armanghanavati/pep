@@ -43,6 +43,7 @@ const PromotionProduct = ({
   const [questionModal, setQuestionModal] = useState({});
   const { main } = useSelector((state) => state);
   const dispatch = useDispatch();
+
   const filterProductGroup = allgroupProduct?.filter((item) => {
     return item?.id === inputsProduct?.productGroup;
   });

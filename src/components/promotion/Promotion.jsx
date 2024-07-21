@@ -205,8 +205,6 @@ const Promotion = () => {
     setselectedRowKeys(e);
   };
 
-  console.log(selectedRowKeys);
-
   return (
     <>
       <Container fluid className="mt-4">
