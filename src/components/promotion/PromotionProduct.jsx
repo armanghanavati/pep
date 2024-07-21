@@ -141,7 +141,6 @@ const PromotionProduct = ({
     const index = allProduct.findIndex(
       (item) => item?.id === inputsProduct?.id
     );
-
     if (index !== -1) {
       // const newItem = {
       //   id: itemId,

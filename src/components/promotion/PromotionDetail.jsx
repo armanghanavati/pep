@@ -74,6 +74,8 @@ const PromotionDetail = ({
   const [selectedType, setSelectedType] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
 
+  console.log(productList);
+
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
       if (id) {
@@ -92,6 +94,7 @@ const PromotionDetail = ({
 
   const fixMapProduct = (itemId, discount, id) => {
     const fixData = productList?.map((item) => {
+      console.log(item, itemId, discount, id);
       if (id) {
         return {
           slaPromotionId: id,
@@ -144,7 +147,6 @@ const PromotionDetail = ({
         return handleGroupIds(value);
       }
     }
-    console.log(name, value);
   };
 
   const handleChangeInputsProduct = (
@@ -246,7 +248,7 @@ const PromotionDetail = ({
       const { data, status, message } = res;
       const fixIdToItemId = data?.map((item) => {
         return {
-          itemId: item?.id,
+          itemId: item?.itemId,
           barcode: item?.barcode,
           code: item?.code,
           discount: item?.discount,
@@ -277,7 +279,6 @@ const PromotionDetail = ({
     dispatch(RsetIsLoading({ stateWait: false }));
 
     const { data, status, message } = res;
-    console.log(res);
     if (status == "Success") {
       setStoreList(data);
     } else {
@@ -434,19 +435,18 @@ const PromotionDetail = ({
         "discount",
         detailRow?.data?.id
       ),
-
       slaPromotionPlatformPromotions: handleIdForList(
-        typeAndPlatform?.type,
+        typeAndPlatform?.type || selectedType,
         "slaPromotionPlatformId",
         detailRow?.data?.id
       ),
       accLocationPromotions: handleIdForList(
-        typeAndPlatform?.store,
+        typeAndPlatform?.store || selectStore,
         "bseLocationId",
         detailRow?.data?.id
       ),
       slaPromotionCustomerGroups: handleIdForList(
-        typeAndPlatform?.customer,
+        typeAndPlatform?.customer || selectedCustomer,
         "slaCustomerGroupId",
         detailRow?.data?.id
       ),
@@ -476,7 +476,6 @@ const PromotionDetail = ({
           })
         );
       }
-      console.log(res);
     } else {
       dispatch(RsetIsLoading({ stateWait: true }));
       const res = await addSlaPromotion(postAddPromotion);
@@ -501,7 +500,6 @@ const PromotionDetail = ({
           })
         );
       }
-      console.log(res);
     }
   });
 
