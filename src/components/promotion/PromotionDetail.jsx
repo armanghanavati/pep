@@ -43,6 +43,7 @@ import { CheckBox } from "devextreme-react";
 import PromotionStore from "./PromotionStore";
 import PromotionType from "./PromotionType";
 import PromotionCustomer from "./PromotionCustomer";
+import DataSource from "devextreme/data/data_source";
 
 const PromotionDetail = ({
   detailRow,
@@ -73,8 +74,6 @@ const PromotionDetail = ({
   const [selectStore, setSelectStore] = useState([]);
   const [selectedType, setSelectedType] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
-
-  console.log(productList);
 
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
@@ -136,17 +135,6 @@ const PromotionDetail = ({
     setInputFields((prevstate) => {
       return { ...prevstate, [name]: value };
     });
-    if (name === "productGroup" && !!value) {
-      if (value === 0) {
-        const fixLoop = StringHelpers.fixComboListId(
-          inputFields?.productGroup,
-          allgroupProduct
-        );
-        return handleGroupIds(fixLoop);
-      } else {
-        return handleGroupIds(value);
-      }
-    }
   };
 
   const handleChangeInputsProduct = (
@@ -170,7 +158,7 @@ const PromotionDetail = ({
     setInputsProduct((prevstate) => {
       return { ...prevstate, [name]: value };
     });
-    if (name === "productGroup" && !!value) {
+    if (name === "productGroup") {
       if (value === 0) {
         const fixLoop = StringHelpers.fixComboListId(
           inputFields?.productGroup,
@@ -178,19 +166,24 @@ const PromotionDetail = ({
         );
         return handleGroupIds(fixLoop);
       } else {
-        return handleGroupIds(value);
+        return handleGroupIds([value]);
       }
     }
   };
 
   const handleGroupIds = asyncWrapper(async (e) => {
     dispatch(RsetIsLoading({ stateWait: true }));
-    const eventFix = [e];
-    const res = await itemComboByItemGroupIdList(eventFix);
+    const res = await itemComboByItemGroupIdList(e);
     dispatch(RsetIsLoading({ stateWait: false }));
 
     const { data, status, message } = res;
     if (status == "Success") {
+      console.log(data);
+      const LAZY = new DataSource({
+        store: data,
+        paginate: true,
+        pageSize: 10,
+      });
       setAllProduct(data);
     } else {
       dispatch(
@@ -247,8 +240,9 @@ const PromotionDetail = ({
       dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       const fixIdToItemId = data?.map((item) => {
+          console.log(item , "item item item itemsssss");
         return {
-          itemId: item?.itemId,
+          itemId: item?.itemId || item?.id ,
           barcode: item?.barcode,
           code: item?.code,
           discount: item?.discount,

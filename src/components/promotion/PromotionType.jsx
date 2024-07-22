@@ -26,8 +26,6 @@ const PromotionType = ({
     submit();
   };
 
-  console.log(selectStore);
-
   const handleCancel = () => {
     setShowTable(false);
   };

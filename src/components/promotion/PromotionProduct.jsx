@@ -3,25 +3,13 @@ import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
 import Input from "../common/Inputs/Input";
 import ComboBox from "../common/ComboBox";
-import { Form, Label, Row, Toast } from "reactstrap";
-import CheckIcon from "@mui/icons-material/Check";
-import asyncWrapper from "../../utiliy/asyncWrapper";
-import {
-  groupIds,
-  groupProductList,
-  slaPromotionList,
-} from "../../redux/reducers/item/item-action";
-import Validation from "../../utiliy/validations";
-import {
-  addSlaPromotionDetail,
-  updateSlaPromotionDetail,
-} from "../../redux/reducers/promotion/promotion-action";
-import {
-  RsetQuestionModal,
-  RsetShowToast,
-} from "../../redux/reducers/main/main-slice";
-import { useDispatch, useSelector } from "react-redux";
+import { Row } from "reactstrap";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
+import { useDispatch, useSelector } from "react-redux";
+import { groupProductList } from "../../redux/reducers/item/item-action";
+import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import asyncWrapper from "../../utiliy/asyncWrapper";
+
 const PromotionProduct = ({
   setInputsProduct,
   inputsProduct,
@@ -31,16 +19,14 @@ const PromotionProduct = ({
   setProductList,
   showAddProduct,
   handleGetProductList,
-  setInputFields,
-  allProduct,
   setShowAddProduct,
   handleChangeInputsProduct,
-  inputFields,
+  allProduct,
   allgroupProduct,
   setAllgroupProduct,
   detailRow,
 }) => {
-  const [questionModal, setQuestionModal] = useState({});
+  const [questionModal, setQuestionModal] = useState(false);
   const { main } = useSelector((state) => state);
   const dispatch = useDispatch();
 
@@ -72,16 +58,14 @@ const PromotionProduct = ({
   useEffect(() => {
     handleGroupProductList();
     if (!itsEditProductRow) {
-      setInputsProduct((...prev) => {
-        return {
-          ...prev,
-          productGroup: editProductRow?.data?.itemGroupName,
-          product: editProductRow?.data?.itemName,
-          discount: editProductRow?.data?.discount,
-        };
-      });
+      setInputsProduct((prev) => ({
+        ...prev,
+        productGroup: editProductRow?.data?.itemGroupName,
+        product: editProductRow?.data?.itemName,
+        discount: editProductRow?.data?.discount,
+      }));
     } else {
-      setInputsProduct((...prev) => ({
+      setInputsProduct((prev) => ({
         ...prev,
         productGroup: {},
         product: {},
@@ -90,30 +74,6 @@ const PromotionProduct = ({
     }
   }, []);
 
-  // const handleSubmitProduct = async () => {
-  //   const postData = {
-  //     slapromotionId: editProductRow?.data?.id,
-  //     itemId: inputFields?.product,
-  //     discount: Number(inputFields?.discount),
-  //     consumerPrice: null,
-  //     priceWithDiscount: null,
-  //   };
-  //   if (itsEditProductRow) {
-  //     const resUpdate = await updateSlaPromotionDetail(
-  //       editProductRow?.data?.id,
-  //       postData?.discount
-  //     );
-  //     handleGetProductList(detailRow?.data?.id);
-  //     setShowAddProduct(false);
-  //     console.log(resUpdate);
-  //   } else {
-  //     const resAdd = await addSlaPromotionDetail(postData);
-  //     const { data, statusCode } = resAdd;
-  //     if (statusCode === 200) {
-  //       handleGetProductList(detailRow?.data?.id);
-  //     }
-  //   }
-  // };
   const findBarcode = filterProduct?.[0]?.label?.split(" ");
   const getBarcode = findBarcode?.[findBarcode?.length - 1];
   const productItem = {
@@ -126,37 +86,38 @@ const PromotionProduct = ({
     code: null,
     id: productList.length + 1,
   };
+
   const handleCheckProductList = () => {
     const test = productList?.some((item) => {
-      return (
-        item?.productId === productItem?.productId
-        // &&
-        // item?.discount == productItem?.discount
-      );
+      return item?.productId === productItem?.productId;
     });
     return test;
   };
 
   const handleAcceptProduct = () => {
-    const index = allProduct.findIndex(
-      (item) => item?.id === inputsProduct?.id
+    console.log(inputsProduct);
+    const index = productList.findIndex(
+      (item) => item?.productId === productItem?.productId
     );
     if (index !== -1) {
-      // const newItem = {
-      //   id: itemId,
-      //   productId: inputsProduct?.product,
-      //   itemName: filterProduct?.[0]?.label,
-      //   groupId: inputsProduct?.productGroup,
-      // };
-      const newProducts = [...allProduct];
-      newProducts?.splice(index, 1, productItem);
+      const newProducts = [...productList];
+      newProducts.splice(index, 1, productItem);
+      console.log(newProducts);
       setProductList([...newProducts]);
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: "کالا با موفقیت جایگزین شد",
+          Type: "Success",
+        })
+      );
+      setQuestionModal(false);
     }
   };
 
   const handleSubmitProduct = () => {
     if (handleCheckProductList()) {
-      setQuestionModal({ show: true });
+      setQuestionModal(true);
     } else {
       setProductList((prev) => [...prev, productItem]);
       dispatch(
@@ -166,6 +127,7 @@ const PromotionProduct = ({
           Type: "Success",
         })
       );
+      // setShowAddProduct(false);
     }
   };
 
@@ -221,26 +183,14 @@ const PromotionProduct = ({
             name="discount"
             onChange={handleChangeInputsProduct}
             value={inputsProduct?.discount}
-            // value={inputFields?.discount  "%"}
           />
         </Row>
-        {/* {toast.isToastVisible && (
-          <Toast
-            visible={toast.isToastVisible}
-            message={toast.Message}
-            type={toast.Type}
-            onHiding={() => setToast({ isToastVisible: false })}
-            displayTime={10000}
-            width={600}
-            rtlEnabled={true}
-          />
-        )} */}
       </Modal>
-      {questionModal?.show && (
+      {questionModal && (
         <Modal
           size="sm"
           classHeader="bg-white"
-          isOpen={questionModal?.show}
+          isOpen={questionModal}
           footerButtons={[
             <Button
               text="Outlined"
@@ -271,3 +221,28 @@ const PromotionProduct = ({
 };
 
 export default PromotionProduct;
+
+// const handleSubmitProduct = async () => {
+//   const postData = {
+//     slapromotionId: editProductRow?.data?.id,
+//     itemId: inputFields?.product,
+//     discount: Number(inputFields?.discount),
+//     consumerPrice: null,
+//     priceWithDiscount: null,
+//   };
+//   if (itsEditProductRow) {
+//     const resUpdate = await updateSlaPromotionDetail(
+//       editProductRow?.data?.id,
+//       postData?.discount
+//     );
+//     handleGetProductList(detailRow?.data?.id);
+//     setShowAddProduct(false);
+//     console.log(resUpdate);
+//   } else {
+//     const resAdd = await addSlaPromotionDetail(postData);
+//     const { data, statusCode } = resAdd;
+//     if (statusCode === 200) {
+//       handleGetProductList(detailRow?.data?.id);
+//     }
+//   }
+// };
