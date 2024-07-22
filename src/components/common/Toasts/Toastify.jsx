@@ -13,8 +13,6 @@ const Toastify = ({ size = "lg" }) => {
       <Row className="d-flex toastContainer">
         <Col xs="10" sm="10" xl="12" className="d-flex">
           <Toast
-            // direction="up-push"
-            // position="top-center"
             visible={main?.showToast?.isToastVisible}
             message={main?.showToast?.Message}
             type={main?.showToast?.Type === "Success" ? "success" : "error"}

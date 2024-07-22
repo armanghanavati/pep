@@ -39,11 +39,11 @@ const ItemReport = () => {
   const [productListWithoutLazyLoading, setProductListWithoutLazyLoading] =
     useState([]);
   const [allListRF, setAllListRF] = useState([]);
-  
+
   useEffect(() => {
     handleGroupProductList();
   }, []);
-  
+
   useEffect(() => {
     if (companies?.currentCompanyId !== null) handleGroupStore();
   }, []);
@@ -57,7 +57,6 @@ const ItemReport = () => {
   };
 
   const handleGroupStore = asyncWrapper(async () => {
-    console.log(users?.userId, companies?.currentCompanyId);
     const res = await storeGroup(users?.userId, companies?.currentCompanyId);
     const { data, statusCode } = res;
     if (statusCode === 200) {
@@ -118,6 +117,8 @@ const ItemReport = () => {
       }
     }
   };
+
+  console.log(productGroupList);
 
   const handleProductGP = asyncWrapper(async (e) => {
     const res = await itemComboByItemGroupIdList(e);

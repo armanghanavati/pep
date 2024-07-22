@@ -14,10 +14,10 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
 // window.apiAddress="http://localhost:7142/api";
-window.apiAddress = "https://pepapi.minoomart.ir/api";
+// window.apiAddress = "https://pepapi.minoomart.ir/api";
 
 // akhlaghi
-// window.apiAddress = "http://10.0.10.48:9092/api";
+window.apiAddress = "http://10.0.10.48:9092/api";
 
 // alirezayi
 // window.apiAddress = "http://10.0.10.41:7142/api";

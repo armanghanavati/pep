@@ -63,6 +63,7 @@ const PromotionDetail = ({
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [allgroupProduct, setAllgroupProduct] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
+  const [lazyTest, setLazyTest] = useState([]);
   const [allPlatform, setAllPlatform] = useState([]);
   const [storeList, setStoreList] = useState([]);
   const [typeAndPlatform, setTypeAndPlatform] = useState({});
@@ -185,6 +186,7 @@ const PromotionDetail = ({
         pageSize: 10,
       });
       setAllProduct(data);
+      setLazyTest(LAZY);
     } else {
       dispatch(
         RsetShowToast({
@@ -240,9 +242,9 @@ const PromotionDetail = ({
       dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       const fixIdToItemId = data?.map((item) => {
-          console.log(item , "item item item itemsssss");
+        console.log(item, "item item item itemsssss");
         return {
-          itemId: item?.itemId || item?.id ,
+          itemId: item?.itemId || item?.id,
           barcode: item?.barcode,
           code: item?.code,
           discount: item?.discount,
@@ -359,7 +361,9 @@ const PromotionDetail = ({
   const handleGetDataEditFields = () => {
     if (itsEditRow) {
       const getEditRow = detailRow?.data;
+      console.log(getEditRow);
       const fixEdit = {
+        daysOfferOld: getEditRow?.daysOffer,
         title: getEditRow?.title || "",
         isActive: getEditRow?.isActive || false,
         itsFromDate: getEditRow?.fromDate || "",
@@ -409,6 +413,7 @@ const PromotionDetail = ({
     };
     const updatePromotion = {
       id: detailRow?.data?.id,
+      daysOfferOld: inputFields?.daysOfferOld,
       title: inputFields?.title,
       daysOffer: inputFields?.daysOffer,
       fromDate:
