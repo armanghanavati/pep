@@ -29,7 +29,6 @@ const Promotion = () => {
   const dispatch = useDispatch();
   const [showDetail, setShowDetail] = useState(false);
   const [detailRow, setDetailRow] = useState({});
-  const [inputFields, setInputFields] = useState({});
   const [promotionList, setPromotionList] = useState([]);
   const [itsEditRow, setItsEditRow] = useState(false);
   const [selectedRowKeys, setselectedRowKeys] = useState(null);
@@ -233,8 +232,6 @@ const Promotion = () => {
           <PromotionDetail
             handleGetAllList={handleGetAllList}
             itsEditRow={itsEditRow}
-            inputFields={inputFields}
-            setInputFields={setInputFields}
             promotionList={promotionList}
             detailRow={detailRow}
             showDetail={showDetail}
