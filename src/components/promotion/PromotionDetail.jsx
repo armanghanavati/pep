@@ -25,10 +25,7 @@ import asyncWrapper from "../../utiliy/asyncWrapper";
 import CheckIcon from "@mui/icons-material/Check";
 import PromotionProduct from "./PromotionProduct";
 import StringHelpers from "../../utiliy/GlobalMethods";
-import {
-  groupIds,
-  itemComboByItemGroupIdList,
-} from "../../redux/reducers/item/item-action";
+import { groupIds } from "../../redux/reducers/item/item-action";
 import { useDispatch, useSelector } from "react-redux";
 import {
   locationPromotionList,
@@ -62,8 +59,6 @@ const PromotionDetail = ({
   const [promotionTypeList, setPromotionTypeList] = useState([]);
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [allgroupProduct, setAllgroupProduct] = useState([]);
-  const [allProduct, setAllProduct] = useState([]);
-  const [lazyTest, setLazyTest] = useState([]);
   const [allPlatform, setAllPlatform] = useState([]);
   const [storeList, setStoreList] = useState([]);
   const [typeAndPlatform, setTypeAndPlatform] = useState({});
@@ -71,7 +66,6 @@ const PromotionDetail = ({
   const [itsEditProductRow, setItsEditProductRow] = useState(false);
   const [allCustomer, setAllCustomer] = useState([]);
   const [productList, setProductList] = useState([]);
-  const [inputsProduct, setInputsProduct] = useState({});
   const [selectStore, setSelectStore] = useState([]);
   const [selectedType, setSelectedType] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
@@ -137,66 +131,6 @@ const PromotionDetail = ({
       return { ...prevstate, [name]: value };
     });
   };
-
-  const handleChangeInputsProduct = (
-    name,
-    value,
-    validationNameList = undefined,
-    index
-  ) => {
-    const temp = [];
-    validationNameList &&
-      validationNameList.map((item) => {
-        if (Validation[item[0]](value, item[1]) === true) {
-          return null;
-        } else {
-          temp.push(Validation[item[0]](value, item[1]));
-        }
-      });
-    setErrors((prevstate) => {
-      return { ...prevstate, [name]: [...temp] };
-    });
-    setInputsProduct((prevstate) => {
-      return { ...prevstate, [name]: value };
-    });
-    if (name === "productGroup") {
-      if (value === 0) {
-        const fixLoop = StringHelpers.fixComboListId(
-          inputFields?.productGroup,
-          allgroupProduct
-        );
-        return handleGroupIds(fixLoop);
-      } else {
-        return handleGroupIds([value]);
-      }
-    }
-  };
-
-  const handleGroupIds = asyncWrapper(async (e) => {
-    dispatch(RsetIsLoading({ stateWait: true }));
-    const res = await itemComboByItemGroupIdList(e);
-    dispatch(RsetIsLoading({ stateWait: false }));
-
-    const { data, status, message } = res;
-    if (status == "Success") {
-      console.log(data);
-      const LAZY = new DataSource({
-        store: data,
-        paginate: true,
-        pageSize: 10,
-      });
-      setAllProduct(data);
-      setLazyTest(LAZY);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
 
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
     dispatch(RsetIsLoading({ stateWait: true }));
@@ -712,6 +646,18 @@ const PromotionDetail = ({
             xl={2}
             label="فروشگاه"
           />
+          {/* <TableMultiSelect2
+            itemName={"locationName"}
+            selected={selectStore}
+            setSelected={setSelectStore}
+            submit={handleAcceptStore}
+            allListRF={storeList}
+            columns={storeColumns}
+            className="my-3"
+            xxl={12}
+            xl={2}
+            label="فروشگاه"
+          /> */}
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
           <PromotionCustomer
@@ -800,9 +746,6 @@ const PromotionDetail = ({
       </Row>
       {showAddProduct && (
         <PromotionProduct
-          handleChangeInputsProduct={handleChangeInputsProduct}
-          setInputsProduct={setInputsProduct}
-          inputsProduct={inputsProduct}
           productList={productList}
           detailRow={detailRow}
           itsEditProductRow={itsEditProductRow}
@@ -810,7 +753,6 @@ const PromotionDetail = ({
           editProductRow={editProductRow}
           handleGetProductList={handleGetProductList}
           setProductList={setProductList}
-          allProduct={allProduct}
           handleChangeInputs={handleChangeInputs}
           showAddProduct={showAddProduct}
           setShowAddProduct={setShowAddProduct}

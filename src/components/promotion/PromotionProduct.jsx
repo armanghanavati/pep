@@ -6,13 +6,21 @@ import ComboBox from "../common/ComboBox";
 import { Row } from "reactstrap";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { useDispatch, useSelector } from "react-redux";
-import { groupProductList } from "../../redux/reducers/item/item-action";
-import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import {
+  groupProductList,
+  itemComboByItemGroupIdList,
+} from "../../redux/reducers/item/item-action";
+import {
+  RsetIsLoading,
+  RsetShowToast,
+} from "../../redux/reducers/main/main-slice";
 import asyncWrapper from "../../utiliy/asyncWrapper";
+import DataSource from "devextreme/data/data_source";
+import Validation from "../../utiliy/validations";
+import StringHelpers from "../../utiliy/GlobalMethods";
 
 const PromotionProduct = ({
-  setInputsProduct,
-  inputsProduct,
+  inputFields,
   editProductRow,
   productList,
   itsEditProductRow,
@@ -20,8 +28,6 @@ const PromotionProduct = ({
   showAddProduct,
   handleGetProductList,
   setShowAddProduct,
-  handleChangeInputsProduct,
-  allProduct,
   allgroupProduct,
   setAllgroupProduct,
   detailRow,
@@ -29,6 +35,40 @@ const PromotionProduct = ({
   const [questionModal, setQuestionModal] = useState(false);
   const { main } = useSelector((state) => state);
   const dispatch = useDispatch();
+  const [inputsProduct, setInputsProduct] = useState({});
+  const [errors, setErrors] = useState({});
+  const [allProduct, setAllProduct] = useState(
+    new DataSource({
+      load: async (loadOptions) => {
+        const res = await itemComboByItemGroupIdList(
+          loadOptions.filter ? loadOptions.filter[0][2] : [],
+          loadOptions.skip,
+          loadOptions.take
+        );
+        const { data, status, message } = res;
+        if (status === "Success") {
+          return {
+            data: data.items,
+            totalCount: data.totalCount,
+          };
+        } else {
+          dispatch(
+            RsetShowToast({
+              isToastVisible: true,
+              Message: message || "لطفا دوباره امتحان کنید",
+              Type: status,
+            })
+          );
+          return {
+            data: [],
+            totalCount: 0,
+          };
+        }
+      },
+      paginate: true,
+      pageSize: 10,
+    })
+  );
 
   const filterProductGroup = allgroupProduct?.filter((item) => {
     return item?.id === inputsProduct?.productGroup;
@@ -38,10 +78,81 @@ const PromotionProduct = ({
     return item?.id === inputsProduct?.product;
   });
 
+  const handleChangeInputsProduct = (
+    name,
+    value,
+    validationNameList = undefined,
+    index
+  ) => {
+    const temp = [];
+    validationNameList &&
+      validationNameList.map((item) => {
+        if (Validation[item[0]](value, item[1]) === true) {
+          return null;
+        } else {
+          temp.push(Validation[item[0]](value, item[1]));
+        }
+      });
+    setErrors((prevstate) => {
+      return { ...prevstate, [name]: [...temp] };
+    });
+    setInputsProduct((prevstate) => {
+      return { ...prevstate, [name]: value };
+    });
+
+    if (name === "productGroup") {
+      setInputsProduct((prev) => ({
+        ...prev,
+        discount: "",
+      }));
+      if (value === 0) {
+        const fixLoop = StringHelpers.fixComboListId(
+          inputsProduct?.productGroup,
+          allgroupProduct
+        );
+        return handleGroupIds(fixLoop);
+      } else {
+        return handleGroupIds([value]);
+      }
+    }
+  };
+
+  const handleGroupIds = asyncWrapper(async (e) => {
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const res = await itemComboByItemGroupIdList(e);
+    dispatch(RsetIsLoading({ stateWait: false }));
+
+    const { data, status, message } = res;
+    if (status === "Success") {
+      // const LAZY = new DataSource({
+      //   type: "array",
+      //   store: data,
+      //   key: "id",
+      //   paginate: true,
+      //   pageSize: 10,
+      // });
+      const LAZY = new DataSource({
+        store: data,
+        paginate: true,
+        pageSize: 10,
+      });
+
+      setAllProduct(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+
   const handleGroupProductList = asyncWrapper(async () => {
     const res = await groupProductList();
     const { data, status, message } = res;
-    if (status == "Success") {
+    if (status === "Success") {
       setAllgroupProduct(data);
       console.log(data);
     } else {
