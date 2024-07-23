@@ -1,51 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Scanner } from '@yudiel/react-qr-scanner';
+import { Scanner } from "@yudiel/react-qr-scanner";
 import { connect } from "react-redux";
 import { Button } from "devextreme-react";
-import Modal from '../common/Modals/Modal';
+import Modal from "../common/Modals/Modal";
 import TableMultiSelect from "../common/Tables/TableMultiSelect";
 import OnOffIcon from '../../assets/images/icon/onOff.png';
 import {
-    Row,
-    Col,
-    Card,
-    Label,
-    TabContent,
-    TabPane,
-    Nav,
-    NavItem,
-    NavLink,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Input,
+  Row,
+  Col,
+  Card,
+  Label,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Input,
 } from "reactstrap";
 import DataGrid, {
-    Column,
-    Editing,
-    Paging,
-    Lookup,
-    Scrolling,
-    FilterRow,
-    HeaderFilter,
-    FilterPanel,
-    FilterBuilderPopup,
-    Pager,
-    Selection,
-    Grouping,
-    GroupPanel,
-    SearchPanel,
+  Column,
+  Editing,
+  Paging,
+  Lookup,
+  Scrolling,
+  FilterRow,
+  HeaderFilter,
+  FilterPanel,
+  FilterBuilderPopup,
+  Pager,
+  Selection,
+  Grouping,
+  GroupPanel,
+  SearchPanel,
 } from "devextreme-react/data-grid";
 import {
-    DataGridPageSizes,
-    DataGridDefaultPageSize,
-    DataGridDefaultHeight,
-    ToastTime,
-    ToastWidth,
-    ALL_MOD,
-    CHECK_BOXES_MOD,
-    FILTER_BUILDER_POPUP_POSITION,
+  DataGridPageSizes,
+  DataGridDefaultPageSize,
+  DataGridDefaultHeight,
+  ToastTime,
+  ToastWidth,
+  ALL_MOD,
+  CHECK_BOXES_MOD,
+  FILTER_BUILDER_POPUP_POSITION,
 } from "../../config/config";
 import { purchaseItemsColumns } from './Sale-config'
 import TextBox from "devextreme-react/text-box";
@@ -65,9 +65,9 @@ const PurchaseReceipt = () => {
     const [ShowInputCode, setShowInputCode] = useState(false);
     const [TxtConfirmCode, setTxtConfirmCode] = useState(null);
 
-    // useEffect(() => {
-    //     handleAcceptGroup();
-    // }, [ItemsList]);
+  // useEffect(() => {
+  //     handleAcceptGroup();
+  // }, [ItemsList]);
 
     const Barcode_onScan = async (data) => {
         await setScanValue(data[0].rawValue)
@@ -87,13 +87,13 @@ const PurchaseReceipt = () => {
         // setShowItems(true)
     }
 
-    const btnCancelItems_onClick = () => {
-        setShowItems(false)
-    }
+  const btnCancelItems_onClick = () => {
+    setShowItems(false);
+  };
 
-    const btnConfirmItems_onClick = () => {
-        alert('test')
-    }
+  const btnConfirmItems_onClick = () => {
+    alert("test");
+  };
 
     // const handleAcceptGroup = () => {
     //     console.log(ItemsList);
@@ -259,15 +259,6 @@ const PurchaseReceipt = () => {
 }
 
 export default PurchaseReceipt;
-
-
-
-
-
-
-
-
-
 
 // class PurchaseReceipt extends React.Component {
 //     constructor(props) {
@@ -451,4 +442,3 @@ export default PurchaseReceipt;
 // });
 
 // export default connect(mapStateToProps)(PurchaseReceipt);
-

@@ -21,7 +21,6 @@ const SwitchCase = ({
   trueLabel,
   falseLabel,
 }) => {
-
   return (
     <>
       {switcher ? (
@@ -70,7 +69,7 @@ const SwitchCase = ({
         <Col className=" d-flex align-items-end">
           <Form.Check
             checked={value}
-            onChange={(e) => onChange(e.target.checked)}
+            onChange={onChange}
             className={className}
             inline
             label={label}

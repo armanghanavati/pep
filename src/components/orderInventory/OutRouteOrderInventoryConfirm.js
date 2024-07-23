@@ -47,7 +47,11 @@ import { DataGridOrderPointInventoryColumns } from "./OrderInventory-config";
 
 import Wait from "../common/Wait";
 
-import { orderIventoryOutRouteList,updateGroupsOrderPointInventory,confirmRejectOrderInventoryOutRoute} from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
+import {
+  orderIventoryOutRouteList,
+  updateGroupsOrderPointInventory,
+  confirmRejectOrderInventoryOutRoute,
+} from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 import { logsOPITodayListByUserId } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-actions";
 import { remainOfEditInsertByLocationUser } from "../../redux/reducers/OrderPointInventory/orderPointInventory-actions";
 
@@ -56,32 +60,30 @@ import ConfirmIcon from "../../assets/images/icon/confirm.png";
 import RejectIcon from "../../assets/images/icon/reject2.png";
 import SearchIcon from "../../assets/images/icon/search.png";
 
-
 class OutRouteOrderInventoryConfirm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        stateWait: false,
-        stateShowRoute:false,
-        OrderInventoryGridData:null,
-        stateEnable_btnUpdate: false,
-        stateEnable_btnConfirm:false,
-        stateEnable_btnReject:false,
-        stateEnable_show:false,
-        OutRouteSelected:[],
-        OrderPointInventoryEdited:[],
-      ToastProps: {        
+      stateWait: false,
+      stateShowRoute: false,
+      OrderInventoryGridData: null,
+      stateEnable_btnUpdate: false,
+      stateEnable_btnConfirm: false,
+      stateEnable_btnReject: false,
+      stateEnable_show: false,
+      OutRouteSelected: [],
+      OrderPointInventoryEdited: [],
+      ToastProps: {
         isToastVisible: false,
         Message: "",
         Type: "",
       },
     };
   }
-  async componentDidMount(){    
+  async componentDidMount() {
     await this.fn_GetPermissions();
     this.showOrderInventoryOutRoute();
   }
-
 
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
@@ -90,7 +92,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
         switch (perm[i].objectName) {
           case "OutRoutOrderPointInventory.update":
             this.setState({ stateEnable_btnUpdate: true });
-            break;                   
+            break;
           case "OutRoutOrderPointInventory.show":
             this.setState({ stateEnable_show: true });
             break;
@@ -104,24 +106,25 @@ class OutRouteOrderInventoryConfirm extends React.Component {
       }
   };
 
-
-  showOrderInventoryOutRoute=async()=>{
+  showOrderInventoryOutRoute = async () => {
     this.OpenCloseWait();
-    if(this.state.stateEnable_show)
+    if (this.state.stateEnable_show)
       this.setState({
-          OrderInventoryGridData: await orderIventoryOutRouteList(this.props.User.token),
-          stateShowRoute:true,
-      })
+        OrderInventoryGridData: await orderIventoryOutRouteList(
+          this.props.User.token
+        ),
+        stateShowRoute: true,
+      });
     this.OpenCloseWait();
-  }
+  };
 
   grdOrderPointInventory_onRowUpdating = async (params) => {
     // let FirstVal = 1;
     // console.log("Old Data=" + JSON.stringify(params.oldData));
     // console.log("New Data=" + JSON.stringify(params.newData));
-    // let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;  
+    // let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;
 
-    // let flagEditRowCount = false;   
+    // let flagEditRowCount = false;
 
     // let flagPush = true;
     // for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
@@ -139,24 +142,24 @@ class OutRouteOrderInventoryConfirm extends React.Component {
     //   }
 
     // let FlagError = true;
-    // let errMsg = "";    
+    // let errMsg = "";
     // if (
     //   params.newData.orderUser > 0 &&
     //   params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
     //   params.newData.orderUser % params.oldData.itemsPerPack2 !== 0
     // ) {
-    //   FlagError = false;      
+    //   FlagError = false;
     //   errMsg += "\nکاربر گرامی عدد سفارش باید مضربی از تعداد در بسته باشد.";
     // }
     // if (params.newData.orderUser < 0) {
-    //   FlagError = false;      
+    //   FlagError = false;
     //   errMsg += "\n کاربر گرامی عدد سفارش باید بزرگتر یا مساوی با 0 باشد.";
     // }
-    
+
     // if (flagPush)
     //   if (FlagError) {
     //     // alert( params.oldData.orderUser)
-        
+
     //     let obj = {
     //       UserId: this.props.User.userId,
     //       OrderPointInventoryId: params.oldData.id,
@@ -185,31 +188,41 @@ class OutRouteOrderInventoryConfirm extends React.Component {
     let FirstVal = 1;
     console.log("Old Data=" + JSON.stringify(params.oldData));
     console.log("New Data=" + JSON.stringify(params.newData));
-    let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;   
-   
+    let tempOrderPointInventoryEdited = this.state.OrderPointInventoryEdited;
+
     // alert('edited='+tempOrderPointInventoryEdited.length+
     //         '\nMaxEdit='+AuthOBJ.orderInventoryEditRowCount+
     //         '\nRelaLogs='+(this.state.RealLogs).length)
 
-    let flagEditRowCount = false;  
+    let flagEditRowCount = false;
     let FlagError = true;
-    let flagCount=true;
+    let flagCount = true;
     let errMsg = "";
-    // ------------------------------------------------    
-    const OBJ_COUNT={
-      LocationId:params.oldData.locationId
-    }
-    const REMAIN_ORDER = await remainOfEditInsertByLocationUser(OBJ_COUNT,this.props.User.token);    
-    
-    if (tempOrderPointInventoryEdited.length >= REMAIN_ORDER && !flagEditRowCount) {
+    // ------------------------------------------------
+    const OBJ_COUNT = {
+      LocationId: params.oldData.locationId,
+    };
+    const REMAIN_ORDER = await remainOfEditInsertByLocationUser(
+      OBJ_COUNT,
+      this.props.User.token
+    );
+
+    if (
+      tempOrderPointInventoryEdited.length >= REMAIN_ORDER &&
+      !flagEditRowCount
+    ) {
       flagCount = false;
       errMsg += "کاربر گرامی ظرفیت سفارش گذاری فروشگاه تکمیل شده است";
     }
-    // ------------------------------------------------    
+    // ------------------------------------------------
     if (
       params.newData.orderUser > 0 &&
-      // params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&      
-      params.newData.orderUser % (params.oldData.itemsPerPack2==0 ? params.oldData.itemsPerPack : params.oldData.itemsPerPack2) !== 0
+      // params.newData.orderUser % params.oldData.itemsPerPack !== 0 &&
+      params.newData.orderUser %
+        (params.oldData.itemsPerPack2 == 0
+          ? params.oldData.itemsPerPack
+          : params.oldData.itemsPerPack2) !==
+        0
     ) {
       FlagError = false;
       // flagEditRowCount = false;
@@ -220,11 +233,14 @@ class OutRouteOrderInventoryConfirm extends React.Component {
       // flagEditRowCount = false;
       errMsg += "\n کاربر گرامی عدد سفارش باید بزرگتر یا مساوی با 0 باشد.";
     }
-    
+
     let flagPush = true;
-    if(FlagError)
+    if (FlagError)
       for (let i = 0; i < tempOrderPointInventoryEdited.length; i++)
-        if (tempOrderPointInventoryEdited[i].OrderPointInventoryId === params.oldData.id) {
+        if (
+          tempOrderPointInventoryEdited[i].OrderPointInventoryId ===
+          params.oldData.id
+        ) {
           tempOrderPointInventoryEdited[i].OrderValue =
             params.newData.orderUser === undefined
               ? params.oldData.orderUser
@@ -237,9 +253,8 @@ class OutRouteOrderInventoryConfirm extends React.Component {
           break;
         }
 
-
     if (flagPush)
-      if(FlagError && (flagCount || flagEditRowCount)){
+      if (FlagError && (flagCount || flagEditRowCount)) {
         let obj = {
           CompanyId: this.props.Company.currentCompanyId,
           UserId: this.props.User.userId,
@@ -272,8 +287,8 @@ class OutRouteOrderInventoryConfirm extends React.Component {
   };
 
   btnUpdateOrders_onClick = async () => {
-    if(this.state.OrderPointInventoryEdited.length>0){
-      this.OpenCloseWait();    
+    if (this.state.OrderPointInventoryEdited.length > 0) {
+      this.OpenCloseWait();
       const RTN = await updateGroupsOrderPointInventory(
         this.state.OrderPointInventoryEdited,
         this.props.User.token
@@ -281,44 +296,43 @@ class OutRouteOrderInventoryConfirm extends React.Component {
       let tempOrders = [];
       if (RTN.id != null) {
         this.setState({
-          OrderPointInventoryEdited: []
+          OrderPointInventoryEdited: [],
         });
-
 
         const ORDER_INV = this.state.OrderInventoryGridData;
         for (let i = 0; i < RTN.id.length; i++)
           for (let j = 0; j < ORDER_INV.length; j++) {
-            if (RTN.id[i] == ORDER_INV[j].id)
-              tempOrders.push(ORDER_INV[j])
+            if (RTN.id[i] == ORDER_INV[j].id) tempOrders.push(ORDER_INV[j]);
           }
-      }
-      else {
+      } else {
         tempOrders = this.state.OrderInventoryGridData;
-      }      
+      }
       this.setState({
         OrderInventoryGridData: tempOrders,
         ToastProps: {
           isToastVisible: true,
           //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
           //Type:RTN==1 ? "success" : "error",
-          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.\n."+RTN.messageOfTime,
-          Type: RTN.id.length==0 ? "success" : "error",
+          Message:
+            RTN.id.length == 0
+              ? "ویرایش با موفقیت انجام گردید"
+              : "تعدادی از سفارشات  ویرایش نشده است، لطفا حد مجاز سفارش را رعایت نمائید.\n." +
+                RTN.messageOfTime,
+          Type: RTN.id.length == 0 ? "success" : "error",
         },
       });
       this.OpenCloseWait();
-    }
-    else
-      this.setState({        
+    } else
+      this.setState({
         ToastProps: {
           isToastVisible: true,
           //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
           //Type:RTN==1 ? "success" : "error",
           Message: "سفارش جهت ویرایش وجود ندارد.",
-          Type: "error" ,
+          Type: "error",
         },
       });
   };
-
 
   OpenCloseWait() {
     this.setState({ stateWait: !this.state.stateWait });
@@ -327,41 +341,43 @@ class OutRouteOrderInventoryConfirm extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
-
-  grdOrderPointInventory_onSelectionChanged=({ selectedRowKeys, selectedRowsData })=> {
-    console.log(JSON.stringify(selectedRowsData))
-    let temp = []
-    for(let i=0;i<selectedRowsData.length;i++){
-        let obj = { value: selectedRowsData[i].id }
-        temp.push(obj)
-    }        
-    this.setState({ OutRouteSelected: temp})
-  }
-
-  btnConfirmOutRoute_onClick=async () =>{    
-    this.OpenCloseWait();
-    const OBJ={
-      values: JSON.stringify(this.state.OutRouteSelected),
-      status:true      
-    }    
-    // alert(JSON.stringify(OBJ))
-    await confirmRejectOrderInventoryOutRoute(OBJ,this.props.User.token)
-    this.OpenCloseWait();
-  }
-
-  btnRejectOutRoute_onClick=async()=>{
-    this.OpenCloseWait();
-    const OBJ={
-      values: JSON.stringify(this.state.OutRouteSelected),
-      status:false
+  grdOrderPointInventory_onSelectionChanged = ({
+    selectedRowKeys,
+    selectedRowsData,
+  }) => {
+    console.log(JSON.stringify(selectedRowsData));
+    let temp = [];
+    for (let i = 0; i < selectedRowsData.length; i++) {
+      let obj = { value: selectedRowsData[i].id };
+      temp.push(obj);
     }
-    await confirmRejectOrderInventoryOutRoute(OBJ,this.props.User.token)
-    this.OpenCloseWait();
-  }
+    this.setState({ OutRouteSelected: temp });
+  };
 
-  btnSearch_onClick=async()=>{
+  btnConfirmOutRoute_onClick = async () => {
+    this.OpenCloseWait();
+    const OBJ = {
+      values: JSON.stringify(this.state.OutRouteSelected),
+      status: true,
+    };
+    // alert(JSON.stringify(OBJ))
+    await confirmRejectOrderInventoryOutRoute(OBJ, this.props.User.token);
+    this.OpenCloseWait();
+  };
+
+  btnRejectOutRoute_onClick = async () => {
+    this.OpenCloseWait();
+    const OBJ = {
+      values: JSON.stringify(this.state.OutRouteSelected),
+      status: false,
+    };
+    await confirmRejectOrderInventoryOutRoute(OBJ, this.props.User.token);
+    this.OpenCloseWait();
+  };
+
+  btnSearch_onClick = async () => {
     this.showOrderInventoryOutRoute();
-  }
+  };
   render() {
     return (
       <div className="standardMargin" style={{ direction: "rtl" }}>
@@ -373,7 +389,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
           displayTime={ToastTime}
           width={ToastWidth}
           rtlEnabled={true}
-        />        
+        />
         {this.state.stateWait && (
           <Row className="text-center">
             <Col style={{ textAlign: "center", marginTop: "10px" }}>
@@ -385,10 +401,10 @@ class OutRouteOrderInventoryConfirm extends React.Component {
           <Row className="standardPadding">
             <Row>
               <Label className="title">تائید سفارشات خارج از مسیر</Label>
-            </Row>            
+            </Row>
             <Row className="standardSpaceTop">
               <Col xs="auto" className="standardMarginRight">
-                <Row style={{paddingBottom:'10px'}}>
+                <Row style={{ paddingBottom: "10px" }}>
                   <Col xs="auto">
                     <Button
                       icon={SearchIcon}
@@ -415,7 +431,9 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                   onRowUpdating={this.grdOrderPointInventory_onRowUpdating}
                   // onCellDblClick={this.grdOrderPointInventory_onCellDblClick}
                   // onRowPrepared={this.grdOrderPointInventory_onRowPrepared}
-                  onSelectionChanged={this.grdOrderPointInventory_onSelectionChanged}
+                  onSelectionChanged={
+                    this.grdOrderPointInventory_onSelectionChanged
+                  }
                   className="fontStyle"
                 >
                   <Scrolling
@@ -444,21 +462,21 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                   <HeaderFilter visible={true} />
                 </DataGrid>
               </Col>
-            </Row>            
-            <Row className="standardSpaceTop">      
-              {this.state.stateEnable_btnUpdate && (                
-                  <Col xs="auto" className="standardMarginRight">
-                    <Button
-                      icon={UpdateIcon}
-                      text="ذخیره تغییرات"
-                      type="success"
-                      stylingMode="contained"
-                      rtlEnabled={true}
-                      onClick={this.btnUpdateOrders_onClick}
-                      className="fontStyle"
-                    />
-                  </Col>                
-              )}      
+            </Row>
+            <Row className="standardSpaceTop">
+              {this.state.stateEnable_btnUpdate && (
+                <Col xs="auto" className="standardMarginRight">
+                  <Button
+                    icon={UpdateIcon}
+                    text="ذخیره تغییرات"
+                    type="success"
+                    stylingMode="contained"
+                    rtlEnabled={true}
+                    onClick={this.btnUpdateOrders_onClick}
+                    className="fontStyle"
+                  />
+                </Col>
+              )}
               {this.state.stateEnable_btnConfirm && (
                 <Col xs="auto" className="standardMarginRight">
                   <Button
@@ -472,7 +490,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                   />
                 </Col>
               )}
-              
+
               {this.state.stateEnable_btnReject && (
                 <Col xs="auto" className="standardMarginRight">
                   <Button
@@ -486,8 +504,7 @@ class OutRouteOrderInventoryConfirm extends React.Component {
                   />
                 </Col>
               )}
-              
-            </Row>            
+            </Row>
           </Row>
         </Card>
       </div>
@@ -495,10 +512,9 @@ class OutRouteOrderInventoryConfirm extends React.Component {
   }
 }
 
-
 const mapStateToProps = (state) => ({
-    User: state.users,    
-    Company: state.companies,
-  });
-  
+  User: state.users,
+  Company: state.companies,
+});
+
 export default connect(mapStateToProps)(OutRouteOrderInventoryConfirm);

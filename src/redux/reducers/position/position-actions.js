@@ -71,9 +71,14 @@ export async function deletePosition(positionId, Token) {
   return 0;
 }
 
-export async function searchPositionByBakhshnamehTypeIdList(bakhshnamehTypeId, Token) {
+export async function searchPositionByBakhshnamehTypeIdList(
+  bakhshnamehTypeId,
+  Token
+) {
   const url =
-    window.apiAddress + "/Position/SearchPositionByBakhshnamehTypeIdList?bakhshnamehTypeId=" + bakhshnamehTypeId;
+    window.apiAddress +
+    "/Position/SearchPositionByBakhshnamehTypeIdList?bakhshnamehTypeId=" +
+    bakhshnamehTypeId;
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -83,7 +88,9 @@ export async function searchPositionByBakhshnamehTypeIdList(bakhshnamehTypeId, T
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("All position by bakhshnamehtypeId" + JSON.stringify(result.data));
+    console.log(
+      "All position by bakhshnamehtypeId" + JSON.stringify(result.data)
+    );
     return result.data;
   }
   return null;
@@ -91,7 +98,11 @@ export async function searchPositionByBakhshnamehTypeIdList(bakhshnamehTypeId, T
 
 export async function searchPositionByUserId(userId, companyId, Token) {
   const url =
-    window.apiAddress + "/Position/searchPositionByUserId?userId=" + userId + "&companyId=" + companyId;
+    window.apiAddress +
+    "/Position/searchPositionByUserId?userId=" +
+    userId +
+    "&companyId=" +
+    companyId;
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -101,7 +112,6 @@ export async function searchPositionByUserId(userId, companyId, Token) {
   });
   const result = await response.json();
   if (result.status == "Success") {
-    console.log("Position by userId" + JSON.stringify(result.data));
     return result.data;
   }
   return null;
