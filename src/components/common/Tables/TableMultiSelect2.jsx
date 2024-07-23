@@ -1,11 +1,13 @@
 import { Table, Col, Container } from "react-bootstrap";
 import Button from "../Buttons/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import "../../../assets/CSS/table_multi_select.css";
 import Modal from "../../common/Modals/Modal";
 import { Label } from "reactstrap";
 import SwitchCase from "../SwitchCases/SwitchCase";
+import Input from "../Inputs/Input";
+import { TextBox } from "devextreme-react";
 
 const TableMultiSelect2 = ({
   label,
@@ -13,14 +15,32 @@ const TableMultiSelect2 = ({
   md = 3,
   xl = 3,
   xxl = 4,
-  allListRF = [],
+  allListRF,
   className,
   submit,
-  selectStore,
-  setSelectStore,
+  itemName,
+  selected,
+  setSelected,
 }) => {
   const [showTable, setShowTable] = useState(false);
-  //   const [selectStore, setSelectStore] = useState([]);
+  const [filterTable, setFilterTable] = useState(allListRF);
+  const [number, setNumber] = useState(null);
+  const [titleFilter, setTitleFilter] = useState("");
+  //   const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    setFilterTable(allListRF);
+  }, [allListRF]);
+
+  useEffect(() => {
+    if (titleFilter.length !== 0) {
+      setFilterTable(
+        allListRF.filter((item) => item[itemName].includes(titleFilter))
+      );
+    } else {
+      setFilterTable(allListRF);  
+    }
+  }, [titleFilter]);
 
   const handleSubmit = () => {
     setShowTable(false);
@@ -32,22 +52,24 @@ const TableMultiSelect2 = ({
   };
 
   const handleSelected = (id) => {
-    setSelectStore((prevSelectStore) =>
-      prevSelectStore.includes(id)
-        ? prevSelectStore.filter((itemId) => itemId !== id)
-        : [...prevSelectStore, id]
+    setSelected((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((itemId) => itemId !== id)
+        : [...prevSelected, id]
     );
   };
 
   const handleSelectedAll = () => {
-    setSelectStore((prevSelectStore) =>
-      prevSelectStore.length === allListRF.length
+    setSelected((prevSelected) =>
+      prevSelected.length === filterTable.length
         ? []
-        : allListRF.map((item) => item.id)
+        : filterTable.map((item) => item.id)
     );
   };
 
-  console.log(selectStore);
+  const handleTitleFilter = (e) => {
+    setTitleFilter(e.event.target.value);
+  };
 
   return (
     <Col className={className} xxl={xxl} xs={xs} md={md} xl={xl}>
@@ -56,7 +78,11 @@ const TableMultiSelect2 = ({
         onClick={() => setShowTable(true)}
         className="d-flex justify-content-between py-1 bg-white-multi cursorPointer px-2 border rounded-2"
       >
-        <span className="font15 mt-1"></span>
+        <span className="font15 mt-1">
+          {selected?.length !== 0 && selected?.length !== undefined
+            ? `${selected?.length} ${label} انتخاب شد`
+            : ""}
+        </span>
         <span>
           <MenuIcon className="text-secondary" />
         </span>
@@ -78,69 +104,55 @@ const TableMultiSelect2 = ({
       >
         <Container className="">
           <Col xl="12">
-            <Table
-              responsive
-              striped
-              bordered
-              hover
-              size="sm"
-              className="mt-4 bg-danger"
-            >
+            <Table responsive striped bordered hover size="sm">
               <thead className="">
                 <tr>
-                  <th className="width10 headColorTable select text-center text-white fw-normal">
-                    کد
+                  <th className="width2 headColorTable vertical-align-center select text-center text-white fw-normal">
+                    <SwitchCase
+                      type="checkbox"
+                      checked={selected.length === filterTable.length}
+                      onChange={handleSelectedAll}
+                    />
                   </th>
-                  <th className="minWidth150 headColorTable select text-center text-white fw-normal width15">
-                    عنوان
+                  <th className=" width2 headColorTable vertical-align-center select text-center text-white fw-normal">
+                    ردیف
+                    {/* <Input className="mt-0 w-100" /> */}
                   </th>
-                  <th className="width10 headColorTable select my-2 text-center text-white fw-normal">
-                    <div className="my-1">
-                      <SwitchCase
-                        type="checkbox"
-                        checked={selectStore.length === allListRF.length}
-                        onChange={handleSelectedAll}
+                  <th className="minWidth150  headColorTable vertical-align-center select text-center text-white fw-normal width15">
+                    <span className="">عنوان</span>
+                    <div>
+                      <TextBox
+                        className="my-2"
+                        onInput={(e) => handleTitleFilter(e)}
+                        rtlEnabled
+                        value={titleFilter}
                       />
                     </div>
                   </th>
                 </tr>
               </thead>
-              <tbody
-                style={{ verticalAlign: "center" }}
-                className="text-center"
-              >
-                {allListRF?.length !== 0 ? (
-                  allListRF.map((item, index) => {
-                    return (
-                      <tr key={item.id}>
-                        <td className="fitTable">{index + 1}</td>
-                        <td className="fitTable">
-                          <div className="">{item?.locationName}</div>
-                        </td>
-                        <td className="fitTable">
-                          <div className="my-1">
-                            <SwitchCase
-                              type="checkbox"
-                              checked={selectStore.includes(item.id)}
-                              onChange={() => handleSelected(item.id)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td className="fitTable" colSpan={9}>
-                      <div className="">
-                        <span className="text-secondary p-2">
-                          کالایی برای نمایش وجود ندارد
-                          <i className="font20 textPrimary me-2 bi bi-exclamation-triangle-fill" />
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                )}
+              <tbody className=" text-center">
+                {filterTable.map((item, index) => {
+                  return (
+                    <tr key={item.id}>
+                      <td className="vertical-align-center fitTable">
+                        <div className="my-1">
+                          <SwitchCase
+                            type="checkbox"
+                            checked={selected.includes(item.id)}
+                            onChange={() => handleSelected(item.id)}
+                          />
+                        </div>
+                      </td>
+                      <td className=" vertical-align-center fitTable">
+                        {index + 1}
+                      </td>
+                      <td className="vertical-align-center fitTable">
+                        <div className="">{item[itemName]}</div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </Table>
           </Col>
