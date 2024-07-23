@@ -32,12 +32,12 @@ const TableMultiSelect = ({
   defaultPageSize = 10,
   className,
   deleteRow,
-  selectedRowKeys,
-  onSelectionChanged,
+  // selectedRowKeys,
+  // onSelectionChanged,
   selection,
   handleAcceptAll,
   onRowUpdating,
-  setSelectedRowKeys = () => {},
+  // setSelectedRowKeys = () => {},
   submit,
   selected,
   handleCancelRow,
@@ -57,6 +57,30 @@ const TableMultiSelect = ({
     // setSelectedRowKeys([]);
     setShowTable(false);
   };
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  // تابع برای مدیریت تغییرات انتخاب
+  const onSelectionChanged = (e) => {
+    if (e.currentSelectedRowKeys.length) {
+      console.log("1");
+      // افزودن کلیدهای انتخاب‌شده جدید به حالت فعلی
+      setSelectedRowKeys((prevSelectedRowKeys) => [
+        ...prevSelectedRowKeys,
+        ...e.currentSelectedRowKeys,
+      ]);
+    } else {
+      console.log("2");
+      // حذف کلیدهای لغو انتخاب‌شده از حالت فعلی
+      setSelectedRowKeys((prevSelectedRowKeys) =>
+        prevSelectedRowKeys.filter(
+          (key) => !e.currentDeselectedRowKeys.includes(key)
+        )
+      );
+    }
+  };
+
+  console.log(selectedRowKeys);
 
   return (
     <Col className={className} xxl={xxl} xs={xs} md={md} xl={xl}>

@@ -9,6 +9,7 @@ import asyncWrapper from "../../utiliy/asyncWrapper";
 import {
   groupIds,
   groupProductList,
+  itemComboByItemGroupIdList,
   slaPromotionList,
 } from "../../redux/reducers/item/item-action";
 import { storeGroup } from "../../redux/reducers/location/location-actions";
@@ -38,9 +39,11 @@ const ItemReport = () => {
   const [productListWithoutLazyLoading, setProductListWithoutLazyLoading] =
     useState([]);
   const [allListRF, setAllListRF] = useState([]);
+
   useEffect(() => {
     handleGroupProductList();
   }, []);
+
   useEffect(() => {
     if (companies?.currentCompanyId !== null) handleGroupStore();
   }, []);
@@ -54,7 +57,6 @@ const ItemReport = () => {
   };
 
   const handleGroupStore = asyncWrapper(async () => {
-    console.log(users?.userId, companies?.currentCompanyId);
     const res = await storeGroup(users?.userId, companies?.currentCompanyId);
     const { data, statusCode } = res;
     if (statusCode === 200) {
@@ -116,8 +118,10 @@ const ItemReport = () => {
     }
   };
 
+  console.log(productGroupList);
+
   const handleProductGP = asyncWrapper(async (e) => {
-    const res = await groupIds(e);
+    const res = await itemComboByItemGroupIdList(e);
     console.log(res);
     const { data, statusCode } = res;
     console.log(data, statusCode);
@@ -168,7 +172,7 @@ const ItemReport = () => {
       dataField: "itemName",
       caption: "نام کالا",
       allowEditing: false,
-    }, 
+    },
     {
       dataField: "barcode1",
       caption: "بارکد1",
@@ -184,23 +188,23 @@ const ItemReport = () => {
       caption: "تعداد در کارتن",
       allowEditing: false,
     },
-       
+
     {
       dataField: "consumerPrice",
       caption: "قیمت مصرف کننده",
       allowEditing: false,
-    },  
+    },
     {
       dataField: "discountPercent",
       caption: "درصد تخفیف",
       allowEditing: false,
-    },  
+    },
     {
       dataField: "discountPrice",
       caption: "مبلغ تخفیف",
       allowEditing: false,
-    }, 
-    
+    },
+
     // {
     //   dataField: "weight",
     //   caption: "وزن واحد",
@@ -210,11 +214,11 @@ const ItemReport = () => {
     //   dataField: "vat",
     //   caption: "مالیات بر ارزش افزوده",
     //   allowEditing: false,
-    // },   
+    // },
   ];
 
   const handleSearching = asyncWrapper(async () => {
-    setStateWait(true)
+    setStateWait(true);
     const postData = {
       itemIds: inputFields?.itsProductName?.includes(0)
         ? StringHelpers.fixComboListId(
@@ -237,13 +241,12 @@ const ItemReport = () => {
       },
     };
     const res = await slaPromotionList(postData);
-    setStateWait(false)
-    const { statusCode, data } = res;    
+    setStateWait(false);
+    const { statusCode, data } = res;
     setAllListRF(data);
-    
   });
 
-
+  console.log(productList);
 
   return (
     <Container fluid>

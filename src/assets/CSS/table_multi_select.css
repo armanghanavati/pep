@@ -16,3 +16,9 @@
    /* background: #e5edff; */
    border: 1px solid #d7d7d7;
 }
+
+.table-responsive {
+   overflow-x: auto;
+   -webkit-overflow-scrolling: touch;
+   max-height: 600px !important;
+}

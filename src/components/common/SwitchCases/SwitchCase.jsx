@@ -66,17 +66,16 @@ const SwitchCase = ({
           </label>
         </Col>
       ) : (
-        <Col className=" d-flex align-items-end">
-          <Form.Check
-            checked={value}
-            onChange={onChange}
-            className={className}
-            inline
-            label={label}
-            name="group1"
-            type="checkbox"
-          />
-        </Col>
+        <Form.Check
+          checked={checked}
+          value={value}
+          onChange={onChange}
+          className={className}
+          inline
+          label={label}
+          name="group1"
+          type="checkbox"
+        />
       )}
     </>
   );
