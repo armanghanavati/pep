@@ -622,9 +622,10 @@ const PromotionDetail = ({
           label="تا تاریخ"
         />
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
-          <PromotionType
-            selectStore={selectedType}
-            setSelectStore={setSelectedType}
+          <TableMultiSelect2
+            itemName={"platformName"}
+            selected={selectedType}
+            setSelected={setSelectedType}
             submit={handleAcceptGroup}
             allListRF={allPlatform}
             columns={platformColumns}
@@ -635,18 +636,7 @@ const PromotionDetail = ({
           />
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
-          <PromotionStore
-            selectStore={selectStore}
-            setSelectStore={setSelectStore}
-            submit={handleAcceptStore}
-            allListRF={storeList}
-            columns={storeColumns}
-            className="my-3"
-            xxl={12}
-            xl={2}
-            label="فروشگاه"
-          />
-          {/* <TableMultiSelect2
+          <TableMultiSelect2
             itemName={"locationName"}
             selected={selectStore}
             setSelected={setSelectStore}
@@ -657,12 +647,13 @@ const PromotionDetail = ({
             xxl={12}
             xl={2}
             label="فروشگاه"
-          /> */}
+          />
         </Col>
         <Col className="d-flex justify-content-start" xxl={4} xl={12}>
-          <PromotionCustomer
-            selectStore={selectedCustomer}
-            setSelectStore={setSelectedCustomer}
+          <TableMultiSelect2
+            itemName={"customerGroupName"}
+            selected={selectedCustomer}
+            setSelected={setSelectedCustomer}
             submit={handleAcceptCustomer}
             allListRF={allCustomer}
             columns={storeColumns}
