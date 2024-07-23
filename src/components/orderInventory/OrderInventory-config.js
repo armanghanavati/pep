@@ -10,6 +10,11 @@ export const DataGridOrderPointInventoryColumns = [
         allowEditing:false    
     },
     {
+        dataField:"itemGroupName" ,
+        caption:"گروه کالا",
+        allowEditing:false    
+    },
+    {
         dataField:"productName" ,
         caption:"نام کالا",
         allowEditing:false    
@@ -28,6 +33,12 @@ export const DataGridOrderPointInventoryColumns = [
         dataField:"orderUser" ,
         caption:"پیشنهاد کاربر",
         allowEditing:true    
+    },
+    {
+        dataField:"packCountOrder" ,
+        caption:"تعداد سفارش(کارتن)",
+        allowEditing:true,
+            
     },
     {
         dataField:"mojoodi" ,
@@ -119,6 +130,11 @@ export const DataGridOrderPointInventoryReportColumns = [
         allowEditing:false    
     },
     {
+        dataField:"itemGroupName" ,
+        caption:"گروه کالا",
+        allowEditing:false    
+    },
+    {
         dataField:"productName" ,
         caption:"نام کالا",
         allowEditing:false    
@@ -137,6 +153,12 @@ export const DataGridOrderPointInventoryReportColumns = [
         dataField:"orderUser" ,
         caption:"پیشنهاد کاربر",
         allowEditing:true    
+    },
+    {
+        dataField:"packCountOrder" ,
+        caption:"تعداد سفارش(کارتن)",
+        allowEditing:true,
+            
     },
     {
         dataField:"mojoodi" ,

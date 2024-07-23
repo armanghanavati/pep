@@ -18,6 +18,12 @@ export const DataGridOrderPointSupplierColumns = [
             
     },
     {
+        dataField:"packCountOrder" ,
+        caption:"تعداد سفارش(کارتن)",
+        allowEditing:true,
+            
+    },
+    {
         dataField:"mojoodi" ,
         caption:"موجودی",
         allowEditing:false,
@@ -28,6 +34,11 @@ export const DataGridOrderPointSupplierColumns = [
         caption:"نام فروشگاه",
         allowEditing:false,
                
+    },
+    {
+        dataField:"itemGroupName" ,
+        caption:"گروه کالا",
+        allowEditing:false    
     },
     {
         dataField:"productName" ,
@@ -256,6 +267,11 @@ export const DataGridOrderPointSupplierConfirmReportColumns = [
                
     },
     {
+        dataField:"itemGroupName" ,
+        caption:"گروه کالا",
+        allowEditing:false    
+    },
+    {
         dataField:"productName" ,
         caption:"نام کالا",
         allowEditing:false,
@@ -272,7 +288,13 @@ export const DataGridOrderPointSupplierConfirmReportColumns = [
         caption:"تعداد سفارش",
         allowEditing:true,
             
-    },   
+    },  
+    {
+        dataField:"packCountOrder" ,
+        caption:"تعداد سفارش(کارتن)",
+        allowEditing:true,
+            
+    }, 
     {
         dataField:"supplierName" ,
         caption:"نام تامین کننده",
