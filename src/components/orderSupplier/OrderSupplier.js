@@ -66,6 +66,7 @@ import { companyActions } from "../../redux/reducers/company/company-slice";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { supplierListByExtIds } from "../../redux/reducers/supplier/supplier-action";
 import { calcSumWeightPriceOrderPointSupplier } from "../../redux/reducers/orderPointSupplier/orderPointSupplier-actions";
+import { locationSupplierLimitList } from '../../redux/reducers/locationSupplierLimit/locationSupplierLimit-actions';
 
 import {
   itemListCombo,
@@ -288,24 +289,57 @@ class OrderSupplier extends React.Component {
     );
 
     ORDER_SUPPLIER = ORDER_SUPPLIER == null ? [] : ORDER_SUPPLIER;
-    let tempSupplierId = [];
+
+    let LocationIds = [];
+    let ExtSupplierIds = [];
     for (let i = 0; i < ORDER_SUPPLIER.length; i++) {
+
       let flag = true;
-      for (let j = 0; j < tempSupplierId.length; j++)
-        if (ORDER_SUPPLIER[i].supplierId == tempSupplierId[j].Id) flag = false;
-      if (flag) {
-        const SUP_OBJ = {
-          extSupplierId: ORDER_SUPPLIER[i].supplierId,
-        };
-        tempSupplierId.push(SUP_OBJ);
-      }
+
+      for (let j = 0; j < LocationIds.length; j++)
+        if (ORDER_SUPPLIER[i].locationId == LocationIds[j])
+          flag = false;
+      if (flag)
+        LocationIds.push(ORDER_SUPPLIER[i].locationId);
+
+      flag = true;
+      for (let j = 0; j < ExtSupplierIds.length; j++)
+        if (ORDER_SUPPLIER[i].supplierId == ExtSupplierIds[j])
+          flag = false;
+      if (flag)
+        ExtSupplierIds.push(ORDER_SUPPLIER[i].supplierId);
+
+      // const SUP_OBJ = {
+      //   extSupplierId: ORDER_SUPPLIER[i].supplierId,
+      //   locationId: ORDER_SUPPLIER[i].locationId,
+      // };
+      // tempOBJ.push(SUP_OBJ);
+
+      // let flag = true;
+      // for (let j = 0; j < tempOBJ.length; j++)
+      //   if (ORDER_SUPPLIER[i].supplierId == tempOBJ[j].extSupplierId && ORDER_SUPPLIER[i].locationId == tempOBJ[j].locationId ) {
+      //     flag = false;          
+      //   }          
+      // if (flag) {        
+      //   const SUP_OBJ = {
+      //     extSupplierId: ORDER_SUPPLIER[i].supplierId,
+      //     locationId: ORDER_SUPPLIER[i].locationId,
+      //   };
+      //   tempOBJ.push(SUP_OBJ);
+      // }
     }
+    const tempOBJ = {
+      extSupplierIds: ExtSupplierIds,
+      locationIds: LocationIds,
+    };
+
+    console.log(JSON.stringify(tempOBJ));
 
     this.setState({
       OrderSupplierGridData: ORDER_SUPPLIER,
       SupplierListSumMaxMinGridData: [],
-      SupplierListMaxMinParam: await supplierListByExtIds(
-        tempSupplierId,
+      SupplierListMaxMinParam: await locationSupplierLimitList(
+        tempOBJ,
         this.props.User.token
       ),
     });
@@ -489,7 +523,7 @@ class OrderSupplier extends React.Component {
     let tempSup = this.state.SupplierListSumMaxMinGridData;
 
     for (let i = 0; i < SUPP_LIST.length; i++)
-      if (SUPP_LIST[i].extSupplierId == extSupplierId) {
+      if (SUPP_LIST[i].extSupplierId == extSupplierId && SUPP_LIST[i].extLocationId == retailStoreId) {
         // alert('SUPPLIER FINDED='+JSON.stringify(SUPP_LIST[i])+'\n'+JSON.stringify(SUM_MAXMIN));
         if (
           SumPrice < SUPP_LIST[i].minOrderRiali ||
@@ -578,18 +612,18 @@ class OrderSupplier extends React.Component {
   // };
 
   btnUpdateOrders_onClick = async () => {
-    let MSG='';
-    let flagSend=true
-    if(this.state.SupplierListSumMaxMinGridData.length!==0){
-      MSG='محدودیت ریالی، وزنی و تعدادی رعایت نشده است.'
-      flagSend=false
-    }      
-    if(this.state.OrderPointSupplierEdited.length===0){
-      MSG+='\nسفارش جهت ویرایش وجود ندارد.'
-      flagSend=false
+    let MSG = '';
+    let flagSend = true
+    if (this.state.SupplierListSumMaxMinGridData.length !== 0) {
+      MSG = 'محدودیت ریالی، وزنی و تعدادی رعایت نشده است.'
+      flagSend = false
     }
-    if(flagSend){
-      this.OpenCloseWait();    
+    if (this.state.OrderPointSupplierEdited.length === 0) {
+      MSG += '\nسفارش جهت ویرایش وجود ندارد.'
+      flagSend = false
+    }
+    if (flagSend) {
+      this.OpenCloseWait();
       await this.fn_RemoveSuppierForConfirm(this.state.OrderPointSupplierEdited, this.state.SupplierListSumMaxMinGridData);
       const RTN = await updateGroupsOrderPointSupplier(
         this.state.OrderPointSupplierEdited,
@@ -611,27 +645,27 @@ class OrderSupplier extends React.Component {
       }
       else {
         tempOrders = this.state.OrderSupplierGridData;
-      }      
+      }
       this.setState({
         OrderSupplierGridData: tempOrders,
         ToastProps: {
           isToastVisible: true,
           //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
           //Type:RTN==1 ? "success" : "error",
-          Message: RTN.id.length==0  ? "ویرایش با موفقیت انجام گردید" :  "تعدادی از سفارشات  ویرایش نشده است.\n."+RTN.messageOfTime,
-          Type: RTN.id.length==0 ? "success" : "error",
+          Message: RTN.id.length == 0 ? "ویرایش با موفقیت انجام گردید" : "تعدادی از سفارشات  ویرایش نشده است.\n." + RTN.messageOfTime,
+          Type: RTN.id.length == 0 ? "success" : "error",
         },
       });
       this.OpenCloseWait();
     }
     else
-      this.setState({        
+      this.setState({
         ToastProps: {
           isToastVisible: true,
           //Message:RTN==1 ? ",ویرایش با موفقیت انجام گردید." : "خطا در ویرایش",
           //Type:RTN==1 ? "success" : "error",
           Message: MSG,
-          Type: "error" ,
+          Type: "error",
         },
       });
   };
