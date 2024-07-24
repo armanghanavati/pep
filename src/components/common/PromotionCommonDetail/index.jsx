@@ -38,7 +38,7 @@ import {
 import { CheckBox } from "devextreme-react";
 import DataSource from "devextreme/data/data_source";
 
-const PromotionCommonDtail = ({
+const PromotionCommonDetail = ({
   setShowDetail,
   handleChangeInputs,
   setProductList,
@@ -53,7 +53,9 @@ const PromotionCommonDtail = ({
   selectedType,
   setSelectedType,
   selectStore,
-  setSelectStore,selectedCustomer, setSelectedCustomer
+  setSelectStore,
+  selectedCustomer,
+  setSelectedCustomer,
 }) => {
   const { users } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -119,8 +121,6 @@ const PromotionCommonDtail = ({
       );
     }
   });
-
-
 
   const platformColumns = [
     {
@@ -358,4 +358,4 @@ const PromotionCommonDtail = ({
   );
 };
 
-export default PromotionCommonDtail;
+export default PromotionCommonDetail;

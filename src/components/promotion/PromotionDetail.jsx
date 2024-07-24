@@ -103,6 +103,7 @@ const PromotionDetail = ({
     setInputFields((prevstate) => {
       return { ...prevstate, [name]: value };
     });
+    console.log(name, value);
   };
 
   const permitForNextStep = (inputsName = []) => {
@@ -366,6 +367,7 @@ const PromotionDetail = ({
     >
       <Row className="d-flex">
         <PromotionCommonDetail
+          handleChangeInputs={handleChangeInputs}
           typeAndPlatform={typeAndPlatform}
           setTypeAndPlatform={setTypeAndPlatform}
           setProductList={setProductList}
