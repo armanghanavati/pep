@@ -56,7 +56,7 @@ import Promotions from "../pages/Promotions";
 import ItemReports from "../pages/ItemReports";
 import PurchaseReceipts from "../pages/PurchaseReceipts";
 import PrintLabels from "../pages/PrintLabels";
-import PromotionsReports from '../components/promotion/PromotionReport'
+import PromotionsReports from "../components/promotion/PromotionReport";
 
 export const REAL_COMPONENT = [
   {

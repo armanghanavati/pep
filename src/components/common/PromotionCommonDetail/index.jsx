@@ -68,9 +68,10 @@ const PromotionCommonDetail = ({
 }) => {
   const { users } = useSelector((state) => state);
   const dispatch = useDispatch();
+
+  const [storeList, setStoreList] = useState([]);
   const [promotionTypeList, setPromotionTypeList] = useState([]);
   const [allPlatform, setAllPlatform] = useState([]);
-  const [storeList, setStoreList] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
   const [allCustomer, setAllCustomer] = useState([]);
   const [allgroupProduct, setAllgroupProduct] = useState([]);
@@ -82,6 +83,7 @@ const PromotionCommonDetail = ({
     const { data, status, message } = res;
     if (status == "Success") {
       setPromotionTypeList(data);
+      setTypeAndPlatform((prev) => ({ ...prev, allType: data }));
     } else {
       dispatch(
         RsetShowToast({
@@ -101,6 +103,7 @@ const PromotionCommonDetail = ({
     const { data, status, message } = res;
     if (status == "Success") {
       setAllPlatform(data);
+      setTypeAndPlatform((prev) => ({ ...prev, platform: data }));
     } else {
       dispatch(
         RsetShowToast({
@@ -117,6 +120,7 @@ const PromotionCommonDetail = ({
     const { data, status, message } = res;
     if (status === "Success") {
       setAllgroupProduct(data);
+      setTypeAndPlatform((prev) => ({ ...prev, allProductGroup: data }));
       console.log(data);
     } else {
       dispatch(
@@ -130,6 +134,7 @@ const PromotionCommonDetail = ({
   });
 
   const handleGroupIds = asyncWrapper(async (e) => {
+    console.log(e);
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await itemComboByItemGroupIdList(e);
     dispatch(RsetIsLoading({ stateWait: false }));
@@ -142,6 +147,7 @@ const PromotionCommonDetail = ({
         pageSize: 10,
       });
       setAllProduct(data);
+      setTypeAndPlatform((prev) => ({ ...prev, allProduct: data }));
     } else {
       dispatch(
         RsetShowToast({
@@ -162,6 +168,7 @@ const PromotionCommonDetail = ({
     const { data, status, message } = res;
     if (status == "Success") {
       setStoreList(data);
+      setTypeAndPlatform((prev) => ({ ...prev, allStore: data }));
     } else {
       dispatch(
         RsetShowToast({

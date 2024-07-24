@@ -36,12 +36,13 @@ const PromotionReport = () => {
   };
 
   const handleSearching = asyncWrapper(async () => {
+    console.log([inputFields?.typePromotion]);
     const postData = {
       userId: users?.userId,
-      title: inputFields?.title,
+      title: inputFields?.title || null,
       itemIds: selectedProduct,
       locationIds: typeAndPlatform?.store,
-      promotionTypeIds: inputFields?.typePromotion,
+      promotionTypeIds: [inputFields?.typePromotion],
       promotionPaltformIds: typeAndPlatform?.type,
       promotionCustomerGroupIds: typeAndPlatform?.customer,
       fromDate: StringHelpers?.convertDateEn(inputFields?.itsFromDate),
@@ -109,9 +110,11 @@ const PromotionReport = () => {
           </div>
         </div>
         <Row className="standardPadding">
-          <Table headerFilter 
-          columns={promotionColumns}
-          allListRF={allListRF} />
+          <Table
+            headerFilter
+            columns={promotionColumns}
+            allListRF={allListRF}
+          />
         </Row>
       </Card>
     </Container>
