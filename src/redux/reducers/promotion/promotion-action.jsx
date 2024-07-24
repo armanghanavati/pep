@@ -61,3 +61,10 @@ export const updateSlaPromotion = async (postData) => {
   const response = await axios.patch(url, postData);
   return response?.data;
 };
+
+// جستجوی گزارش پروموشن ها
+export const slaPromotionReport = async (postData) => {
+  const url = window?.apiAddress + `/SlaPromotion/slaPromotionReport`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};

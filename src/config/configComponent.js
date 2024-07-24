@@ -1,11 +1,11 @@
-import Ticket from '../components/ticket/Ticket'
-import PaymentRequest from '../components/payment/PaymentRequest'
-import Company from '../components/company/Company'
-import Position from '../components/position/Position'
-import Locations from '../pages/Locations'
-import Supplier from '../components/supplier/Supplier';
-import Person from '../components/person/Person'
-import OrdersSupplier from '../pages/OrdersSupplier'
+import Ticket from "../components/ticket/Ticket";
+import PaymentRequest from "../components/payment/PaymentRequest";
+import Company from "../components/company/Company";
+import Position from "../components/position/Position";
+import Locations from "../pages/Locations";
+import Supplier from "../components/supplier/Supplier";
+import Person from "../components/person/Person";
+import OrdersSupplier from "../pages/OrdersSupplier";
 import User from "../components/user/User";
 import Role from "../components/role/Role";
 import PepObject from "../components/pepObject/PepObject";
@@ -13,49 +13,50 @@ import PepRoleObjectPermission from "../components/pepRoleObjectPermission/PepRo
 import OrderStoreDate from "../components/orderStoreDate/OrderStoreDate";
 import OrdersInventory from "../pages/OrdersInventory";
 import OrderStoreSupplierDate from "../components/orderStoreSupplierDate/OrderStoreSupplierDate";
-import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber"
+import LocationPositionOrderNumber from "../components/locationPositionOrderNumber/LocationPositionOrderNumber";
 import RegisterOrderTimes from "../pages/RegisterOrderTimes";
-import ItemLocations from '../pages/ItemLocations';
-import OrdersInventoryReports from '../pages/OrdersInventoryReports';
-import OrdersInventoryOutRouteReports from '../pages/OrdersInventoryOutRouteReports';
-import OutRoutsOrdersInventoryConfirms from '../pages/OutRoutsOrdersInventoryConfirms';
-import RegisterSupplierOrderTimes from '../pages/RegisterSupplierOrderTimes';
-import UserCompanies from '../pages/UserCompanies';
-import UserLocations from '../pages/UserLocations'
-import PersonShifts from '../pages/PersonShifts'
-import ItemSuppliers from '../pages/ItemSuppliers'
-import OrderInventoryConfirms from '../pages/OrderInventoryConfirms'
-import OrderSupplierConfirms from '../pages/OrderSupplierConfirms';
-import OrderPoints from '../pages/OrderPoints'
-import OrderPointSupplierReports from '../pages/OrderPointSupplierReports';
-import TicketSubjectUsers from '../pages/TicketSubjectUsers';
-import TicketSubjects from '../pages/TicketSubjects'
-import OrdersByUpload from '../pages/OrdersByUpload'
-import SupplierLocationContacts from '../pages/SupplierLocationContacts'
-import Opinions from '../pages/Opinions'
-import RealEstateRegisters from '../pages/RealEstateRegisters'
-import Questions from '../pages/Questions'
-import Answers from '../pages/Answers'
-import Zones from '../pages/Zones'
-import RealEstateShow from '../components/realEstate/RealEstateShow'
-import AnswerReports from '../pages/AnswerReports'
-import QuestionTypeUsers from '../pages/QuestionTypeUsers'
-import Profiles from '../pages/Profiles'
-import StoreKalaMojoodiReports from '../pages/StoreKalaMojoodiReports'
-import TicketReports from '../pages/TicketReports'
-import ItemsWeights from '../pages/ItemsWeights'
-import SnpOrders from '../pages/SnpOrder'
-import ItemJets from '../pages/ItemJets'
-import ItemLocationSnapps from '../pages/ItemLocationSnapps'
-import SnpOrderReports from '../pages/SnpOrderReports'
-import TissMapItemSSTIDs from '../pages/TissMapItemSSTIDs'
-import TissDataDocs from '../pages/TissDataDocs'
-import OrderPointSupplierConfirmReports from '../pages/OrderPointSupplierConfirmReports'
-import Bakhshnamehs from '../pages/Bakhshnamehs'
-import Promotions from '../pages/Promotions';
-import ItemReports from '../pages/ItemReports'
-import PurchaseReceipts from '../pages/PurchaseReceipts'
-import PrintLabels from '../pages/PrintLabels'
+import ItemLocations from "../pages/ItemLocations";
+import OrdersInventoryReports from "../pages/OrdersInventoryReports";
+import OrdersInventoryOutRouteReports from "../pages/OrdersInventoryOutRouteReports";
+import OutRoutsOrdersInventoryConfirms from "../pages/OutRoutsOrdersInventoryConfirms";
+import RegisterSupplierOrderTimes from "../pages/RegisterSupplierOrderTimes";
+import UserCompanies from "../pages/UserCompanies";
+import UserLocations from "../pages/UserLocations";
+import PersonShifts from "../pages/PersonShifts";
+import ItemSuppliers from "../pages/ItemSuppliers";
+import OrderInventoryConfirms from "../pages/OrderInventoryConfirms";
+import OrderSupplierConfirms from "../pages/OrderSupplierConfirms";
+import OrderPoints from "../pages/OrderPoints";
+import OrderPointSupplierReports from "../pages/OrderPointSupplierReports";
+import TicketSubjectUsers from "../pages/TicketSubjectUsers";
+import TicketSubjects from "../pages/TicketSubjects";
+import OrdersByUpload from "../pages/OrdersByUpload";
+import SupplierLocationContacts from "../pages/SupplierLocationContacts";
+import Opinions from "../pages/Opinions";
+import RealEstateRegisters from "../pages/RealEstateRegisters";
+import Questions from "../pages/Questions";
+import Answers from "../pages/Answers";
+import Zones from "../pages/Zones";
+import RealEstateShow from "../components/realEstate/RealEstateShow";
+import AnswerReports from "../pages/AnswerReports";
+import QuestionTypeUsers from "../pages/QuestionTypeUsers";
+import Profiles from "../pages/Profiles";
+import StoreKalaMojoodiReports from "../pages/StoreKalaMojoodiReports";
+import TicketReports from "../pages/TicketReports";
+import ItemsWeights from "../pages/ItemsWeights";
+import SnpOrders from "../pages/SnpOrder";
+import ItemJets from "../pages/ItemJets";
+import ItemLocationSnapps from "../pages/ItemLocationSnapps";
+import SnpOrderReports from "../pages/SnpOrderReports";
+import TissMapItemSSTIDs from "../pages/TissMapItemSSTIDs";
+import TissDataDocs from "../pages/TissDataDocs";
+import OrderPointSupplierConfirmReports from "../pages/OrderPointSupplierConfirmReports";
+import Bakhshnamehs from "../pages/Bakhshnamehs";
+import Promotions from "../pages/Promotions";
+import ItemReports from "../pages/ItemReports";
+import PurchaseReceipts from "../pages/PurchaseReceipts";
+import PrintLabels from "../pages/PrintLabels";
+import PromotionsReports from "../components/promotion/PromotionReport";
 
 export const REAL_COMPONENT = [
   {
@@ -91,9 +92,8 @@ export const REAL_COMPONENT = [
     orgComponent: <Person />,
   },
   {
-
     strComponent: "OrdersSupplier",
-    orgComponent: <OrdersSupplier />
+    orgComponent: <OrdersSupplier />,
   },
   {
     strComponent: "User",
@@ -206,8 +206,7 @@ export const REAL_COMPONENT = [
   {
     strComponent: "Opinions",
     orgComponent: <Opinions />,
-  }
-  ,
+  },
   {
     strComponent: "RealEstateRegisters",
     orgComponent: <RealEstateRegisters />,
@@ -263,8 +262,7 @@ export const REAL_COMPONENT = [
   {
     strComponent: "SnpOrderReports",
     orgComponent: <SnpOrderReports />,
-  }
-  ,
+  },
   {
     strComponent: "ItemLocationSnapps",
     orgComponent: <ItemLocationSnapps />,
@@ -285,23 +283,29 @@ export const REAL_COMPONENT = [
     strComponent: "Bakhshnamehs",
     orgComponent: <Bakhshnamehs />,
   },
+  // {
+  //   strComponent: "Promotions",
+  //   orgComponent: <Promotions />,
+  // },
   {
     strComponent: "Promotions",
-    orgComponent: <Promotions />,
+    orgComponent: <PromotionsReports />,
+  },
+
+  {
+    strComponent: "PromotionsReports",
+    orgComponent: <PromotionsReports />,
   },
   {
     strComponent: "ItemReports",
     orgComponent: <ItemReports />,
-  }
-  ,
+  },
   {
     strComponent: "PurchaseReceipts",
     orgComponent: <PurchaseReceipts />,
-  }
-  ,
+  },
   {
     strComponent: "PrintLabels",
     orgComponent: <PrintLabels />,
-  }
+  },
 ];
-

@@ -33,12 +33,12 @@ const TableMultiSelect2 = ({
   }, [allListRF]);
 
   useEffect(() => {
-    if (titleFilter.length !== 0) {
+    if (titleFilter?.length !== 0) {
       setFilterTable(
         allListRF.filter((item) => item[itemName].includes(titleFilter))
       );
     } else {
-      setFilterTable(allListRF);  
+      setFilterTable(allListRF);
     }
   }, [titleFilter]);
 
@@ -61,9 +61,9 @@ const TableMultiSelect2 = ({
 
   const handleSelectedAll = () => {
     setSelected((prevSelected) =>
-      prevSelected.length === filterTable.length
+      prevSelected?.length === filterTable?.length
         ? []
-        : filterTable.map((item) => item.id)
+        : filterTable?.map((item) => item?.id)
     );
   };
 
@@ -110,7 +110,7 @@ const TableMultiSelect2 = ({
                   <th className="width2 headColorTable vertical-align-center select text-center text-white fw-normal">
                     <SwitchCase
                       type="checkbox"
-                      checked={selected.length === filterTable.length}
+                      checked={selected?.length === filterTable?.length}
                       onChange={handleSelectedAll}
                     />
                   </th>
@@ -132,14 +132,14 @@ const TableMultiSelect2 = ({
                 </tr>
               </thead>
               <tbody className=" text-center">
-                {filterTable.map((item, index) => {
+                {filterTable?.map((item, index) => {
                   return (
                     <tr key={item.id}>
                       <td className="vertical-align-center fitTable">
                         <div className="my-1">
                           <SwitchCase
                             type="checkbox"
-                            checked={selected.includes(item.id)}
+                            checked={selected?.includes(item.id)}
                             onChange={() => handleSelected(item.id)}
                           />
                         </div>
