@@ -37,38 +37,7 @@ const PromotionProduct = ({
   const dispatch = useDispatch();
   const [inputsProduct, setInputsProduct] = useState({});
   const [errors, setErrors] = useState({});
-  const [allProduct, setAllProduct] = useState(
-    new DataSource({
-      load: async (loadOptions) => {
-        const res = await itemComboByItemGroupIdList(
-          loadOptions.filter ? loadOptions.filter[0][2] : [],
-          loadOptions.skip,
-          loadOptions.take
-        );
-        const { data, status, message } = res;
-        if (status === "Success") {
-          return {
-            data: data.items,
-            totalCount: data.totalCount,
-          };
-        } else {
-          dispatch(
-            RsetShowToast({
-              isToastVisible: true,
-              Message: message || "لطفا دوباره امتحان کنید",
-              Type: status,
-            })
-          );
-          return {
-            data: [],
-            totalCount: 0,
-          };
-        }
-      },
-      paginate: true,
-      pageSize: 10,
-    })
-  );
+  const [allProduct, setAllProduct] = useState(null);
 
   const filterProductGroup = allgroupProduct?.filter((item) => {
     return item?.id === inputsProduct?.productGroup;
@@ -124,13 +93,6 @@ const PromotionProduct = ({
 
     const { data, status, message } = res;
     if (status === "Success") {
-      // const LAZY = new DataSource({
-      //   type: "array",
-      //   store: data,
-      //   key: "id",
-      //   paginate: true,
-      //   pageSize: 10,
-      // });
       const LAZY = new DataSource({
         store: data,
         paginate: true,

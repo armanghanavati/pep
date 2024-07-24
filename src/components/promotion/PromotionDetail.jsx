@@ -37,9 +37,6 @@ import {
   RsetShowToast,
 } from "../../redux/reducers/main/main-slice";
 import { CheckBox } from "devextreme-react";
-import PromotionStore from "./PromotionStore";
-import PromotionType from "./PromotionType";
-import PromotionCustomer from "./PromotionCustomer";
 import DataSource from "devextreme/data/data_source";
 import PromotionCommonDetail from "../common/PromotionCommonDetail";
 
@@ -65,7 +62,7 @@ const PromotionDetail = ({
   const [selectedType, setSelectedType] = useState([]);
   const [selectStore, setSelectStore] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
-
+  
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
       if (id) {

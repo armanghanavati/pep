@@ -24,7 +24,11 @@ import {
 import asyncWrapper from "../../../utiliy/asyncWrapper";
 import CheckIcon from "@mui/icons-material/Check";
 import StringHelpers from "../../../utiliy/GlobalMethods";
-import { groupIds } from "../../../redux/reducers/item/item-action";
+import {
+  groupIds,
+  groupProductList,
+  itemComboByItemGroupIdList,
+} from "../../../redux/reducers/item/item-action";
 import { useDispatch, useSelector } from "react-redux";
 import {
   locationPromotionList,
@@ -39,6 +43,7 @@ import { CheckBox } from "devextreme-react";
 import DataSource from "devextreme/data/data_source";
 
 const PromotionCommonDetail = ({
+  itsPromotionReport,
   setShowDetail,
   handleChangeInputs,
   setProductList,
@@ -56,14 +61,19 @@ const PromotionCommonDetail = ({
   setSelectStore,
   selectedCustomer,
   setSelectedCustomer,
+  selectedProduct,
+  setSelectedProduct,
+  selectedGroup,
+  setSelectedGroup,
 }) => {
   const { users } = useSelector((state) => state);
   const dispatch = useDispatch();
   const [promotionTypeList, setPromotionTypeList] = useState([]);
   const [allPlatform, setAllPlatform] = useState([]);
   const [storeList, setStoreList] = useState([]);
-
+  const [allProduct, setAllProduct] = useState([]);
   const [allCustomer, setAllCustomer] = useState([]);
+  const [allgroupProduct, setAllgroupProduct] = useState([]);
 
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
     dispatch(RsetIsLoading({ stateWait: true }));
@@ -91,6 +101,47 @@ const PromotionCommonDetail = ({
     const { data, status, message } = res;
     if (status == "Success") {
       setAllPlatform(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+
+  const handleGroupProductList = asyncWrapper(async () => {
+    const res = await groupProductList();
+    const { data, status, message } = res;
+    if (status === "Success") {
+      setAllgroupProduct(data);
+      console.log(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+
+  const handleGroupIds = asyncWrapper(async (e) => {
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const res = await itemComboByItemGroupIdList(e);
+    dispatch(RsetIsLoading({ stateWait: false }));
+
+    const { data, status, message } = res;
+    if (status === "Success") {
+      const LAZY = new DataSource({
+        store: data,
+        paginate: true,
+        pageSize: 10,
+      });
+      setAllProduct(data);
     } else {
       dispatch(
         RsetShowToast({
@@ -241,11 +292,21 @@ const PromotionCommonDetail = ({
     setTypeAndPlatform((prev) => ({ ...prev, customer: selectedCustomer }));
   };
 
+  const handleAcceptProduct = () => {
+    setTypeAndPlatform((prev) => ({ ...prev, product: selectedProduct }));
+  };
+
   const handleGetEditCustomer = () => {
     const fix = allCustomer
       ?.filter((custom) => custom?.isChecked === true)
       .map((item) => item.id);
     setSelectedCustomer((prev) => [...prev, ...fix]);
+  };
+
+  const handleAcceptGroupLocation = () => {
+    if (selectedGroup?.length !== 0) {
+      handleGroupIds(selectedGroup);
+    }
   };
 
   useEffect(() => {
@@ -255,6 +316,9 @@ const PromotionCommonDetail = ({
     handleGroupStore();
     if (detailRow?.data?.id) {
       handleGetDataEditFields();
+    }
+    if (itsPromotionReport) {
+      handleGroupProductList();
     }
   }, []);
 
@@ -269,7 +333,7 @@ const PromotionCommonDetail = ({
   return (
     <Row className="d-flex">
       <Input
-        error={errors.title}
+        error={!!errors && errors.title}
         validations={[["required"]]}
         xxl={4}
         className="my-3"
@@ -281,7 +345,7 @@ const PromotionCommonDetail = ({
       <DatePicker
         onChange={(e) => handleChangeInputs("itsFromDate", e)}
         name="itsFromDate"
-        error={errors.itsFromDate}
+        error={!!errors && errors?.itsFromDate}
         value={inputFields?.itsFromDate}
         className="my-3"
         minDate={Date.now()}
@@ -297,7 +361,7 @@ const PromotionCommonDetail = ({
         onChange={(e) => handleChangeInputs("itsToDate", e)}
         className="my-3"
         xxl={4}
-        error={errors.itsToDate}
+        error={!!errors && errors.itsToDate}
         label="تا تاریخ"
       />
       <Col className="d-flex justify-content-start" xxl={4} xl={12}>
@@ -319,7 +383,7 @@ const PromotionCommonDetail = ({
           itemName={"locationName"}
           selected={selectStore}
           setSelected={setSelectStore}
-          submit={handleAcceptStore}
+          submit={handleAcceptProduct}
           allListRF={storeList}
           columns={storeColumns}
           className="my-3"
@@ -328,6 +392,37 @@ const PromotionCommonDetail = ({
           label="فروشگاه"
         />
       </Col>
+      {itsPromotionReport && (
+        <>
+          <Col className="d-flex justify-content-start" xxl={4} xl={12}>
+            <TableMultiSelect2
+              itemName={"label"}
+              selected={selectedGroup}
+              setSelected={setSelectedGroup}
+              submit={handleAcceptGroupLocation}
+              allListRF={allgroupProduct}
+              className="my-3"
+              xxl={12}
+              xl={2}
+              label="گروه کالا"
+            />
+          </Col>
+          <Col className="d-flex justify-content-start" xxl={4} xl={12}>
+            <TableMultiSelect2
+              itemName={"label"}
+              selected={selectedProduct}
+              setSelected={setSelectedProduct}
+              submit={handleAcceptStore}
+              allListRF={allProduct}
+              columns={storeColumns}
+              className="my-3"
+              xxl={12}
+              xl={2}
+              label="کالا"
+            />
+          </Col>
+        </>
+      )}
       <Col className="d-flex justify-content-start" xxl={4} xl={12}>
         <TableMultiSelect2
           itemName={"customerGroupName"}
@@ -342,6 +437,18 @@ const PromotionCommonDetail = ({
           label="گروه مشتری"
         />
       </Col>
+      {itsPromotionReport && (
+        <Input
+          maxLength={3}
+          label="درصد تخفیف"
+          type="number"
+          xxl={4}
+          className="my-3"
+          name="discount"
+          onChange={handleChangeInputs}
+          value={inputFields?.discount}
+        />
+      )}
       <ComboBox
         name="typePromotion"
         displayExpr="typeName"
