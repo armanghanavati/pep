@@ -62,9 +62,10 @@ const PromotionDetail = ({
   const [selectedType, setSelectedType] = useState([]);
   const [selectStore, setSelectStore] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
-  
+
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
+      console.log(data, postProps, id, item);
       if (id) {
         return {
           slaPromotionId: id,
@@ -193,6 +194,7 @@ const PromotionDetail = ({
   };
 
   const handleAcceptPromotion = asyncWrapper(async () => {
+    console.log(handleIdForList(typeAndPlatform?.store, "bseLocationId"));
     const postAddPromotion = {
       title: inputFields?.title,
       fromDate: StringHelpers?.convertDateEn(inputFields?.itsFromDate),
@@ -243,7 +245,7 @@ const PromotionDetail = ({
         "slaPromotionPlatformId",
         detailRow?.data?.id
       ),
-      accLocationPromotions: handleIdForList(
+      accLocationPromotion: handleIdForList(
         typeAndPlatform?.store || selectStore,
         "bseLocationId",
         detailRow?.data?.id

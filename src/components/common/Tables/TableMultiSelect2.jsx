@@ -21,6 +21,8 @@ const TableMultiSelect2 = ({
   itemName,
   selected,
   setSelected,
+  name,
+  error,
 }) => {
   const [showTable, setShowTable] = useState(false);
   const [filterTable, setFilterTable] = useState(allListRF);
@@ -158,6 +160,17 @@ const TableMultiSelect2 = ({
           </Col>
         </Container>
       </Modal>
+      <span className="flex-order-column">
+        {error &&
+          error.map((err, index) => (
+            <span
+              key={`${name}-errors-${index}`}
+              className="text-danger font12"
+            >
+              {err}
+            </span>
+          ))}
+      </span>
     </Col>
   );
 };

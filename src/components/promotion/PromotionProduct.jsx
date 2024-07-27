@@ -43,6 +43,33 @@ const PromotionProduct = ({
     return item?.id === inputsProduct?.productGroup;
   });
 
+  const permitForNextStep = (inputsName = []) => {
+    const error = handleValidation(inputsName);
+    for (let key in error) {
+      if (error[key]?.length > 0) {
+        if (inputsName.includes(key)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const handleValidation = (inputsName = []) => {
+    const err = { ...errors };
+    inputsName.map((item) => {
+      if (
+        inputFields[item] === undefined ||
+        inputFields[item] === null ||
+        JSON.stringify(inputFields[item])?.trim() === ""
+      ) {
+        err[item] = ["پرکردن این فیلد الزامی است"];
+      }
+    });
+    setErrors(err);
+    return err;
+  };
+
   const filterProduct = allProduct?.filter((item) => {
     return item?.id === inputsProduct?.product;
   });
@@ -204,6 +231,12 @@ const PromotionProduct = ({
     }
   };
 
+  const handleQuestionToAccept = () => {
+    if (permitForNextStep(["productGroup", "product", "discount"]) === true) {
+      handleSubmitProduct();
+    }
+  };
+
   return (
     <>
       <Modal
@@ -220,7 +253,7 @@ const PromotionProduct = ({
           />,
           <Button
             className=""
-            onClick={handleSubmitProduct}
+            onClick={handleQuestionToAccept}
             text="success"
             stylingMode="success"
             type="success"
@@ -248,12 +281,12 @@ const PromotionProduct = ({
             label="کالا"
           />
           <Input
+            name="discount"
             maxLength={3}
             label="درصد تخفیف"
             type="number"
             xxl={6}
             className="my-3"
-            name="discount"
             onChange={handleChangeInputsProduct}
             value={inputsProduct?.discount}
           />

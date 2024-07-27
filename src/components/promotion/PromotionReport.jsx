@@ -7,11 +7,13 @@ import asyncWrapper from "../../utiliy/asyncWrapper";
 import Button from "../common/Buttons/Button";
 import { slaPromotionReport } from "../../redux/reducers/promotion/promotion-action";
 import StringHelpers from "../../utiliy/GlobalMethods";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TableMultiSelect2 from "../common/Tables/TableMultiSelect2";
 import Input from "../common/Inputs/Input";
-
+import SearchIcon from "@mui/icons-material/Search";
+import { RsetIsLoading } from "../../redux/reducers/main/main-slice";
 const PromotionReport = () => {
+  const dispatch = useDispatch();
   const { users } = useSelector((state) => state);
   const [inputFields, setInputFields] = useState({});
   const [typeAndPlatform, setTypeAndPlatform] = useState({});
@@ -32,49 +34,100 @@ const PromotionReport = () => {
     setInputFields((prevstate) => {
       return { ...prevstate, [name]: value };
     });
-    console.log(name, value);
   };
 
   const handleSearching = asyncWrapper(async () => {
-    console.log([inputFields?.typePromotion]);
+    const fixLocation = typeAndPlatform?.allStore.map(
+      (location) => location.id
+    );
+    const fixAllType = typeAndPlatform?.allType?.map((type) => type.id);
+    const fixPlatform = typeAndPlatform?.platform?.map((item) => item.id);
+    const fixAllProduct = typeAndPlatform?.allProduct?.map((item) => item.id);
+    const fixAllCustomer = typeAndPlatform?.allCustomer?.map((item) => item.id);
+
     const postData = {
       userId: users?.userId,
-      title: inputFields?.title || null,
-      itemIds: selectedProduct,
-      locationIds: typeAndPlatform?.store,
-      promotionTypeIds: [inputFields?.typePromotion],
-      promotionPaltformIds: typeAndPlatform?.type,
-      promotionCustomerGroupIds: typeAndPlatform?.customer,
-      fromDate: StringHelpers?.convertDateEn(inputFields?.itsFromDate),
-      toDate: StringHelpers?.convertDateEn(inputFields?.itsToDate),
+      title: inputFields?.title || "",
+      itemIds: selectedProduct?.length !== 0 ? selectedProduct : fixAllProduct,
+      locationIds: typeAndPlatform?.store || fixLocation,
+      promotionTypeIds: !!inputFields?.typePromotion
+        ? [inputFields?.typePromotion]
+        : fixAllType,
+      promotionPaltformIds: typeAndPlatform?.type || fixPlatform,
+      promotionCustomerGroupIds: typeAndPlatform?.customer || fixAllCustomer,
+      fromDate:
+        StringHelpers?.convertDateEnWithoutTime(inputFields?.itsFromDate) ||
+        null,
+      toDate:
+        StringHelpers?.convertDateEnWithoutTime(inputFields?.itsToDate) || null,
       discount: inputFields?.discount,
     };
+    dispatch(RsetIsLoading({ stateWait: true }));
     const res = await slaPromotionReport(postData);
-    console.log(res);
+    dispatch(RsetIsLoading({ stateWait: false }));
+
     const { statusCode, data } = res;
     setAllListRF(data);
   });
 
   const promotionColumns = [
     {
-      dataField: "barcode",
+      dataField: 1,
+      caption: "ردیف",
+      allowEditing: false,
+      cellRender: (item) => {
+        return <>{item?.row?.dataIndex + 1}</>;
+      },
+    },
+    {
+      dataField: "title",
       caption: "عنوان",
       allowEditing: true,
     },
     {
-      dataField: "itemGroupName",
+      dataField: "fromDate",
       caption: "از تاریخ",
       allowEditing: false,
     },
+
     {
-      dataField: "itemName",
+      dataField: "toDate",
       caption: "تا تاریخ",
       allowEditing: false,
     },
     {
-      dataField: "itemName",
-      caption: "",
+      dataField: "plaformName",
+      caption: "دسته",
       allowEditing: false,
+    },
+
+    {
+      dataField: "locationName",
+      caption: "فروشگاه",
+      allowEditing: false,
+    },
+    {
+      dataField: "itemName",
+      caption: "کالا",
+      allowEditing: false,
+    },
+    {
+      dataField: "barcode1",
+      caption: "بارکد",
+      allowEditing: true,
+    },
+    {
+      dataField: "discount",
+      caption: "درصد تخفیف",
+      allowEditing: true,
+      cellRender: (item) => {
+        return <>{item?.key?.discount + "%"}</>;
+      },
+    },
+    {
+      dataField: "typeName",
+      caption: "عمومی",
+      allowEditing: true,
     },
   ];
 
@@ -104,7 +157,7 @@ const PromotionReport = () => {
           <div className="d-flex justify-content-end mt-2">
             <Button
               onClick={handleSearching}
-              icon={<i className="d-flex ms-2 bi bi-search" />}
+              icon={<SearchIcon className="d-flex ms-2 font18" />}
               label="جستجو"
             />
           </div>

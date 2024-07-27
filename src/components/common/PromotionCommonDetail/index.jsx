@@ -75,7 +75,6 @@ const PromotionCommonDetail = ({
   const [allProduct, setAllProduct] = useState([]);
   const [allCustomer, setAllCustomer] = useState([]);
   const [allgroupProduct, setAllgroupProduct] = useState([]);
-
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await slaPromotionTypeList();
@@ -121,7 +120,6 @@ const PromotionCommonDetail = ({
     if (status === "Success") {
       setAllgroupProduct(data);
       setTypeAndPlatform((prev) => ({ ...prev, allProductGroup: data }));
-      console.log(data);
     } else {
       dispatch(
         RsetShowToast({
@@ -134,7 +132,6 @@ const PromotionCommonDetail = ({
   });
 
   const handleGroupIds = asyncWrapper(async (e) => {
-    console.log(e);
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await itemComboByItemGroupIdList(e);
     dispatch(RsetIsLoading({ stateWait: false }));
@@ -227,7 +224,6 @@ const PromotionCommonDetail = ({
   const handleGetDataEditFields = () => {
     if (itsEditRow) {
       const getEditRow = detailRow?.data;
-      console.log(getEditRow);
       const fixEdit = {
         daysOfferOld: getEditRow?.daysOffer,
         title: getEditRow?.title || "",
@@ -262,6 +258,7 @@ const PromotionCommonDetail = ({
     const { data, status, message } = res;
     if (status == "Success") {
       setAllCustomer(data);
+      setTypeAndPlatform((prev) => ({ ...prev, allCustomer: data }));
     } else {
       dispatch(
         RsetShowToast({
@@ -330,6 +327,13 @@ const PromotionCommonDetail = ({
   }, []);
 
   useEffect(() => {
+    if (allgroupProduct?.length !== 0) {
+      const allIdProduct = StringHelpers.fixComboListId([0], allgroupProduct);
+      handleGroupIds(allIdProduct);
+    }
+  }, [allgroupProduct]);
+
+  useEffect(() => {
     if (storeList.length !== 0) {
       handleGetEditCustomer();
       handleGetEditStore();
@@ -373,6 +377,7 @@ const PromotionCommonDetail = ({
       />
       <Col className="d-flex justify-content-start" xxl={4} xl={12}>
         <TableMultiSelect2
+          name="platform"
           itemName={"platformName"}
           selected={selectedType}
           setSelected={setSelectedType}
@@ -390,7 +395,7 @@ const PromotionCommonDetail = ({
           itemName={"locationName"}
           selected={selectStore}
           setSelected={setSelectStore}
-          submit={handleAcceptProduct}
+          submit={handleAcceptStore}
           allListRF={storeList}
           columns={storeColumns}
           className="my-3"
@@ -419,9 +424,8 @@ const PromotionCommonDetail = ({
               itemName={"label"}
               selected={selectedProduct}
               setSelected={setSelectedProduct}
-              submit={handleAcceptStore}
+              submit={handleAcceptProduct}
               allListRF={allProduct}
-              columns={storeColumns}
               className="my-3"
               xxl={12}
               xl={2}

@@ -262,6 +262,11 @@ export default class StringHelpers {
     const fixDate = new DateObject(new Date(date));
     return fixDate?.format("YYYY-MM-DDTHH:mm:ss.SSS");
   }
+  static convertDateEnWithoutTime(date) {
+    // const getDate = new DateObject();
+    const fixDate = new DateObject(new Date(date));
+    return fixDate?.format("YYYY-MM-DD");
+  }
   static convertJalaliDateToGregorian = (date) => {
     const fixDate = new DateObject(new Date(date));
     if (date) {
