@@ -24,7 +24,7 @@ const index = ({
       width={120}
       text={text}
       type={type}
-      stylingMode="contained"
+      stylingMode={stylingMode}
       onClick={onClick}
       style={style}
     >
