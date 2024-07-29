@@ -7,6 +7,6 @@ const Promotions = () => {
       <Promotion />
     </div>
   );
-};
+};  
 
 export default Promotions;

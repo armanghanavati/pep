@@ -25,10 +25,7 @@ import asyncWrapper from "../../utiliy/asyncWrapper";
 import CheckIcon from "@mui/icons-material/Check";
 import PromotionProduct from "./PromotionProduct";
 import StringHelpers from "../../utiliy/GlobalMethods";
-import {
-  groupIds,
-  itemComboByItemGroupIdList,
-} from "../../redux/reducers/item/item-action";
+import { groupIds } from "../../redux/reducers/item/item-action";
 import { useDispatch, useSelector } from "react-redux";
 import {
   locationPromotionList,
@@ -40,44 +37,35 @@ import {
   RsetShowToast,
 } from "../../redux/reducers/main/main-slice";
 import { CheckBox } from "devextreme-react";
-import PromotionStore from "./PromotionStore";
-import PromotionType from "./PromotionType";
-import PromotionCustomer from "./PromotionCustomer";
 import DataSource from "devextreme/data/data_source";
+import PromotionCommonDetail from "../common/PromotionCommonDetail";
 
 const PromotionDetail = ({
   detailRow,
   handleGetAllList,
   itsEditRow,
-  inputFields,
-  setInputFields,
   showDetail,
   handleShowDetail,
   promotionList,
   setShowDetail,
 }) => {
-  const { users, companies } = useSelector((state) => state);
+  const { users } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const [errors, setErrors] = useState({});
-  const [promotionTypeList, setPromotionTypeList] = useState([]);
+  const [productList, setProductList] = useState([]);
   const [showAddProduct, setShowAddProduct] = useState(false);
-  const [allgroupProduct, setAllgroupProduct] = useState([]);
-  const [allProduct, setAllProduct] = useState([]);
-  const [lazyTest, setLazyTest] = useState([]);
-  const [allPlatform, setAllPlatform] = useState([]);
-  const [storeList, setStoreList] = useState([]);
-  const [typeAndPlatform, setTypeAndPlatform] = useState({});
+  const [errors, setErrors] = useState({});
+  const [inputFields, setInputFields] = useState({});
   const [editProductRow, setEditProductRow] = useState({});
   const [itsEditProductRow, setItsEditProductRow] = useState(false);
-  const [allCustomer, setAllCustomer] = useState([]);
-  const [productList, setProductList] = useState([]);
-  const [inputsProduct, setInputsProduct] = useState({});
-  const [selectStore, setSelectStore] = useState([]);
+  const [allgroupProduct, setAllgroupProduct] = useState([]);
+  const [typeAndPlatform, setTypeAndPlatform] = useState({});
   const [selectedType, setSelectedType] = useState([]);
+  const [selectStore, setSelectStore] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
 
   const handleIdForList = (data, postProps, id) => {
     const dataFixed = data?.map((item) => {
+      console.log(data, postProps, id, item);
       if (id) {
         return {
           slaPromotionId: id,
@@ -90,29 +78,6 @@ const PromotionDetail = ({
       }
     });
     return dataFixed;
-  };
-
-  const fixMapProduct = (itemId, discount, id) => {
-    const fixData = productList?.map((item) => {
-      console.log(item, itemId, discount, id);
-      if (id) {
-        return {
-          slaPromotionId: id,
-          [itemId]: item?.productId || item?.itemId,
-          [discount]: item?.discount,
-          consumerPrice: 0,
-          priceWithDiscount: 0,
-        };
-      } else {
-        return {
-          [itemId]: item?.itemId || item?.productId,
-          [discount]: item?.discount,
-          consumerPrice: 0,
-          priceWithDiscount: 0,
-        };
-      }
-    });
-    return fixData;
   };
 
   const handleChangeInputs = (
@@ -136,104 +101,41 @@ const PromotionDetail = ({
     setInputFields((prevstate) => {
       return { ...prevstate, [name]: value };
     });
+    console.log(name, value);
   };
 
-  const handleChangeInputsProduct = (
-    name,
-    value,
-    validationNameList = undefined,
-    index
-  ) => {
-    const temp = [];
-    validationNameList &&
-      validationNameList.map((item) => {
-        if (Validation[item[0]](value, item[1]) === true) {
-          return null;
-        } else {
-          temp.push(Validation[item[0]](value, item[1]));
+  const permitForNextStep = (inputsName = []) => {
+    const error = handleValidation(inputsName);
+    for (let key in error) {
+      if (error[key]?.length > 0) {
+        if (inputsName.includes(key)) {
+          return false;
         }
-      });
-    setErrors((prevstate) => {
-      return { ...prevstate, [name]: [...temp] };
-    });
-    setInputsProduct((prevstate) => {
-      return { ...prevstate, [name]: value };
-    });
-    if (name === "productGroup") {
-      if (value === 0) {
-        const fixLoop = StringHelpers.fixComboListId(
-          inputFields?.productGroup,
-          allgroupProduct
-        );
-        return handleGroupIds(fixLoop);
-      } else {
-        return handleGroupIds([value]);
       }
     }
+    return true;
   };
 
-  const handleGroupIds = asyncWrapper(async (e) => {
-    dispatch(RsetIsLoading({ stateWait: true }));
-    const res = await itemComboByItemGroupIdList(e);
-    dispatch(RsetIsLoading({ stateWait: false }));
+  const handleValidation = (inputsName = []) => {
+    const err = { ...errors };
+    inputsName.map((item) => {
+      if (
+        inputFields[item] === undefined ||
+        inputFields[item] === null ||
+        JSON.stringify(inputFields[item])?.trim() === ""
+      ) {
+        err[item] = ["پرکردن این فیلد الزامی است"];
+      }
+    });
+    setErrors(err);
+    return err;
+  };
 
-    const { data, status, message } = res;
-    if (status == "Success") {
-      console.log(data);
-      const LAZY = new DataSource({
-        store: data,
-        paginate: true,
-        pageSize: 10,
-      });
-      setAllProduct(data);
-      setLazyTest(LAZY);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
+  const handleQuestionToAcceptEdit = () => {
+    if (permitForNextStep(["title", "itsFromDate", "itsToDate"]) === true) {
+      handleAcceptPromotion();
     }
-  });
-
-  const handleGetslaPromotionTypeList = asyncWrapper(async () => {
-    dispatch(RsetIsLoading({ stateWait: true }));
-    const res = await slaPromotionTypeList();
-    dispatch(RsetIsLoading({ stateWait: false }));
-    const { data, status, message } = res;
-    if (status == "Success") {
-      setPromotionTypeList(data);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
-
-  const handleSlaPromotionPlatformList = asyncWrapper(async (id) => {
-    dispatch(RsetIsLoading({ stateWait: true }));
-    const fixId = itsEditRow ? detailRow?.data?.id : 0;
-    const res = await slaPromotionPlatformList(fixId);
-    dispatch(RsetIsLoading({ stateWait: false }));
-    const { data, status, message } = res;
-    if (status == "Success") {
-      setAllPlatform(data);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
+  };
 
   const handleGetProductList = asyncWrapper(async (id) => {
     dispatch(RsetIsLoading({ stateWait: true }));
@@ -268,127 +170,31 @@ const PromotionDetail = ({
     }
   });
 
-  const handleGroupStore = asyncWrapper(async () => {
-    const fixId = itsEditRow ? detailRow?.data?.id : 0;
-    dispatch(RsetIsLoading({ stateWait: true }));
-    const res = await locationPromotionList(users?.userId, fixId);
-    dispatch(RsetIsLoading({ stateWait: false }));
-
-    const { data, status, message } = res;
-    if (status == "Success") {
-      setStoreList(data);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
-
-  const columnsProduct = [
-    {
-      dataField: "barcode",
-      caption: "بارکد‌ کالا",
-      allowEditing: true,
-    },
-    {
-      dataField: "itemGroupName",
-      caption: "گروه‌ کالا",
-      allowEditing: false,
-    },
-    {
-      dataField: "itemName",
-      caption: "نام‌ کالا",
-      allowEditing: false,
-    },
-    {
-      dataField: "discount",
-      caption: "درصد‌تخفیف‌ کالا",
-      allowEditing: true,
-      cellRender: (item) => {
-        return <>{item?.key?.discount + "%"}</>;
-      },
-    },
-  ];
-
-  const platformColumns = [
-    {
-      dataField: "code",
-      caption: "کد‌",
-      allowEditing: false,
-    },
-    {
-      dataField: "platformName",
-      caption: "عنوان",
-      allowEditing: false,
-    },
-  ];
-
-  const storeColumns = [
-    {
-      dataField: "code",
-      caption: "کد‌",
-      allowEditing: false,
-    },
-    {
-      dataField: "locationName",
-      caption: "عنوان",
-      allowEditing: false,
-    },
-  ];
-
-  const customerColumns = [
-    {
-      dataField: "id",
-      caption: "کد‌",
-      allowEditing: false,
-    },
-    {
-      dataField: "code",
-      caption: "کد‌",
-      allowEditing: false,
-    },
-    {
-      dataField: "customerGroupName",
-      caption: "عنوان",
-      allowEditing: false,
-    },
-  ];
-
-  const handleGetDataEditFields = () => {
-    if (itsEditRow) {
-      const getEditRow = detailRow?.data;
-      console.log(getEditRow);
-      const fixEdit = {
-        daysOfferOld: getEditRow?.daysOffer,
-        title: getEditRow?.title || "",
-        isActive: getEditRow?.isActive || false,
-        itsFromDate: getEditRow?.fromDate || "",
-        itsToDate: getEditRow?.toDate || "",
-        daysOffer: getEditRow?.daysOffer || "",
-        typePromotion: getEditRow?.promotionTypeId || "",
-        desc: getEditRow?.desc || "",
-        code: getEditRow?.code || "",
-      };
-      setInputFields((prev) => ({ ...prev, ...fixEdit }));
-    } else {
-      setInputFields({
-        title: "",
-        isActive: false,
-        itsFromDate: "",
-        itsToDate: "",
-        daysOffer: "",
-        typePromotion: "",
-        desc: "",
-        code: "",
-      });
-    }
+  const fixMapProduct = (itemId, discount, id) => {
+    const fixData = productList?.map((item) => {
+      console.log(item, itemId, discount, id);
+      if (id) {
+        return {
+          slaPromotionId: id,
+          [itemId]: item?.productId || item?.itemId,
+          [discount]: item?.discount,
+          consumerPrice: 0,
+          priceWithDiscount: 0,
+        };
+      } else {
+        return {
+          [itemId]: item?.itemId || item?.productId,
+          [discount]: item?.discount,
+          consumerPrice: 0,
+          priceWithDiscount: 0,
+        };
+      }
+    });
+    return fixData;
   };
 
   const handleAcceptPromotion = asyncWrapper(async () => {
+    console.log(handleIdForList(typeAndPlatform?.store, "bseLocationId"));
     const postAddPromotion = {
       title: inputFields?.title,
       fromDate: StringHelpers?.convertDateEn(inputFields?.itsFromDate),
@@ -439,7 +245,7 @@ const PromotionDetail = ({
         "slaPromotionPlatformId",
         detailRow?.data?.id
       ),
-      accLocationPromotions: handleIdForList(
+      accLocationPromotion: handleIdForList(
         typeAndPlatform?.store || selectStore,
         "bseLocationId",
         detailRow?.data?.id
@@ -502,121 +308,35 @@ const PromotionDetail = ({
     }
   });
 
-  const permitForNextStep = (inputsName = []) => {
-    const error = handleValidation(inputsName);
-    for (let key in error) {
-      if (error[key]?.length > 0) {
-        if (inputsName.includes(key)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
-  const handleValidation = (inputsName = []) => {
-    const err = { ...errors };
-    inputsName.map((item) => {
-      if (
-        inputFields[item] === undefined ||
-        inputFields[item] === null ||
-        JSON.stringify(inputFields[item])?.trim() === ""
-      ) {
-        err[item] = ["پرکردن این فیلد الزامی است"];
-      }
-    });
-    setErrors(err);
-    return err;
-  };
-
-  const handleQuestionToAcceptEdit = () => {
-    if (permitForNextStep(["title", "itsFromDate", "itsToDate"]) === true) {
-      handleAcceptPromotion();
-    }
-  };
-
-  const handleEditRowProduct = (data) => {
-    setShowAddProduct(true);
-    setItsEditProductRow(true);
-    setEditProductRow(data);
-  };
-
-  const handleSlaCustomerGroupList = asyncWrapper(async () => {
-    const fixId = itsEditRow ? detailRow?.data?.id : 0;
-    dispatch(RsetIsLoading({ stateWait: true }));
-    const res = await slaCustomerGroupList(fixId);
-    dispatch(RsetIsLoading({ stateWait: false }));
-    const { data, status, message } = res;
-    if (status == "Success") {
-      setAllCustomer(data);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
-
-  const handleAcceptGroup = () => {
-    setTypeAndPlatform((prev) => ({ ...prev, type: selectedType }));
-  };
-
-  const hanldeGetEditGroup = () => {
-    const fix = allPlatform
-      ?.filter((type) => type?.isChecked === true)
-      .map((item) => item.id);
-    setSelectedType((prev) => [...prev, ...fix]);
-  };
-
-  const handleAcceptStore = () => {
-    setTypeAndPlatform((prev) => ({ ...prev, store: selectStore }));
-  };
-
-  const handleGetEditStore = () => {
-    const fix = storeList
-      ?.filter((store) => store?.isChecked === true)
-      .map((item) => item.id);
-    setSelectStore((prev) => [...prev, ...fix]);
-  };
-
-  const handleAcceptCustomer = () => {
-    setTypeAndPlatform((prev) => ({ ...prev, customer: selectedCustomer }));
-  };
-
-  const handleGetEditCustomer = () => {
-    const fix = allCustomer
-      ?.filter((custom) => custom?.isChecked === true)
-      .map((item) => item.id);
-    setSelectedCustomer((prev) => [...prev, ...fix]);
-  };
+  const columnsProduct = [
+    {
+      dataField: "barcode",
+      caption: "بارکد‌ کالا",
+      allowEditing: true,
+    },
+    {
+      dataField: "itemGroupName",
+      caption: "گروه‌ کالا",
+      allowEditing: false,
+    },
+    {
+      dataField: "itemName",
+      caption: "نام‌ کالا",
+      allowEditing: false,
+    },
+    {
+      dataField: "discount",
+      caption: "درصد‌تخفیف‌ کالا",
+      allowEditing: true,
+      cellRender: (item) => {
+        return <>{item?.key?.discount + "%"}</>;
+      },
+    },
+  ];
 
   useEffect(() => {
-    handleGetslaPromotionTypeList();
-    handleSlaCustomerGroupList();
-    handleSlaPromotionPlatformList(detailRow?.data?.id);
     handleGetProductList(detailRow?.data?.id);
-    handleGroupStore();
-    if (detailRow?.data?.id) {
-      handleGetDataEditFields();
-    }
   }, []);
-
-  useEffect(() => {
-    if (storeList.length !== 0) {
-      handleGetEditCustomer();
-      handleGetEditStore();
-      hanldeGetEditGroup();
-    }
-  }, [storeList]);
-
-  // const onSelectionChanged = (e) => {
-  //   console.log(e);
-  //   const selectedKeys = e.selectedRowKeys;
-  //   setSelectedRowKeys(selectedKeys);
-  // };
 
   return (
     <Modal
@@ -645,87 +365,25 @@ const PromotionDetail = ({
       ]}
     >
       <Row className="d-flex">
-        {/* <Input
-          error={errors.code}
-          validations={[["required"]]}
-          xxl={4}
-          className="my-3"
-          name="code"
-          onChange={handleChangeInputs}
-          value={inputFields?.code}
-          label="کد"
-        /> */}
-        <Input
-          error={errors.title}
-          validations={[["required"]]}
-          xxl={4}
-          className="my-3"
-          name="title"
-          onChange={handleChangeInputs}
-          value={inputFields?.title}
-          label="عنوان"
+        <PromotionCommonDetail
+          handleChangeInputs={handleChangeInputs}
+          typeAndPlatform={typeAndPlatform}
+          setTypeAndPlatform={setTypeAndPlatform}
+          setProductList={setProductList}
+          errors={errors}
+          inputFields={inputFields}
+          setInputFields={setInputFields}
+          setShowDetail={setShowDetail}
+          handleGetAllList={handleGetAllList}
+          detailRow={detailRow}
+          itsEditRow={itsEditRow}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          selectStore={selectStore}
+          setSelectStore={setSelectStore}
+          selectedCustomer={selectedCustomer}
+          setSelectedCustomer={setSelectedCustomer}
         />
-        <DatePicker
-          onChange={(e) => handleChangeInputs("itsFromDate", e)}
-          name="itsFromDate"
-          error={errors.itsFromDate}
-          value={inputFields?.itsFromDate}
-          className="my-3"
-          minDate={Date.now()}
-          xxl={4}
-          validations={[["required", "maximumDate", inputFields?.itsToDate]]}
-          label="از تاریخ"
-        />
-        <DatePicker
-          minDate={Date.now()}
-          name="itsToDate"
-          value={inputFields?.itsToDate}
-          validations={[["required", "minimumDate", inputFields?.itsFromDate]]}
-          onChange={(e) => handleChangeInputs("itsToDate", e)}
-          className="my-3"
-          xxl={4}
-          error={errors.itsToDate}
-          label="تا تاریخ"
-        />
-        <Col className="d-flex justify-content-start" xxl={4} xl={12}>
-          <PromotionType
-            selectStore={selectedType}
-            setSelectStore={setSelectedType}
-            submit={handleAcceptGroup}
-            allListRF={allPlatform}
-            columns={platformColumns}
-            className="my-3"
-            xxl={12}
-            xl={2}
-            label="دسته"
-          />
-        </Col>
-        <Col className="d-flex justify-content-start" xxl={4} xl={12}>
-          <PromotionStore
-            selectStore={selectStore}
-            setSelectStore={setSelectStore}
-            submit={handleAcceptStore}
-            allListRF={storeList}
-            columns={storeColumns}
-            className="my-3"
-            xxl={12}
-            xl={2}
-            label="فروشگاه"
-          />
-        </Col>
-        <Col className="d-flex justify-content-start" xxl={4} xl={12}>
-          <PromotionCustomer
-            selectStore={selectedCustomer}
-            setSelectStore={setSelectedCustomer}
-            submit={handleAcceptCustomer}
-            allListRF={allCustomer}
-            columns={storeColumns}
-            className="my-3"
-            xxl={12}
-            xl={2}
-            label="گروه مشتری"
-          />
-        </Col>
         <Input
           type="number"
           name="daysOffer"
@@ -735,18 +393,6 @@ const PromotionDetail = ({
           className="my-3"
           xxl={4}
           label="روز‌مجاز‌ ویرایش"
-        />
-        <ComboBox
-          name="typePromotion"
-          displayExpr="typeName"
-          options={promotionTypeList}
-          value={inputFields?.typePromotion}
-          onChange={(e) => handleChangeInputs("typePromotion", e)}
-          placeholder="نوع"
-          label="نوع"
-          className="my-3"
-          xl={4}
-          xxl={4}
         />
         <Col
           xl="4"
@@ -788,7 +434,6 @@ const PromotionDetail = ({
         </Col>
         <Col xxl="12" className="">
           <Table
-            // onRowClick={handleEditRowProduct}
             allListRF={productList}
             allowDeleting
             // allowEditing
@@ -800,9 +445,6 @@ const PromotionDetail = ({
       </Row>
       {showAddProduct && (
         <PromotionProduct
-          handleChangeInputsProduct={handleChangeInputsProduct}
-          setInputsProduct={setInputsProduct}
-          inputsProduct={inputsProduct}
           productList={productList}
           detailRow={detailRow}
           itsEditProductRow={itsEditProductRow}
@@ -810,7 +452,6 @@ const PromotionDetail = ({
           editProductRow={editProductRow}
           handleGetProductList={handleGetProductList}
           setProductList={setProductList}
-          allProduct={allProduct}
           handleChangeInputs={handleChangeInputs}
           showAddProduct={showAddProduct}
           setShowAddProduct={setShowAddProduct}
@@ -819,17 +460,6 @@ const PromotionDetail = ({
           setAllgroupProduct={setAllgroupProduct}
         />
       )}
-      {/* {toast.isToastVisible && (
-        <Toast
-          visible={toast.isToastVisible}
-          message={toast.Message}
-          type={toast.Type}
-          onHiding={() => setToast({ isToastVisible: false })}
-          displayTime={10000}
-          width={600}
-          rtlEnabled={true}
-        />
-      )} */}
     </Modal>
   );
 };
