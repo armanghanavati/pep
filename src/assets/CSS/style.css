@@ -52,6 +52,7 @@
     font-weight: lighter;
   }
 
+
   .mainMenuStyle{
     font-family: IRANSansWeb;
     font-size: 14px;    
@@ -70,13 +71,40 @@
     font-weight: 100!important;
   }
   
-  .rootMenuStyle{
+  /* .rootMenuStyle{
     background-color: #e4e4e4;
     color: white;
     min-height: 100vh;
     box-shadow: inset 0px 5px 20px -5px rgba(0, 0, 0, 0.5);
     font-weight: 800!important;
+  } */
+
+  .rootMenuStyle{
+    background-color: rgba(124, 153, 210, 0.24);
+    color: white;
+    min-height: 100vh;
+    box-shadow:  0px 5px 20px -5px rgba(0, 0, 0, 0.5);
+    font-weight: 800!important;
+    /* border-radius: 25px !important; */
   }
+
+  .dx-treeview-item {
+    display: block;
+    cursor: pointer;
+    padding: 8px 8px !important;
+    margin: 6px 0 !important;
+    min-height: 32px;
+    border-radius: 4px;
+}
+
+  /* .dx-rtl .dx-treeview-node-container .dx-treeview-node .dx-treeview-item .dx-treeview-item-content > .dx-icon {
+    margin-right: 0;
+} */
+
+.dx-rtl .dx-treeview-node-container .dx-treeview-node .dx-treeview-item .dx-treeview-item-content > .dx-icon {
+  margin-right: 0;
+  display: none !important;
+}
 
   .errMessage{
     text-align: right;

@@ -226,7 +226,25 @@
     width: 100%;
     height: 100%;
   }
+
+  .text-purpule{
+    color: #b533b7
+   }
+ 
+   .bg-purpule{
+     background-color: #b533b7
+    }
+ 
+    .bg-purpule:hover{
+      background-color: #7f0d81
+     }
   
+
+    .bg-orange{
+      background-color: #ff7600
+     }
+  
+
   .imageLogin {
     /* width: 10%;
     height: 10%; */

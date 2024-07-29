@@ -156,6 +156,7 @@ const PromotionReport = () => {
           />
           <div className="d-flex justify-content-end mt-2">
             <Button
+              type="default"
               onClick={handleSearching}
               icon={<SearchIcon className="d-flex ms-2 font18" />}
               label="جستجو"
