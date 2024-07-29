@@ -359,13 +359,13 @@ const PromotionCommonDetail = ({
         error={!!errors && errors?.itsFromDate}
         value={inputFields?.itsFromDate}
         className="my-3"
-        minDate={Date.now()}
+        minDate={!itsPromotionReport && Date.now()}
         xxl={4}
         validations={[["required", "maximumDate", inputFields?.itsToDate]]}
         label="از تاریخ"
       />
       <DatePicker
-        minDate={Date.now()}
+        minDate={!itsPromotionReport && Date.now()}
         name="itsToDate"
         value={inputFields?.itsToDate}
         validations={[["required", "minimumDate", inputFields?.itsFromDate]]}
