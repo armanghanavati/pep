@@ -82,7 +82,7 @@ const PromotionReport = () => {
     {
       dataField: "title",
       caption: "عنوان",
-      allowEditing: true,
+      allowEditing: false,
     },
     {
       dataField: "fromDate",
@@ -114,20 +114,20 @@ const PromotionReport = () => {
     {
       dataField: "barcode1",
       caption: "بارکد",
-      allowEditing: true,
+      allowEditing: false,
     },
     {
       dataField: "discount",
       caption: "درصد تخفیف",
-      allowEditing: true,
+      allowEditing: false,
       cellRender: (item) => {
         return <>{item?.key?.discount + "%"}</>;
       },
     },
     {
       dataField: "typeName",
-      caption: "عمومی",
-      allowEditing: true,
+      caption: "دسته",
+      allowEditing: false,
     },
   ];
 
