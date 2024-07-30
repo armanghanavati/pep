@@ -140,11 +140,14 @@ class MainMenu extends React.Component {
 
     return (
       <>
-        <Row className="d-flex" >
+        <div className="d-flex gap-4">
           {/* <Col xs='auto' style={{backgroundColor:'#11648719',color:'white',minHeight:'100vh',boxShadow:'inset 0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}> */}
+
           {this.props.showMainMenu && (
             <Col xs="auto" className="rootMenuStyle">
-              <div style={{ padding: "10px" }}>
+              <div
+                style={{ padding: "10px 10px 10px 10px", margin: "0 0 0 12px" }}
+              >
                 <TreeView
                   id="simple-treeview"
                   items={this.state.MainMenuData}
@@ -185,7 +188,7 @@ class MainMenu extends React.Component {
               </Routes>
             </div>
           </Col>
-        </Row>
+        </div>
       </>
     );
   }
