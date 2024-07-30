@@ -4,7 +4,8 @@
 const asyncWrapper = (fn) => {
   return (...args) => {
     return fn(...args).catch((error) => {
-    //   store.dispatch(RsetShowLoading({ value: false }));
+      //   store.dispatch(RsetShowLoading({ value: false }));
+      console.log("HHHHHHHHHHHHHHHElo wrapper");
       console.error(error);
       throw error;
     });
