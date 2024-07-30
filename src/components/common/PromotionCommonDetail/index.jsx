@@ -46,8 +46,6 @@ const PromotionCommonDetail = ({
   itsPromotionReport,
   setShowDetail,
   handleChangeInputs,
-  selectedPlatform,
-  setSelectedPlatform,
   setProductList,
   itsEditRow,
   detailRow,
@@ -67,8 +65,6 @@ const PromotionCommonDetail = ({
   setSelectedProduct,
   selectedGroup,
   setSelectedGroup,
-  typeAndPlatform,
-  setTypeAndPlatform,
 }) => {
   const { users } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -79,7 +75,6 @@ const PromotionCommonDetail = ({
   const [allProduct, setAllProduct] = useState([]);
   const [allCustomer, setAllCustomer] = useState([]);
   const [allgroupProduct, setAllgroupProduct] = useState([]);
-
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await slaPromotionTypeList();
@@ -275,15 +270,15 @@ const PromotionCommonDetail = ({
     }
   });
 
-  const handleAcceptPlatform = () => {
-    setTypeAndPlatform((prev) => ({ ...prev, platform: selectedPlatform }));
+  const handleAcceptGroup = () => {
+    setTypeAndPlatform((prev) => ({ ...prev, type: selectedType }));
   };
 
   const hanldeGetEditGroup = () => {
     const fix = allPlatform
       ?.filter((type) => type?.isChecked === true)
       .map((item) => item.id);
-    setSelectedPlatform((prev) => [...prev, ...fix]);
+    setSelectedType((prev) => [...prev, ...fix]);
   };
 
   const handleAcceptStore = () => {
@@ -384,9 +379,9 @@ const PromotionCommonDetail = ({
         <TableMultiSelect2
           name="platform"
           itemName={"platformName"}
-          selected={selectedPlatform}
-          setSelected={setSelectedPlatform}
-          submit={handleAcceptPlatform}
+          selected={selectedType}
+          setSelected={setSelectedType}
+          submit={handleAcceptGroup}
           allListRF={allPlatform}
           columns={platformColumns}
           className="my-3"
@@ -465,43 +460,18 @@ const PromotionCommonDetail = ({
           value={inputFields?.discount}
         />
       )}
-      {!itsPromotionReport && (
-        <ComboBox
-          name="typePromotion"
-          displayExpr="typeName"
-          options={promotionTypeList}
-          value={inputFields?.typePromotion}
-          onChange={(e) => handleChangeInputs("typePromotion", e)}
-          placeholder="نوع"
-          label="نوع"
-          className="my-3"
-          xl={4}
-          xxl={4}
-        />
-      )}
-      {itsPromotionReport && (
-        <TableMultiSelect2
-          name="typePromotion"
-          displayExpr="typeName"
-          itemName={"label"}
-          allListRF={promotionTypeList}
-          selected={selectedType}
-          setSelected={setSelectedType}
-          submit={handleAcceptType}
-          placeholder="نوع"
-          label="نوع"
-          className="my-3"
-          xl={4}
-          xxl={4}
-        />
-
-        // columns={platformColumns}
-        // className="my-3"
-        // xxl={12}
-        // xl={2}
-        // label="دسته"
-        // />
-      )}
+      <ComboBox
+        name="typePromotion"
+        displayExpr="typeName"
+        options={promotionTypeList}
+        value={inputFields?.typePromotion}
+        onChange={(e) => handleChangeInputs("typePromotion", e)}
+        placeholder="نوع"
+        label="نوع"
+        className="my-3"
+        xl={4}
+        xxl={4}
+      />
     </Row>
   );
 };
