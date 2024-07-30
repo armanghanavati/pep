@@ -119,10 +119,10 @@ class ItemWeight extends React.Component {
     if (perm != null)
       for (let i = 0; i < perm.length; i++) {
         switch (perm[i].objectName) {
-          case "itemLocation.update":
+          case "item_weight.update":
             this.setState({ stateDisable_btnUpdate: true });
             break;
-          case "itemLocation.show":
+          case "item_weight.show":
             this.setState({ stateDisable_show: true });
             break;
         }

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Slider } from "@mui/material";
 import { Col, Label } from "reactstrap";
@@ -16,19 +15,39 @@ const RangeSlider = ({
   onChange,
   value,
   isCurrency,
+  isWeight,
+  isPercent,
 }) => {
   function labelFormatCurrency(value) {
     return ` ${Gfn_FormatNumber(value)} تومان`;
   }
 
   function labelFormatPercent(value) {
-    return `% ${Gfn_FormatNumber(value)}`;
+    return `% ${value}`;
   }
+
+  function labelFormatWeight(value) {
+    return `kg ${Gfn_FormatNumber(value)}`;
+  }
+
+  function labelFormatNormal(value) {
+    return Gfn_FormatNumber(value);
+  }
+
+  // function spanLabel() {
+  //   switch (labelType) {
+  //     case "isWeight":
+  //       break;
+
+  //     default:
+  //       break;
+  //   }
+  // }
 
   return (
     <>
       <Col className=" ms-2 my-2 ">
-        <Label className="standardLabelFont"> {label} </Label>
+        <label className="mb-2"> {label} </label>
         <div className="border rounded-3 p-2">
           <div className="d-flex justify-content-center">
             <Col className="d-flex" lg={lg} md={md} xs={xs} xl={xl} xxl={xxl}>
@@ -38,7 +57,13 @@ const RangeSlider = ({
                 onChange={onChange}
                 value={value}
                 valueLabelFormat={
-                  isCurrency ? labelFormatCurrency : labelFormatPercent
+                  isCurrency
+                    ? labelFormatCurrency
+                    : isWeight
+                    ? labelFormatWeight
+                    : isPercent
+                    ? labelFormatPercent
+                    : labelFormatNormal
                 }
                 min={min}
                 max={max}
@@ -49,12 +74,20 @@ const RangeSlider = ({
             <span className="">
               {isCurrency
                 ? Gfn_FormatNumber(value[1]) + " " + "تومان"
-                : `${value[1]}%`}
+                : isWeight
+                ? Gfn_FormatNumber(value[1]) + " " + "kg"
+                : isPercent
+                ? `${Gfn_FormatNumber(value[1])}%`
+                : Gfn_FormatNumber(value[1])}
             </span>
             <span className="">
               {isCurrency
                 ? Gfn_FormatNumber(value[0]) + " " + "تومان"
-                : `${value[0]}%`}
+                : isWeight
+                ? Gfn_FormatNumber(value[0]) + " " + "kg"
+                : isPercent
+                ? `${Gfn_FormatNumber(value[0])}%`
+                : Gfn_FormatNumber(value[0])}
             </span>
           </div>
         </div>

@@ -5,16 +5,16 @@ import "../../../assets/CSS/button_style.css";
 
 const index = ({
   style,
-  type = "default",
+  type = "",
   className = "",
   label,
   icon,
   xs = 12,
   md = 2,
   xl = 5,
-  stylingMode = "Contained",
+  stylingMode = "",
   onClick,
-  text = "Contained",
+  text = "",
   loading = false,
 }) => {
   return (
@@ -33,7 +33,6 @@ const index = ({
           className="button-indicator"
           height={20}
           width={20}
-          style={{ color: "red" }}
           visible={true}
         />
       ) : (

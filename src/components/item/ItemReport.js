@@ -350,6 +350,7 @@ const ItemReport = () => {
         </Row>
         <div className="d-flex justify-content-end mt-2">
           <Button
+            type="default"
             onClick={handleSearching}
             icon={<i className="d-flex ms-2 bi bi-search" />}
             label="جستجو"

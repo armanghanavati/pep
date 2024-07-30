@@ -24,8 +24,12 @@ const index = ({
         centered={centered}
         size={size}
       >
-        <ModalHeader className={classHeader} toggle={onClose}>
-          {label}
+        <ModalHeader
+          style={{ transform: "scale(-1, 1)", direction: "ltr" }}
+          className={classHeader}
+          toggle={onClose}
+        >
+          <div style={{ transform: "scale(-1, 1)" }}>{label}</div>
         </ModalHeader>
         <ModalBody>{children}</ModalBody>
         <ModalFooter>{footerButtons?.map((btn) => btn)}</ModalFooter>

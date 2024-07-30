@@ -163,7 +163,7 @@ class Home extends React.Component {
     return (
       <div className="mainRow">
         {/* <Row style={{position:'fixed',width:'100vh',top:'0',left:'0',zIndex:'9999',width:'100%'}}> */}
-        <Row>
+        <div className="d-flex">
           <Toolbar style={{
             "background-color": "#00345c",
             "padding": "5px 10px"
@@ -198,23 +198,22 @@ class Home extends React.Component {
             </Item>
 
           </Toolbar>
-        </Row>
-
-        <Row className="textCenter">
+        </div>
+        <div className="textCenter">
           <Col xs="auto">
             <MainMenu showMainMenu={this.state.stateShowMainMenu} linkPath={this.state.linkPath} linkComponent={this.state.linkComponent} />
           </Col>
-        </Row>
+        </div>
         {this.state.stateSignalNotification && (
-          <Row style={{ backgroundColor: "lightblue", padding: "20px", position: "fixed", zIndex: "2", bottom: "0", height: "200px", width: "460px" }}>
+          <div style={{ backgroundColor: "lightblue", padding: "20px", position: "fixed", zIndex: "2", bottom: "0", height: "200px", width: "460px" }}>
             <Col xs="auto"><p style={{ fontSize: "16pt", cursor: "pointer" }} onClick={this.closeSignalNotif}>x</p></Col>
             <Col style={{ textAlign: "left" }}><span style={{ fontSize: "12pt", marginRight: "100px" }}>اطلاع</span></Col>
             <Row>
               <p style={{ fontSize: "16pt", textAlign: "justify" }}>{this.state.message}<span style={{ fontSize: '20pt', marginRight: "30px", fontStyle: "italic" }}>!</span></p>
             </Row>
-          </Row>
+          </div>
         )}
-        <Row className="text-center">
+        <div className="">
           <Col>
             <Modal style={{ direction: 'rtl' }}
               isOpen={this.state.stateModalBakhshnamehNotification}
@@ -239,7 +238,7 @@ class Home extends React.Component {
               </ModalBody>
             </Modal>
           </Col>
-        </Row>
+        </div>
       </div>
     );
   }
