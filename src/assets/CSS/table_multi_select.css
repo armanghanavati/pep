@@ -20,12 +20,9 @@
 .table-responsive {
    overflow-x: auto;
    -webkit-overflow-scrolling: touch;
-   max-height: 600px !important;
 }
 
 .dx-gridbase-container > .dx-datagrid-rowsview {
    -ms-flex: auto;
    flex: auto !important;
-   max-height: 600px !important;
-   height: 100px !important;
 }
