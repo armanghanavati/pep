@@ -31,6 +31,7 @@ const Coppy = ({ showCoppy, setShowCoppy }) => {
             label="لغو"
           />
           <Button
+              type="success"
             // onClick={handleQuestionToAcceptEdit}
             label="کپی"
           />

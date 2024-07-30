@@ -97,15 +97,6 @@
     border-radius: 4px;
 }
 
-  /* .dx-rtl .dx-treeview-node-container .dx-treeview-node .dx-treeview-item .dx-treeview-item-content > .dx-icon {
-    margin-right: 0;
-} */
-
-.dx-rtl .dx-treeview-node-container .dx-treeview-node .dx-treeview-item .dx-treeview-item-content > .dx-icon {
-  margin-right: 0;
-  display: none !important;
-}
-
   .errMessage{
     text-align: right;
     color:rgb(224, 3, 3)

@@ -225,7 +225,7 @@ const SupplierLocation = () => {
               label="جدید"
             />
             <Button
-              type="danger"
+              type="success"
               icon={<ContentCopyIcon className="ms-1 font18 fw-bold" />}
               onClick={() => setShowCoppy(true)}
               label="کپی تنظیمات"

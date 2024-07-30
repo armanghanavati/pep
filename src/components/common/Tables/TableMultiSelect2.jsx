@@ -107,7 +107,7 @@ const TableMultiSelect2 = ({
             onClick={handleCancel}
             label="لغو"
           />,
-          <Button onClick={handleSubmit} label="افزودن" />,
+          <Button type="default" onClick={handleSubmit} label="افزودن" />,
         ]}
       >
         <Container className="">
