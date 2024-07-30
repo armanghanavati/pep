@@ -8,10 +8,13 @@ import DataGrid, {
   Editing,
   HeaderFilter,
   Selection,
+  RowDragging,
 } from "devextreme-react/data-grid";
 import { Col } from "reactstrap";
 
 const Table = ({
+  onAdd,
+  dragging,
   onRowClick,
   headerFilter,
   filterRow,
@@ -75,6 +78,9 @@ const Table = ({
             selectAllMode="allPages"
             mode="multiple"
           />
+        )}
+        {dragging && (
+          <RowDragging data={allListRF} group="tasksGroup" onAdd={onAdd} />
         )}
         <HeaderFilter
           texts={{ cancel: "لغو", ok: "تایید" }}

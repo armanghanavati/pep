@@ -322,7 +322,7 @@ class User extends React.Component {
       });
       return;
     }
-
+    
     var items = this.dataGrid._items;
     if (e.toIndex >= items.length) return;
     const id = e.itemData.id;

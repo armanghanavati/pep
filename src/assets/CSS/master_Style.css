@@ -22,7 +22,7 @@
   }
   
   .headColorTable {
-    background-color: rgb(124 153 210) !important;
+    background-color: rgb(37 111 169) !important;
   }
   
   .userSelect {
@@ -53,6 +53,10 @@
     text-align: justify;
   }
   
+  .vertical-align-center{
+    vertical-align: middle;
+  }
+
   .paraphFit {
     text-align: justify;
     min-height: 115px;
@@ -264,8 +268,8 @@
     max-width: 400px;
   }
   
-  .width10 {
-    width: 10%;
+  .width2 {
+    width: 5%;
   }
   
   .width15 {
@@ -1067,4 +1071,9 @@
 
 .text-dev-blue{
   color:rgb(37 111 169) ;
+}
+
+.form-check-inline {
+  display: inline-block;
+  margin-right: 0 !important;
 }

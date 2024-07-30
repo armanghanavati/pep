@@ -29,7 +29,6 @@ const Promotion = () => {
   const dispatch = useDispatch();
   const [showDetail, setShowDetail] = useState(false);
   const [detailRow, setDetailRow] = useState({});
-  const [inputFields, setInputFields] = useState({});
   const [promotionList, setPromotionList] = useState([]);
   const [itsEditRow, setItsEditRow] = useState(false);
   const [selectedRowKeys, setselectedRowKeys] = useState(null);
@@ -220,7 +219,6 @@ const Promotion = () => {
           </div>
           <Row className="standardPadding">
             <Table
-              selection
               selectedRowKeys={selectedRowKeys}
               onSelectionChanged={onSelectionChanged}
               headerFilter
@@ -234,8 +232,6 @@ const Promotion = () => {
           <PromotionDetail
             handleGetAllList={handleGetAllList}
             itsEditRow={itsEditRow}
-            inputFields={inputFields}
-            setInputFields={setInputFields}
             promotionList={promotionList}
             detailRow={detailRow}
             showDetail={showDetail}
@@ -249,73 +245,3 @@ const Promotion = () => {
 };
 
 export default Promotion;
-
-// const Table = ({
-//   onRowClick,
-//   headerFilter,
-//   filterRow,
-//   allListRF = [],
-//   defaultPageSize = 25,
-//   deleteRow,
-//   editRow,
-// }) => {
-//   const DataGridPageSizes =
-//     allListRF?.length < 25
-//       ? []
-//       : allListRF?.length > 25
-//       ? [25, 50]
-//       : [25, 50, 100];
-
-//   const columns = [
-//     {
-//       dataField: "code",
-//       caption: "کد",
-//       allowEditing: false,
-//     },
-//     {
-//       dataField: "operations",
-//       caption: "عملیات",
-//       allowEditing: false,
-//       cellRender: (cellData) => (
-//         <div>
-//           <FontAwesomeIcon
-//             icon={faEdit}
-//             style={{ marginRight: 10, cursor: "pointer" }}
-//             onClick={() => editRow(cellData.data)}
-//           />
-//           <FontAwesomeIcon
-//             icon={faTrash}
-//             style={{ cursor: "pointer" }}
-//             onClick={() => deleteRow(cellData.data)}
-//           />
-//         </div>
-//       ),
-//     },
-//   ];
-
-//         <Scrolling
-//           rowRenderingMode="virtual"
-//           showScrollbar="always"
-//           columnRenderingMode="virtual"
-//         />
-//         <Paging defaultPageSize={defaultPageSize} />
-//         <Editing
-//           mode="row"
-//           allowUpdating={true}
-//           allowDeleting={true}
-//           allowAdding={true}
-//         />
-//         <HeaderFilter visible={headerFilter} />
-//         <Pager
-//           visible
-//           allowedPageSizes={DataGridPageSizes}
-//           showPageSizeSelector
-//           showNavigationButtons
-//         />
-//         <FilterRow visible={filterRow} />
-//       </DataGrid>
-//     </Col>
-//   );
-// };
-
-// export default Table;
