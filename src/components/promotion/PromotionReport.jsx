@@ -166,7 +166,7 @@ const PromotionReport = () => {
             />
             <Button
               icon={<ArticleIcon className="font18 fwbold ms-2" />}
-              className="bg-danger "
+              className="bg-danger text-white "
               label="اکسل"
               stylingMode="contained"
               rtlEnabled={true}

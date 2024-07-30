@@ -18,7 +18,7 @@ import { BrowserRouter } from "react-router-dom";
 
 
 // akhlaghi
-// window.apiAddress = "http://10.0.10.48:9092/api";
+window.apiAddress = "http://10.0.10.48:9092/api";
 
 // alirezayi
 // window.apiAddress = "http://10.0.10.41:7142/api";
