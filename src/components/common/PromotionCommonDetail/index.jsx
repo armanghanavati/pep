@@ -65,6 +65,8 @@ const PromotionCommonDetail = ({
   setSelectedProduct,
   selectedGroup,
   setSelectedGroup,
+  selectedTypeGroup,
+  setSelectedTypeGroup,
 }) => {
   const { users } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -75,13 +77,20 @@ const PromotionCommonDetail = ({
   const [allProduct, setAllProduct] = useState([]);
   const [allCustomer, setAllCustomer] = useState([]);
   const [allgroupProduct, setAllgroupProduct] = useState([]);
+
+  console.log(promotionTypeList);
+
   const handleGetslaPromotionTypeList = asyncWrapper(async () => {
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await slaPromotionTypeList();
     dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
+    const fixingForTable = data?.map((item) => ({
+      id: item?.id,
+      label: item?.typeName,
+    }));
     if (status == "Success") {
-      setPromotionTypeList(data);
+      setPromotionTypeList(fixingForTable);
       setTypeAndPlatform((prev) => ({ ...prev, allType: data }));
     } else {
       dispatch(
@@ -190,37 +199,6 @@ const PromotionCommonDetail = ({
     },
   ];
 
-  const storeColumns = [
-    {
-      dataField: "code",
-      caption: "کد‌",
-      allowEditing: false,
-    },
-    {
-      dataField: "locationName",
-      caption: "عنوان",
-      allowEditing: false,
-    },
-  ];
-
-  const customerColumns = [
-    {
-      dataField: "id",
-      caption: "کد‌",
-      allowEditing: false,
-    },
-    {
-      dataField: "code",
-      caption: "کد‌",
-      allowEditing: false,
-    },
-    {
-      dataField: "customerGroupName",
-      caption: "عنوان",
-      allowEditing: false,
-    },
-  ];
-
   const handleGetDataEditFields = () => {
     if (itsEditRow) {
       const getEditRow = detailRow?.data;
@@ -313,6 +291,10 @@ const PromotionCommonDetail = ({
     }
   };
 
+  const handleAcceptTypeGroup = () =>{
+    setTypeAndPlatform((prev) => ({ ...prev, typeGroup: selectedTypeGroup }));
+  }
+
   useEffect(() => {
     handleGetslaPromotionTypeList();
     handleSlaCustomerGroupList();
@@ -341,6 +323,7 @@ const PromotionCommonDetail = ({
     }
   }, [storeList]);
 
+  
   return (
     <Row className="d-flex">
       <Input
@@ -397,7 +380,6 @@ const PromotionCommonDetail = ({
           setSelected={setSelectStore}
           submit={handleAcceptStore}
           allListRF={storeList}
-          columns={storeColumns}
           className="my-3"
           xxl={12}
           xl={2}
@@ -441,7 +423,6 @@ const PromotionCommonDetail = ({
           setSelected={setSelectedCustomer}
           submit={handleAcceptCustomer}
           allListRF={allCustomer}
-          columns={storeColumns}
           className="my-3"
           xxl={12}
           xl={2}
@@ -460,18 +441,31 @@ const PromotionCommonDetail = ({
           value={inputFields?.discount}
         />
       )}
-      <ComboBox
-        name="typePromotion"
-        displayExpr="typeName"
-        options={promotionTypeList}
-        value={inputFields?.typePromotion}
-        onChange={(e) => handleChangeInputs("typePromotion", e)}
-        placeholder="نوع"
-        label="نوع"
-        className="my-3"
-        xl={4}
-        xxl={4}
-      />
+      {!itsPromotionReport && (
+        <ComboBox
+          name="typePromotion"
+          displayExpr="label"
+          options={promotionTypeList}
+          value={inputFields?.typePromotion}
+          onChange={(e) => handleChangeInputs("typePromotion", e)}
+          placeholder="نوع"
+          label="نوع"
+          className="my-3"
+          xl={4}
+          xxl={4}
+        />
+      )}
+      {itsPromotionReport && (
+        <TableMultiSelect2
+          label="نوع"
+          className="my-3"
+          itemName={"label"}
+          allListRF={promotionTypeList}
+          selected={selectedTypeGroup}
+          setSelected={setSelectedTypeGroup}
+          submit={handleAcceptTypeGroup}
+        />
+      )}
     </Row>
   );
 };

@@ -11,7 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import TableMultiSelect2 from "../common/Tables/TableMultiSelect2";
 import Input from "../common/Inputs/Input";
 import SearchIcon from "@mui/icons-material/Search";
-import { RsetIsLoading } from "../../redux/reducers/main/main-slice";
+import {
+  RsetIsLoading,
+  RsetShowToast,
+} from "../../redux/reducers/main/main-slice";
 import ArticleIcon from "@mui/icons-material/Article";
 
 const PromotionReport = () => {
@@ -20,6 +23,7 @@ const PromotionReport = () => {
   const [inputFields, setInputFields] = useState({});
   const [typeAndPlatform, setTypeAndPlatform] = useState({});
   const [selectedType, setSelectedType] = useState([]);
+  const [selectedTypeGroup, setSelectedTypeGroup] = useState([]);
   const [selectStore, setSelectStore] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState([]);
@@ -38,6 +42,8 @@ const PromotionReport = () => {
     });
   };
 
+  console.log(typeAndPlatform);
+
   const handleSearching = asyncWrapper(async () => {
     const fixLocation = typeAndPlatform?.allStore.map(
       (location) => location.id
@@ -52,9 +58,7 @@ const PromotionReport = () => {
       title: inputFields?.title || "",
       itemIds: selectedProduct?.length !== 0 ? selectedProduct : fixAllProduct,
       locationIds: typeAndPlatform?.store || fixLocation,
-      promotionTypeIds: !!inputFields?.typePromotion
-        ? [inputFields?.typePromotion]
-        : fixAllType,
+      promotionTypeIds: typeAndPlatform?.typeGroup || fixAllType,
       promotionPaltformIds: typeAndPlatform?.type || fixPlatform,
       promotionCustomerGroupIds: typeAndPlatform?.customer || fixAllCustomer,
       fromDate:
@@ -68,8 +72,18 @@ const PromotionReport = () => {
     const res = await slaPromotionReport(postData);
     dispatch(RsetIsLoading({ stateWait: false }));
 
-    const { statusCode, data } = res;
-    setAllListRF(data);
+    const { status, statusCode, data, message } = res;
+    if (status === "Success") {
+      setAllListRF(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
   });
 
   const promotionColumns = [
@@ -155,6 +169,8 @@ const PromotionReport = () => {
             setSelectStore={setSelectStore}
             selectedCustomer={selectedCustomer}
             setSelectedCustomer={setSelectedCustomer}
+            selectedTypeGroup={selectedTypeGroup}
+            setSelectedTypeGroup={setSelectedTypeGroup}
           />
           <div className="d-flex justify-content-end mt-2">
             <Button

@@ -30,8 +30,6 @@ const TableMultiSelect2 = ({
   const [titleFilter, setTitleFilter] = useState("");
   //   const [selected, setSelected] = useState([]);
 
-  console.log(selected);
-
   useEffect(() => {
     setFilterTable(allListRF);
   }, [allListRF]);

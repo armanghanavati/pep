@@ -281,14 +281,10 @@ export const REAL_COMPONENT = [
     strComponent: "OrderPointSupplierConfirmReports",
     orgComponent: <OrderPointSupplierConfirmReports />,
   },
-  // {
-  //   strComponent: "OrderPointSupplierConfirmReports",
-  //   orgComponent: <SupplierLocations />,
-  // },
-  // {
-  //   strComponent: "SupplierLocations",
-  //   orgComponent: <SupplierLocations />,
-  // },
+  {
+    strComponent: "SupplierLocations",
+    orgComponent: <SupplierLocations />,
+  },
   {
     strComponent: "Bakhshnamehs",
     orgComponent: <Bakhshnamehs />,
