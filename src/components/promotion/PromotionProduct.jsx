@@ -216,6 +216,7 @@ const PromotionProduct = ({
   };
 
   const handleSubmitProduct = () => {
+    console.log("DDDDDDDDDDDDDD");
     if (handleCheckProductList()) {
       setQuestionModal(true);
     } else {
@@ -232,9 +233,9 @@ const PromotionProduct = ({
   };
 
   const handleQuestionToAccept = () => {
-    if (permitForNextStep(["productGroup", "product", "discount"]) === true) {
-      handleSubmitProduct();
-    }
+    // if (permitForNextStep(["productGroup", "product", "discount"]) === true) {
+    // console.log("DDDDDDDDDDDDDD");
+    handleSubmitProduct();
   };
 
   return (

@@ -143,8 +143,7 @@ class Profile extends React.Component {
                 name: this.state.txtNameValue,
                 userName: this.state.txtUserNameValue,
                 password: this.state.txtPasswordValue,
-            };
-            alert(JSON.stringify(data))
+            };            
             if (this.state.AttachedFile != null) {
                 const attachObj = {
                     AttachedFile: this.state.AttachedFile,

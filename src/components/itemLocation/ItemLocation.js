@@ -67,6 +67,7 @@ import {
 import { logsOrderPointInventoryActions } from "../../redux/reducers/logsOrderPointInventory/logsOrderPointInventory-slice";
 import { locationActions } from "../../redux/reducers/location/location-slice";
 import { companyActions } from "../../redux/reducers/company/company-slice";
+import { searchLocationSupplier } from "../../redux/reducers/locationSupplierLimit/locationSupplierLimit-actions";
 import {
   itemLocationList,
   updateItemLocation,
@@ -456,12 +457,17 @@ class ItemLocation extends React.Component {
       tempItemLocation = [];
     }
     for (let i = 0; i < tempItemLocation.length; i++) {
-      obj = {
+      obj = {        
         itemId: tempItemLocation[i].itemId,
         locationId: tempItemLocation[i].locationId,
         isActive: Status,
         minPercentChange: tempItemLocation[i].minPercentChange,
-        maxPercentChange: tempItemLocation[i].maxPercentChange
+        maxPercentChange: tempItemLocation[i].maxPercentChange,
+        isActiveSnapp: tempItemLocation[i].isActiveSnapp,
+        isCreateOrderInventory: tempItemLocation[i].isCreateOrderInventory,
+        isCreateOrderSupplier: tempItemLocation[i].isCreateOrderSupplier,
+        orderNumber: tempItemLocation[i].orderNumber,
+        maxAllowOrderNumberSnapp: tempItemLocation[i].maxAllowOrderNumberSnapp
       };
       tempItems.push(obj);
 

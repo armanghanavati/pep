@@ -6,12 +6,14 @@ import Table from "../common/Tables/Table";
 import asyncWrapper from "../../utiliy/asyncWrapper";
 import Button from "../common/Buttons/Button";
 import { slaPromotionReport } from "../../redux/reducers/promotion/promotion-action";
-import StringHelpers from "../../utiliy/GlobalMethods";
+import StringHelpers, { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 import { useDispatch, useSelector } from "react-redux";
 import TableMultiSelect2 from "../common/Tables/TableMultiSelect2";
 import Input from "../common/Inputs/Input";
 import SearchIcon from "@mui/icons-material/Search";
 import { RsetIsLoading } from "../../redux/reducers/main/main-slice";
+import ArticleIcon from "@mui/icons-material/Article";
+
 const PromotionReport = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state);
@@ -82,7 +84,7 @@ const PromotionReport = () => {
     {
       dataField: "title",
       caption: "عنوان",
-      allowEditing: true,
+      allowEditing: false,
     },
     {
       dataField: "fromDate",
@@ -114,20 +116,20 @@ const PromotionReport = () => {
     {
       dataField: "barcode1",
       caption: "بارکد",
-      allowEditing: true,
+      allowEditing: false,
     },
     {
       dataField: "discount",
       caption: "درصد تخفیف",
-      allowEditing: true,
+      allowEditing: false,
       cellRender: (item) => {
         return <>{item?.key?.discount + "%"}</>;
       },
     },
     {
       dataField: "typeName",
-      caption: "عمومی",
-      allowEditing: true,
+      caption: "دسته",
+      allowEditing: false,
     },
   ];
 
@@ -157,9 +159,18 @@ const PromotionReport = () => {
           <div className="d-flex justify-content-end mt-2">
             <Button
               type="default"
+              className="ms-3"
               onClick={handleSearching}
               icon={<SearchIcon className="d-flex ms-2 font18" />}
               label="جستجو"
+            />
+            <Button
+              icon={<ArticleIcon className="font18 fwbold ms-2" />}
+              className="bg-danger "
+              label="اکسل"
+              stylingMode="contained"
+              rtlEnabled={true}
+              onClick={() => Gfn_ExportToExcel(allListRF, "promotion-report")}
             />
           </div>
         </div>

@@ -58,6 +58,7 @@ import PurchaseReceipts from "../pages/PurchaseReceipts";
 import PrintLabels from "../pages/PrintLabels";
 import PromotionsReports from "../components/promotion/PromotionReport";
 import SupplierLocations from "../pages/SupplierLocations";
+import DiffItemsSnappReports from '../pages/DiffItemsSnappReports';
 
 export const REAL_COMPONENT = [
   {
@@ -313,5 +314,9 @@ export const REAL_COMPONENT = [
   {
     strComponent: "PrintLabels",
     orgComponent: <PrintLabels />,
+  },
+  {
+    strComponent: "DiffItemsSnappReports",
+    orgComponent: <DiffItemsSnappReports />,
   },
 ];
