@@ -22,9 +22,9 @@ const PromotionReport = () => {
   const [selectedType, setSelectedType] = useState([]);
   const [selectStore, setSelectStore] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
+  const [selectedPlatform, setSelectedPlatform] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState([]);
-
   const [allListRF, setAllListRF] = useState([]);
 
   const handleChangeInputs = (
@@ -155,6 +155,8 @@ const PromotionReport = () => {
             setSelectStore={setSelectStore}
             selectedCustomer={selectedCustomer}
             setSelectedCustomer={setSelectedCustomer}
+            selectedPlatform={selectedPlatform}
+            setSelectedPlatform={setSelectedPlatform}
           />
           <div className="d-flex justify-content-end mt-2">
             <Button
