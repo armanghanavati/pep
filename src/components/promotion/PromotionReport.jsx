@@ -22,9 +22,9 @@ const PromotionReport = () => {
   const [selectedType, setSelectedType] = useState([]);
   const [selectStore, setSelectStore] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
-  const [selectedPlatform, setSelectedPlatform] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState([]);
+
   const [allListRF, setAllListRF] = useState([]);
 
   const handleChangeInputs = (
@@ -84,7 +84,7 @@ const PromotionReport = () => {
     {
       dataField: "title",
       caption: "عنوان",
-      allowEditing: true,
+      allowEditing: false,
     },
     {
       dataField: "fromDate",
@@ -116,20 +116,20 @@ const PromotionReport = () => {
     {
       dataField: "barcode1",
       caption: "بارکد",
-      allowEditing: true,
+      allowEditing: false,
     },
     {
       dataField: "discount",
       caption: "درصد تخفیف",
-      allowEditing: true,
+      allowEditing: false,
       cellRender: (item) => {
         return <>{item?.key?.discount + "%"}</>;
       },
     },
     {
       dataField: "typeName",
-      caption: "عمومی",
-      allowEditing: true,
+      caption: "دسته",
+      allowEditing: false,
     },
   ];
 
@@ -155,11 +155,10 @@ const PromotionReport = () => {
             setSelectStore={setSelectStore}
             selectedCustomer={selectedCustomer}
             setSelectedCustomer={setSelectedCustomer}
-            selectedPlatform={selectedPlatform}
-            setSelectedPlatform={setSelectedPlatform}
           />
           <div className="d-flex justify-content-end mt-2">
             <Button
+              type="default"
               className="ms-3"
               onClick={handleSearching}
               icon={<SearchIcon className="d-flex ms-2 font18" />}
