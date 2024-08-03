@@ -8,6 +8,7 @@ import { Label } from "reactstrap";
 import SwitchCase from "../SwitchCases/SwitchCase";
 import Input from "../Inputs/Input";
 import { TextBox } from "devextreme-react";
+import SearchIcon from "@mui/icons-material/Search";
 
 const TableMultiSelect2 = ({
   label,
@@ -124,31 +125,46 @@ const TableMultiSelect2 = ({
             <Table responsive striped bordered hover size="sm">
               <thead className="">
                 <tr>
-                  <th className="width2 headColorTable vertical-align-center select text-center text-white fw-normal">
+                  <th className="width2 headColorTable py-2 vertical-align-center select text-center text-white fw-normal">
                     <SwitchCase
                       type="checkbox"
                       checked={selected?.length === filterTable?.length}
                       onChange={handleSelectedAll}
                     />
                   </th>
-                  <th className=" width2 headColorTable vertical-align-center select text-center text-white fw-normal">
+                  <th className=" width2 headColorTable py-2 vertical-align-center select text-center text-white fw-normal">
                     ردیف
                     {/* <Input className="mt-0 w-100" /> */}
                   </th>
-                  <th className="minWidth150  headColorTable vertical-align-center select text-center text-white fw-normal width15">
+                  <th className="minWidth150  headColorTable py-2 vertical-align-center select text-center text-white fw-normal width15">
                     <span className="">عنوان</span>
-                    <div>
+                    {/*  <div>
                       <TextBox
                         className="my-2"
                         onInput={(e) => handleTitleFilter(e)}
                         rtlEnabled
                         value={titleFilter}
                       />
-                    </div>
+                    </div>*/}
                   </th>
                 </tr>
               </thead>
               <tbody className=" text-center">
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <div>
+                      <TextBox
+                        placeholder={`جستجو . . .`}
+                        className="my-2"
+                        onInput={(e) => handleTitleFilter(e)}
+                        rtlEnabled
+                        value={titleFilter}
+                      />
+                    </div>
+                  </td>
+                </tr>
                 {filterTable?.map((item, index) => {
                   return (
                     <tr key={item.id}>

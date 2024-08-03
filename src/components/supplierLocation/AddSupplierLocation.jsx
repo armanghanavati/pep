@@ -43,6 +43,8 @@ const AddSupplierLocation = ({
   const [selectedLocation, setSelectedLocation] = useState([]);
   const [getSupplier, setGetSupplier] = useState({});
 
+  console.log(allSupplier);
+
   const fixStoreList = storeList?.map((store) => ({
     id: store?.id,
     label: store?.locationName,
@@ -214,7 +216,7 @@ const AddSupplierLocation = ({
         )}
         {!itsEdit ? (
           <TableMultiSelect2
-            itemName={"label"}
+            itemName={"supplierName"}
             selected={selectedSupplier}
             setSelected={setSelectedSupplier}
             submit={() => setGetSupplier(selectedSupplier)}

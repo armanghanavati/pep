@@ -114,7 +114,7 @@ const Coppy = ({
             text="Outlined"
             stylingMode="outlined"
             type="danger"
-            // onClick={() => setShowDetail(false)}
+            onClick={() => setShowCoppy(false)}
             label="لغو"
           />
           <Button type="success" onClick={handleCopy} label="کپی" />
