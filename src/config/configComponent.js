@@ -286,6 +286,10 @@ export const REAL_COMPONENT = [
     orgComponent: <SupplierLocations />,
   },
   {
+    strComponent: "SupplierLocations",
+    orgComponent: <SupplierLocations />,
+  },
+  {
     strComponent: "Bakhshnamehs",
     orgComponent: <Bakhshnamehs />,
   },

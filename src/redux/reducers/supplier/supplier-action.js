@@ -241,3 +241,67 @@ export const allLocationSupplierLimitList = async () => {
   const response = await axios.get(url);
   return response?.data;
 };
+
+// جستجوی تامین کننده بر اساس فروشگاه
+export const searchLocationSupplierLimitList = async (postData) => {
+  const url =
+    window?.apiAddress +
+    `/BseLocationSupplierLimit/searchLocationSupplierLimitList`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};
+
+export const getAllSupplierComboList = async () => {
+  const url = window?.apiAddress + `/Supplier/activeSupplierComboList`;
+  const response = await axios.get(url);
+  return response?.data;
+};
+
+// حذف تامین کننده و فروشگاه
+export const deleteLocationSupplierLimitList = async (
+  locationId,
+  supplierId
+) => {
+  const url =
+    window?.apiAddress +
+    `/BseLocationSupplierLimit/deleteLocationSupplierLimitList?locationId=${locationId}&supplierId=${supplierId}`;
+  const response = await axios.delete(url);
+  return response?.data;
+};
+
+// افزودن تامین کننده و فروشگاه
+export const addLocationSupplierLimitList = async (postData) => {
+  const url =
+    window?.apiAddress +
+    `/BseLocationSupplierLimit/addLocationSupplierLimitList`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};
+
+// ویرایش تامین کننده و فروشگاه
+export const updateLocationSupplierLimitList = async (postData) => {
+  const url =
+    window?.apiAddress +
+    `/BseLocationSupplierLimit/updateLocationSupplierLimitList`;
+  const response = await axios.patch(url, postData);
+  return response?.data;
+};
+
+export const supplierLocationSupplierLimitListByLocationId = async (
+  locationId
+) => {
+  const url =
+    window?.apiAddress +
+    `/BseLocationSupplierLimit/supplierLocationSupplierLimitListByLocationId?locationId=${locationId}`;
+  const response = await axios.get(url);
+  return response?.data;
+};
+
+// کپی تامین کنننده
+export const copySupplierLocationSupplierLimitList = async (postData) => {
+  const url =
+    window?.apiAddress +
+    `/BseLocationSupplierLimit/copySupplierLocationSupplierLimitList`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};

@@ -10,7 +10,10 @@ import HdrWeakIcon from "@mui/icons-material/HdrWeak";
 import AddSupplierLocation from "./AddSupplierLocation";
 import AddIcon from "@mui/icons-material/Add";
 import {
+  activeSupplierComboList,
   allLocationSupplierLimitList,
+  getAllSupplierComboList,
+  searchLocationSupplierLimitList,
   supplierLocationSupplierLimitListByLocationIds,
 } from "../../redux/reducers/supplier/supplier-action";
 import asyncWrapper from "../../utiliy/asyncWrapper";
@@ -22,30 +25,63 @@ import {
 import { Gfn_FormatNumber } from "../../utiliy/GlobalMethods";
 import TableMultiSelect2 from "../common/Tables/TableMultiSelect2";
 import SearchIcon from "@mui/icons-material/Search";
-import { locationPromotionList } from "../../redux/reducers/location/location-actions";
+import {
+  allLocationOrderWithSupplier,
+  allSupplierList,
+  locationPromotionList,
+} from "../../redux/reducers/location/location-actions";
 import Coppy from "./Coppy";
-
 const SupplierLocation = () => {
   const dispatch = useDispatch();
-  const { users } = useSelector((state) => state);
+  const { companies, users } = useSelector((state) => state);
+  const [permission, setPermission] = useState({});
+
+  const fn_GetPermissions = () => {
+    const perm = users?.permissions;
+    if (perm != null)
+      for (let i = 0; i < perm.length; i++) {
+        switch (perm[i].objectName) {
+          case "supplier.update":
+            setPermission((prev) => ({ ...prev, update: true }));
+            break;
+          case "supplier.insert":
+            setPermission((prev) => ({ ...prev, insert: true }));
+            break;
+          case "supplier.show":
+            setPermission((prev) => ({ ...prev, show: true }));
+            break;
+          case "supplier.delete":
+            setPermission((prev) => ({ ...prev, delete: true }));
+            break;
+        }
+      }
+  };
+
+  console.log(permission);
+
   const [showSupplier, setShowSupplier] = useState(false);
   const [showCoppy, setShowCoppy] = useState(false);
   const [allLocationSupplier, setAllLocationSupplier] = useState([]);
-  const [editSupplierRowData, setEditSupplierRowData] = useState({});
+  const [editSupplierRowData, setIsEditSupplierRowData] = useState({});
+  const [itsEdit, setItsEdit] = useState(false);
   const [inputFields, setInputFields] = useState({});
   const [selectedLocation, setSelectedLocation] = useState([]);
   const [storeList, setStoreList] = useState([]);
   const [getLocation, setGetLocation] = useState({});
+  const [getSupplier, setGetSupplier] = useState({});
   const [allSupplier, setAllSupplier] = useState([]);
-
+  const [selectedSupplier, setSelectedSupplier] = useState([]);
   const fixStoreList = storeList?.map((store) => ({
     id: store?.id,
     label: store?.locationName,
   }));
 
-  const handleShowStartSupplier = () => {
-    setShowSupplier(true);
-  };
+  useEffect(() => {
+    handleActiveSupplierComboList();
+    handleGroupStore();
+    handleAllLocationSupplierLimitList();
+    fn_GetPermissions();
+  }, []);
 
   const handleAllLocationSupplierLimitList = asyncWrapper(async () => {
     dispatch(RsetIsLoading({ stateWait: true }));
@@ -66,11 +102,6 @@ const SupplierLocation = () => {
 
     console.log(res);
   });
-
-  useEffect(() => {
-    handleAllLocationSupplierLimitList();
-    handleGroupStore();
-  }, []);
 
   const columns = [
     {
@@ -139,6 +170,18 @@ const SupplierLocation = () => {
         return <>{Gfn_FormatNumber(data?.maxOrderRiali)}</>;
       },
     },
+    // {
+    //   caption: "عملیات",
+    //   allowEditing: true,
+    //   cellRender: (data) => {
+    //     console.log(data?.row?.data);
+    //     return (
+    //       <>
+    //         <DeleteIcon className="font18 fw-bold text-primary cursorPointer" />
+    //       </>
+    //     );
+    //   },
+    // },
   ];
 
   const handleGroupStore = asyncWrapper(async () => {
@@ -161,36 +204,65 @@ const SupplierLocation = () => {
     }
   });
 
-  const handleSupplierLocationSupplierLimitListByLocationIds = asyncWrapper(
-    async (e) => {
-      dispatch(RsetIsLoading({ stateWait: true }));
-      const res = await supplierLocationSupplierLimitListByLocationIds(e);
-      dispatch(RsetIsLoading({ stateWait: false }));
+  // const handleSupplierLocationSupplierLimitListByLocationIds = asyncWrapper(
+  //   async (e) => {
+  //     console.log(e);
+  //     dispatch(RsetIsLoading({ stateWait: true }));
+  //     const res = await supplierLocationSupplierLimitListByLocationIds(e);
+  //     dispatch(RsetIsLoading({ stateWait: false }));
 
-      const { data, status, message } = res;
-      if (status == "Success") {
-        const fixdata = data.map((item) => ({
-          id: item?.supplierId,
-          label: item?.supplierName,
-        }));
-        console.log(data);
-        setAllSupplier(fixdata);
-      } else {
-        dispatch(
-          RsetShowToast({
-            isToastVisible: true,
-            Message: message || "لطفا دوباره امتحان کنید",
-            Type: status,
-          })
-        );
-      }
+  //     const { data, status, message } = res;
+  //     if (status == "Success") {
+  //       const fixdata = data.map((item) => ({
+  //         id: item?.supplierId,
+  //         label: item?.supplierName,
+  //       }));
+  //       console.log(data);
+  //       setAllSupplier(fixdata);
+  //     } else {
+  //       dispatch(
+  //         RsetShowToast({
+  //           isToastVisible: true,
+  //           Message: message || "لطفا دوباره امتحان کنید",
+  //           Type: status,
+  //         })
+  //       );
+  //     }
+  //   }
+  // );
+
+  const handleSearching = asyncWrapper(async () => {
+    const postData = {
+      locationIds: selectedLocation,
+      supplierIds: selectedSupplier,
+    };
+    dispatch(RsetIsLoading({ stateWait: true }));
+    const res = await searchLocationSupplierLimitList(postData);
+    dispatch(RsetIsLoading({ stateWait: false }));
+    const { data, status, message } = res;
+    if (status == "Success") {
+      console.log(data);
+      setAllLocationSupplier(data);
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
     }
-  );
-
-  const handleSearching = asyncWrapper(() => {});
+  });
 
   const handleOnRowClick = (data) => {
-    setEditSupplierRowData(data);
+    setIsEditSupplierRowData(data);
     const {
       minOrderWeight,
       maxOrderWeight,
@@ -205,10 +277,46 @@ const SupplierLocation = () => {
       number: [minOrderNumber, maxOrderNumber],
       rial: [minOrderRiali, maxOrderRiali],
     });
+    setItsEdit(true);
   };
+
+  console.log(companies?.currentCompanyId);
+
+  const handleActiveSupplierComboList = asyncWrapper(async () => {
+    dispatch(RsetIsLoading({ stateWait: true }));
+    // const res = await getAllSupplierComboList();
+    const res = await allSupplierList();
+
+    const { data, status, message } = res;
+    dispatch(RsetIsLoading({ stateWait: false }));
+    if (status == "Success") {
+      setAllSupplier(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+    console.log(res);
+  });
+
+  const handleShowStartSupplier = () => {
+    setInputFields({
+      weight: undefined,
+      number: undefined,
+      rial: undefined,
+      setSelectedLocation: [],
+      setSelectedSupplier: [],
+    });
+    setShowSupplier(true);
+    setItsEdit(false);
+  };
+
   const handleAcceptLocation = () => {
-    handleSupplierLocationSupplierLimitListByLocationIds();
-    setGetLocation(selectedLocation);
+    // handleSupplierLocationSupplierLimitListByLocationIds(selectedLocation);
   };
 
   return (
@@ -217,13 +325,15 @@ const SupplierLocation = () => {
         <MainTitle label="تامین کننده/ فروشگاه‌ها" />
         <Card className="p-3 shadow bg-white border pointer">
           <div className="d-flex justify-content-start mt-1 mb-3">
-            <Button
-              className="ms-3"
-              icon={<AddIcon className="ms-1 font18 fw-bold" />}
-              type="success"
-              onClick={handleShowStartSupplier}
-              label="جدید"
-            />
+            {!!permission && (
+              <Button
+                className="ms-3"
+                icon={<AddIcon className="ms-1 font18 fw-bold" />}
+                type="success"
+                onClick={handleShowStartSupplier}
+                label="جدید"
+              />
+            )}
             <Button
               type="success"
               icon={<ContentCopyIcon className="ms-1 font18 fw-bold" />}
@@ -237,18 +347,18 @@ const SupplierLocation = () => {
               itemName={"label"}
               selected={selectedLocation}
               setSelected={setSelectedLocation}
-              submit={handleAcceptLocation}
+              submit={() => setGetLocation(selectedLocation)}
               allListRF={fixStoreList}
               xxl={4}
               xl={4}
               label="فروشگاه"
             />
             <TableMultiSelect2
-              itemName={"label"}
-              // selected={selectedSupplier}
-              // setSelected={setSelectedSupplier}
-              // submit={() => setGetSupplier(selectedSupplier)}
-              // allListRF={allSupplier}
+              itemName={"supplierName"}
+              selected={selectedSupplier}
+              setSelected={setSelectedSupplier}
+              submit={() => setGetSupplier(selectedSupplier)}
+              allListRF={allSupplier}
               xxl={4}
               xl={4}
               label="تامین کننده"
@@ -268,7 +378,7 @@ const SupplierLocation = () => {
             //   onSelectionChanged={onSelectionChanged}
             filterRow
             headerFilter
-            onRowClick={handleOnRowClick}
+            onRowClick={!!permission && handleOnRowClick}
             columns={columns}
             allListRF={allLocationSupplier}
           />
@@ -277,6 +387,7 @@ const SupplierLocation = () => {
       </Container>
       {showSupplier && (
         <AddSupplierLocation
+          permission={permission}
           allSupplier={allSupplier}
           setAllSupplier={setAllSupplier}
           getLocation={getLocation}
@@ -288,13 +399,26 @@ const SupplierLocation = () => {
           editSupplierRowData={editSupplierRowData}
           setShowSupplier={setShowSupplier}
           showSupplier={showSupplier}
-          handleSupplierLocationSupplierLimitListByLocationIds={
-            handleSupplierLocationSupplierLimitListByLocationIds
+          handleAllLocationSupplierLimitList={
+            handleAllLocationSupplierLimitList
           }
+          itsEdit={itsEdit}
+          // handleSupplierLocationSupplierLimitListByLocationIds={
+          //   handleSupplierLocationSupplierLimitListByLocationIds
+          // }
         />
       )}
 
-      {showCoppy && <Coppy showCoppy={showCoppy} setShowCoppy={setShowCoppy} />}
+      {showCoppy && (
+        <Coppy
+          handleAllLocationSupplierLimitList={
+            handleAllLocationSupplierLimitList
+          }
+          showCoppy={showCoppy}
+          storeList={fixStoreList}
+          setShowCoppy={setShowCoppy}
+        />
+      )}
     </>
   );
 };

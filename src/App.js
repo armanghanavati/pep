@@ -136,7 +136,7 @@ class App extends React.Component {
     // const userData = jwt (Token);
     // let Vals=Object.values(userData);
     // const UserId=Vals[1];
-    // const permissions=resAuthUser.permissions;
+    // const s=resAuthUser.permissions;
 
     //-------------------Config For Debug------------------------------
 

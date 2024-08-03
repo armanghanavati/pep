@@ -256,6 +256,7 @@ const PromotionCommonDetail = ({
     const fix = allPlatform
       ?.filter((type) => type?.isChecked === true)
       .map((item) => item.id);
+      console.log(fix);
     setSelectedType((prev) => [...prev, ...fix]);
   };
 
