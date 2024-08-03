@@ -23,14 +23,13 @@ const TableMultiSelect2 = ({
   setSelected,
   name,
   error,
+  disabled = false,
 }) => {
   const [showTable, setShowTable] = useState(false);
   const [filterTable, setFilterTable] = useState(allListRF);
   const [number, setNumber] = useState(null);
   const [titleFilter, setTitleFilter] = useState("");
   //   const [selected, setSelected] = useState([]);
-
-  console.log(selected);
 
   useEffect(() => {
     setFilterTable(allListRF);
@@ -79,12 +78,22 @@ const TableMultiSelect2 = ({
     // setCurrentPage((prev) => prev + 1);
   }, []);
 
+  const handleShowTableMultiSelected = () => {
+    if (!!disabled) {
+      return null;
+    } else {
+      return setShowTable(true);
+    }
+  };
+
   return (
     <Col className={className} xxl={xxl} xs={xs} md={md} xl={xl}>
       <Label> {label} </Label>
       <div
-        onClick={() => setShowTable(true)}
-        className="d-flex justify-content-between py-1 bg-white-multi cursorPointer px-2 border rounded-2"
+        onClick={handleShowTableMultiSelected}
+        className={`d-flex justify-content-between py-1 ${
+          disabled ? "bg-light" : "bg-white-multi"
+        }  cursorPointer px-2 border rounded-2`}
       >
         <span className="font15 mt-1">
           {selected?.length !== 0 && selected?.length !== undefined

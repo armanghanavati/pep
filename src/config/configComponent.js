@@ -58,7 +58,7 @@ import PurchaseReceipts from "../pages/PurchaseReceipts";
 import PrintLabels from "../pages/PrintLabels";
 import PromotionsReports from "../components/promotion/PromotionReport";
 import SupplierLocations from "../pages/SupplierLocations";
-import DiffItemsSnappReports from '../pages/DiffItemsSnappReports';
+import DiffItemsSnappReports from "../pages/DiffItemsSnappReports";
 
 export const REAL_COMPONENT = [
   {
@@ -277,20 +277,18 @@ export const REAL_COMPONENT = [
     strComponent: "TissDataDocs",
     orgComponent: <TissDataDocs />,
   },
-  // {
-  //   strComponent: "OrderPointSupplierConfirmReports",
-  //   orgComponent: <OrderPointSupplierConfirmReports />,
-  // },
-  // -> test
+  {
+    strComponent: "OrderPointSupplierConfirmReports",
+    orgComponent: <OrderPointSupplierConfirmReports />,
+  },
   {
     strComponent: "OrderPointSupplierConfirmReports",
     orgComponent: <SupplierLocations />,
   },
-  // {
-  //   strComponent: "SupplierLocations",
-  //   orgComponent: <SupplierLocations />,
-  // },
-
+  {
+    strComponent: "SupplierLocations",
+    orgComponent: <SupplierLocations />,
+  },
   {
     strComponent: "Bakhshnamehs",
     orgComponent: <Bakhshnamehs />,

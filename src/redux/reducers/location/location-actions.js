@@ -297,6 +297,13 @@ export const locationPromotionList = async (userId, permitionId = 0) => {
     window.apiAddress +
     `/Location/locationPromotionList?promotionId=${permitionId}&userId=${userId}`;
   const response = await axios.get(url);
+
+  return response?.data;
+};
+
+export const allSupplierList = async () => {
+  const url = window.apiAddress + `/Supplier/supplierList`;
+  const response = await axios.get(url);  
   console.log(response);
   return response?.data;
 };

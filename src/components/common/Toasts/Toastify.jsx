@@ -15,9 +15,21 @@ const Toastify = ({ size = "lg" }) => {
           <Toast
             visible={main?.showToast?.isToastVisible}
             message={main?.showToast?.Message}
-            type={main?.showToast?.Type === "Success" ? "success" : "error"}
+            type={
+              main?.showToast?.Type?.toLowerCase() === "success"
+                ? "success"
+                : main?.showToast?.Type?.toLowerCase() === "unsuccess"
+                ? "error"
+                : main?.showToast?.Type?.toLowerCase() === "exception"
+                ? "warning"
+                : ""
+            }
             onHiding={() => dispatch(RsetShowToast({ isToastVisible: false }))}
             displayTime={10000}
+            animation={{
+              show: { type: "fade", duration: 500 },
+              hide: { type: "fade", duration: 500 },
+            }}
             width={size}
             rtlEnabled={true}
           />

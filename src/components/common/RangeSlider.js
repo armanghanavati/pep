@@ -52,6 +52,8 @@ const RangeSlider = ({
           <div className="d-flex justify-content-center">
             <Col className="d-flex" lg={lg} md={md} xs={xs} xl={xl} xxl={xxl}>
               <Slider
+                // shiftStep={30}
+                step={isCurrency && 1000}
                 className=""
                 valueLabelDisplay="auto"
                 onChange={onChange}
