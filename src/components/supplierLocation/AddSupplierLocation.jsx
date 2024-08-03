@@ -32,7 +32,7 @@ const AddSupplierLocation = ({
   getLocation,
   setGetLocation,
   allSupplier,
-  setAllSupplier,
+  permission,
   editSupplierRowData,
   handleSupplierLocationSupplierLimitListByLocationIds,
   itsEdit,
@@ -185,7 +185,7 @@ const AddSupplierLocation = ({
           label="لغو"
         />,
         <Button
-          onClick={itsEdit ? handleEdit : handleAccept}
+          onClick={itsEdit && permission ? handleEdit : handleAccept}
           icon={<CheckIcon className="ms-1 font18 fw-bold" />}
           text="success"
           stylingMode="success"

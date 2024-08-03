@@ -325,13 +325,15 @@ const SupplierLocation = () => {
         <MainTitle label="تامین کننده/ فروشگاه‌ها" />
         <Card className="p-3 shadow bg-white border pointer">
           <div className="d-flex justify-content-start mt-1 mb-3">
-            <Button
-              className="ms-3"
-              icon={<AddIcon className="ms-1 font18 fw-bold" />}
-              type="success"
-              onClick={handleShowStartSupplier}
-              label="جدید"
-            />
+            {!!permission && (
+              <Button
+                className="ms-3"
+                icon={<AddIcon className="ms-1 font18 fw-bold" />}
+                type="success"
+                onClick={handleShowStartSupplier}
+                label="جدید"
+              />
+            )}
             <Button
               type="success"
               icon={<ContentCopyIcon className="ms-1 font18 fw-bold" />}
@@ -376,7 +378,7 @@ const SupplierLocation = () => {
             //   onSelectionChanged={onSelectionChanged}
             filterRow
             headerFilter
-            onRowClick={handleOnRowClick}
+            onRowClick={!!permission && handleOnRowClick}
             columns={columns}
             allListRF={allLocationSupplier}
           />
@@ -385,6 +387,7 @@ const SupplierLocation = () => {
       </Container>
       {showSupplier && (
         <AddSupplierLocation
+          permission={permission}
           allSupplier={allSupplier}
           setAllSupplier={setAllSupplier}
           getLocation={getLocation}
