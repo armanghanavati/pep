@@ -20,6 +20,7 @@ import Table from "../common/Tables/Table";
 import { useSelector } from "react-redux";
 import MainTitle from "../common/MainTitles/MailTitle";
 import Wait from "../common/Wait";
+import EditTables from "../common/EditTables";
 
 const ItemReport = () => {
   const [storeList, setStoreList] = useState([]);
@@ -348,6 +349,32 @@ const ItemReport = () => {
             max={100}
           />
         </Row>
+        <EditTables
+          filedFineds={[
+            <ComboBox
+              xxl={6}
+              xl={6}
+              multi
+              className="my-2"
+              label="نام کالا:"
+              name="itsProductName"
+              value={inputFields?.itsProductName}
+              onChange={(e) => handleChangeInputs("itsProductName", e)}
+              options={productList}
+            />,
+            <ComboBox
+              xxl={6}
+              xl={6}
+              multi
+              className="my-2"
+              label="نام فروشگاه:"
+              name="store"
+              value={inputFields?.store}
+              onChange={(e) => handleChangeInputs("store", e)}
+              options={storeList}
+            />,
+          ]}
+        />
         <div className="d-flex justify-content-end mt-2">
           <Button
             type="default"

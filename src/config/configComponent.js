@@ -136,7 +136,7 @@ export const REAL_COMPONENT = [
   },
   {
     strComponent: "ItemLocations",
-    orgComponent: <EditTables />,
+    orgComponent: <ItemLocations />,
   },
   {
     strComponent: "RegisterOrderTimes",
