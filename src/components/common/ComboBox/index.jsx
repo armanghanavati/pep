@@ -36,8 +36,8 @@ export default function ComboBox({
           value={value}
           dataSource={options}
           searchEnabled
-          displayExpr="label"
-          valueExpr="id"
+          displayExpr={displayExpr}
+          valueExpr={valueExpr}
           placeholder={placeholder}
           name={name}
           rtlEnabled={true}

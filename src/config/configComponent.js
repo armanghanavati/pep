@@ -59,6 +59,7 @@ import PrintLabels from "../pages/PrintLabels";
 import PromotionsReports from "../components/promotion/PromotionReport";
 import SupplierLocations from "../pages/SupplierLocations";
 import DiffItemsSnappReports from "../pages/DiffItemsSnappReports";
+import EditTables from "../components/common/EditTables";
 
 export const REAL_COMPONENT = [
   {
@@ -135,7 +136,7 @@ export const REAL_COMPONENT = [
   },
   {
     strComponent: "ItemLocations",
-    orgComponent: <ItemLocations />,
+    orgComponent: <EditTables />,
   },
   {
     strComponent: "RegisterOrderTimes",
@@ -280,10 +281,6 @@ export const REAL_COMPONENT = [
   {
     strComponent: "OrderPointSupplierConfirmReports",
     orgComponent: <OrderPointSupplierConfirmReports />,
-  },
-  {
-    strComponent: "SupplierLocations",
-    orgComponent: <SupplierLocations />,
   },
   {
     strComponent: "SupplierLocations",

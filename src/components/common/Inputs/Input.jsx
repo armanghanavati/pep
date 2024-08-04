@@ -3,28 +3,18 @@ import { Col, Label } from "reactstrap";
 
 const Input = ({
   value = "",
-  errors,
   name = "",
-  onClick = () => {},
   onChange = () => {},
-  required = false,
   error,
   label,
   type = "text",
   maxLength,
   placeholder,
-  labelWidth = "300px",
   validations,
   index,
   readOnly,
   isCurrency = false,
   className = undefined,
-  borderRadius,
-  onBlur = () => {},
-  titleFontSize,
-  TooltipTitle = null,
-  minWidth,
-  maxWidth,
   height,
   centerText = false,
   align = "center",
@@ -46,11 +36,20 @@ const Input = ({
     ) {
       onChange(name, undefined, validations, index);
     } else {
-      onChange(name, value, validations, index);
+      let inputValue;
+      inputValue = value;
+      // inputValue = value.replace(/[^\d.0-9]/g, "");
+      // inputValue = inputValue.replace(/\.{2,}/g, ".");ّ
+      if (type === "number" && isCurrency) {
+        const dot = inputValue.split(".");
+        dot[0] = dot[0]?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        inputValue = dot.join(".");
+      }
+      if (type === "number") {
+        inputValue = inputValue.replace(/[^\d.0-9]/g, "");
+      }
+      onChange(name, inputValue, validations, index);
     }
-    // if (!!className && (error?.length === 0 || !!!error)) {
-    //   setNewClassName("orange");
-    // }
   };
 
   const handleChangeForCurrencyFormat = (value) => {
@@ -87,11 +86,13 @@ const Input = ({
     }
     // return checkDot && e.preventDefault()
   };
+
   const formatInput = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
     }
   };
+
   let direction = false;
   const handelValue = (value) => {
     const tempDirection = /\s*[a-zA-Z0-9!@#\$%\^\&*/\)\(+=._-]\s*$/?.test(
@@ -120,18 +121,7 @@ const Input = ({
           placeholder={placeholder}
           name={name}
           maxLength={maxLength}
-          pattern={
-            maxLength !== undefined && type === "number"
-              ? // ? "/^-?d+.?d*$/"
-                /[^0-9]/g
-              : // "/^-?d+.?d*$/"
-                undefined
-          }
           value={value}
-          // value={handelValue(value)}
-          // title={value}
-          // type={(maxLength && type === 'number') ? 'text' : type}
-          // type={passwordShown ? "text" : type}
           style={{
             textAlign: centerText
               ? align
@@ -142,7 +132,7 @@ const Input = ({
               type === "number" || isCurrency || direction ? "ltr" : "rtl",
             height: height ? height : "",
           }}
-          onChange={handleChange}
+          onInput={handleChange}
           readOnly={readOnly}
           onKeyDown={type === "number" ? formatNumberInput : formatInput}
         />
@@ -162,3 +152,75 @@ const Input = ({
   );
 };
 export default Input;
+
+// pattern={
+//   maxLength !== undefined && type === "number"
+//     ? // ? "/^-?d+.?d*$/"
+//       /[^0-9]/g
+//     : // "/^-?d+.?d*$/"
+//       undefined
+// }
+// value={handelValue(value)}
+// title={value}
+// type={(maxLength && type === 'number') ? 'text' : type}
+// type={passwordShown ? "text" : type}
+
+// const handleChange = (e, field) => {
+//   let inputValue;
+//   inputValue = e.target.value.replace(/[^\d.0-9]/g, "");
+//   inputValue = inputValue.replace(/\.{2,}/g, ".");
+//   let part = inputValue.split(".");
+//   if (currency) {
+//     const dot = inputValue.split(".");
+//     dot[0] = dot[0]?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+//     inputValue = dot.join(".");
+//   }
+//   field.onChange(inputValue);
+// };
+
+// switch (field.name) {
+//   case "creditPrice":
+//   case "itemValueIncreasedTaxPrice":
+//   case "equivalentWithRial":
+//   case "article17TaxPrice":
+//   case "otherTaxPrice":
+//   case "constructionFee":
+//   case "sellerProfit":
+//   case "commission":
+//   case "otherLegalFundsPrice":
+//     inputValue = parseFloat(inputValue || "0").toFixed(0);
+//     break;
+//   case "name":
+//   case "lastName":
+//     inputValue = e.target.value?.replace(/[^a-zA-Zآ-ی]/g, "");
+//     break;
+//   case "count":
+//   case "unitPrice":
+//     if (
+//       part[0].length > 18 ||
+//       (part[1] && part[0].length + part[1].length > 18)
+//     ) {
+//       part[0] = part[0].slice(0, 18);
+//     }
+//     if (part[1] && part[1].length > 8) {
+//       part[1] = part[1].slice(0, 8);
+//     }
+//     inputValue = part.join(".");
+//     break;
+//   case "otherLegalFundsRate":
+//   case "otherTaxRate":
+//     let partRate = inputValue.split(".");
+//     if (
+//       partRate[0].length > 3 ||
+//       (partRate[1] && partRate[0].length + partRate[1].length > 3)
+//     ) {
+//       partRate[0] = partRate[0].slice(0, 3);
+//     }
+//     if (partRate[1] && partRate[1].length > 2) {
+//       partRate[1] = partRate[1].slice(0, 2);
+//     }
+//     inputValue = partRate.join(".");
+//     break;
+//   default:
+//     break;
+// }

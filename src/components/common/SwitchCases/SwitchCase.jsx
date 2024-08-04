@@ -20,7 +20,15 @@ const SwitchCase = ({
   switcher,
   trueLabel,
   falseLabel,
+  validations,
+  index,
 }) => {
+  const handleChange = (e) => {
+
+    console.log(name, value, validations, index, checked, e);
+    onChange(name, value, validations, index);
+  };
+
   return (
     <>
       {switcher ? (

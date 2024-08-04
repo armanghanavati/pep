@@ -5,6 +5,7 @@ import "../../../assets/CSS/button_style.css";
 
 const index = ({
   style,
+  disabled = false,
   type = "",
   className = "",
   label,
@@ -23,6 +24,7 @@ const index = ({
       className={className}
       width={120}
       text={text}
+      disabled={disabled}
       type={type}
       stylingMode={stylingMode}
       onClick={onClick}
