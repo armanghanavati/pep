@@ -350,6 +350,7 @@ const ItemReport = () => {
           />
         </Row>
         <EditTables
+        // valueFieldFind={}
           filedFineds={[
             <ComboBox
               xxl={6}
@@ -357,9 +358,9 @@ const ItemReport = () => {
               multi
               className="my-2"
               label="نام کالا:"
-              name="itsProductName"
-              value={inputFields?.itsProductName}
-              onChange={(e) => handleChangeInputs("itsProductName", e)}
+              name="itsProductEdit"
+              value={inputFields?.itsProductEdit}
+              onChange={(e) => handleChangeInputs("itsProductEdit", e)}
               options={productList}
             />,
             <ComboBox
@@ -368,9 +369,9 @@ const ItemReport = () => {
               multi
               className="my-2"
               label="نام فروشگاه:"
-              name="store"
-              value={inputFields?.store}
-              onChange={(e) => handleChangeInputs("store", e)}
+              name="locationEdit"
+              value={inputFields?.locationEdit}
+              onChange={(e) => handleChangeInputs("locationEdit", e)}
               options={storeList}
             />,
           ]}

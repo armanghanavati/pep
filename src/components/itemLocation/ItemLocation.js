@@ -72,16 +72,29 @@ import {
   itemLocationList,
   updateItemLocation,
 } from "../../redux/reducers/itemLocation/itemLocation-actions";
-import { userLocationList, userLocationListCombo } from "../../redux/reducers/user/user-actions";
+import {
+  userLocationList,
+  userLocationListCombo,
+} from "../../redux/reducers/user/user-actions";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
-import { itemListComboByItemGroupId, itemListByItemGroupIds, itemListComboBySupplierId } from "../../redux/reducers/item/item-action";
+import {
+  itemListComboByItemGroupId,
+  itemListByItemGroupIds,
+  itemListComboBySupplierId,
+} from "../../redux/reducers/item/item-action";
 import { inventoryComboListByCompanyId } from "../../redux/reducers/inventory/inventory-actions";
-import { locationListOrderInventoryCombo } from "../../redux/reducers/location/location-actions";
+import {
+  locationListOrderInventoryCombo,
+  searchItemLocationByLocationIdList,
+} from "../../redux/reducers/location/location-actions";
 import {
   supplierListComboByCompanyId,
   supplierOrderInventoryComboList,
 } from "../../redux/reducers/supplier/supplier-action";
-import { itemGroupListBySupplierId, itemGroupListCombo } from "../../redux/reducers/itemGroup/itemGroup-actions";
+import {
+  itemGroupListBySupplierId,
+  itemGroupListCombo,
+} from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { inventoryListByLocationId } from "../../redux/reducers/inventory/inventory-actions";
 import { DataGridItemLocationColumns } from "./ItemLocation-config";
 
@@ -98,7 +111,11 @@ import SearchIcon from "../../assets/images/icon/search.png";
 import PlusNewIcon from "../../assets/images/icon/plus.png";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
-import { stateList, stateListCombo } from "../../redux/reducers/state/state-actions";
+import {
+  stateList,
+  stateListCombo,
+} from "../../redux/reducers/state/state-actions";
+import EditTables from "../common/EditTables";
 
 const dateLabel = { "aria-label": "Date" };
 
@@ -106,6 +123,9 @@ class ItemLocation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      itemLocByLocIdList: [],
+      itemLocByLocIdValue: null,
+      allStateEditTable: {},
       LocationGroupIds: null,
       LocationIds: null,
       cmbSupplier: null,
@@ -113,6 +133,7 @@ class ItemLocation extends React.Component {
       cmbItemGroup: null,
       cmbItemGroupValue: null,
       cmbItemValue: null,
+
       ItemLocationGridData: null,
 
       Id: null,
@@ -133,7 +154,7 @@ class ItemLocation extends React.Component {
       ItemLocation: null,
       ItemGroupList: null,
       cmbItem: null,
-      cmbItemOrg:null,
+      cmbItemOrg: null,
       ItemLocationGroupId: null,
       ItemLocationId: null,
       ActiveAll: false,
@@ -147,9 +168,9 @@ class ItemLocation extends React.Component {
       stateWait: false,
       cmbState: null,
       cmbStateValue: null,
-      cmbItemGroupIds:null,
-      cmbItemIds:null,
-      cmbSupplierIds:null,
+      cmbItemGroupIds: null,
+      cmbItemIds: null,
+      cmbSupplierIds: null,
     };
   }
 
@@ -161,7 +182,6 @@ class ItemLocation extends React.Component {
     this.fn_itemGroupList();
     this.fn_inventoryList();
     await this.fn_stateList();
-
   }
   fn_locationList = async () => {
     this.setState({
@@ -185,12 +205,15 @@ class ItemLocation extends React.Component {
   fn_inventoryList = async () => {
     const INV_REQ_OBJ = {
       companyId: this.props.Company.currentCompanyId,
-      inventoryTypeCode: '01'
-    }
+      inventoryTypeCode: "01",
+    };
     this.setState({
-      cmbInventory: await inventoryComboListByCompanyId(INV_REQ_OBJ, this.props.User.token)
-    })
-  }
+      cmbInventory: await inventoryComboListByCompanyId(
+        INV_REQ_OBJ,
+        this.props.User.token
+      ),
+    });
+  };
 
   fn_itemGroupList = async () => {
     this.setState({
@@ -204,9 +227,9 @@ class ItemLocation extends React.Component {
 
   fn_stateList = async () => {
     this.setState({
-      cmbState: await stateListCombo(this.props.User.token)
-    })
-  }
+      cmbState: await stateListCombo(this.props.User.token),
+    });
+  };
 
   OpenCloseWait() {
     this.setState({ stateWait: !this.state.stateWait });
@@ -229,7 +252,7 @@ class ItemLocation extends React.Component {
         })
       );
     }
-  }
+  };
   fn_GetPermissions = () => {
     const perm = this.props.User.permissions;
     if (perm != null)
@@ -252,18 +275,17 @@ class ItemLocation extends React.Component {
       this.props.Company.currentCompanyId,
       this.props.User.token
     );
-
+    this?.handleSearchItemLocationByLocationIdList(e);
     let tempLocation = [];
     for (let i = 0; i < IDS.length; i++)
       for (let j = 0; j < TEMP_LOCATION.length; j++)
         if (IDS[i] == TEMP_LOCATION[j].id) tempLocation.push(TEMP_LOCATION[j]);
-    if (IDS.includes('0')) {
+    if (IDS.includes("0")) {
       this.setState({
         LocationGroupIds: e,
         Location: TEMP_LOCATION,
-      })
-    }
-    else {
+      });
+    } else {
       this.setState({
         LocationGroupIds: e,
         Location: tempLocation,
@@ -271,123 +293,129 @@ class ItemLocation extends React.Component {
     }
   };
 
+  handleSearchItemLocationByLocationIdList = async (e) => {
+    console.log(e);
+    try {
+      const res = await searchItemLocationByLocationIdList(e);
+      const { data, status } = res;
+      console.log(res?.data);
+      this.setState({ itemLocByLocIdList: data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   cmbLocation_onChange = async (e) => {
     const IDS = e.toString().split(",");
-    if (IDS.includes('0')) {
+    if (IDS.includes("0")) {
       const TEMP_LOCATION = await userLocationListCombo(
         this.props.User.userId,
         this.props.Company.currentCompanyId,
         this.props.User.token
       );
-      let data = await Gfn_ConvertComboForAll(e, TEMP_LOCATION)
+      let data = await Gfn_ConvertComboForAll(e, TEMP_LOCATION);
       this.setState({ LocationIds: data });
-    }
-    else {
+    } else {
       this.setState({
         LocationIds: e,
-      })
+      });
     }
   };
 
   cmbInventory_onChange = async (e) => {
     this.setState({ cmbInventoryvalue: e });
-  }
+  };
 
   cmbSupplier_onChange = async (e) => {
     this.setState({
-      cmbItemGroup: await itemGroupListBySupplierId(e, this.props.User.token)
-    })
+      cmbItemGroup: await itemGroupListBySupplierId(e, this.props.User.token),
+    });
     const IDS = e.toString().split(",");
-    if (IDS.includes('0')) {
+    if (IDS.includes("0")) {
       var temp = [];
       for (var i = 0; i < this.state.cmbSupplier.length; i++) {
-        temp.push(this.state.cmbSupplier[i].id)
+        temp.push(this.state.cmbSupplier[i].id);
       }
       this.setState({
         cmbSupplier: this.state.cmbSupplier,
         cmbSupplierValue: e,
-        cmbSupplierIds:temp
+        cmbSupplierIds: temp,
       });
-    }
-    else {
+    } else {
       this.setState({
         cmbSupplierValue: e,
-        cmbSupplierIds:e
-      })
+        cmbSupplierIds: e,
+      });
     }
-  }
-  cmbItemGroup_onChange = async (e) => {  
-
+  };
+  cmbItemGroup_onChange = async (e) => {
     const IDS = e.toString().split(",");
-    if (IDS.includes('0')) {
+    if (IDS.includes("0")) {
       var temp = [];
       for (var i = 0; i < this.state.cmbItemGroup.length; i++) {
-        temp.push(this.state.cmbItemGroup[i].id)
+        temp.push(this.state.cmbItemGroup[i].id);
       }
-      const ITEMS=await itemListByItemGroupIds(temp, this.props.User.token)
+      const ITEMS = await itemListByItemGroupIds(temp, this.props.User.token);
       const LAZY = new DataSource({
         store: ITEMS,
         paginate: true,
-        pageSize: 10
-      })
+        pageSize: 10,
+      });
       this.setState({
         cmbItem: LAZY,
-        cmbItemOrg:ITEMS,
+        cmbItemOrg: ITEMS,
         cmbItemGroup: this.state.cmbItemGroup,
         cmbItemGroupValue: e,
-        cmbItemGroupIds:temp,
-      })
-    }
-    else {
-      const ITEMS=await itemListByItemGroupIds(e, this.props.User.token)
+        cmbItemGroupIds: temp,
+      });
+    } else {
+      const ITEMS = await itemListByItemGroupIds(e, this.props.User.token);
       const LAZY = new DataSource({
         store: ITEMS,
         paginate: true,
-        pageSize: 10
-      })
+        pageSize: 10,
+      });
       this.setState({
         cmbItemGroupValue: e,
         cmbItem: LAZY,
-        cmbItemOrg:ITEMS,
-        cmbItemGroupIds:e,
-      })
+        cmbItemOrg: ITEMS,
+        cmbItemGroupIds: e,
+      });
     }
   };
 
-  cmbItem_onChange = async (e) => {    
+  cmbItem_onChange = async (e) => {
     const IDS = e.toString().split(",");
-    if (IDS.includes('0')) {
+    if (IDS.includes("0")) {
       var temp = [];
       for (var i = 0; i < this.state.cmbItemOrg.length; i++) {
-        temp.push(this.state.cmbItemOrg[i].id)
+        temp.push(this.state.cmbItemOrg[i].id);
       }
       this.setState({
         // cmbItem: this.state.cmbItemOrg,
-        cmbItemIds:temp,
-        cmbItemValue: e
+        cmbItemIds: temp,
+        cmbItemValue: e,
       });
-    }
-    else {
+    } else {
       this.setState({
         cmbItemValue: e,
-        cmbItemIds:e,
-      })
+        cmbItemIds: e,
+      });
     }
   };
 
   cmbState_onChange = async (e) => {
     const IDS = e.toString().split(",");
-    if (IDS.includes('0')) {
-      const TEMP_STATE = this.state.cmbState
-      let data = await Gfn_ConvertComboForAll(e, TEMP_STATE)
+    if (IDS.includes("0")) {
+      const TEMP_STATE = this.state.cmbState;
+      let data = await Gfn_ConvertComboForAll(e, TEMP_STATE);
       this.setState({ cmbStateValue: data });
-    }
-    else {
+    } else {
       this.setState({
         cmbStateValue: e,
-      })
+      });
     }
-  }
+  };
 
   fn_CheckValidation = () => {
     let errMsg = "";
@@ -427,8 +455,9 @@ class ItemLocation extends React.Component {
       supplierIds: this.state.cmbSupplierIds,
       itemGroupIds: this.state.cmbItemGroupIds,
       inventoryId: this.state.cmbInventoryvalue,
-      stateIds: this.state.cmbStateValue
+      stateIds: this.state.cmbStateValue,
     };
+    console.log(data);
     var RESULT = 0;
     this.OpenCloseWait();
     RESULT = await itemLocationList(data, this.props.User.token);
@@ -457,7 +486,7 @@ class ItemLocation extends React.Component {
       tempItemLocation = [];
     }
     for (let i = 0; i < tempItemLocation.length; i++) {
-      obj = {        
+      obj = {
         itemId: tempItemLocation[i].itemId,
         locationId: tempItemLocation[i].locationId,
         isActive: Status,
@@ -467,7 +496,7 @@ class ItemLocation extends React.Component {
         isCreateOrderInventory: tempItemLocation[i].isCreateOrderInventory,
         isCreateOrderSupplier: tempItemLocation[i].isCreateOrderSupplier,
         orderNumber: tempItemLocation[i].orderNumber,
-        maxAllowOrderNumberSnapp: tempItemLocation[i].maxAllowOrderNumberSnapp
+        maxAllowOrderNumberSnapp: tempItemLocation[i].maxAllowOrderNumberSnapp,
       };
       tempItems.push(obj);
 
@@ -502,10 +531,12 @@ class ItemLocation extends React.Component {
         tempItems[i].maxPercentChange = params.data.maxPercentChange;
         tempItems[i].minPercentChange = params.data.minPercentChange;
         tempItems[i].isActiveSnapp = params.data.isActiveSnapp;
-        tempItems[i].isCreateOrderInventory = params.data.isCreateOrderInventory;
+        tempItems[i].isCreateOrderInventory =
+          params.data.isCreateOrderInventory;
         tempItems[i].isCreateOrderSupplier = params.data.isCreateOrderSupplier;
         tempItems[i].orderNumber = params.data.orderNumber;
-        tempItems[i].maxAllowOrderNumberSnapp = params.data.maxAllowOrderNumberSnapp;
+        tempItems[i].maxAllowOrderNumberSnapp =
+          params.data.maxAllowOrderNumberSnapp;
         flagPush = false;
       }
     }
@@ -520,7 +551,7 @@ class ItemLocation extends React.Component {
         isCreateOrderInventory: params.data.isCreateOrderInventory,
         isCreateOrderSupplier: params.data.isCreateOrderSupplier,
         orderNumber: params.data.orderNumber,
-        maxAllowOrderNumberSnapp: params.data.maxAllowOrderNumberSnapp
+        maxAllowOrderNumberSnapp: params.data.maxAllowOrderNumberSnapp,
       };
       tempItems.push(obj);
     }
@@ -582,7 +613,6 @@ class ItemLocation extends React.Component {
   btnExportExcel_onClick = () => {
     Gfn_ExportToExcel(this.state.ItemLocationGridData, "ItemLocation");
   };
-
 
   render() {
     locale("fa-IR");
@@ -648,9 +678,11 @@ class ItemLocation extends React.Component {
                   onValueChange={this.cmbInventory_onChange}
                   className="fontStyle"
                 />
-                <Label id="errInventory" className="standardLabelFont errMessage" />
+                <Label
+                  id="errInventory"
+                  className="standardLabelFont errMessage"
+                />
               </Col>
-
               <Col>
                 <Label className="standardLabelFont">تامین کننده</Label>
                 {/* <SelectBox
@@ -744,10 +776,67 @@ class ItemLocation extends React.Component {
                   className="fontStyle"
                 />
               </Col>
+              <EditTables
+                allState={[
+                  {
+                    itemLocByLocIdValue: this.state.itemLocByLocIdValue,
+                    locationIds: this.state.LocationGroupIds,
+                    itemIds: this.state.cmbItemIds,
+                    inventoryId: [this.state.cmbInventoryvalue],
+
+                  },
+                ]}
+                mulltiComponents={[
+                  <Col xl={12} xxl={12} className="my-2">
+                    <Label className="standardLabelFont">فروشگاه</Label>
+                    <TagBox
+                      dataSource={this.state.LocationList}
+                      searchEnabled={true}
+                      displayExpr="label"
+                      placeholder="فروشگاه"
+                      valueExpr="id"
+                      rtlEnabled={true}
+                      onValueChange={this.cmbLocationList_onChange}
+                      className="fontStyle"
+                    />
+                  </Col>,
+                  <Col xl={12} xxl={12} className="my-2">
+                    <Label className="standardLabelFont">انبار</Label>
+                    <SelectBox
+                      dataSource={this.state.cmbInventory}
+                      searchEnabled={true}
+                      displayExpr="label"
+                      placeholder="انبار"
+                      valueExpr="id"
+                      rtlEnabled={true}
+                      onValueChange={this.cmbInventory_onChange}
+                      className="fontStyle"
+                    />
+                  </Col>,
+                  <Col xl={12} xxl={12} xs={3}>
+                    <Label className="standardLabelFont">کالا</Label>
+                    <TagBox
+                      dataSource={this.state.itemLocByLocIdList}
+                      searchEnabled={true}
+                      displayExpr="label"
+                      placeholder="کالا"
+                      valueExpr="id"
+                      rtlEnabled={true}
+                      onValueChange={(e) =>
+                        this.setState((prev) => ({
+                          ...prev,
+                          itemLocByLocIdValue: e,
+                        }))
+                      }
+                      value={this.state.itemLocByLocIdValue}
+                      className="fontStyle"
+                    />
+                  </Col>,
+                ]}
+              />
             </Row>
           </Row>
         </Card>
-
         <p></p>
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
@@ -784,7 +873,7 @@ class ItemLocation extends React.Component {
               <Row>
                 <Label className="title">لیست کالا فروشگاه</Label>
               </Row>
-              <Row style={{ direction: 'ltr' }}>
+              <Row style={{ direction: "ltr" }}>
                 <Col xs="auto">
                   <Button
                     icon={ExportExcelIcon}

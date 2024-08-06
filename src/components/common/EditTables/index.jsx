@@ -15,13 +15,20 @@ import asyncWrapper from "../../../utiliy/asyncWrapper";
 import { RsetShowToast } from "../../../redux/reducers/main/main-slice";
 import { useDispatch } from "react-redux";
 
-const EditTables = ({ filedFineds }) => {
+const EditTables = ({
+  mulltiComponents,
+  filedFineds,
+  allState,
+  optionFieldFind,
+  valueFieldFind,
+}) => {
   const dispatch = useDispatch();
   const [inputFields, setInputFields] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const location = useLocation();
   const [errors, setErrors] = useState({});
   const [allField, setAllField] = useState([]);
+  const [getFieldValues, setGetFieldValues] = useState([]);
   // const [selectedLocation, setSelectedLocation] = useState([]);
   // const [getLocation, setGetLocation] = useState([]);
   const [showFieldFined, setShowFieldFined] = useState(false);
@@ -51,6 +58,8 @@ const EditTables = ({ filedFineds }) => {
     };
   });
 
+  console.log(allState);
+
   const handleChangeInputs = (
     name,
     value,
@@ -77,8 +86,7 @@ const EditTables = ({ filedFineds }) => {
 
   const handleShowFieldFined = () => {
     setShowFieldFined(true);
-    let temp = [];
-    const getValues = {
+    const data = {
       value:
         fixFind === "int"
           ? inputFields?.input
@@ -87,7 +95,8 @@ const EditTables = ({ filedFineds }) => {
           : null,
       field: findValues?.[0]?.fieldName,
     };
-    console.log(getValues);
+    // temp.push(...data);
+    setGetFieldValues((prev) => [...prev, data]);
   };
 
   const handleGetTableFields = asyncWrapper(async () => {
@@ -109,9 +118,58 @@ const EditTables = ({ filedFineds }) => {
     }
   });
 
+  const test = mulltiComponents?.map((item) => {
+    return item;
+  });
+
+  const fixTest = () => {
+    const captions = test?.map((item) => {
+      return {
+        caption: item?.label,
+        data: { id: item?.selected },
+      };
+    });
+
+    return captions;
+  };
+
+  console.log(fixTest(), test);
+
   useEffect(() => {
     handleGetTableFields();
   }, []);
+
+  const fixFieldFindForValues = filedFineds?.map((item) => {
+    return {
+      values: item?.props?.value,
+    };
+  });
+
+  console.log(allState);
+
+  const handleAcceptEditTable = () => {
+    console.log(getFieldValues);
+    const postData = {
+      ItemIds: allState?.[0]?.itemLocByLocIdValue,
+      LocationIds: allState?.[0]?.locationIds,
+      InventoryIds: allState?.[0]?.inventoryId,
+      IsActive: false,
+      MaxPercentChange: 0,
+      MinPercentChange: 0,
+      IsCreateOrderInventory: false,
+      IsCreateOrderSupplier: false,
+      OrderNumber: 0,
+      IsActiveSnapp: false,
+      IsSentToSnapp: false,
+      MaxAllowOrderNumberSnapp: 0,
+      AllowNewOrderInventory: false,
+    };
+  };
+
+  // [
+  //   { caption : "فروشگاه" ,  data:[{id , itemName}]},
+  //   { caption : "کالا" ,  data:[{id , itemName}]}
+  // ]
 
   return (
     <>
@@ -133,7 +191,11 @@ const EditTables = ({ filedFineds }) => {
             onClick={() => setShowEditModal(false)}
             label="لغو"
           />,
-          <Button type="success" onClick={() => {}} label="تایید" />,
+          <Button
+            type="success"
+            onClick={handleAcceptEditTable}
+            label="تایید"
+          />,
         ]}
       >
         <Container className="">
@@ -174,7 +236,7 @@ const EditTables = ({ filedFineds }) => {
                     name="input"
                     onChange={handleChangeInputs}
                     value={inputFields?.input}
-                    label="تکست را وارد کنید"
+                    label="متن را وارد کنید"
                     className=""
                     xxl="12"
                     xl="12"
@@ -191,12 +253,14 @@ const EditTables = ({ filedFineds }) => {
               label="ثبت موقت"
             />
           </div>
-          <Col xxl="12">
-            {showFieldFined &&
-              filedFineds?.map((field) => {
-                return <Col xxl="12">{field}</Col>;
-              })}
-          </Col>
+          {showFieldFined &&
+            mulltiComponents?.map((field) => {
+              return (
+                <Col className="py-2" xl={12} xxl={12}>
+                  {field}
+                </Col>
+              );
+            })}
         </Container>
       </Modal>
     </>

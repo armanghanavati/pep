@@ -9,6 +9,7 @@ import HdrStrongIcon from "@mui/icons-material/HdrStrong";
 import HdrWeakIcon from "@mui/icons-material/HdrWeak";
 import AddSupplierLocation from "./AddSupplierLocation";
 import AddIcon from "@mui/icons-material/Add";
+import EditTables from "../common/EditTables/index";
 import {
   activeSupplierComboList,
   allLocationSupplierLimitList,
@@ -319,6 +320,8 @@ const SupplierLocation = () => {
     // handleSupplierLocationSupplierLimitListByLocationIds(selectedLocation);
   };
 
+  const handleFixEditTable = () => {};
+
   return (
     <>
       <Container fluid className="mt-4">
@@ -370,6 +373,32 @@ const SupplierLocation = () => {
                 onClick={handleSearching}
                 icon={<SearchIcon className="d-flex ms-2 font18" />}
                 label="جستجو"
+              />
+              <EditTables
+                // multies={}
+                mulltiComponents={[
+                  <TableMultiSelect2
+                    className="ms-3"
+                    itemName={"label"}
+                    selected={selectedLocation}
+                    setSelected={setSelectedLocation}
+                    submit={() => setGetLocation(selectedLocation)}
+                    allListRF={fixStoreList}
+                    xxl={4}
+                    xl={4}
+                    label="فروشگاه"
+                  />,
+                  <TableMultiSelect2
+                    itemName={"supplierName"}
+                    selected={selectedSupplier}
+                    setSelected={setSelectedSupplier}
+                    submit={() => setGetSupplier(selectedSupplier)}
+                    allListRF={allSupplier}
+                    xxl={4}
+                    xl={4}
+                    label="تامین کننده"
+                  />,
+                ]}
               />
             </div>
           </Col>

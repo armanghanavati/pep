@@ -21,6 +21,8 @@
    overflow-x: auto;
    -webkit-overflow-scrolling: touch;
    max-height: 700px !important;
+   min-height  : 700px !important;
+
 }
 
 .dx-gridbase-container > .dx-datagrid-rowsview {
