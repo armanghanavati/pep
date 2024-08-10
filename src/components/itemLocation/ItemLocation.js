@@ -52,7 +52,6 @@ import DataGrid, {
 } from "devextreme-react/data-grid";
 
 import Wait from "../common/Wait";
-
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
@@ -98,7 +97,7 @@ import {
 import { inventoryListByLocationId } from "../../redux/reducers/inventory/inventory-actions";
 import { DataGridItemLocationColumns } from "./ItemLocation-config";
 
-import {
+import StringHelpers, {
   Gfn_BuildValueComboMulti,
   Gfn_ConvertComboForAll,
   Gfn_BuildValueComboSelectAll,
@@ -116,6 +115,8 @@ import {
   stateListCombo,
 } from "../../redux/reducers/state/state-actions";
 import EditTables from "../common/EditTables";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import CopyLocation from "./CopyLocation";
 
 const dateLabel = { "aria-label": "Date" };
 
@@ -123,6 +124,7 @@ class ItemLocation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showCopyModal: false,
       itemLocByLocIdList: [],
       itemLocByLocIdValue: null,
       allStateEditTable: {},
@@ -133,9 +135,7 @@ class ItemLocation extends React.Component {
       cmbItemGroup: null,
       cmbItemGroupValue: null,
       cmbItemValue: null,
-
       ItemLocationGridData: null,
-
       Id: null,
       RowSelected: null,
       stateUpdateDelete: true,
@@ -294,12 +294,30 @@ class ItemLocation extends React.Component {
   };
 
   handleSearchItemLocationByLocationIdList = async (e) => {
-    console.log(e);
     try {
-      const res = await searchItemLocationByLocationIdList(e);
-      const { data, status } = res;
-      console.log(res?.data);
-      this.setState({ itemLocByLocIdList: data });
+      if (e?.includes(0)) {
+        const sendAllId = StringHelpers?.fixComboListId(
+          [0],
+          this?.state?.LocationList
+        );
+        const res = await searchItemLocationByLocationIdList(sendAllId);
+        const { data, status } = res;
+        const LAZY = new DataSource({
+          store: data,
+          paginate: true,
+          pageSize: 10,
+        });
+        this.setState({ itemLocByLocIdList: LAZY });
+      } else {
+        const res = await searchItemLocationByLocationIdList(e);
+        const { data, status } = res;
+        // const LAZY = new DataSource({
+        //   store: data,
+        //   paginate: true,
+        //   pageSize: 10,
+        // });
+        this.setState({ itemLocByLocIdList: data });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -307,6 +325,7 @@ class ItemLocation extends React.Component {
 
   cmbLocation_onChange = async (e) => {
     const IDS = e.toString().split(",");
+    console.log(IDS);
     if (IDS.includes("0")) {
       const TEMP_LOCATION = await userLocationListCombo(
         this.props.User.userId,
@@ -765,75 +784,77 @@ class ItemLocation extends React.Component {
               </Row>
             </Row>
             <Row className="standardSpaceTop">
-              <Col xs="auto">
+              <Col className="d-flex " xs="12">
                 <Button
                   icon={SearchIcon}
                   text="اعمال فیلتر"
-                  type="default"
+                  type="success"
                   stylingMode="contained"
                   rtlEnabled={true}
                   onClick={this.btnSearch_onClick}
-                  className="fontStyle"
+                  className="fontStyle ms-2 "
                 />
+                <EditTables
+                  allState={[
+                    {
+                      itemLocByLocIdValue: this.state.itemLocByLocIdValue,
+                      locationIds: this.state.LocationGroupIds,
+                      itemIds: this.state.cmbItemIds,
+                      inventoryId: [this.state.cmbInventoryvalue],
+                    },
+                  ]}
+                  mulltiComponents={[
+                    <Col xl={12} xxl={12} className="">
+                      <Col xl={12} xxl={12} className=" my-2">
+                        <Label className="standardLabelFont">فروشگاه</Label>
+                        <TagBox
+                          dataSource={this.state.LocationList}
+                          searchEnabled={true}
+                          displayExpr="label"
+                          placeholder="فروشگاه"
+                          valueExpr="id"
+                          rtlEnabled={true}
+                          onValueChange={this.cmbLocationList_onChange}
+                          className="fontStyle"
+                        />
+                      </Col>
+                      <Col xl={12} xxl={12} className=" my-2">
+                        <Label className="standardLabelFont">انبار</Label>
+                        <SelectBox
+                          dataSource={this.state.cmbInventory}
+                          searchEnabled={true}
+                          displayExpr="label"
+                          placeholder="انبار"
+                          valueExpr="id"
+                          rtlEnabled={true}
+                          onValueChange={this.cmbInventory_onChange}
+                          className="fontStyle"
+                        />
+                      </Col>
+                      <Col xl={12} xxl={12}>
+                        <Label className="standardLabelFont">کالا</Label>
+                        <TagBox
+                          dataSource={this.state.itemLocByLocIdList}
+                          searchEnabled={true}
+                          displayExpr="label"
+                          placeholder="کالا"
+                          valueExpr="id"
+                          rtlEnabled={true}
+                          onValueChange={(e) =>
+                            this.setState((prev) => ({
+                              ...prev,
+                              itemLocByLocIdValue: e,
+                            }))
+                          }
+                          value={this.state.itemLocByLocIdValue}
+                          className="fontStyle"
+                        />
+                      </Col>
+                    </Col>,
+                  ]}
+                />
+                <CopyLocation />
               </Col>
-              <EditTables
-                allState={[
-                  {
-                    itemLocByLocIdValue: this.state.itemLocByLocIdValue,
-                    locationIds: this.state.LocationGroupIds,
-                    itemIds: this.state.cmbItemIds,
-                    inventoryId: [this.state.cmbInventoryvalue],
-
-                  },
-                ]}
-                mulltiComponents={[
-                  <Col xl={12} xxl={12} className="my-2">
-                    <Label className="standardLabelFont">فروشگاه</Label>
-                    <TagBox
-                      dataSource={this.state.LocationList}
-                      searchEnabled={true}
-                      displayExpr="label"
-                      placeholder="فروشگاه"
-                      valueExpr="id"
-                      rtlEnabled={true}
-                      onValueChange={this.cmbLocationList_onChange}
-                      className="fontStyle"
-                    />
-                  </Col>,
-                  <Col xl={12} xxl={12} className="my-2">
-                    <Label className="standardLabelFont">انبار</Label>
-                    <SelectBox
-                      dataSource={this.state.cmbInventory}
-                      searchEnabled={true}
-                      displayExpr="label"
-                      placeholder="انبار"
-                      valueExpr="id"
-                      rtlEnabled={true}
-                      onValueChange={this.cmbInventory_onChange}
-                      className="fontStyle"
-                    />
-                  </Col>,
-                  <Col xl={12} xxl={12} xs={3}>
-                    <Label className="standardLabelFont">کالا</Label>
-                    <TagBox
-                      dataSource={this.state.itemLocByLocIdList}
-                      searchEnabled={true}
-                      displayExpr="label"
-                      placeholder="کالا"
-                      valueExpr="id"
-                      rtlEnabled={true}
-                      onValueChange={(e) =>
-                        this.setState((prev) => ({
-                          ...prev,
-                          itemLocByLocIdValue: e,
-                        }))
-                      }
-                      value={this.state.itemLocByLocIdValue}
-                      className="fontStyle"
-                    />
-                  </Col>,
-                ]}
-              />
             </Row>
           </Row>
         </Card>

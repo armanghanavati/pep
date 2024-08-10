@@ -14,6 +14,8 @@ import { useLocation } from "react-router";
 import asyncWrapper from "../../../utiliy/asyncWrapper";
 import { RsetShowToast } from "../../../redux/reducers/main/main-slice";
 import { useDispatch } from "react-redux";
+import { updateItemLocationGroup } from "../../../redux/reducers/location/location-actions";
+import StringHelpers from "../../../utiliy/GlobalMethods";
 
 const EditTables = ({
   mulltiComponents,
@@ -58,7 +60,9 @@ const EditTables = ({
     };
   });
 
-  console.log(allState);
+  const allLocationData =
+    mulltiComponents?.[0]?.props?.children?.[0]?.props?.children?.[1]?.props
+      ?.dataSource;
 
   const handleChangeInputs = (
     name,
@@ -145,36 +149,42 @@ const EditTables = ({
     };
   });
 
-  console.log(allState);
-
-  const handleAcceptEditTable = () => {
-    console.log(getFieldValues);
+  const handleAcceptEditTable = async () => {
+    console.log(allState?.[0]?.itemLocByLocIdValue.includes(0));
     const postData = {
-      ItemIds: allState?.[0]?.itemLocByLocIdValue,
-      LocationIds: allState?.[0]?.locationIds,
-      InventoryIds: allState?.[0]?.inventoryId,
-      IsActive: false,
-      MaxPercentChange: 0,
-      MinPercentChange: 0,
-      IsCreateOrderInventory: false,
-      IsCreateOrderSupplier: false,
-      OrderNumber: 0,
-      IsActiveSnapp: false,
-      IsSentToSnapp: false,
-      MaxAllowOrderNumberSnapp: 0,
-      AllowNewOrderInventory: false,
+      itemIds: allState?.[0]?.itemLocByLocIdValue.includes(0)
+        ? StringHelpers.fixComboListId(
+            allState?.[0]?.itemLocByLocIdValue,
+            allLocationData
+          )
+        : allState?.[0]?.itemLocByLocIdValue,
+      locationIds: allState?.[0]?.locationIds,
+      inventoryIds: allState?.[0]?.inventoryId,
+      isActive: inputFields?.isActive,
+      maxPercentChange: inputFields?.maxPercentChange,
+      minPercentChange: inputFields?.minPercentChange,
+      isCreateOrderInventory: inputFields?.isCreateOrderInventory,
+      isCreateOrderSupplier: inputFields?.isCreateOrderSupplier,
+      orderNumber: inputFields?.orderNumber,
+      isActiveSnapp: inputFields?.isActiveSnapp,
+      isSentToSnapp: inputFields?.isSentToSnapp,
+      maxAllowOrderNumberSnapp: inputFields?.maxAllowOrderNumberSnapp,
+      allowNewOrderInventory: inputFields?.allowNewOrderInventory,
     };
+
+    const res = await updateItemLocationGroup(postData);
+    console.log(res);
   };
 
   // [
   //   { caption : "فروشگاه" ,  data:[{id , itemName}]},
   //   { caption : "کالا" ,  data:[{id , itemName}]}
   // ]
-
+  
   return (
-    <>
+    <span>
       <Button
-        type="danger"
+        type="success"
         onClick={() => setShowEditModal(true)}
         label="ویرایش جدول"
       />
@@ -199,71 +209,136 @@ const EditTables = ({
         ]}
       >
         <Container className="">
-          <Row>
-            <ComboBox
-              name="fieldName"
-              value={inputFields?.fieldName}
-              onChange={(e) => handleChangeInputs("fieldName", e)}
-              options={fixAllField}
-              xxl={6}
-              xl={6}
-              label="انتخاب فیلد"
-            />
-            <Col
-              className=" d-flex align-items-center justify-content-center"
-              xl="6"
-            >
-              {fixFind === "bit" && (
-                <Col className="mt-4 d-flex justify-content-center">
-                  <SwitchCase
-                    className="my-3"
-                    name="isActive"
-                    trueLabel="فعال"
-                    falseLabel="غیر فعال"
-                    onChange={(e) =>
-                      handleChangeInputs("isActive", e.target.checked)
-                    }
-                    checked={inputFields?.isActive}
-                    switcher
-                  />
-                </Col>
-              )}
-              {fixFind === "int" && (
-                <Col>
-                  <Input
-                    type="number"
-                    maxLength={30}
-                    name="input"
-                    onChange={handleChangeInputs}
-                    value={inputFields?.input}
-                    label="متن را وارد کنید"
-                    className=""
-                    xxl="12"
-                    xl="12"
-                  />
-                </Col>
-              )}
+          {mulltiComponents?.map((item) => (
+            <Col xl="12" xxl="12" className=" d-flex pb-2">
+              {item}
+            </Col>
+          ))}
+          <Row className=" d-flex align-items-center justify-content-center">
+            <Col className="my-2" xl="6" xxl="6">
+              <Input
+                className="fw-normal"
+                type="number"
+                maxLength={30}
+                name="maxPercentChange"
+                onChange={handleChangeInputs}
+                value={inputFields?.maxPercentChange}
+                label="حداکثر درصد تغییر"
+                xxl="12"
+                xl="12"
+              />
+            </Col>
+            <Col className="my-2" xl="6" xxl="6">
+              <Input
+                className="fw-normal"
+                type="number"
+                maxLength={30}
+                name="minPercentChange"
+                onChange={handleChangeInputs}
+                value={inputFields?.minPercentChange}
+                label="حداقل درصد تغییر"
+                xxl="12"
+                xl="12"
+              />
+            </Col>
+            <Col className="my-2" xl="6" xxl="6">
+              <Input
+                className="fw-normal"
+                type="number"
+                maxLength={30}
+                name="orderNumber"
+                onChange={handleChangeInputs}
+                value={inputFields?.orderNumber}
+                label="شماره سفارش"
+                xxl="12"
+                xl="12"
+              />
+            </Col>{" "}
+            <Col className="my-2" xl="6" xxl="6">
+              <Input
+                className="fw-normal"
+                type="number"
+                maxLength={30}
+                name="maxAllowOrderNumberSnapp"
+                onChange={handleChangeInputs}
+                value={inputFields?.maxAllowOrderNumberSnapp}
+                label="شماره مجاز حداکثر سفارش اسنپ"
+                xxl="12"
+                xl="12"
+              />
             </Col>
           </Row>
-          <div className="d-flex justify-content-center my-3">
-            <Button
-              onClick={handleShowFieldFined}
-              disabled={!!inputFields?.fieldName ? false : true}
-              type="default"
-              label="ثبت موقت"
-            />
-          </div>
-          {showFieldFined &&
-            mulltiComponents?.map((field) => {
-              return (
-                <Col className="py-2" xl={12} xxl={12}>
-                  {field}
-                </Col>
-              );
-            })}
+          <Row>
+            <Col xl="6" xxl="6" className="mt-4 d-flex">
+              <SwitchCase
+                className=""
+                name="isActive"
+                onChange={(e) =>
+                  handleChangeInputs("isActive", e.target.checked)
+                }
+                checked={inputFields?.isActive}
+              />
+              <div className="mx-2">فعال</div>
+            </Col>
+            <Col xl="6" xxl="6" className="mt-4 d-flex">
+              <SwitchCase
+                className=""
+                name="isCreateOrderInventory"
+                onChange={(e) =>
+                  handleChangeInputs("isCreateOrderInventory", e.target.checked)
+                }
+                checked={inputFields?.isCreateOrderInventory}
+              />
+              <div className="mx-2">موجودی سفارش</div>
+            </Col>
+            <Col xl="6" xxl="6" className="mt-4 d-flex">
+              <SwitchCase
+                className=""
+                name="isSentToSnapp"
+                onChange={(e) =>
+                  handleChangeInputs("isSentToSnapp", e.target.checked)
+                }
+                checked={inputFields?.isSentToSnapp}
+              />
+              <div className="mx-2">ارسال برای اسنپ</div>
+            </Col>
+            <Col xl="6" xxl="6" className="mt-4 d-flex">
+              <SwitchCase
+                className=""
+                name="isCreateOrderSupplier"
+                onChange={(e) =>
+                  handleChangeInputs("isCreateOrderSupplier", e.target.checked)
+                }
+                checked={inputFields?.isCreateOrderSupplier}
+              />
+              <div className="mx-2"> تامین کننده سفارش</div>
+            </Col>
+            <Col xl="6" xxl="6" className="mt-4 d-flex">
+              <SwitchCase
+                className=""
+                name="allowNewOrderInventory"
+                onChange={(e) =>
+                  handleChangeInputs("allowNewOrderInventory", e.target.checked)
+                }
+                checked={inputFields?.allowNewOrderInventory}
+              />
+              <div className="mx-2">سفارش مجاز</div>
+            </Col>
+            <Col xl="6" xxl="6" className="mt-4 d-flex">
+              <SwitchCase
+                className=""
+                name="isActiveSnapp"
+                onChange={(e) =>
+                  handleChangeInputs("isActiveSnapp", e.target.checked)
+                }
+                checked={inputFields?.isActiveSnapp}
+              />
+              <div className="mx-2">فعال برای اسنپ</div>
+            </Col>
+          </Row>
         </Container>
       </Modal>
-    </>
+    </span>
   );
 };
 

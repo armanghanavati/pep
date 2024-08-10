@@ -374,32 +374,6 @@ const SupplierLocation = () => {
                 icon={<SearchIcon className="d-flex ms-2 font18" />}
                 label="جستجو"
               />
-              <EditTables
-                // multies={}
-                mulltiComponents={[
-                  <TableMultiSelect2
-                    className="ms-3"
-                    itemName={"label"}
-                    selected={selectedLocation}
-                    setSelected={setSelectedLocation}
-                    submit={() => setGetLocation(selectedLocation)}
-                    allListRF={fixStoreList}
-                    xxl={4}
-                    xl={4}
-                    label="فروشگاه"
-                  />,
-                  <TableMultiSelect2
-                    itemName={"supplierName"}
-                    selected={selectedSupplier}
-                    setSelected={setSelectedSupplier}
-                    submit={() => setGetSupplier(selectedSupplier)}
-                    allListRF={allSupplier}
-                    xxl={4}
-                    xl={4}
-                    label="تامین کننده"
-                  />,
-                ]}
-              />
             </div>
           </Col>
           <Table

@@ -349,33 +349,6 @@ const ItemReport = () => {
             max={100}
           />
         </Row>
-        <EditTables
-        // valueFieldFind={}
-          filedFineds={[
-            <ComboBox
-              xxl={6}
-              xl={6}
-              multi
-              className="my-2"
-              label="نام کالا:"
-              name="itsProductEdit"
-              value={inputFields?.itsProductEdit}
-              onChange={(e) => handleChangeInputs("itsProductEdit", e)}
-              options={productList}
-            />,
-            <ComboBox
-              xxl={6}
-              xl={6}
-              multi
-              className="my-2"
-              label="نام فروشگاه:"
-              name="locationEdit"
-              value={inputFields?.locationEdit}
-              onChange={(e) => handleChangeInputs("locationEdit", e)}
-              options={storeList}
-            />,
-          ]}
-        />
         <div className="d-flex justify-content-end mt-2">
           <Button
             type="default"
