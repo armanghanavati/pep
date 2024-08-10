@@ -282,20 +282,7 @@ export default class StringHelpers {
       return undefined;
     }
   };
-
   static fixComboListId(field, data) {
-    console.log(field, data);
-    const test = data?.some((item) => {
-      return item?.id === 0;
-    });
-    console.log(test);
-    if (test) {
-      return data?.map((item) => item?.id);
-    } else {
-      return field?.map((item) => item?.id);
-    }
-  }
-  static comboId(field, data) {
     console.log(field, data);
     const test = data?.some((item) => {
       return item?.id === 0;

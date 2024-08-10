@@ -9,6 +9,7 @@ import HdrStrongIcon from "@mui/icons-material/HdrStrong";
 import HdrWeakIcon from "@mui/icons-material/HdrWeak";
 import AddSupplierLocation from "./AddSupplierLocation";
 import AddIcon from "@mui/icons-material/Add";
+import EditTables from "../common/EditTables/index";
 import {
   activeSupplierComboList,
   allLocationSupplierLimitList,
@@ -318,6 +319,8 @@ const SupplierLocation = () => {
   const handleAcceptLocation = () => {
     // handleSupplierLocationSupplierLimitListByLocationIds(selectedLocation);
   };
+
+  const handleFixEditTable = () => {};
 
   return (
     <>

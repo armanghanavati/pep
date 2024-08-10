@@ -20,6 +20,7 @@ import Table from "../common/Tables/Table";
 import { useSelector } from "react-redux";
 import MainTitle from "../common/MainTitles/MailTitle";
 import Wait from "../common/Wait";
+import EditTables from "../common/EditTables";
 
 const ItemReport = () => {
   const [storeList, setStoreList] = useState([]);

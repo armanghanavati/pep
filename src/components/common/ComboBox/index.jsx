@@ -21,6 +21,7 @@ export default function ComboBox({
   valueExpr = "id",
   displayExpr = "label",
   index = "",
+  showClearButton = true,
 }) {
   const handleChange = (value) => {
     console.log("index index index index index", value, name);
@@ -36,8 +37,8 @@ export default function ComboBox({
           value={value}
           dataSource={options}
           searchEnabled
-          displayExpr="label"
-          valueExpr="id"
+          displayExpr={displayExpr}
+          valueExpr={valueExpr}
           placeholder={placeholder}
           name={name}
           rtlEnabled={true}
@@ -48,6 +49,7 @@ export default function ComboBox({
         <SelectBox
           // labelMode=""
           // onValueChanged={}
+          showClearButton={showClearButton}
           disabled={disabled}
           valueExpr={valueExpr}
           displayExpr={displayExpr}

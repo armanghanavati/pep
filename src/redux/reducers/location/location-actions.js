@@ -303,7 +303,22 @@ export const locationPromotionList = async (userId, permitionId = 0) => {
 
 export const allSupplierList = async () => {
   const url = window.apiAddress + `/Supplier/supplierList`;
-  const response = await axios.get(url);  
+  const response = await axios.get(url);
+  console.log(response);
+  return response?.data;
+};
+
+export const searchItemLocationByLocationIdList = async (postData) => {
+  const url =
+    window.apiAddress + `/ItemLocation/searchItemLocationByLocationIdList`;
+  const response = await axios.post(url, postData);
+  console.log(response);
+  return response?.data;
+};
+
+export const updateItemLocationGroup = async (postData) => {
+  const url = window.apiAddress + `/ItemLocation/updateItemLocationGroup`;
+  const response = await axios.patch(url, postData);
   console.log(response);
   return response?.data;
 };

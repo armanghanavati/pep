@@ -239,11 +239,21 @@
       background-color: #7f0d81
      }
   
-
     .bg-orange{
-      background-color: #ff7600
+      background-color: #ff7600;
+      color:white;
+     }
+
+     .bg-orange:hover {
+      background-color: #db6600;
+    transition: all 0.4s;
      }
   
+     .bg-orange:focus {
+      background-color: #ff7600;
+    transition: all 0.4s;
+    color:white;
+     }
 
   .imageLogin {
     /* width: 10%;
