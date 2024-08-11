@@ -125,6 +125,7 @@ class ItemLocation extends React.Component {
     super(props);
     this.state = {
       showCopyModal: false,
+      cmbInventoryForEditing: null,
       itemLocByLocIdList: [],
       itemLocByLocIdValue: null,
       allStateEditTable: {},
@@ -344,7 +345,7 @@ class ItemLocation extends React.Component {
   };
 
   cmbInventory_onChange = async (e) => {
-    this.setState({ cmbInventoryvalue: e });
+    this.setState({ cmbInventoryForEditing: e });
   };
 
   cmbSupplier_onChange = async (e) => {
@@ -862,7 +863,7 @@ class ItemLocation extends React.Component {
                       itemLocByLocIdValue: this.state.itemLocByLocIdValue,
                       locationIds: this.state.LocationGroupIds,
                       itemIds: this.state.cmbItemIds,
-                      inventoryId: this.state.cmbInventoryvalue,
+                      inventoryId: this.state.cmbInventoryForEditing,
                       itemLocByLocIdList: this.state.itemLocByLocIdList,
                     },
                   ]}
@@ -884,7 +885,7 @@ class ItemLocation extends React.Component {
                       <Col xl={12} xxl={12} className=" my-2">
                         <Label className="standardLabelFont">انبار</Label>
                         <TagBox
-                          dataSource={this.state.cmbInventory}
+                          dataSource={this.state.cmbInventoryForEditing}
                           searchEnabled={true}
                           displayExpr="label"
                           placeholder="انبار"

@@ -303,7 +303,7 @@ const EditTables = ({
                 }
                 checked={inputFields?.isCreateOrderInventory}
               />
-              <div className="mx-2">موجودی سفارش</div>
+              <div className="mx-2">ایجاد سفارش انبار</div>
             </Col>
             <Col xl="6" xxl="6" className="mt-4 d-flex">
               <SwitchCase
