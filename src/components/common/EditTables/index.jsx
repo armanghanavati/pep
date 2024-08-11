@@ -12,10 +12,11 @@ import TableMultiSelect2 from "../Tables/TableMultiSelect2";
 import { getTableFields } from "../../../redux/reducers/main/main-action";
 import { useLocation } from "react-router";
 import asyncWrapper from "../../../utiliy/asyncWrapper";
-import { RsetShowToast } from "../../../redux/reducers/main/main-slice";
+import { RsetIsLoading, RsetShowToast } from "../../../redux/reducers/main/main-slice";
 import { useDispatch } from "react-redux";
 import { updateItemLocationGroup } from "../../../redux/reducers/location/location-actions";
 import StringHelpers from "../../../utiliy/GlobalMethods";
+import Toastify from "../Toasts/Toastify";
 
 const EditTables = ({
   mulltiComponents,
@@ -27,12 +28,9 @@ const EditTables = ({
   const dispatch = useDispatch();
   const [inputFields, setInputFields] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
-  const location = useLocation();
   const [errors, setErrors] = useState({});
   const [allField, setAllField] = useState([]);
   const [getFieldValues, setGetFieldValues] = useState([]);
-  // const [selectedLocation, setSelectedLocation] = useState([]);
-  // const [getLocation, setGetLocation] = useState([]);
   const [showFieldFined, setShowFieldFined] = useState(false);
   const [fieldNames, setFieldNames] = useState([
     {
@@ -48,7 +46,6 @@ const EditTables = ({
       dataType: "number",
     },
   ]);
-  const [getFieldNames, setGetFieldNames] = useState(null);
   const findValues = allField?.filter((field) => {
     return inputFields?.fieldName === field?.id;
   });
@@ -60,9 +57,13 @@ const EditTables = ({
     };
   });
 
-  const allLocationData =
+  const allLocaitons =
     mulltiComponents?.[0]?.props?.children?.[0]?.props?.children?.[1]?.props
       ?.dataSource;
+
+  const fixListForId = allState?.[0]?.itemLocByLocIdList?._store?._array?.map(
+    (item) => item?.id
+  );
 
   const handleChangeInputs = (
     name,
@@ -141,6 +142,7 @@ const EditTables = ({
 
   useEffect(() => {
     handleGetTableFields();
+    setInputFields({});
   }, []);
 
   const fixFieldFindForValues = filedFineds?.map((item) => {
@@ -149,16 +151,14 @@ const EditTables = ({
     };
   });
 
-  const handleAcceptEditTable = async () => {
-    console.log(allState?.[0]?.itemLocByLocIdValue.includes(0));
+  const handleAcceptEditTable = asyncWrapper(async () => {
     const postData = {
-      itemIds: allState?.[0]?.itemLocByLocIdValue.includes(0)
-        ? StringHelpers.fixComboListId(
-            allState?.[0]?.itemLocByLocIdValue,
-            allLocationData
-          )
+      itemIds: allState?.[0]?.itemLocByLocIdValue?.includes(0)
+        ? fixListForId
         : allState?.[0]?.itemLocByLocIdValue,
-      locationIds: allState?.[0]?.locationIds,
+      locationIds: allState?.[0]?.locationIds?.includes(0)
+        ? StringHelpers.fixComboListId(allState?.[0]?.locationIds, allLocaitons)
+        : allState?.[0]?.locationIds,
       inventoryIds: allState?.[0]?.inventoryId,
       isActive: inputFields?.isActive,
       maxPercentChange: inputFields?.maxPercentChange,
@@ -171,16 +171,30 @@ const EditTables = ({
       maxAllowOrderNumberSnapp: inputFields?.maxAllowOrderNumberSnapp,
       allowNewOrderInventory: inputFields?.allowNewOrderInventory,
     };
-
+    dispatch(RsetIsLoading({ stateWait: true }));
     const res = await updateItemLocationGroup(postData);
-    console.log(res);
-  };
+    dispatch(RsetIsLoading({ stateWait: false }));
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setShowEditModal(false);
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message,
+          Type: status,
+        })
+      );
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
 
-  // [
-  //   { caption : "فروشگاه" ,  data:[{id , itemName}]},
-  //   { caption : "کالا" ,  data:[{id , itemName}]}
-  // ]
-  
   return (
     <span>
       <Button
@@ -223,7 +237,7 @@ const EditTables = ({
                 name="maxPercentChange"
                 onChange={handleChangeInputs}
                 value={inputFields?.maxPercentChange}
-                label="حداکثر درصد تغییر"
+                label="حداکثر درصد افزایش"
                 xxl="12"
                 xl="12"
               />
@@ -236,7 +250,7 @@ const EditTables = ({
                 name="minPercentChange"
                 onChange={handleChangeInputs}
                 value={inputFields?.minPercentChange}
-                label="حداقل درصد تغییر"
+                label="حداکثر درصد کاهش"
                 xxl="12"
                 xl="12"
               />
@@ -249,7 +263,7 @@ const EditTables = ({
                 name="orderNumber"
                 onChange={handleChangeInputs}
                 value={inputFields?.orderNumber}
-                label="شماره سفارش"
+                label="تعداد سفارش"
                 xxl="12"
                 xl="12"
               />
@@ -262,7 +276,7 @@ const EditTables = ({
                 name="maxAllowOrderNumberSnapp"
                 onChange={handleChangeInputs}
                 value={inputFields?.maxAllowOrderNumberSnapp}
-                label="شماره مجاز حداکثر سفارش اسنپ"
+                label="تعداد مجاز سفارش اسنپ"
                 xxl="12"
                 xl="12"
               />
@@ -300,7 +314,7 @@ const EditTables = ({
                 }
                 checked={inputFields?.isSentToSnapp}
               />
-              <div className="mx-2">ارسال برای اسنپ</div>
+              <div className="mx-2">ارسال شده برای اسنپ</div>
             </Col>
             <Col xl="6" xxl="6" className="mt-4 d-flex">
               <SwitchCase
@@ -311,7 +325,7 @@ const EditTables = ({
                 }
                 checked={inputFields?.isCreateOrderSupplier}
               />
-              <div className="mx-2"> تامین کننده سفارش</div>
+              <div className="mx-2"> ایجاد سفارش تامین کننده</div>
             </Col>
             <Col xl="6" xxl="6" className="mt-4 d-flex">
               <SwitchCase
@@ -322,7 +336,7 @@ const EditTables = ({
                 }
                 checked={inputFields?.allowNewOrderInventory}
               />
-              <div className="mx-2">سفارش مجاز</div>
+              <div className="mx-2">تعداد مجاز سفارش جدید انبار</div>
             </Col>
             <Col xl="6" xxl="6" className="mt-4 d-flex">
               <SwitchCase
@@ -338,6 +352,7 @@ const EditTables = ({
           </Row>
         </Container>
       </Modal>
+      <Toastify />
     </span>
   );
 };
