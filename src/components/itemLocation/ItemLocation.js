@@ -132,8 +132,10 @@ class ItemLocation extends React.Component {
       LocationIds: null,
       cmbSupplier: null,
       cmbSupplierValue: null,
+      cmbSupplierEditTable: null,
       cmbItemGroup: null,
       cmbItemGroupValue: null,
+      cmbItemGroupEdit: null,
       cmbItemValue: null,
       ItemLocationGridData: null,
       Id: null,
@@ -311,12 +313,12 @@ class ItemLocation extends React.Component {
       } else {
         const res = await searchItemLocationByLocationIdList(e);
         const { data, status } = res;
-        // const LAZY = new DataSource({
-        //   store: data,
-        //   paginate: true,
-        //   pageSize: 10,
-        // });
-        this.setState({ itemLocByLocIdList: data });
+        const LAZY = new DataSource({
+          store: data,
+          paginate: true,
+          pageSize: 10,
+        });
+        this.setState({ itemLocByLocIdList: LAZY });
       }
     } catch (error) {
       console.log(error);
@@ -367,6 +369,30 @@ class ItemLocation extends React.Component {
       });
     }
   };
+
+  cmbSupplierEdit_onChange = async (e) => {
+    this.setState({
+      cmbItemGroup: await itemGroupListBySupplierId(e, this.props.User.token),
+    });
+    const IDS = e.toString().split(",");
+    if (IDS.includes("0")) {
+      var temp = [];
+      for (var i = 0; i < this.state.cmbSupplier.length; i++) {
+        temp.push(this.state.cmbSupplier[i].id);
+      }
+      this.setState({
+        cmbSupplier: this.state.cmbSupplier,
+        cmbSupplierEditTable: e,
+        cmbSupplierIds: temp,
+      });
+    } else {
+      this.setState({
+        cmbSupplierEditTable: e,
+        cmbSupplierIds: e,
+      });
+    }
+  };
+
   cmbItemGroup_onChange = async (e) => {
     const IDS = e.toString().split(",");
     if (IDS.includes("0")) {
@@ -396,6 +422,42 @@ class ItemLocation extends React.Component {
       });
       this.setState({
         cmbItemGroupValue: e,
+        cmbItem: LAZY,
+        cmbItemOrg: ITEMS,
+        cmbItemGroupIds: e,
+      });
+    }
+  };
+
+  cmbItemGroupEdit_onChange = async (e) => {
+    const IDS = e.toString().split(",");
+    if (IDS.includes("0")) {
+      var temp = [];
+      for (var i = 0; i < this.state.cmbItemGroup.length; i++) {
+        temp.push(this.state.cmbItemGroup[i].id);
+      }
+      const ITEMS = await itemListByItemGroupIds(temp, this.props.User.token);
+      const LAZY = new DataSource({
+        store: ITEMS,
+        paginate: true,
+        pageSize: 10,
+      });
+      this.setState({
+        cmbItem: LAZY,
+        cmbItemOrg: ITEMS,
+        cmbItemGroup: this.state.cmbItemGroup,
+        cmbItemGroupEdit: e,
+        cmbItemGroupIds: temp,
+      });
+    } else {
+      const ITEMS = await itemListByItemGroupIds(e, this.props.User.token);
+      const LAZY = new DataSource({
+        store: ITEMS,
+        paginate: true,
+        pageSize: 10,
+      });
+      this.setState({
+        cmbItemGroupEdit: e,
         cmbItem: LAZY,
         cmbItemOrg: ITEMS,
         cmbItemGroupIds: e,
@@ -741,8 +803,8 @@ class ItemLocation extends React.Component {
                     placeholder="گروه کالا"
                     valueExpr="id"
                     rtlEnabled={true}
-                    onValueChange={this.cmbItemGroup_onChange}
-                    value={this.state.cmbItemGroupValue}
+                    onValueChange={this.cmbItemGroupEdit_onChange}
+                    value={this.state.cmbItemGroupEdit}
                     className="fontStyle"
                   />
                 </Col>
@@ -800,7 +862,8 @@ class ItemLocation extends React.Component {
                       itemLocByLocIdValue: this.state.itemLocByLocIdValue,
                       locationIds: this.state.LocationGroupIds,
                       itemIds: this.state.cmbItemIds,
-                      inventoryId: [this.state.cmbInventoryvalue],
+                      inventoryId: this.state.cmbInventoryvalue,
+                      itemLocByLocIdList: this.state.itemLocByLocIdList,
                     },
                   ]}
                   mulltiComponents={[
@@ -820,7 +883,7 @@ class ItemLocation extends React.Component {
                       </Col>
                       <Col xl={12} xxl={12} className=" my-2">
                         <Label className="standardLabelFont">انبار</Label>
-                        <SelectBox
+                        <TagBox
                           dataSource={this.state.cmbInventory}
                           searchEnabled={true}
                           displayExpr="label"
@@ -831,7 +894,35 @@ class ItemLocation extends React.Component {
                           className="fontStyle"
                         />
                       </Col>
-                      <Col xl={12} xxl={12}>
+                      <Col className=" my-2">
+                        <Label className="standardLabelFont">تامین کننده</Label>
+                        <TagBox
+                          dataSource={this.state.cmbSupplier}
+                          searchEnabled={true}
+                          displayExpr="label"
+                          placeholder="تامین کننده"
+                          valueExpr="id"
+                          rtlEnabled={true}
+                          onValueChange={this.cmbSupplierEdit_onChange}
+                          value={this.state.cmbSupplierEditTable}
+                          className="fontStyle"
+                        />
+                      </Col>
+                      <Col xl={12} xxl={12} className=" my-2">
+                        <Label className="standardLabelFont">گروه کالا</Label>
+                        <TagBox
+                          dataSource={this.state.cmbItemGroup}
+                          searchEnabled={true}
+                          displayExpr="label"
+                          placeholder="گروه کالا"
+                          valueExpr="id"
+                          rtlEnabled={true}
+                          onValueChange={this.cmbItemGroup_onChange}
+                          value={this.state.cmbItemGroupValue}
+                          className="fontStyle"
+                        />
+                      </Col>
+                      <Col xl={12} xxl={12} className=" my-2">
                         <Label className="standardLabelFont">کالا</Label>
                         <TagBox
                           dataSource={this.state.itemLocByLocIdList}
