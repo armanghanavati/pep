@@ -944,7 +944,7 @@ class ItemLocation extends React.Component {
                     </Col>,
                   ]}
                 />
-                <CopyLocation />
+                <CopyLocation inventoryList={this.state.cmbInventory} />
               </Col>
             </Row>
           </Row>

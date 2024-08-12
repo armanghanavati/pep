@@ -1,6 +1,7 @@
+import axios from "axios";
+
 export async function itemLocationList(object, Token) {
-  const url =
-    window.apiAddress + "/ItemLocation/itemlocationList";
+  const url = window.apiAddress + "/ItemLocation/itemlocationList";
   const response = await fetch(url, {
     method: "POST",
     body: JSON.stringify(object),
@@ -35,3 +36,9 @@ export async function updateItemLocation(Object, Token) {
   return 0;
 }
 
+export const copyItemLocationGroup = async (postData) => {
+  const url = window.apiAddress + `/ItemLocation/copyItemLocationGroup`;
+  const response = await axios.post(url, postData);
+  console.log(response);
+  return response?.data;
+};
