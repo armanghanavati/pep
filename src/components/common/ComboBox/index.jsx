@@ -8,6 +8,7 @@ export default function ComboBox({
   xs = 12,
   md = 4,
   xl = 4,
+  style,
   name,
   placeholder = "انتخاب کنید ...",
   className,
@@ -33,6 +34,7 @@ export default function ComboBox({
       <Label>{label}</Label>
       {multi ? (
         <TagBox
+          style={style}
           disabled={disabled}
           value={value}
           dataSource={options}

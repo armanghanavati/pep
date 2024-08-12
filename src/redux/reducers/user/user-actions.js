@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export async function authUser(Object, Token) {
   const url = window.apiAddress + "/User/authUser";
   const response = await fetch(url, {
@@ -8,15 +10,15 @@ export async function authUser(Object, Token) {
     },
   });
   const result = await response.json();
-  var rtnOBJ={
-    status:result.status,
-    data:result.data,
-    msg:result.message
-  }
+  var rtnOBJ = {
+    status: result.status,
+    data: result.data,
+    msg: result.message,
+  };
   // if (result.status == "Success") {
-  //   console.log("User Authenticated=" + JSON.stringify(result.data));    
+  //   console.log("User Authenticated=" + JSON.stringify(result.data));
   //   return result.data;
-  // }  
+  // }
   return rtnOBJ;
 }
 // --------------------------------------------------------------------------------------------
@@ -226,10 +228,7 @@ export async function userLocationListCombo(userId, companyId, Token) {
 }
 
 export async function SearchUserById(userId, Token) {
-  const url =
-    window.apiAddress +
-    "/User/searchUserById?userId=" +
-    userId;
+  const url = window.apiAddress + "/User/searchUserById?userId=" + userId;
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -262,3 +261,13 @@ export async function updateProfile(Object, Token) {
   }
   return 0;
 }
+
+export const userLocationListUserId = async (userId, companyId) => {
+  const url =
+    window.apiAddress +
+    "/User/userLocationList?userId=" +
+    userId +
+    "&companyId=" +
+    companyId;
+  return axios.get(url);
+};

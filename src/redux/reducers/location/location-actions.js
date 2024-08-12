@@ -309,10 +309,10 @@ export const allSupplierList = async () => {
 };
 
 export const searchItemLocationByLocationIdList = async (postData) => {
+  console.log(postData);
   const url =
     window.apiAddress + `/ItemLocation/searchItemLocationByLocationIdList`;
   const response = await axios.post(url, postData);
-  console.log(response);
   return response?.data;
 };
 

@@ -117,6 +117,7 @@ import {
 import EditTables from "../common/EditTables";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CopyLocation from "./CopyLocation";
+import ComboBox from "../common/ComboBox";
 
 const dateLabel = { "aria-label": "Date" };
 
@@ -127,6 +128,8 @@ class ItemLocation extends React.Component {
       showCopyModal: false,
       cmbInventoryForEditing: null,
       itemLocByLocIdList: [],
+      inventoryEditing: null,
+      inventoryEditingList: null,
       itemLocByLocIdValue: null,
       allStateEditTable: {},
       LocationGroupIds: null,
@@ -864,7 +867,7 @@ class ItemLocation extends React.Component {
                       itemLocByLocIdValue: this.state.itemLocByLocIdValue,
                       locationIds: this.state.LocationGroupIds,
                       itemIds: this.state.cmbItemIds,
-                      inventoryId: this.state.cmbInventoryForEditing,
+                      inventoryId: this.state.inventoryEditing,
                       itemLocByLocIdList: this.state.itemLocByLocIdList,
                     },
                   ]}
@@ -884,16 +887,26 @@ class ItemLocation extends React.Component {
                         />
                       </Col>
                       <Col xl={12} xxl={12} className=" my-2">
-                        <Label className="standardLabelFont">انبار</Label>
-                        <TagBox
-                          dataSource={this.state.cmbInventoryForEditing}
+                        {/* <label className="fw-normal">انبار </label> */}
+                        <ComboBox
+                          xxl={12}
+                          xl={12}
+                          multi
+                          label="انبار"
+                          value={this.state.inventoryEditing}
+                          options={this.state.cmbInventory}
                           searchEnabled={true}
                           displayExpr="label"
                           placeholder="انبار"
                           valueExpr="id"
                           rtlEnabled={true}
-                          onValueChange={this.cmbInventory_onChange}
-                          className="fontStyle"
+                          onChange={(e) =>
+                            this.setState((prev) => ({
+                              ...prev,
+                              inventoryEditing: e,
+                            }))
+                          }
+                          className="fw-normal"
                         />
                       </Col>
                       <Col className=" my-2">
@@ -946,7 +959,7 @@ class ItemLocation extends React.Component {
                     </Col>,
                   ]}
                 />
-                <CopyLocation />
+                <CopyLocation inventoryList={this.state.inventoryEditingList} />
               </Col>
             </Row>
           </Row>
