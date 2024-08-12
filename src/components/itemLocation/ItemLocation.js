@@ -346,6 +346,7 @@ class ItemLocation extends React.Component {
 
   cmbInventory_onChange = async (e) => {
     this.setState({ cmbInventoryForEditing: e });
+    this.setState({ cmbInventoryvalue: e });
   };
 
   cmbSupplier_onChange = async (e) => {
