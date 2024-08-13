@@ -13,17 +13,11 @@ import "./assets/fonts/IRANSansWeb.ttf";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
-// window.apiAddress="http://localhost:7142/api";
-// window.apiAddress = "https://pepapi.minoomart.ir/api";
-
 // akhlaghi
-window.apiAddress = "http://10.0.10.48:9092/api";
+// window.apiAddress = "http://10.0.10.48:9092/api";
 
-// alirezayi
-// window.apiAddress = "http://10.0.10.41:7142/api";
-
-// test pep 
-// window.apiAddress = "http://172.16.1.40:2923/api";
+// pep test
+window.apiAddress = "http://172.16.1.40:2923/api";
 
 window.siteAddress = "https://pepapi.minoomart.ir";
 
@@ -53,3 +47,4 @@ serviceWorkerRegistration.unregister();
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+

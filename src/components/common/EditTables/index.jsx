@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../Modals/Modal";
 import Button from "../Buttons/Button";
-import { Col, Container, Row } from "reactstrap";
+import { Col, Container, Label, Row } from "reactstrap";
 import ComboBox from "../ComboBox";
 import CheckBox from "../SwitchCases/SwitchCase";
 import Input from "../Inputs/Input";
@@ -12,11 +12,15 @@ import TableMultiSelect2 from "../Tables/TableMultiSelect2";
 import { getTableFields } from "../../../redux/reducers/main/main-action";
 import { useLocation } from "react-router";
 import asyncWrapper from "../../../utiliy/asyncWrapper";
-import { RsetIsLoading, RsetShowToast } from "../../../redux/reducers/main/main-slice";
+import {
+  RsetIsLoading,
+  RsetShowToast,
+} from "../../../redux/reducers/main/main-slice";
 import { useDispatch } from "react-redux";
 import { updateItemLocationGroup } from "../../../redux/reducers/location/location-actions";
 import StringHelpers from "../../../utiliy/GlobalMethods";
 import Toastify from "../Toasts/Toastify";
+import { TagBox } from "devextreme-react";
 
 const EditTables = ({
   mulltiComponents,
@@ -31,6 +35,8 @@ const EditTables = ({
   const [errors, setErrors] = useState({});
   const [allField, setAllField] = useState([]);
   const [getFieldValues, setGetFieldValues] = useState([]);
+  const [group, setGroup] = useState(null);
+  const [supplier, setSupplier] = useState(null);
   const [showFieldFined, setShowFieldFined] = useState(false);
   const [fieldNames, setFieldNames] = useState([
     {
@@ -86,7 +92,6 @@ const EditTables = ({
     setInputFields((prevstate) => {
       return { ...prevstate, [name]: value };
     });
-    console.log(value);
   };
 
   const handleShowFieldFined = () => {
@@ -107,10 +112,8 @@ const EditTables = ({
   const handleGetTableFields = asyncWrapper(async () => {
     // const res = await getTableFields(location?.pathname?.split("/")?.[1]);
     const res = await getTableFields("itemLocations");
-    console.log(res);
     const { data, status, message } = res;
     if (status == "Success") {
-      console.log(data);
       setAllField(data);
     } else {
       dispatch(
@@ -138,18 +141,20 @@ const EditTables = ({
     return captions;
   };
 
-  console.log(fixTest(), test);
-
   useEffect(() => {
     handleGetTableFields();
     setInputFields({});
   }, []);
+
+  console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHH");
 
   const fixFieldFindForValues = filedFineds?.map((item) => {
     return {
       values: item?.props?.value,
     };
   });
+
+  console.log(supplier);
 
   const handleAcceptEditTable = asyncWrapper(async () => {
     const postData = {
@@ -223,11 +228,40 @@ const EditTables = ({
         ]}
       >
         <Container className="">
+          {/* <Col className=" my-2">
+            <Label className="standardLabelFont">تامین کننده</Label>
+            <TagBox
+              dataSource={allState?.[0]?.supplierList}
+              searchEnabled={true}
+              displayExpr="label"
+              placeholder="تامین کننده"
+              valueExpr="id"
+              rtlEnabled={true}
+              onValueChange={(e) => setSupplier(e)}
+              value={supplier}
+              className="fontStyle"
+            />
+          </Col> */}
+          {/* <Col xl={12} xxl={12} className=" my-2">
+            <Label className="standardLabelFont">گروه کالا</Label>
+            <TagBox
+              dataSource={allState?.[0]?.itemGroupList}
+              searchEnabled={true}
+              displayExpr="label"
+              placeholder="گروه کالا"
+              valueExpr="id"
+              rtlEnabled={true}
+              onValueChange={(e) => setGroup(e)}
+              value={group}
+              className="fontStyle"
+            />
+          </Col> */}
           {mulltiComponents?.map((item) => (
             <Col xl="12" xxl="12" className=" d-flex pb-2">
               {item}
             </Col>
           ))}
+          {/* cmbItemGroupIds */}
           <Row className=" d-flex align-items-center justify-content-center">
             <Col className="my-2" xl="6" xxl="6">
               <Input

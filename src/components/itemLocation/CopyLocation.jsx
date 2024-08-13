@@ -41,12 +41,10 @@ const CopyLocation = ({ inventoryList }) => {
 
   const cmbLocationList = (e) => {
     setLocation(e);
-    console.log(e);
     handleSearchItemLocationByLocationIdList(e);
   };
 
   const handleSearchItemLocationByLocationIdList = asyncWrapper(async (e) => {
-    console.log(e);
     const res = await searchItemLocationByLocationIdList([e]);
     const { data, status } = res;
     const LAZY = new DataSource({
@@ -67,7 +65,6 @@ const CopyLocation = ({ inventoryList }) => {
     };
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await copyItemLocationGroup(postData);
-    console.log(res);
     dispatch(RsetIsLoading({ stateWait: false }));
     const { data, status, message } = res;
     if (status == "Success") {
@@ -89,8 +86,6 @@ const CopyLocation = ({ inventoryList }) => {
       );
     }
   };
-
-  console.log(item, inventory, location, locationEnd);
 
   return (
     <span>
@@ -124,6 +119,7 @@ const CopyLocation = ({ inventoryList }) => {
             label="فروشگاه مبدا"
             xxl={12}
             xl={12}
+            showClearButton={false}
             options={locationList}
             searchEnabled={true}
             displayExpr="label"

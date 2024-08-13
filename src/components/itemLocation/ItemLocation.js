@@ -386,14 +386,14 @@ class ItemLocation extends React.Component {
         temp.push(this.state.cmbSupplier[i].id);
       }
       this.setState({
-        cmbSupplier: this.state.cmbSupplier,
+        // cmbSupplier: this.state.cmbSupplier,
         cmbSupplierEditTable: e,
-        cmbSupplierIds: temp,
+        // cmbSupplierIds: temp,
       });
     } else {
       this.setState({
         cmbSupplierEditTable: e,
-        cmbSupplierIds: e,
+        // cmbSupplierIds: e,
       });
     }
   };
@@ -448,7 +448,7 @@ class ItemLocation extends React.Component {
         pageSize: 10,
       });
       this.setState({
-        cmbItem: LAZY,
+        // cmbItem: LAZY,
         cmbItemOrg: ITEMS,
         cmbItemGroup: this.state.cmbItemGroup,
         cmbItemGroupEdit: e,
@@ -463,7 +463,7 @@ class ItemLocation extends React.Component {
       });
       this.setState({
         cmbItemGroupEdit: e,
-        cmbItem: LAZY,
+        // cmbItem: LAZY,
         cmbItemOrg: ITEMS,
         cmbItemGroupIds: e,
       });
@@ -543,6 +543,7 @@ class ItemLocation extends React.Component {
       inventoryId: this.state.cmbInventoryvalue,
       stateIds: this.state.cmbStateValue,
     };
+
     console.log(data);
     var RESULT = 0;
     this.OpenCloseWait();
@@ -808,8 +809,8 @@ class ItemLocation extends React.Component {
                     placeholder="گروه کالا"
                     valueExpr="id"
                     rtlEnabled={true}
-                    onValueChange={this.cmbItemGroupEdit_onChange}
-                    value={this.state.cmbItemGroupEdit}
+                    onValueChange={this.cmbItemGroup_onChange}
+                    value={this.state.cmbItemGroupValue}
                     className="fontStyle"
                   />
                 </Col>
@@ -864,6 +865,8 @@ class ItemLocation extends React.Component {
                 <EditTables
                   allState={[
                     {
+                      supplierList: this.state.cmbSupplier,
+                      itemGroupList: this.state.cmbItemGroup,
                       itemLocByLocIdValue: this.state.itemLocByLocIdValue,
                       locationIds: this.state.LocationGroupIds,
                       itemIds: this.state.cmbItemIds,
@@ -923,7 +926,7 @@ class ItemLocation extends React.Component {
                           className="fontStyle"
                         />
                       </Col>
-                      <Col xl={12} xxl={12} className=" my-2">
+                      {/* <Col xl={12} xxl={12} className=" my-2">
                         <Label className="standardLabelFont">گروه کالا</Label>
                         <TagBox
                           dataSource={this.state.cmbItemGroup}
@@ -932,11 +935,14 @@ class ItemLocation extends React.Component {
                           placeholder="گروه کالا"
                           valueExpr="id"
                           rtlEnabled={true}
-                          onValueChange={this.cmbItemGroup_onChange}
-                          value={this.state.cmbItemGroupValue}
+                          onValueChange={(e) =>
+                            this.setState({ cmbItemGroupEdit: e })
+                          }
+                          value={this.state.cmbItemGroupEdit}
                           className="fontStyle"
                         />
-                      </Col>
+                      </Col> */}
+                      {/* cmbItemGroupIds */}
                       <Col xl={12} xxl={12} className=" my-2">
                         <Label className="standardLabelFont">کالا</Label>
                         <TagBox
