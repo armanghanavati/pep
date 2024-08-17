@@ -990,7 +990,10 @@ class ItemLocation extends React.Component {
                   </Col>,
                 ]}
               />
-              <CopyLocation inventoryList={this.state.cmbInventory} />
+              <CopyLocation
+                inventoryList={this.state.cmbInventory}
+                supplierList={this.state.cmbSupplier}
+              />
             </Col>
           </Row>
           <Row className="standardPadding">

@@ -350,3 +350,10 @@ export const itemComboByItemGroupIdList = async (object) => {
   console.log(response);
   return response?.data;
 };
+
+export const listByGroupIds = async (object) => {
+  const url = window.apiAddress + "/Item/itemListByItemGroupIds";
+  const response = await axios.post(url, object);
+  console.log(response);
+  return response?.data;
+};
