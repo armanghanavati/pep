@@ -128,9 +128,9 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
     setGroup(e);
     dispatch(RsetIsLoading({ stateWait: true }));
     const postData = {
-      itemGroupIds: group?.includes(0)
-        ? StringHelpers.fixComboListId(group, groupList)
-        : group,
+      itemGroupIds: e?.includes(0)
+        ? StringHelpers.fixComboListId(e, groupList)
+        : e,
       supplierIds: supplier.includes(0)
         ? StringHelpers.fixComboListId(supplier, supplierList)
         : supplier,
