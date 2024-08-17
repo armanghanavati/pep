@@ -17,6 +17,7 @@ import {
 } from "../../redux/reducers/main/main-slice";
 import { groupBySupplierId } from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { listByGroupIds } from "../../redux/reducers/item/item-action";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 const CopyLocation = ({ inventoryList, supplierList }) => {
   const dispatch = useDispatch();
@@ -174,6 +175,7 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
         // icon={<ContentCopyIcon className="ms-1 font18 fw-bold" />}
         onClick={() => setShowCopyModal(true)}
         className="fontStyle me-4 "
+        icon={<ContentCopyIcon className="ms-1 font18 fw-bold"/>}
         label="کپی تنظیمات"
         type="success"
         // stylingMode="contained"

@@ -20,7 +20,7 @@ import { useDispatch } from "react-redux";
 import { updateItemLocationGroup } from "../../../redux/reducers/location/location-actions";
 import StringHelpers from "../../../utiliy/GlobalMethods";
 import Toastify from "../Toasts/Toastify";
-import { TagBox } from "devextreme-react";
+import EditIcon from '@mui/icons-material/Edit';
 
 const EditTables = ({
   mulltiComponents,
@@ -205,6 +205,7 @@ const EditTables = ({
     <span className="">
       <Button
         type="success"
+        icon={<EditIcon className="ms-1 font18 fw-bold"/>}
         onClick={() => setShowEditModal(true)}
         label="ویرایش جدول"
       />

@@ -386,14 +386,11 @@ class ItemLocation extends React.Component {
         temp.push(this.state.cmbSupplier[i].id);
       }
       this.setState({
-        // cmbSupplier: this.state.cmbSupplier,
         cmbSupplierEditTable: e,
-        // cmbSupplierIds: temp,
       });
     } else {
       this.setState({
         cmbSupplierEditTable: e,
-        // cmbSupplierIds: e,
       });
     }
   };
@@ -1049,7 +1046,7 @@ class ItemLocation extends React.Component {
                   </DataGrid>
                 </Col>
               </Row>
-              <Row style={{ paddingRight: "10px", paddingBottom: "10px" }}>
+              {/* <Row style={{ paddingRight: "10px", paddingBottom: "10px" }}>
                 {this.state.stateDisable_btnUpdate && (
                   <Col xs="auto">
                     <Button
@@ -1063,7 +1060,7 @@ class ItemLocation extends React.Component {
                     />
                   </Col>
                 )}
-              </Row>
+              </Row> */}
             </Col>
           </Row>
         </Card>
