@@ -41,3 +41,11 @@ export const groupBySupplierId = async (postData) => {
   const response = await axios.post(url, postData);
   return response?.data;
 };
+
+// دریافت کالا با استفاده از گروه و تامین کننده
+export const itemComboByItemGroupAndSupplierList = async (postData) => {
+  const url = window.apiAddress + `/Item/itemComboByItemGroupAndSupplierList`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};
+

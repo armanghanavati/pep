@@ -15,14 +15,10 @@ import {
   RsetIsLoading,
   RsetShowToast,
 } from "../../redux/reducers/main/main-slice";
-import {
-  groupBySupplierId,
-  itemComboByItemGroupAndSupplierList,
-} from "../../redux/reducers/itemGroup/itemGroup-actions";
+import { groupBySupplierId } from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { listByGroupIds } from "../../redux/reducers/item/item-action";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-const CopyLocation = ({ inventoryList, supplierList }) => {
+const GroupCopy = ({ setShowCopy, showCopy, inventoryList, supplierList }) => {
   const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
   const [showCopyModal, setShowCopyModal] = useState(false);
@@ -127,58 +123,63 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
   const handleListByGroupIds = asyncWrapper(async (e) => {
     setGroup(e);
     dispatch(RsetIsLoading({ stateWait: true }));
-    const postData = {
-      itemGroupIds: group?.includes(0)
-        ? StringHelpers.fixComboListId(group, groupList)
-        : group,
-      supplierIds: supplier.includes(0)
-        ? StringHelpers.fixComboListId(supplier, supplierList)
-        : supplier,
-    };
-    const res = await itemComboByItemGroupAndSupplierList(postData);
-    dispatch(RsetIsLoading({ stateWait: false }));
-    const { data, status, message } = res;
-    if (status == "Success") {
-      const LAZY = new DataSource({
-        store: data,
-        paginate: true,
-        pageSize: 10,
-      });
-      setItemList(LAZY);
+    if (e.includes(0)) {
+      const fixLoop = StringHelpers.fixComboListId(e, groupList);
+      console.log(fixLoop);
+      const res = await listByGroupIds(fixLoop);
+      dispatch(RsetIsLoading({ stateWait: false }));
+      const { data, status, message } = res;
+      if (status == "Success") {
+        const LAZY = new DataSource({
+          store: data,
+          paginate: true,
+          pageSize: 10,
+        });
+        setItemList(LAZY);
+      } else {
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      }
     } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
+      const res = await listByGroupIds(e);
+      dispatch(RsetIsLoading({ stateWait: false }));
+      const { data, status, message } = res;
+      if (status == "Success") {
+        const LAZY = new DataSource({
+          store: data,
+          paginate: true,
+          pageSize: 10,
+        });
+        setItemList(LAZY);
+      } else {
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      }
     }
   });
 
   return (
     <span>
-      <Button
-        // icon={<ContentCopyIcon className="ms-1 font18 fw-bold" />}
-        onClick={() => setShowCopyModal(true)}
-        className="fontStyle me-4 "
-        icon={<ContentCopyIcon className="ms-1 font18 fw-bold" />}
-        label="کپی تنظیمات"
-        type="success"
-        // stylingMode="contained"
-        rtlEnabled={true}
-      />
       <Modal
         size="lg"
         label={"کپی تنظیمات"}
-        classHeader="bg-white"
-        isOpen={showCopyModal}
+        isOpen={showCopy}
         footerButtons={[
           <Button
             text="Outlined"
             stylingMode="outlined"
             type="danger"
-            onClick={() => setShowCopyModal(false)}
+            onClick={() => setShowCopy(false)}
             label="لغو"
           />,
           <Button type="success" onClick={handleAccept} label="تایید" />,
@@ -201,17 +202,16 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
             className="fontStyle"
           />
         </Col>
-        <Col xl={12} xxl={12} className=" my-2">
-          <Label className="standardLabelFont">انبار</Label>
+        <Col className=" mt-2">
+          <Label className="standardLabelFont">سمت</Label>
           <TagBox
-            dataSource={inventoryList}
+            // dataSource={supplierList}
             searchEnabled={true}
             displayExpr="label"
-            placeholder="انبار"
             valueExpr="id"
             rtlEnabled={true}
-            onValueChange={(e) => setInventory(e)}
-            value={inventory}
+            // onValueChange={handleGroupListBySupplier}
+            // value={supplier}
             className="fontStyle"
           />
         </Col>
@@ -226,34 +226,6 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
             rtlEnabled={true}
             onValueChange={handleGroupListBySupplier}
             value={supplier}
-            className="fontStyle"
-          />
-        </Col>
-        <Col xs={3} xxl={12} className=" my-2">
-          <Label className="standardLabelFont">گروه کالا</Label>
-          <TagBox
-            dataSource={groupList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="گروه کالا"
-            valueExpr="id"
-            rtlEnabled={true}
-            onValueChange={handleListByGroupIds}
-            value={group}
-            className="fontStyle"
-          />
-        </Col>
-        <Col xl={12} xxl={12} className=" my-2">
-          <Label className="standardLabelFont">کالا</Label>
-          <TagBox
-            dataSource={itemList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="کالا"
-            valueExpr="id"
-            rtlEnabled={true}
-            onValueChange={(e) => setItem(e)}
-            value={item}
             className="fontStyle"
           />
         </Col>
@@ -279,4 +251,4 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
   );
 };
 
-export default CopyLocation;
+export default GroupCopy;
