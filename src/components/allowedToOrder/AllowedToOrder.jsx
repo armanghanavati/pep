@@ -153,6 +153,12 @@ const AllowedToOrder = () => {
                 label="افزودن"
               />
               <Button
+                onClick={() => setShowAdd(true)}
+                type="success"
+                icon={<AddIcon className="ms-1 font18 fw-bold" />}
+                label="حذف گروهی"
+              />
+              <Button
                 type="success"
                 onClick={() => setShowEdit(true)}
                 icon={<EditIcon className="font18" />}
