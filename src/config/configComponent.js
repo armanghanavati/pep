@@ -60,6 +60,7 @@ import PromotionsReports from "../components/promotion/PromotionReport";
 import SupplierLocations from "../pages/SupplierLocations";
 import DiffItemsSnappReports from "../pages/DiffItemsSnappReports";
 import EditTables from "../components/common/EditTables";
+import AllowedToOrder from "../components/allowedToOrder/AllowedToOrder";
 
 export const REAL_COMPONENT = [
   {
@@ -310,8 +311,12 @@ export const REAL_COMPONENT = [
     strComponent: "PrintLabels",
     orgComponent: <PrintLabels />,
   },
+  // {
+  //   strComponent: "DiffItemsSnappReports",
+  //   orgComponent: <DiffItemsSnappReports />,
+  // },
   {
     strComponent: "DiffItemsSnappReports",
-    orgComponent: <DiffItemsSnappReports />,
+    orgComponent: <AllowedToOrder />,
   },
 ];
