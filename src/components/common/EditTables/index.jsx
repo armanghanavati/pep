@@ -20,7 +20,7 @@ import { useDispatch } from "react-redux";
 import { updateItemLocationGroup } from "../../../redux/reducers/location/location-actions";
 import StringHelpers from "../../../utiliy/GlobalMethods";
 import Toastify from "../Toasts/Toastify";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 
 const EditTables = ({
   mulltiComponents,
@@ -165,16 +165,16 @@ const EditTables = ({
         ? StringHelpers.fixComboListId(allState?.[0]?.locationIds, allLocaitons)
         : allState?.[0]?.locationIds,
       inventoryIds: allState?.[0]?.inventoryId,
-      isActive: inputFields?.isActive || false,
+      isActive: inputFields?.isActive || null,
       maxPercentChange: inputFields?.maxPercentChange,
       minPercentChange: inputFields?.minPercentChange,
-      isCreateOrderInventory: inputFields?.isCreateOrderInventory || false,
-      isCreateOrderSupplier: inputFields?.isCreateOrderSupplier || false,
+      isCreateOrderInventory: inputFields?.isCreateOrderInventory || null,
+      isCreateOrderSupplier: inputFields?.isCreateOrderSupplier || null,
       orderNumber: inputFields?.orderNumber,
-      isActiveSnapp: inputFields?.isActiveSnapp || false,
-      isSentToSnapp: inputFields?.isSentToSnapp || false,
+      isActiveSnapp: inputFields?.isActiveSnapp || null,
+      isSentToSnapp: inputFields?.isSentToSnapp || null,
       maxAllowOrderNumberSnapp: inputFields?.maxAllowOrderNumberSnapp,
-      allowNewOrderInventory: inputFields?.allowNewOrderInventory || false,
+      allowNewOrderInventory: inputFields?.allowNewOrderInventory || null,
     };
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await updateItemLocationGroup(postData);
@@ -205,7 +205,7 @@ const EditTables = ({
     <span className="">
       <Button
         type="success"
-        icon={<EditIcon className="ms-1 font18 fw-bold"/>}
+        icon={<EditIcon className="ms-1 font18 fw-bold" />}
         onClick={() => setShowEditModal(true)}
         label="ویرایش جدول"
       />
