@@ -504,15 +504,16 @@ class ItemLocation extends React.Component {
   };
 
   fn_CheckValidation = () => {
-    let errMsg = "";
-    let flag = true;
-    document.getElementById("errLocationId").innerHTML = "";
-    if (this.state.LocationIds == null) {
-      document.getElementById("errLocationId").innerHTML =
-        "نام  فروشگاه را انتخاب نمائید";
-      flag = false;
-    }
-    return flag;
+    console.log("Hellllllllllllllllllllo valid");
+    // let errMsg = "";
+    // let flag = true;
+    // document.getElementById("errInventoryEdit").innerHTML = "";
+    // if (this.state.inventoryEditing == null) {
+    //   document.getElementById("errInventoryEdit").innerHTML =
+    //     "نام  فروشگاه را انتخاب نمائید";
+    //   flag = false;
+    // }
+    // return flag;
   };
 
   btnUpdate_onClick = async () => {
@@ -862,110 +863,6 @@ class ItemLocation extends React.Component {
                   onClick={this.btnSearch_onClick}
                   className="fontStyle ms-2 "
                 />
-                <EditTables
-                  allState={[
-                    {
-                      supplierList: this.state.cmbSupplier,
-                      itemGroupList: this.state.cmbItemGroup,
-                      itemLocByLocIdValue: this.state.itemLocByLocIdValue,
-                      locationIds: this.state.LocationGroupIds,
-                      itemIds: this.state.cmbItemIds,
-                      inventoryId: this.state.inventoryEditing,
-                      itemLocByLocIdList: this.state.itemLocByLocIdList,
-                    },
-                  ]}
-                  mulltiComponents={[
-                    <Col xl={12} xxl={12} className="">
-                      <Col xl={12} xxl={12} className=" my-2">
-                        <Label className="standardLabelFont">فروشگاه</Label>
-                        <TagBox
-                          dataSource={this.state.LocationList}
-                          searchEnabled={true}
-                          displayExpr="label"
-                          placeholder="فروشگاه"
-                          valueExpr="id"
-                          rtlEnabled={true}
-                          onValueChange={this.cmbLocationList_onChange}
-                          className="fontStyle"
-                        />
-                      </Col>
-                      <Col xl={12} xxl={12} className=" my-2">
-                        {/* <label className="fw-normal">انبار </label> */}
-                        <ComboBox
-                          xxl={12}
-                          xl={12}
-                          multi
-                          label="انبار"
-                          value={this.state.inventoryEditing}
-                          options={this.state.cmbInventory}
-                          searchEnabled={true}
-                          displayExpr="label"
-                          placeholder="انبار"
-                          valueExpr="id"
-                          rtlEnabled={true}
-                          onChange={(e) =>
-                            this.setState((prev) => ({
-                              ...prev,
-                              inventoryEditing: e,
-                            }))
-                          }
-                          className="fw-normal"
-                        />
-                      </Col>
-                      <Col className=" my-2">
-                        <Label className="standardLabelFont">تامین کننده</Label>
-                        <TagBox
-                          dataSource={this.state.cmbSupplier}
-                          searchEnabled={true}
-                          displayExpr="label"
-                          placeholder="تامین کننده"
-                          valueExpr="id"
-                          rtlEnabled={true}
-                          onValueChange={this.cmbSupplierEdit_onChange}
-                          value={this.state.cmbSupplierEditTable}
-                          className="fontStyle"
-                        />
-                      </Col>
-                      {/* <Col xl={12} xxl={12} className=" my-2">
-                        <Label className="standardLabelFont">گروه کالا</Label>
-                        <TagBox
-                          dataSource={this.state.cmbItemGroup}
-                          searchEnabled={true}
-                          displayExpr="label"
-                          placeholder="گروه کالا"
-                          valueExpr="id"
-                          rtlEnabled={true}
-                          onValueChange={(e) =>
-                            this.setState({ cmbItemGroupEdit: e })
-                          }
-                          value={this.state.cmbItemGroupEdit}
-                          className="fontStyle"
-                        />
-                      </Col> */}
-                      {/* cmbItemGroupIds */}
-                      <Col xl={12} xxl={12} className=" my-2">
-                        <Label className="standardLabelFont">کالا</Label>
-                        <TagBox
-                          dataSource={this.state.itemLocByLocIdList}
-                          searchEnabled={true}
-                          displayExpr="label"
-                          placeholder="کالا"
-                          valueExpr="id"
-                          rtlEnabled={true}
-                          onValueChange={(e) =>
-                            this.setState((prev) => ({
-                              ...prev,
-                              itemLocByLocIdValue: e,
-                            }))
-                          }
-                          value={this.state.itemLocByLocIdValue}
-                          className="fontStyle"
-                        />
-                      </Col>
-                    </Col>,
-                  ]}
-                />
-                <CopyLocation inventoryList={this.state.cmbInventory} />
               </Col>
             </Row>
           </Row>
@@ -973,7 +870,7 @@ class ItemLocation extends React.Component {
         <p></p>
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
-            <Row>
+            {/* <Row>
               <Label className="title"></Label>
             </Row>
             <Row style={{ padding: "10px", direction: "rtl" }}>
@@ -999,7 +896,102 @@ class ItemLocation extends React.Component {
                 />
                 <Label>زدن گروهی تیک غیرفعال برای کالاهای فیلتر شده</Label>
               </Col>
-            </Row>
+            </Row> */}
+            <Col className=" d-flex ">
+              <EditTables
+                fn_CheckValidation={this.fn_CheckValidation()}
+                allState={[
+                  {
+                    supplierList: this.state.cmbSupplier,
+                    itemGroupList: this.state.cmbItemGroup,
+                    itemLocByLocIdValue: this.state.itemLocByLocIdValue,
+                    locationIds: this.state.LocationGroupIds,
+                    itemIds: this.state.cmbItemIds,
+                    inventoryId: this.state.inventoryEditing,
+                    itemLocByLocIdList: this.state.itemLocByLocIdList,
+                  },
+                ]}
+                mulltiComponents={[
+                  <Col xl={12} xxl={12} className="">
+                    <Col xl={12} xxl={12} className=" my-2">
+                      <Label className="standardLabelFont">فروشگاه</Label>
+                      <TagBox
+                        dataSource={this.state.LocationList}
+                        searchEnabled={true}
+                        displayExpr="label"
+                        placeholder="فروشگاه"
+                        valueExpr="id"
+                        rtlEnabled={true}
+                        onValueChange={this.cmbLocationList_onChange}
+                        className="fontStyle"
+                      />
+                    </Col>
+                    <Col xl={12} xxl={12} className=" my-2">
+                      <ComboBox
+                        xxl={12}
+                        xl={12}
+                        multi
+                        label="انبار"
+                        value={this.state.inventoryEditing}
+                        options={this.state.cmbInventory}
+                        searchEnabled={true}
+                        displayExpr="label"
+                        placeholder="انبار"
+                        valueExpr="id"
+                        rtlEnabled={true}
+                        onChange={(e) =>
+                          this.setState((prev) => ({
+                            ...prev,
+                            inventoryEditing: e,
+                          }))
+                        }
+                        className="fw-normal"
+                      />
+                      <Row>
+                        <Label
+                          id="errInventoryEdit"
+                          className="standardLabelFont errMessage"
+                        />
+                      </Row>
+                    </Col>
+                    <Col className=" my-2">
+                      <Label className="standardLabelFont">تامین کننده</Label>
+                      <TagBox
+                        dataSource={this.state.cmbSupplier}
+                        searchEnabled={true}
+                        displayExpr="label"
+                        placeholder="تامین کننده"
+                        valueExpr="id"
+                        rtlEnabled={true}
+                        onValueChange={this.cmbSupplierEdit_onChange}
+                        value={this.state.cmbSupplierEditTable}
+                        className="fontStyle"
+                      />
+                    </Col>
+                    <Col xl={12} xxl={12} className=" my-2">
+                      <Label className="standardLabelFont">کالا</Label>
+                      <TagBox
+                        dataSource={this.state.itemLocByLocIdList}
+                        searchEnabled={true}
+                        displayExpr="label"
+                        placeholder="کالا"
+                        valueExpr="id"
+                        rtlEnabled={true}
+                        onValueChange={(e) =>
+                          this.setState((prev) => ({
+                            ...prev,
+                            itemLocByLocIdValue: e,
+                          }))
+                        }
+                        value={this.state.itemLocByLocIdValue}
+                        className="fontStyle"
+                      />
+                    </Col>
+                  </Col>,
+                ]}
+              />
+              <CopyLocation inventoryList={this.state.cmbInventory} />
+            </Col>
           </Row>
           <Row className="standardPadding">
             <Col>

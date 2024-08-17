@@ -24,6 +24,7 @@ import { TagBox } from "devextreme-react";
 
 const EditTables = ({
   mulltiComponents,
+  fn_CheckValidation,
   filedFineds,
   allState,
   optionFieldFind,
@@ -146,8 +147,6 @@ const EditTables = ({
     setInputFields({});
   }, []);
 
-  console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHH");
-
   const fixFieldFindForValues = filedFineds?.map((item) => {
     return {
       values: item?.props?.value,
@@ -157,6 +156,7 @@ const EditTables = ({
   console.log(supplier);
 
   const handleAcceptEditTable = asyncWrapper(async () => {
+    // if (await fn_CheckValidation()) {
     const postData = {
       itemIds: allState?.[0]?.itemLocByLocIdValue?.includes(0)
         ? fixListForId
@@ -165,16 +165,16 @@ const EditTables = ({
         ? StringHelpers.fixComboListId(allState?.[0]?.locationIds, allLocaitons)
         : allState?.[0]?.locationIds,
       inventoryIds: allState?.[0]?.inventoryId,
-      isActive: inputFields?.isActive,
+      isActive: inputFields?.isActive || false,
       maxPercentChange: inputFields?.maxPercentChange,
       minPercentChange: inputFields?.minPercentChange,
-      isCreateOrderInventory: inputFields?.isCreateOrderInventory,
-      isCreateOrderSupplier: inputFields?.isCreateOrderSupplier,
+      isCreateOrderInventory: inputFields?.isCreateOrderInventory || false,
+      isCreateOrderSupplier: inputFields?.isCreateOrderSupplier || false,
       orderNumber: inputFields?.orderNumber,
-      isActiveSnapp: inputFields?.isActiveSnapp,
-      isSentToSnapp: inputFields?.isSentToSnapp,
+      isActiveSnapp: inputFields?.isActiveSnapp || false,
+      isSentToSnapp: inputFields?.isSentToSnapp || false,
       maxAllowOrderNumberSnapp: inputFields?.maxAllowOrderNumberSnapp,
-      allowNewOrderInventory: inputFields?.allowNewOrderInventory,
+      allowNewOrderInventory: inputFields?.allowNewOrderInventory || false,
     };
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await updateItemLocationGroup(postData);
@@ -198,10 +198,11 @@ const EditTables = ({
         })
       );
     }
+    // }
   });
 
   return (
-    <span>
+    <span className="">
       <Button
         type="success"
         onClick={() => setShowEditModal(true)}
@@ -370,7 +371,7 @@ const EditTables = ({
                 }
                 checked={inputFields?.allowNewOrderInventory}
               />
-              <div className="mx-2">تعداد مجاز سفارش جدید انبار</div>
+              <div className="mx-2">تعداد مجاز ویرایش</div>
             </Col>
             <Col xl="6" xxl="6" className="mt-4 d-flex">
               <SwitchCase

@@ -92,7 +92,7 @@ const CopyLocation = ({ inventoryList }) => {
       <Button
         // icon={<ContentCopyIcon className="ms-1 font18 fw-bold" />}
         onClick={() => setShowCopyModal(true)}
-        className="fontStyle me-2 "
+        className="fontStyle me-4 "
         label="کپی تنظیمات"
         type="success"
         // stylingMode="contained"

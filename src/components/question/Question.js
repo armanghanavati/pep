@@ -51,11 +51,9 @@ import {
   questionList,
   addQuestion,
   updateQuestion,
-  deleteQuestion
+  deleteQuestion,
 } from "../../redux/reducers/question/question-actions";
-import {
-  questionTypeList
-} from "../../redux/reducers/question/questionType-actions";
+import { questionTypeList } from "../../redux/reducers/question/questionType-actions";
 import { DataGridQuestionColumns } from "./Question-config";
 import { companyListCombo } from "../../redux/reducers/company/company-actions";
 import { companyActions } from "../../redux/reducers/company/company-slice";
@@ -148,25 +146,28 @@ class Question extends React.Component {
         })
       );
     }
-  }
+  };
 
   fn_questionTypeList = async () => {
     this.setState({
-      cmbQuestionType: await questionTypeList(this.props.User.userId, this.props.User.token)
-    })
-  }
+      cmbQuestionType: await questionTypeList(
+        this.props.User.userId,
+        this.props.User.token
+      ),
+    });
+  };
 
   fn_unitList = async () => {
     this.setState({
-      cmbUnit: await unitList(this.props.User.token)
-    })
-  }
+      cmbUnit: await unitList(this.props.User.token),
+    });
+  };
 
   fn_zoneList = async () => {
     this.setState({
-      cmbZone: await zoneList(this.props.User.token)
-    })
-  }
+      cmbZone: await zoneList(this.props.User.token),
+    });
+  };
 
   grdQuestion_onClickRow = (e) => {
     this.setState({
@@ -233,32 +234,24 @@ class Question extends React.Component {
       flag = false;
     }
     if (this.state.cmbZoneValue == null) {
-      document.getElementById("errZone").innerHTML =
-        "حوزه را انتخاب نمائید";
+      document.getElementById("errZone").innerHTML = "حوزه را انتخاب نمائید";
       flag = false;
     }
-
     if (this.state.txtScoreValue == null) {
-      document.getElementById("errScore").innerHTML =
-        "نمره را وارد نمایید";
+      document.getElementById("errScore").innerHTML = "نمره را وارد نمایید";
       flag = false;
     }
-
     if (this.state.cmbQuestionTypeValue == null) {
       document.getElementById("errQuestionType").innerHTML =
         "نوع سوال را انتخاب نمایید";
       flag = false;
     }
-
     if (this.state.cmbUnitValue == null) {
-      document.getElementById("errUnit").innerHTML =
-        "مسول را انتخاب نمایید";
+      document.getElementById("errUnit").innerHTML = "مسول را انتخاب نمایید";
       flag = false;
     }
-
     if (this.state.txtQuestionValue == null) {
-      document.getElementById("errQuestion").innerHTML =
-        "سوال را وارد نمایید";
+      document.getElementById("errQuestion").innerHTML = "سوال را وارد نمایید";
       flag = false;
     }
 
@@ -300,7 +293,7 @@ class Question extends React.Component {
 
   txtPriority_onChange = (e) => {
     this.setState({ txtPriorityValue: e.value });
-  }
+  };
 
   btnUpdate_onClick = async () => {
     if (await this.fn_CheckValidation()) {
@@ -379,7 +372,6 @@ class Question extends React.Component {
               </Row>
             )}
             <Row className="standardPadding">
-
               <Col xs="auto">
                 <Label className="standardLabelFont">نوع بازرسی</Label>
                 <SelectBox
@@ -538,7 +530,6 @@ class Question extends React.Component {
               <Row className="standardSpaceTop">
                 <Row>
                   {this.state.stateDisable_btnUpdate && (
-
                     <Col xs="auto">
                       <Button
                         icon={UpdateIcon}
@@ -581,7 +572,13 @@ class Question extends React.Component {
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
-              <Label className="title">لیست سوالات {this.state.cmbQuestionTypeValue != null && this.state.cmbQuestionType.map(p => p.id == this.state.cmbQuestionTypeValue ? p.name : '')}</Label>
+              <Label className="title">
+                لیست سوالات{" "}
+                {this.state.cmbQuestionTypeValue != null &&
+                  this.state.cmbQuestionType.map((p) =>
+                    p.id == this.state.cmbQuestionTypeValue ? p.name : ""
+                  )}
+              </Label>
             </Row>
             <Row>
               <Col xs="auto" className="standardMarginRight">
