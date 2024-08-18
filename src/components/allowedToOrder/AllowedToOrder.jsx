@@ -14,6 +14,7 @@ import GroupEdit from "./GroupEdit";
 import GroupAdd from "./GroupAdd";
 import Table from "../common/Tables/Table";
 import { Gfn_FormatNumber } from "../../utiliy/GlobalMethods";
+import SearchIcon from "@mui/icons-material/Search";
 
 const AllowedToOrder = () => {
   const { users, main } = useSelector((state) => state);
@@ -21,8 +22,6 @@ const AllowedToOrder = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showCopy, setShowCopy] = useState(false);
-
-  useEffect(() => {}, []);
 
   const columns = [
     {
@@ -76,41 +75,45 @@ const AllowedToOrder = () => {
       },
     },
     {
-      dataField: "minOrderNumber",
-      caption: "حداقل تعداد",
+      dataField: "maxNewInventoryOrderNumber",
+      caption: "تعداد مجاز سفارش جدید انباری",
       allowEditing: false,
-      cellRender: ({ data }) => {
-        return <>{Gfn_FormatNumber(data?.minOrderNumber)}</>;
-      },
     },
     {
-      dataField: "minOrderRiali",
-      caption: "حداقل ریال",
+      dataField: "maxZeroInventoryOrderNumber",
+      caption: "تعداد مجاز صفر کردن سفارش انباری",
       allowEditing: false,
-      cellRender: ({ data }) => {
-        return <>{Gfn_FormatNumber(data?.minOrderRiali)}</>;
-      },
     },
     {
-      dataField: "maxOrderRiali",
-      caption: "حداکثر ریال",
+      dataField: "maxOutRouteNumber",
+      caption: "تعداد ویرایش سفارش بدون برنامه ریزی انباری",
       allowEditing: false,
-      cellRender: ({ data }) => {
-        return <>{Gfn_FormatNumber(data?.maxOrderRiali)}</>;
-      },
     },
-    // {
-    //   caption: "عملیات",
-    //   allowEditing: true,
-    //   cellRender: (data) => {
-    //     console.log(data?.row?.data);
-    //     return (
-    //       <>
-    //         <DeleteIcon className="font18 fw-bold text-primary cursorPointer" />
-    //       </>
-    //     );
-    //   },
-    // },
+    {
+      dataField: "maxDecEditSupplierOrderNumber",
+      caption: "تعداد مجاز ویرایش (کم کردن) سفارش دایرکتی",
+      allowEditing: false,
+    },
+    {
+      dataField: "maxIncEditSupplierOrderNumber",
+      caption: "تعداد مجاز ویرایش (افزایش دادن) سفارش دایرکتی",
+      allowEditing: false,
+    },
+    {
+      dataField: "maxNewSupplierOrderNumber",
+      caption: "تعداد مجاز سفارش جدید دایرکتی",
+      allowEditing: false,
+    },
+    {
+      dataField: "maxZeroSupplierOrderNumber",
+      caption: "تعداد مجاز صفر کردن سفارش دایرکتی",
+      allowEditing: false,
+    },
+    {
+      dataField: "maxOutRouteSupplierOrderNumber",
+      caption: "تعداد مجاز صفر کردن سفارش دایرکتی",
+      allowEditing: false,
+    },
   ];
 
   return (
@@ -153,6 +156,12 @@ const AllowedToOrder = () => {
                 label="افزودن"
               />
               <Button
+                onClick={() => setShowAdd(true)}
+                type="success"
+                icon={<AddIcon className="ms-1 font18 fw-bold" />}
+                label="حذف گروهی"
+              />
+              <Button
                 type="success"
                 onClick={() => setShowEdit(true)}
                 icon={<EditIcon className="font18" />}
@@ -168,6 +177,43 @@ const AllowedToOrder = () => {
                 rtlEnabled={true}
               />
             </div>
+            <Row>
+              <ComboBox
+                multi
+                label="فروشگاه"
+                xxl={4}
+                xl={4}
+                // options={locationList}
+                // onChange={cmbLocationList}
+                // value={location}
+              />
+              <ComboBox
+                multi
+                xxl={4}
+                xl={4}
+                label="سمت"
+                searchEnabled={true}
+                rtlEnabled={true}
+              />
+              <ComboBox
+                multi
+                xxl={4}
+                xl={4}
+                // options={supplierList}
+                label="تامین کننده"
+                // onValueChange={handleGroupListBySupplier}
+                // value={supplier}
+              />
+              <Col className="d-flex justify-content-end" xxl={12} xl={12}>
+                <Button
+                  // onClick={() => setShowAdd(true)}
+                  className="mt-2"
+                  type="default"
+                  icon={<SearchIcon className="d-flex ms-2 font18" />}
+                  label="جستجو"
+                />
+              </Col>
+            </Row>
             <Table
               filterRow
               headerFilter

@@ -315,4 +315,8 @@ export const REAL_COMPONENT = [
     strComponent: "DiffItemsSnappReports",
     orgComponent: <DiffItemsSnappReports />,
   },
+  // {
+  //   strComponent: "DiffItemsSnappReports",
+  //   orgComponent: <AllowedToOrder />,
+  // },
 ];

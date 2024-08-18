@@ -23,7 +23,7 @@ import { listByGroupIds } from "../../redux/reducers/item/item-action";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 const CopyLocation = ({ inventoryList, supplierList }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
   const { companies, users } = useSelector((state) => state);
   const [showCopyModal, setShowCopyModal] = useState(false);
   const [locationList, setLocationList] = useState([]);
