@@ -896,6 +896,8 @@ class ItemLocation extends React.Component {
             </Row> */}
             <Col className=" d-flex ">
               <EditTables
+                inventoryList={this.state.cmbInventory}
+                supplierList={this.state.cmbSupplier}
                 fn_CheckValidation={this.fn_CheckValidation()}
                 allState={[
                   {
@@ -907,84 +909,6 @@ class ItemLocation extends React.Component {
                     inventoryId: this.state.inventoryEditing,
                     itemLocByLocIdList: this.state.itemLocByLocIdList,
                   },
-                ]}
-                mulltiComponents={[
-                  <Col xl={12} xxl={12} className="">
-                    <Col xl={12} xxl={12} className=" my-2">
-                      <Label className="standardLabelFont">فروشگاه</Label>
-                      <TagBox
-                        dataSource={this.state.LocationList}
-                        searchEnabled={true}
-                        displayExpr="label"
-                        placeholder="فروشگاه"
-                        valueExpr="id"
-                        rtlEnabled={true}
-                        onValueChange={this.cmbLocationList_onChange}
-                        className="fontStyle"
-                      />
-                    </Col>
-                    <Col xl={12} xxl={12} className=" my-2">
-                      <ComboBox
-                        xxl={12}
-                        xl={12}
-                        multi
-                        label="انبار"
-                        value={this.state.inventoryEditing}
-                        options={this.state.cmbInventory}
-                        searchEnabled={true}
-                        displayExpr="label"
-                        placeholder="انبار"
-                        valueExpr="id"
-                        rtlEnabled={true}
-                        onChange={(e) =>
-                          this.setState((prev) => ({
-                            ...prev,
-                            inventoryEditing: e,
-                          }))
-                        }
-                        className="fw-normal"
-                      />
-                      <Row>
-                        <Label
-                          id="errInventoryEdit"
-                          className="standardLabelFont errMessage"
-                        />
-                      </Row>
-                    </Col>
-                    <Col className=" my-2">
-                      <Label className="standardLabelFont">تامین کننده</Label>
-                      <TagBox
-                        dataSource={this.state.cmbSupplier}
-                        searchEnabled={true}
-                        displayExpr="label"
-                        placeholder="تامین کننده"
-                        valueExpr="id"
-                        rtlEnabled={true}
-                        onValueChange={this.cmbSupplierEdit_onChange}
-                        value={this.state.cmbSupplierEditTable}
-                        className="fontStyle"
-                      />
-                    </Col>
-                    <Col xl={12} xxl={12} className=" my-2">
-                      <Label className="standardLabelFont">کالا</Label>
-                      <TagBox
-                        dataSource={this.state.itemLocByLocIdList}
-                        searchEnabled={true}
-                        displayExpr="label"
-                        placeholder="کالا"
-                        valueExpr="id"
-                        rtlEnabled={true}
-                        onValueChange={(e) =>
-                          this.setState((prev) => ({
-                            ...prev,
-                            itemLocByLocIdValue: e,
-                          }))
-                        }
-                        value={this.state.itemLocByLocIdValue}
-                        className="fontStyle"
-                      />
-                    </Col>
-                  </Col>,
                 ]}
               />
               <CopyLocation

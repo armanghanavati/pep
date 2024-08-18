@@ -311,12 +311,12 @@ export const REAL_COMPONENT = [
     strComponent: "PrintLabels",
     orgComponent: <PrintLabels />,
   },
-  // {
-  //   strComponent: "DiffItemsSnappReports",
-  //   orgComponent: <DiffItemsSnappReports />,
-  // },
   {
     strComponent: "DiffItemsSnappReports",
-    orgComponent: <AllowedToOrder />,
+    orgComponent: <DiffItemsSnappReports />,
   },
+  // {
+  //   strComponent: "DiffItemsSnappReports",
+  //   orgComponent: <AllowedToOrder />,
+  // },
 ];

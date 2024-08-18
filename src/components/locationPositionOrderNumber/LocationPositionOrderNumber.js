@@ -16,6 +16,7 @@ import {
   ModalFooter,
 } from "reactstrap";
 import classnames from "classnames";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import TextBox from "devextreme-react/text-box";
 import TextArea from "devextreme-react/text-area";
 import SelectBox from "devextreme-react/select-box";
@@ -44,9 +45,9 @@ import DataGrid, {
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
-  DataGridDefaultHeight,
   ToastTime,
   ToastWidth,
+  DataGridDefaultHeight,
 } from "../../config/config";
 import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 import {
@@ -73,9 +74,9 @@ import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
-import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import { ElevenMp } from "@mui/icons-material";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
+import Single from "./Single";
 
 class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
@@ -154,7 +155,7 @@ class LocationPositionOrderNumber extends React.Component {
         })
       );
     }
-  }
+  };
 
   fn_locationGroupList = async (companyId) => {
     this.setState({
@@ -167,10 +168,7 @@ class LocationPositionOrderNumber extends React.Component {
   };
   fn_positionList = async (companyId) => {
     this.setState({
-      PositionList: await positionList(
-        companyId,
-        this.props.User.token
-      ),
+      PositionList: await positionList(companyId, this.props.User.token),
     });
   };
 
@@ -186,7 +184,7 @@ class LocationPositionOrderNumber extends React.Component {
   };
 
   cmbLocationGroup_onChange = async (e) => {
-    // const LOCATION=await location(e, this.props.User.token)      
+    // const LOCATION=await location(e, this.props.User.token)
     let tempLocationGroups = this.state.LocationGroupList;
     let tempLocations = [];
     for (let i = 0; i < tempLocationGroups.length; i++)
@@ -199,7 +197,6 @@ class LocationPositionOrderNumber extends React.Component {
       LocationGroupId: e,
       LocationList: tempLocations,
     });
-
   };
 
   cmbLocation_onChange = (e) => {
@@ -214,31 +211,33 @@ class LocationPositionOrderNumber extends React.Component {
   };
 
   grdLocationPositionOrderNumber_onClickRow = async (e) => {
-
-    const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }]
+    const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
     this.setState({
-      LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),      
-    })
+      LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
+    });
 
     // this.fn_positionList(this.props.Company.currentCompanyId);
     // this.fn_locationGroupList(this.props.Company.currentCompanyId);
 
     this.setState({
       txtMaxOrderNumberValue: e.data.maxOrderNumber,
-      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,      
+      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
       txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
       txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
       txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
-      txtMaxDecEditSupplierOrderNumberValue: e.data.maxDecEditSupplierOrderNumber,
-      txtMaxIncEditSupplierOrderNumberValue: e.data.maxIncEditSupplierOrderNumber,
+      txtMaxDecEditSupplierOrderNumberValue:
+        e.data.maxDecEditSupplierOrderNumber,
+      txtMaxIncEditSupplierOrderNumberValue:
+        e.data.maxIncEditSupplierOrderNumber,
       txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
       txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
-      txtMaxOutRouteSupplierOrderNumberValue: e.data.maxOutRouteSupplierOrderNumber,
+      txtMaxOutRouteSupplierOrderNumberValue:
+        e.data.maxOutRouteSupplierOrderNumber,
       stateUpdateDelete: true,
       RowSelected: e.data,
       PositionId: e.data.positionId,
       LocationGroupId: e.data.locationId,
-      LocationId: e.data.locationId
+      LocationId: e.data.locationId,
     });
   };
 
@@ -260,17 +259,36 @@ class LocationPositionOrderNumber extends React.Component {
         positionId: this.state.PositionId,
         maxOrderNumber: parseInt(this.state.txtMaxOrderNumberValue),
         maxOutRouteNumber: parseInt(this.state.txtMaxOutRouteNumberValue),
-        maxIncEditOrderNumber: parseInt(this.state.txtMaxIncEditOrderNumberValue),
-        maxNewInventoryOrderNumber: parseInt(this.state.txtMaxNewInventoryOrderNumberValue),
-        maxZeroInventoryOrderNumber: parseInt(this.state.txtMaxZeroInventoryOrderNumberValue),
-        maxDecEditSupplierOrderNumber: parseInt(this.state.txtMaxDecEditSupplierOrderNumberValue),
-        maxIncEditSupplierOrderNumber: parseInt(this.state.txtMaxIncEditSupplierOrderNumberValue),
-        maxNewSupplierOrderNumber: parseInt(this.state.txtMaxNewSupplierOrderNumberValue),
-        maxZeroSupplierOrderNumber: parseInt(this.state.txtMaxZeroSupplierOrderNumberValue),
-        maxOutRouteSupplierOrderNumber: parseInt(this.state.txtMaxOutRouteSupplierOrderNumberValue)
+        maxIncEditOrderNumber: parseInt(
+          this.state.txtMaxIncEditOrderNumberValue
+        ),
+        maxNewInventoryOrderNumber: parseInt(
+          this.state.txtMaxNewInventoryOrderNumberValue
+        ),
+        maxZeroInventoryOrderNumber: parseInt(
+          this.state.txtMaxZeroInventoryOrderNumberValue
+        ),
+        maxDecEditSupplierOrderNumber: parseInt(
+          this.state.txtMaxDecEditSupplierOrderNumberValue
+        ),
+        maxIncEditSupplierOrderNumber: parseInt(
+          this.state.txtMaxIncEditSupplierOrderNumberValue
+        ),
+        maxNewSupplierOrderNumber: parseInt(
+          this.state.txtMaxNewSupplierOrderNumberValue
+        ),
+        maxZeroSupplierOrderNumber: parseInt(
+          this.state.txtMaxZeroSupplierOrderNumberValue
+        ),
+        maxOutRouteSupplierOrderNumber: parseInt(
+          this.state.txtMaxOutRouteSupplierOrderNumberValue
+        ),
       };
 
-      const RESULT = await updateLocationPositionOrderNumber(data, this.props.User.token);
+      const RESULT = await updateLocationPositionOrderNumber(
+        data,
+        this.props.User.token
+      );
       this.setState({
         ToastProps: {
           isToastVisible: true,
@@ -311,7 +329,6 @@ class LocationPositionOrderNumber extends React.Component {
       txtMaxOutRouteNumberValue: e.value,
     });
   };
-
 
   txtMaxDecEditSupplierOrderNumber_onChange = (e) => {
     this.setState({
@@ -387,14 +404,30 @@ class LocationPositionOrderNumber extends React.Component {
         positionId: this.state.PositionId,
         maxOrderNumber: parseInt(this.state.txtMaxOrderNumberValue),
         maxOutRouteNumber: parseInt(this.state.txtMaxOutRouteNumberValue),
-        maxIncEditOrderNumber: parseInt(this.state.txtMaxIncEditOrderNumberValue),
-        maxNewInventoryOrderNumber: parseInt(this.state.txtMaxNewInventoryOrderNumberValue),
-        maxZeroInventoryOrderNumber: parseInt(this.state.txtMaxZeroInventoryOrderNumberValue),
-        maxDecEditSupplierOrderNumber: parseInt(this.state.txtMaxDecEditSupplierOrderNumberValue),
-        maxIncEditSupplierOrderNumber: parseInt(this.state.txtMaxIncEditSupplierOrderNumberValue),
-        maxNewSupplierOrderNumber: parseInt(this.state.txtMaxNewSupplierOrderNumberValue),
-        maxZeroSupplierOrderNumber: parseInt(this.state.txtMaxZeroSupplierOrderNumberValue),
-        maxOutRouteSupplierOrderNumber: parseInt(this.state.txtMaxOutRouteSupplierOrderNumberValue)
+        maxIncEditOrderNumber: parseInt(
+          this.state.txtMaxIncEditOrderNumberValue
+        ),
+        maxNewInventoryOrderNumber: parseInt(
+          this.state.txtMaxNewInventoryOrderNumberValue
+        ),
+        maxZeroInventoryOrderNumber: parseInt(
+          this.state.txtMaxZeroInventoryOrderNumberValue
+        ),
+        maxDecEditSupplierOrderNumber: parseInt(
+          this.state.txtMaxDecEditSupplierOrderNumberValue
+        ),
+        maxIncEditSupplierOrderNumber: parseInt(
+          this.state.txtMaxIncEditSupplierOrderNumberValue
+        ),
+        maxNewSupplierOrderNumber: parseInt(
+          this.state.txtMaxNewSupplierOrderNumberValue
+        ),
+        maxZeroSupplierOrderNumber: parseInt(
+          this.state.txtMaxZeroSupplierOrderNumberValue
+        ),
+        maxOutRouteSupplierOrderNumber: parseInt(
+          this.state.txtMaxOutRouteSupplierOrderNumberValue
+        ),
       };
       const RESULT = await addLocationPositionOrderNumber(
         data,
@@ -432,7 +465,10 @@ class LocationPositionOrderNumber extends React.Component {
   };
 
   btnExportExcel_onClick = () => {
-    Gfn_ExportToExcel(this.state.LocationPositionOrderNumberGridData, "LocationPositionOrderNumber");
+    Gfn_ExportToExcel(
+      this.state.LocationPositionOrderNumberGridData,
+      "LocationPositionOrderNumber"
+    );
   };
 
   render() {
@@ -634,7 +670,9 @@ class LocationPositionOrderNumber extends React.Component {
                   placeholder="تعداد مجاز ویرایش (کم کردن) سفارش دایرکتی"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
-                  onValueChanged={this.txtMaxDecEditSupplierOrderNumber_onChange}
+                  onValueChanged={
+                    this.txtMaxDecEditSupplierOrderNumber_onChange
+                  }
                 />
                 <Row>
                   <Label
@@ -653,7 +691,9 @@ class LocationPositionOrderNumber extends React.Component {
                   placeholder="تعداد مجاز ویرایش  سفارشات بدون برنامه ریزی"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
-                  onValueChanged={this.txtMaxIncEditSupplierOrderNumber_onChange}
+                  onValueChanged={
+                    this.txtMaxIncEditSupplierOrderNumber_onChange
+                  }
                 />
                 <Row>
                   <Label
@@ -710,7 +750,9 @@ class LocationPositionOrderNumber extends React.Component {
                   placeholder="تعداد مجاز سفارشات خارج از مسیر"
                   rtlEnabled={true}
                   valueChangeEvent="keyup"
-                  onValueChanged={this.txtMaxOutRouteSupplierOrderNumber_onChange}
+                  onValueChanged={
+                    this.txtMaxOutRouteSupplierOrderNumber_onChange
+                  }
                 />
                 <Row>
                   <Label
@@ -777,6 +819,15 @@ class LocationPositionOrderNumber extends React.Component {
           </Row>
         </Card>
         <p></p>
+        {/* <Single
+          LocationPositionOrderNumberGridData={
+            this.state.LocationPositionOrderNumberGridData
+          }
+          grdLocationPositionOrderNumber_onClickRow={
+            this.grdLocationPositionOrderNumber_onClickRow
+          }
+          btnExportExcel_onClick={this.btnExportExcel_onClick}
+        /> */}
         <Card className="shadow bg-white border pointer">
           <Row className="standardPadding">
             <Row>
@@ -784,7 +835,7 @@ class LocationPositionOrderNumber extends React.Component {
                 لیست تعداد مجاز ثبت درخواست فروشگاه
               </Label>
             </Row>
-            <Row style={{ direction: 'ltr' }}>
+            <Row style={{ direction: "ltr" }}>
               <Col xs="auto">
                 <Button
                   icon={ExportExcelIcon}
