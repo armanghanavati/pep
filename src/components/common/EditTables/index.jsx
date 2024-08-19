@@ -293,77 +293,54 @@ const EditTables = ({
             </Col>
           ))}
           {/* ------------------------------------------------------------------------- */}
-          <Col xl={12} xxl={12} className=" my-2">
+          <Row>
             <ComboBox
               multi
               label="فروشگاه"
-              xxl={12}
-              xl={12}
-              showClearButton={false}
+              xxl={6}
+              xl={6}
               options={locationList}
-              searchEnabled={true}
-              placeholder="فروشگاه"
-              rtlEnabled={true}
               onChange={cmbLocationList}
               value={location}
             />
-          </Col>
-          <Col xl={12} xxl={12} className=" my-2">
-            <Label className="standardLabelFont">انبار</Label>
-            <TagBox
-              dataSource={inventoryList}
-              searchEnabled={true}
-              displayExpr="label"
-              placeholder="انبار"
-              valueExpr="id"
-              rtlEnabled={true}
-              onValueChange={(e) => setInventory(e)}
+            <ComboBox
+              multi
+              xxl={6}
+              xl={6}
+              options={inventoryList}
+              label="انبار"
+              onChange={(e) => setInventory(e)}
               value={inventory}
-              className="fontStyle"
             />
-          </Col>
-          <Col className=" mt-2">
-            <Label className="standardLabelFont">تامین کننده</Label>
-            <TagBox
-              dataSource={supplierList}
-              searchEnabled={true}
-              displayExpr="label"
-              placeholder="تامین کننده"
-              valueExpr="id"
-              rtlEnabled={true}
-              onValueChange={handleGroupListBySupplier}
+            <ComboBox
+              xxl={6}
+              xl={6}
+              label="تامین کننده"
+              multi
+              options={supplierList}
+              onChange={handleGroupListBySupplier}
               value={supplier}
-              className="fontStyle"
             />
-          </Col>
-          <Col xs={3} xxl={12} className=" my-2">
-            <Label className="standardLabelFont">گروه کالا</Label>
-            <TagBox
-              dataSource={groupList}
-              searchEnabled={true}
-              displayExpr="label"
-              placeholder="گروه کالا"
-              valueExpr="id"
-              rtlEnabled={true}
-              onValueChange={handleListByGroupIds}
+            <ComboBox
+              xxl={6}
+              xl={6}
+              label="گروه کالا"
+              multi
+              options={groupList}
+              onChange={handleListByGroupIds}
               value={group}
-              className="fontStyle"
             />
-          </Col>
-          <Col xl={12} xxl={12} className=" my-2">
-            <Label className="standardLabelFont">کالا</Label>
-            <TagBox
-              dataSource={itemList}
+            <ComboBox
+              xxl={12}
+              xl={12}
+              multi
+              options={itemList}
               searchEnabled={true}
-              displayExpr="label"
-              placeholder="کالا"
-              valueExpr="id"
-              rtlEnabled={true}
-              onValueChange={(e) => setItem(e)}
+              label="کالا"
+              onChange={(e) => setItem(e)}
               value={item}
-              className="fontStyle"
             />
-          </Col>
+          </Row>
           <Row className=" d-flex align-items-center justify-content-center">
             <Col className="my-2" xl="6" xxl="6">
               <Input

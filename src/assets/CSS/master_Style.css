@@ -173,6 +173,15 @@
     color: white;
   }
   
+  .css-yafthl-MuiSlider-markLabel {
+    font-family: iranSansFaNum !important;
+}
+
+.css-1eoe787-MuiSlider-markLabel {
+  font-family: iranSansFaNum !important;
+
+}
+
   .carousel-indicators [data-bs-target] {
     box-sizing: content-box !important;
     flex: 0 1 auto !important;
