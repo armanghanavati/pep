@@ -14,10 +14,10 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter } from "react-router-dom";
 
 // akhlaghi
-window.apiAddress = "http://10.0.10.48:9092/api";
+// window.apiAddress = "http://10.0.10.48:9092/api";
 
 // pep test
-// window.apiAddress = "http://172.16.1.40:2923/api";
+window.apiAddress = "http://172.16.1.40:2923/api";
 
 window.siteAddress = "https://pepapi.minoomart.ir";
 
