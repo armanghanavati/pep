@@ -177,7 +177,7 @@ const AllowedToOrder = () => {
                 rtlEnabled={true}
               />
             </div>
-            <Row>
+            <Row className="mt-3">
               <ComboBox
                 multi
                 label="فروشگاه"
