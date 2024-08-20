@@ -46,14 +46,8 @@ const EditTables = ({
   const [inputFields, setInputFields] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [errors, setErrors] = useState({});
-  const [allField, setAllField] = useState([]);
-  const [group, setGroup] = useState(null);
-  const [supplier, setSupplier] = useState(null);
   const [locationList, setLocationList] = useState([]);
-  const [location, setLocation] = useState([]);
   const [itemList, setItemList] = useState([]);
-  const [item, setItem] = useState([]);
-  const [inventory, setInventory] = useState(null);
   const [groupList, setGroupList] = useState([]);
 
   const handleLocationList = asyncWrapper(async () => {
@@ -64,13 +58,7 @@ const EditTables = ({
     setLocationList(res?.data?.data);
   });
 
-  const cmbLocationList = (e) => {
-    setLocation(e);
-  };
-
   const handleGroupListBySupplier = asyncWrapper(async (e) => {
-    setSupplier(e);
-    console.log(e);
     dispatch(RsetIsLoading({ stateWait: true }));
     if (e.includes(0)) {
       const fixLoop = StringHelpers.fixComboListId(e, supplierList);
@@ -107,18 +95,15 @@ const EditTables = ({
     }
   });
 
-  console.log(group);
-
   const handleListByGroupIds = asyncWrapper(async (e) => {
-    setGroup(e);
     dispatch(RsetIsLoading({ stateWait: true }));
     const postData = {
       itemGroupIds: e?.includes(0)
         ? StringHelpers.fixComboListId(e, groupList)
         : e,
-      supplierIds: supplier.includes(0)
-        ? StringHelpers.fixComboListId(supplier, supplierList)
-        : supplier,
+      supplierIds: inputFields?.supplier.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.supplier, supplierList)
+        : inputFields?.supplier,
     };
     const res = await itemComboByItemGroupAndSupplierList(postData);
     dispatch(RsetIsLoading({ stateWait: false }));
@@ -164,45 +149,27 @@ const EditTables = ({
       return { ...prevstate, [name]: value };
     });
     if (name === "supplier") {
+      handleGroupListBySupplier(value);
+    }
+    if (name === "group") {
+      handleListByGroupIds(value);
     }
   };
 
-  const handleGetTableFields = asyncWrapper(async () => {
-    // const res = await getTableFields(location?.pathname?.split("/")?.[1]);
-    const res = await getTableFields("itemLocations");
-    const { data, status, message } = res;
-    if (status == "Success") {
-      setAllField(data);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
-
   useEffect(() => {
-    handleGetTableFields();
     setInputFields({});
     handleLocationList();
   }, []);
 
-  const fixFieldFindForValues = filedFineds?.map((item) => {
-    return {
-      values: item?.props?.value,
-    };
-  });
-
   const handleAcceptEditTable = asyncWrapper(async () => {
     const postData = {
-      itemIds: item?.includes(0) ? fixListForId : item,
+      itemIds: inputFields?.item?.includes(0)
+        ? fixListForId
+        : inputFields?.item,
       locationIds: inputFields?.location?.includes(0)
         ? StringHelpers?.fixComboListId(inputFields?.location, locationList)
         : inputFields?.location,
-      inventoryIds: inventory || null,
+      inventoryIds: inputFields?.inventory || null,
       isActive: StringHelpers?.sliderThree(inputFields?.isActive) ?? null,
       maxPercentChange: inputFields?.maxPercentChange || null,
       minPercentChange: inputFields?.minPercentChange || null,
@@ -259,6 +226,8 @@ const EditTables = ({
       label: "غیرفعال",
     },
   ];
+
+  console.log(inputFields);
 
   return (
     <span className="">
@@ -322,7 +291,7 @@ const EditTables = ({
               multi
               options={supplierList}
               name="supplier"
-              onChange={handleGroupListBySupplier}
+              onChange={handleChangeInputs}
               value={inputFields?.supplier}
             />
             <ComboBox
@@ -330,19 +299,20 @@ const EditTables = ({
               xl={6}
               label="گروه کالا"
               multi
+              name="group"
               options={groupList}
-              onChange={handleListByGroupIds}
-              value={group}
+              onChange={handleChangeInputs}
+              value={inputFields?.group}
             />
             <ComboBox
               xxl={12}
               xl={12}
               multi
               options={itemList}
-              searchEnabled={true}
               label="کالا"
-              onChange={(e) => setItem(e)}
-              value={item}
+              name="item"
+              onChange={handleChangeInputs}
+              value={inputFields?.item}
             />
           </Row>
           <Row className=" d-flex align-items-center justify-content-center">

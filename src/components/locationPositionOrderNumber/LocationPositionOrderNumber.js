@@ -76,7 +76,7 @@ import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
 import { ElevenMp } from "@mui/icons-material";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
-import Single from "./Single";
+// import Single from "./Single";
 
 class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
