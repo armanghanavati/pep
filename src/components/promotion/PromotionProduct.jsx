@@ -265,7 +265,7 @@ const PromotionProduct = ({
         <Row>
           <ComboBox
             name="productGroup"
-            onChange={(e) => handleChangeInputsProduct("productGroup", e)}
+            onChange={handleChangeInputsProduct}
             value={inputsProduct?.productGroup}
             options={allgroupProduct}
             xxl={6}
@@ -274,7 +274,7 @@ const PromotionProduct = ({
           />
           <ComboBox
             name="product"
-            onChange={(e) => handleChangeInputsProduct("product", e)}
+            onChange={handleChangeInputsProduct}
             value={inputsProduct?.product}
             options={allProduct}
             xxl={6}
