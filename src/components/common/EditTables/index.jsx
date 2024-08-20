@@ -163,6 +163,8 @@ const EditTables = ({
     setInputFields((prevstate) => {
       return { ...prevstate, [name]: value };
     });
+    if (name === "supplier") {
+    }
   };
 
   const handleGetTableFields = asyncWrapper(async () => {
@@ -197,9 +199,9 @@ const EditTables = ({
   const handleAcceptEditTable = asyncWrapper(async () => {
     const postData = {
       itemIds: item?.includes(0) ? fixListForId : item,
-      locationIds: location?.includes(0)
-        ? StringHelpers?.fixComboListId(location, locationList)
-        : location,
+      locationIds: inputFields?.location?.includes(0)
+        ? StringHelpers?.fixComboListId(inputFields?.location, locationList)
+        : inputFields?.location,
       inventoryIds: inventory || null,
       isActive: StringHelpers?.sliderThree(inputFields?.isActive) ?? null,
       maxPercentChange: inputFields?.maxPercentChange || null,
@@ -298,18 +300,20 @@ const EditTables = ({
               label="فروشگاه"
               xxl={6}
               xl={6}
+              name="location"
               options={locationList}
-              onChange={cmbLocationList}
-              value={location}
+              onChange={handleChangeInputs}
+              value={inputFields?.location}
             />
             <ComboBox
               multi
               xxl={6}
               xl={6}
               options={inventoryList}
+              name="inventory"
               label="انبار"
-              onChange={(e) => setInventory(e)}
-              value={inventory}
+              onChange={handleChangeInputs}
+              value={inputFields?.inventory}
             />
             <ComboBox
               xxl={6}
@@ -317,8 +321,9 @@ const EditTables = ({
               label="تامین کننده"
               multi
               options={supplierList}
+              name="supplier"
               onChange={handleGroupListBySupplier}
-              value={supplier}
+              value={inputFields?.supplier}
             />
             <ComboBox
               xxl={6}
