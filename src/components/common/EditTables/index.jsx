@@ -267,9 +267,8 @@ const EditTables = ({
         label="ویرایش جدول"
       />
       <Modal
-        size="lg"
+        size="xl"
         label={"ویرایش"}
-        classHeader="bg-white"
         isOpen={showEditModal}
         footerButtons={[
           <Button

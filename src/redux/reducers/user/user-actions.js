@@ -265,9 +265,6 @@ export async function updateProfile(Object, Token) {
 export const userLocationListUserId = async (userId, companyId) => {
   const url =
     window.apiAddress +
-    "/User/userLocationList?userId=" +
-    userId +
-    "&companyId=" +
-    companyId;
+    "/User/userLocationListCombo?userId="+userId+"&companyId="+companyId;
   return axios.get(url);
 };
