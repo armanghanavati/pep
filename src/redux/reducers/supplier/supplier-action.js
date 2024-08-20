@@ -305,3 +305,11 @@ export const copySupplierLocationSupplierLimitList = async (postData) => {
   const response = await axios.post(url, postData);
   return response?.data;
 };
+
+export const supplierByCompanyId = async (companyId) => {
+  const url =
+    window?.apiAddress +
+    `/Supplier/supplierListComboByCompanyId?companyId=${companyId}`;
+  const response = await axios.get(url);
+  return response?.data;
+};

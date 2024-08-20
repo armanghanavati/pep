@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export async function positionList(companyId, Token) {
   const url =
     window.apiAddress + "/Position/positionList?companyId=" + companyId;
@@ -116,3 +118,10 @@ export async function searchPositionByUserId(userId, companyId, Token) {
   }
   return null;
 }
+
+export const positionListWithCompanyId = async (companyId) => {
+  const url =
+    window?.apiAddress + `/Position/positionList?companyId=${companyId}`;
+  const response = await axios.get(url);
+  return response?.data;
+};

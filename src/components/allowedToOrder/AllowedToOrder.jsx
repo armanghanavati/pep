@@ -153,7 +153,7 @@ const AllowedToOrder = () => {
                 onClick={() => setShowAdd(true)}
                 type="success"
                 icon={<AddIcon className="ms-1 font18 fw-bold" />}
-                label="افزودن"
+                label="افزودن گروهی"
               />
               <Button
                 onClick={() => setShowAdd(true)}
