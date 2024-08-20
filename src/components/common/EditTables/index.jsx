@@ -197,9 +197,9 @@ const EditTables = ({
   const handleAcceptEditTable = asyncWrapper(async () => {
     const postData = {
       itemIds: item?.includes(0) ? fixListForId : item,
-      locationIds: location?.includes(0)
-        ? StringHelpers?.fixComboListId(location, locationList)
-        : location,
+      locationIds: inputFields?.location?.includes(0)
+        ? StringHelpers?.fixComboListId(inputFields?.location, locationList)
+        : inputFields?.location,
       inventoryIds: inventory || null,
       isActive: StringHelpers?.sliderThree(inputFields?.isActive) ?? null,
       maxPercentChange: inputFields?.maxPercentChange || null,
@@ -296,16 +296,14 @@ const EditTables = ({
           <Col xl={12} xxl={12} className=" my-2">
             <ComboBox
               multi
+              name="location"
               label="فروشگاه"
               xxl={12}
               xl={12}
               showClearButton={false}
               options={locationList}
-              searchEnabled={true}
-              placeholder="فروشگاه"
-              rtlEnabled={true}
-              onChange={cmbLocationList}
-              value={location}
+              onChange={handleChangeInputs}
+              value={inputFields?.location}
             />
           </Col>
           <Col xl={12} xxl={12} className=" my-2">

@@ -3,19 +3,19 @@ import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
 import CommonFields from "./CommonFields";
 
-const GroupAdd = ({ showAdd, setShowAdd }) => {
+const GroupDelete = ({ setShowDelete, showDelete }) => {
   return (
     <>
       <Modal
         size="lg"
-        label="افزودن گروهی"
-        isOpen={showAdd}
+        label="حذف گروهی"
+        isOpen={showDelete}
         footerButtons={[
           <Button
             text="Outlined"
             stylingMode="outlined"
             type="danger"
-            onClick={() => setShowAdd(false)}
+            onClick={() => setShowDelete(false)}
             label="لغو"
           />,
           <Button
@@ -25,10 +25,10 @@ const GroupAdd = ({ showAdd, setShowAdd }) => {
           />,
         ]}
       >
-        <CommonFields locPosSupp={true} />
+        <CommonFields />
       </Modal>
     </>
   );
 };
 
-export default GroupAdd;
+export default GroupDelete;

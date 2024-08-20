@@ -186,14 +186,14 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
       >
         <Col xl={12} xxl={12} className=" my-2">
           <ComboBox
-            label="فروشگاه مبدا"
+            label="فروشگاه مبداء"
             xxl={12}
             xl={12}
             showClearButton={false}
             options={locationList}
             searchEnabled={true}
             displayExpr="label"
-            placeholder="فروشگاه مبدا"
+            placeholder="فروشگاه مبداء"
             valueExpr="id"
             rtlEnabled={true}
             onChange={cmbLocationList}

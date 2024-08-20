@@ -2,7 +2,6 @@ import * as React from "react";
 import TagBox from "devextreme-react/tag-box";
 import SelectBox from "devextreme-react/select-box";
 import { Col, Label } from "reactstrap";
-import Validations from "../../../utiliy/validations";
 
 export default function ComboBox({
   xs = 12,
@@ -13,6 +12,7 @@ export default function ComboBox({
   placeholder = "انتخاب کنید ...",
   className,
   disabled,
+  validations,
   options = [],
   label = "",
   value,
@@ -26,7 +26,7 @@ export default function ComboBox({
 }) {
   const handleChange = (value) => {
     console.log("index index index index index", value, name);
-    onChange(name, value, Validations || undefined, index);
+    onChange(name, value, validations || undefined, index);
   };
 
   return (
@@ -44,7 +44,7 @@ export default function ComboBox({
           placeholder={placeholder}
           name={name}
           rtlEnabled={true}
-          onValueChange={onChange}
+          onValueChange={handleChange}
           className={`${error && "border border-danger"} `}
         />
       ) : (
@@ -60,7 +60,7 @@ export default function ComboBox({
           placeholder={placeholder}
           name={name}
           value={value}
-          onValueChange={onChange}
+          onValueChange={handleChange}
           rtlEnabled={true}
           className="fontStyle"
         />
