@@ -256,7 +256,7 @@ const PromotionCommonDetail = ({
     const fix = allPlatform
       ?.filter((type) => type?.isChecked === true)
       .map((item) => item.id);
-      console.log(fix);
+    console.log(fix);
     setSelectedType((prev) => [...prev, ...fix]);
   };
 
@@ -292,9 +292,9 @@ const PromotionCommonDetail = ({
     }
   };
 
-  const handleAcceptTypeGroup = () =>{
+  const handleAcceptTypeGroup = () => {
     setTypeAndPlatform((prev) => ({ ...prev, typeGroup: selectedTypeGroup }));
-  }
+  };
 
   useEffect(() => {
     handleGetslaPromotionTypeList();
@@ -324,7 +324,6 @@ const PromotionCommonDetail = ({
     }
   }, [storeList]);
 
-  
   return (
     <Row className="d-flex">
       <Input
@@ -448,7 +447,7 @@ const PromotionCommonDetail = ({
           displayExpr="label"
           options={promotionTypeList}
           value={inputFields?.typePromotion}
-          onChange={(e) => handleChangeInputs("typePromotion", e)}
+          onChange={handleChangeInputs}
           placeholder="نوع"
           label="نوع"
           className="my-3"

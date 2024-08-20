@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
-import { Col, Label } from "reactstrap";
+import { Col, Label, Row } from "reactstrap";
 import { SelectBox, TagBox } from "devextreme-react";
 import { useDispatch, useSelector } from "react-redux";
 import asyncWrapper from "../../utiliy/asyncWrapper";
@@ -21,9 +21,10 @@ import {
 } from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { listByGroupIds } from "../../redux/reducers/item/item-action";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import Validation from "../../utiliy/validations";
 
 const CopyLocation = ({ inventoryList, supplierList }) => {
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
   const [showCopyModal, setShowCopyModal] = useState(false);
   const [locationList, setLocationList] = useState([]);
@@ -35,6 +36,10 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
   const [inventory, setInventory] = useState(null);
   const [groupList, setGroupList] = useState([]);
   const [group, setGroup] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [inputFields, setInputFields] = useState({});
+
+  console.log(inputFields);
 
   const handleLocationList = asyncWrapper(async () => {
     const res = await userLocationListUserId(
@@ -52,14 +57,46 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
     setLocation(e);
   };
 
+  const handleChangeInputs = (
+    name,
+    value,
+    validationNameList = undefined,
+    index
+  ) => {
+    const temp = [];
+    validationNameList &&
+      validationNameList.map((item) => {
+        if (Validation[item[0]](value, item[1]) === true) {
+          return null;
+        } else {
+          temp.push(Validation[item[0]](value, item[1]));
+        }
+      });
+    setErrors((prevstate) => {
+      return { ...prevstate, [name]: [...temp] };
+    });
+    setInputFields((prevstate) => {
+      return { ...prevstate, [name]: value };
+    });
+    if (name === "supplier") {
+      handleGroupListBySupplier(value);
+    }
+    if (name === "group") {
+      handleListByGroupIds(value);
+    }
+  };
+
   const handleAccept = async () => {
     const postData = {
-      itemIds: item?.includes(0)
-        ? StringHelpers.fixComboListId(item, itemList?._store?._array)
-        : item,
-      inventoryIds: inventory,
-      locationSoreceId: location,
-      locationDestinationIds: locationEnd,
+      itemIds: inputFields?.item?.includes(0)
+        ? StringHelpers.fixComboListId(
+            inputFields?.item,
+            itemList?._store?._array
+          )
+        : inputFields?.item,
+      inventoryIds: inputFields?.inventory,
+      locationSoreceId: inputFields?.location,
+      locationDestinationIds: inputFields?.locationEnd,
     };
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await copyItemLocationGroup(postData);
@@ -86,8 +123,6 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
   };
 
   const handleGroupListBySupplier = asyncWrapper(async (e) => {
-    setSupplier(e);
-    console.log(e);
     dispatch(RsetIsLoading({ stateWait: true }));
     if (e.includes(0)) {
       const fixLoop = StringHelpers.fixComboListId(e, supplierList);
@@ -125,15 +160,14 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
   });
 
   const handleListByGroupIds = asyncWrapper(async (e) => {
-    setGroup(e);
     dispatch(RsetIsLoading({ stateWait: true }));
     const postData = {
       itemGroupIds: e?.includes(0)
         ? StringHelpers.fixComboListId(e, groupList)
         : e,
-      supplierIds: supplier.includes(0)
-        ? StringHelpers.fixComboListId(supplier, supplierList)
-        : supplier,
+      supplierIds: inputFields?.supplier.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.supplier, supplierList)
+        : inputFields?.supplier,
     };
     const res = await itemComboByItemGroupAndSupplierList(postData);
     dispatch(RsetIsLoading({ stateWait: false }));
@@ -144,6 +178,7 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
         paginate: true,
         pageSize: 10,
       });
+      console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
       setItemList(LAZY);
     } else {
       dispatch(
@@ -184,96 +219,68 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
           <Button type="success" onClick={handleAccept} label="تایید" />,
         ]}
       >
-        <Col xl={12} xxl={12} className=" my-2">
+        <Row>
           <ComboBox
-            label="فروشگاه مبدا"
             xxl={12}
             xl={12}
+            name="location"
             showClearButton={false}
             options={locationList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="فروشگاه مبدا"
-            valueExpr="id"
-            rtlEnabled={true}
-            onChange={cmbLocationList}
-            value={location}
-            className="fontStyle"
+            label="فروشگاه مبدا"
+            onChange={handleChangeInputs}
+            value={inputFields?.location}
           />
-        </Col>
-        <Col xl={12} xxl={12} className=" my-2">
-          <Label className="standardLabelFont">انبار</Label>
-          <TagBox
-            dataSource={inventoryList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="انبار"
-            valueExpr="id"
-            rtlEnabled={true}
-            onValueChange={(e) => setInventory(e)}
-            value={inventory}
-            className="fontStyle"
+          <ComboBox
+            xxl={12}
+            xl={12}
+            multi
+            options={inventoryList}
+            label="انبار"
+            name="inventory"
+            onChange={handleChangeInputs}
+            value={inputFields?.inventory}
           />
-        </Col>
-        <Col className=" mt-2">
-          <Label className="standardLabelFont">تامین کننده</Label>
-          <TagBox
-            dataSource={supplierList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="تامین کننده"
-            valueExpr="id"
-            rtlEnabled={true}
-            onValueChange={handleGroupListBySupplier}
-            value={supplier}
-            className="fontStyle"
+          <ComboBox
+            xxl={12}
+            xl={12}
+            multi
+            name="supplier"
+            options={supplierList}
+            label="تامین کننده"
+            onChange={handleChangeInputs}
+            value={inputFields?.supplier}
           />
-        </Col>
-        <Col xs={3} xxl={12} className=" my-2">
-          <Label className="standardLabelFont">گروه کالا</Label>
-          <TagBox
-            dataSource={groupList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="گروه کالا"
-            valueExpr="id"
-            rtlEnabled={true}
-            onValueChange={handleListByGroupIds}
-            value={group}
-            className="fontStyle"
+          <ComboBox
+            xxl={12}
+            xl={12}
+            multi
+            options={groupList}
+            label="گروه کالا"
+            name="group"
+            onChange={handleChangeInputs}
+            value={inputFields?.group}
           />
-        </Col>
-        <Col xl={12} xxl={12} className=" my-2">
-          <Label className="standardLabelFont">کالا</Label>
-          <TagBox
-            dataSource={itemList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="کالا"
-            valueExpr="id"
-            rtlEnabled={true}
-            onValueChange={(e) => setItem(e)}
-            value={item}
-            className="fontStyle"
+          <ComboBox
+            xxl={12}
+            xl={12}
+            multi
+            name="item"
+            options={itemList}
+            label="کالا"
+            onChange={handleChangeInputs}
+            value={inputFields?.item}
           />
-        </Col>
-        <Col xl={12} xxl={12} className=" mt-2">
           <ComboBox
             multi
+            name="locationEnd"
             label="فروشگاه مقصد"
             xxl={12}
             xl={12}
             options={locationList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="فروشگاه مقصد"
-            valueExpr="id"
-            rtlEnabled={true}
-            onChange={(e) => setLocationEnd(e)}
-            value={locationEnd}
-            className="fontStyle"
+            onChange={handleChangeInputs}
+            value={inputFields?.locationEnd}
           />
-        </Col>
+        </Row>
       </Modal>
     </span>
   );

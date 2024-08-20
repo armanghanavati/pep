@@ -126,7 +126,7 @@ const Coppy = ({
           className="mt-0"
           name="startLocation"
           value={inputFields?.startLocation}
-          onChange={(e) => handleChangeInputs("startLocation", e)}
+          onChange={handleChangeInputs}
           options={storeList}
           xxl={6}
           xl={6}

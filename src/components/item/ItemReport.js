@@ -269,12 +269,10 @@ const ItemReport = () => {
               valueExpr="id"
               className="my-2"
               label="گروه کالا:"
-              // error={errors?.itProductGroup}
-              // validations={[["decimal", 4]]}
               name="itProductGroup"
               value={inputFields?.itProductGroup}
               options={productGroupList}
-              onChange={(e) => handleChangeInputs("itProductGroup", e)}
+              onChange={handleChangeInputs}
             />
             <ComboBox
               xxl={6}
@@ -284,7 +282,7 @@ const ItemReport = () => {
               label="نام کالا:"
               name="itsProductName"
               value={inputFields?.itsProductName}
-              onChange={(e) => handleChangeInputs("itsProductName", e)}
+              onChange={handleChangeInputs}
               options={productList}
             />
           </Row>
@@ -297,7 +295,7 @@ const ItemReport = () => {
               label="گروه فروشگاه:"
               name="storeGroup"
               value={inputFields?.storeGroup}
-              onChange={(e) => handleChangeInputs("storeGroup", e)}
+              onChange={handleChangeInputs}
               options={storeList}
             />
             <ComboBox
@@ -308,7 +306,7 @@ const ItemReport = () => {
               label="نام فروشگاه:"
               name="store"
               value={inputFields?.store}
-              onChange={(e) => handleChangeInputs("store", e)}
+              onChange={handleChangeInputs}
               options={storeList}
             />
           </Row>
