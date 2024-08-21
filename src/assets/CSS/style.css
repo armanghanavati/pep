@@ -1,6 +1,6 @@
 .mainBack{
     font-family: IRANSansWeb;
-    background: #f1f1f1;
+    /* background: #f1f1f1; */
     /* background-color: #ffcdcd; */
     direction:rtl;
     display: flex;
@@ -10,7 +10,7 @@
     background-size: 500px 200px; 
     background-image: url('../images/pep_logo.png');
     background-position: center center;
-    
+    z-index: 0 !important;
   }
 
   .standardMargin{    

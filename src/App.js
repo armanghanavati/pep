@@ -182,7 +182,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="mainBack">
+      <div className="">
         {this.props.main.isLoading.stateWait && (
           <Row className="text-center">
             <Col style={{ textAlign: "center", marginTop: "10px" }}>

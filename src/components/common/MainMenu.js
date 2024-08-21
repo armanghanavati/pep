@@ -166,7 +166,7 @@ class MainMenu extends React.Component {
               </div>
             </Col>
           )}
-          <Col style={{ minWidth: "400px" }}>
+          <Col className="mainBack" style={{ minWidth: "400px" }}>
             <div style={{ color: "black" }}>
               <Link id="lnkProfile" to="/Profiles"></Link>
               <Routes>
