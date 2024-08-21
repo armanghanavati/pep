@@ -15,6 +15,8 @@ import GroupAdd from "./GroupAdd";
 import Table from "../common/Tables/Table";
 import { Gfn_FormatNumber } from "../../utiliy/GlobalMethods";
 import SearchIcon from "@mui/icons-material/Search";
+import GroupDelete from "./GroupDelete";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const AllowedToOrder = () => {
   const { users, main } = useSelector((state) => state);
@@ -22,6 +24,7 @@ const AllowedToOrder = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showCopy, setShowCopy] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const columns = [
     {
@@ -153,12 +156,12 @@ const AllowedToOrder = () => {
                 onClick={() => setShowAdd(true)}
                 type="success"
                 icon={<AddIcon className="ms-1 font18 fw-bold" />}
-                label="افزودن"
+                label="افزودن گروهی"
               />
               <Button
-                onClick={() => setShowAdd(true)}
+                onClick={() => setShowDelete(true)}
                 type="success"
-                icon={<AddIcon className="ms-1 font18 fw-bold" />}
+                icon={<DeleteIcon className="ms-1 font18 fw-bold" />}
                 label="حذف گروهی"
               />
               <Button
@@ -177,7 +180,7 @@ const AllowedToOrder = () => {
                 rtlEnabled={true}
               />
             </div>
-            <Row>
+            <Row className="mt-3">
               <ComboBox
                 multi
                 label="فروشگاه"
@@ -224,12 +227,34 @@ const AllowedToOrder = () => {
           </div>
         </Card>
         {showCopy && (
-          <GroupCopy showCopy={showCopy} setShowCopy={setShowCopy} />
+          <GroupCopy
+            locPosSupp={true}
+            showCopy={showCopy}
+            setShowCopy={setShowCopy}
+          />
         )}
         {showEdit && (
-          <GroupEdit showEdit={showEdit} setShowEdit={setShowEdit} />
+          <GroupEdit
+            locPosSupp={true}
+            showEdit={showEdit}
+            setShowEdit={setShowEdit}
+          />
         )}
-        {showAdd && <GroupAdd showAdd={showAdd} setShowAdd={setShowAdd} />}
+        {showDelete && (
+          <GroupDelete
+            locPosSupp={true}
+            showDelete={showDelete}
+            setShowDelete={setShowDelete}
+          />
+        )}
+
+        {showAdd && (
+          <GroupAdd
+            locPosSupp={true}
+            showAdd={showAdd}
+            setShowAdd={setShowAdd}
+          />
+        )}
         <Toastify />
       </Container>
     </>

@@ -266,6 +266,7 @@ const EditTables = ({
           <Row>
             <ComboBox
               multi
+              name="location"
               label="فروشگاه"
               xxl={6}
               xl={6}

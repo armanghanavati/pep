@@ -12,6 +12,7 @@ export default function ComboBox({
   placeholder = "انتخاب کنید ...",
   className,
   disabled,
+  validations,
   options = [],
   label = "",
   value,

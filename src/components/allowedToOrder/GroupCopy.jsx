@@ -1,36 +1,54 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
-import { Col, Label } from "reactstrap";
-import { SelectBox, TagBox } from "devextreme-react";
-import { useDispatch, useSelector } from "react-redux";
-import asyncWrapper from "../../utiliy/asyncWrapper";
-import { userLocationListUserId } from "../../redux/reducers/user/user-actions";
+import CommonFields from "./CommonFields";
 import ComboBox from "../common/ComboBox";
-import { searchItemLocationByLocationIdList } from "../../redux/reducers/location/location-actions";
-import StringHelpers from "../../utiliy/GlobalMethods";
-import DataSource from "devextreme/data/data_source";
-import { copyItemLocationGroup } from "../../redux/reducers/itemLocation/itemLocation-actions";
-import {
-  RsetIsLoading,
-  RsetShowToast,
-} from "../../redux/reducers/main/main-slice";
-import { groupBySupplierId } from "../../redux/reducers/itemGroup/itemGroup-actions";
-import { listByGroupIds } from "../../redux/reducers/item/item-action";
+import { useDispatch, useSelector } from "react-redux";
+import Validation from "../../utiliy/validations";
+import { userLocationListUserId } from "../../redux/reducers/user/user-actions";
+import { positionListWithCompanyId } from "../../redux/reducers/position/position-actions";
+import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
+import asyncWrapper from "../../utiliy/asyncWrapper";
+import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import { Row } from "reactstrap";
 
-const GroupCopy = ({ setShowCopy, showCopy, inventoryList, supplierList }) => {
+const GroupCopy = ({ setShowCopy, showCopy }) => {
   const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
-  const [showCopyModal, setShowCopyModal] = useState(false);
   const [locationList, setLocationList] = useState([]);
   const [location, setLocation] = useState([]);
-  const [locationEnd, setLocationEnd] = useState([]);
-  const [itemList, setItemList] = useState([]);
-  const [item, setItem] = useState([]);
   const [supplier, setSupplier] = useState([]);
-  const [inventory, setInventory] = useState(null);
-  const [groupList, setGroupList] = useState([]);
-  const [group, setGroup] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
+  const [positionList, setPositionList] = useState([]);
+  const [position, setPosition] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [inputFields, setInputFields] = useState({});
+
+  const handleChangeInputs = (
+    name,
+    value,
+    validationNameList = undefined,
+    index
+  ) => {
+    const temp = [];
+    validationNameList &&
+      validationNameList.map((item) => {
+        if (Validation[item[0]](value, item[1]) === true) {
+          return null;
+        } else {
+          temp.push(Validation[item[0]](value, item[1]));
+        }
+      });
+    setErrors((prevstate) => {
+      return { ...prevstate, [name]: [...temp] };
+    });
+    setInputFields((prevstate) => {
+      return { ...prevstate, [name]: value };
+    });
+    console.log(value, name);
+  };
+
+  console.log(inputFields);
 
   const handleLocationList = asyncWrapper(async () => {
     const res = await userLocationListUserId(
@@ -42,34 +60,15 @@ const GroupCopy = ({ setShowCopy, showCopy, inventoryList, supplierList }) => {
 
   useEffect(() => {
     handleLocationList();
+    handleSupplierList();
+    handlePositionList();
   }, []);
 
-  const cmbLocationList = (e) => {
-    setLocation(e);
-  };
-
-  const handleAccept = async () => {
-    const postData = {
-      itemIds: item?.includes(0)
-        ? StringHelpers.fixComboListId(item, itemList?._store?._array)
-        : item,
-      inventoryIds: inventory,
-      locationSoreceId: location,
-      locationDestinationIds: locationEnd,
-    };
-    dispatch(RsetIsLoading({ stateWait: true }));
-    const res = await copyItemLocationGroup(postData);
-    dispatch(RsetIsLoading({ stateWait: false }));
+  const handlePositionList = asyncWrapper(async () => {
+    const res = await positionListWithCompanyId(companies.currentCompanyId);
     const { data, status, message } = res;
     if (status == "Success") {
-      setShowCopyModal(false);
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
+      setPositionList(data);
     } else {
       dispatch(
         RsetShowToast({
@@ -78,93 +77,22 @@ const GroupCopy = ({ setShowCopy, showCopy, inventoryList, supplierList }) => {
           Type: status,
         })
       );
-    }
-  };
-
-  const handleGroupListBySupplier = asyncWrapper(async (e) => {
-    setSupplier(e);
-    console.log(e);
-    dispatch(RsetIsLoading({ stateWait: true }));
-    if (e.includes(0)) {
-      const fixLoop = StringHelpers.fixComboListId(e, supplierList);
-      console.log(fixLoop);
-      const res = await groupBySupplierId(fixLoop);
-      dispatch(RsetIsLoading({ stateWait: false }));
-      const { data, status, message } = res;
-      if (status == "Success") {
-        setGroupList(data);
-      } else {
-        dispatch(
-          RsetShowToast({
-            isToastVisible: true,
-            Message: message || "لطفا دوباره امتحان کنید",
-            Type: status,
-          })
-        );
-      }
-    } else {
-      const res = await groupBySupplierId(e);
-      dispatch(RsetIsLoading({ stateWait: false }));
-      const { data, status, message } = res;
-      if (status == "Success") {
-        setGroupList(data);
-      } else {
-        dispatch(
-          RsetShowToast({
-            isToastVisible: true,
-            Message: message || "لطفا دوباره امتحان کنید",
-            Type: status,
-          })
-        );
-      }
     }
   });
 
-  const handleListByGroupIds = asyncWrapper(async (e) => {
-    setGroup(e);
-    dispatch(RsetIsLoading({ stateWait: true }));
-    if (e.includes(0)) {
-      const fixLoop = StringHelpers.fixComboListId(e, groupList);
-      console.log(fixLoop);
-      const res = await listByGroupIds(fixLoop);
-      dispatch(RsetIsLoading({ stateWait: false }));
-      const { data, status, message } = res;
-      if (status == "Success") {
-        const LAZY = new DataSource({
-          store: data,
-          paginate: true,
-          pageSize: 10,
-        });
-        setItemList(LAZY);
-      } else {
-        dispatch(
-          RsetShowToast({
-            isToastVisible: true,
-            Message: message || "لطفا دوباره امتحان کنید",
-            Type: status,
-          })
-        );
-      }
+  const handleSupplierList = asyncWrapper(async () => {
+    const res = await supplierByCompanyId(companies.currentCompanyId);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setSupplierList(data);
     } else {
-      const res = await listByGroupIds(e);
-      dispatch(RsetIsLoading({ stateWait: false }));
-      const { data, status, message } = res;
-      if (status == "Success") {
-        const LAZY = new DataSource({
-          store: data,
-          paginate: true,
-          pageSize: 10,
-        });
-        setItemList(LAZY);
-      } else {
-        dispatch(
-          RsetShowToast({
-            isToastVisible: true,
-            Message: message || "لطفا دوباره امتحان کنید",
-            Type: status,
-          })
-        );
-      }
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
     }
   });
 
@@ -182,70 +110,75 @@ const GroupCopy = ({ setShowCopy, showCopy, inventoryList, supplierList }) => {
             onClick={() => setShowCopy(false)}
             label="لغو"
           />,
-          <Button type="success" onClick={handleAccept} label="تایید" />,
+          <Button type="success" onClick={() => {}} label="تایید" />,
         ]}
       >
-        <Col xl={12} xxl={12} className=" my-2">
-          <ComboBox
-            label="فروشگاه مبدا"
-            xxl={12}
-            xl={12}
-            showClearButton={false}
-            options={locationList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="فروشگاه مبدا"
-            valueExpr="id"
-            rtlEnabled={true}
-            onChange={cmbLocationList}
-            value={location}
-            className="fontStyle"
-          />
-        </Col>
-        <Col className=" mt-2">
-          <Label className="standardLabelFont">سمت</Label>
-          <TagBox
-            // dataSource={supplierList}
-            searchEnabled={true}
-            displayExpr="label"
-            valueExpr="id"
-            rtlEnabled={true}
-            // onValueChange={handleGroupListBySupplier}
-            // value={supplier}
-            className="fontStyle"
-          />
-        </Col>
-        <Col className=" mt-2">
-          <Label className="standardLabelFont">تامین کننده</Label>
-          <TagBox
-            dataSource={supplierList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="تامین کننده"
-            valueExpr="id"
-            rtlEnabled={true}
-            onValueChange={handleGroupListBySupplier}
-            value={supplier}
-            className="fontStyle"
-          />
-        </Col>
-        <Col xl={12} xxl={12} className=" mt-2">
+        <Row>
           <ComboBox
             multi
-            label="فروشگاه مقصد"
-            xxl={12}
-            xl={12}
+            name="startLocation"
+            label="فروشگاه مبداء"
+            xxl={6}
+            xl={6}
             options={locationList}
-            searchEnabled={true}
-            displayExpr="label"
-            placeholder="فروشگاه مقصد"
-            valueExpr="id"
-            rtlEnabled={true}
-            onChange={(e) => setLocationEnd(e)}
-            value={locationEnd}
-            className="fontStyle"
+            onChange={handleChangeInputs}
+            value={inputFields?.startLocation}
           />
-        </Col>
+          <ComboBox
+            name="startPosition"
+            multi
+            xxl={6}
+            xl={6}
+            options={positionList}
+            rtlEnabled={true}
+            label="سمت  مبداء"
+            displayExpr="positionName"
+            onChange={handleChangeInputs}
+            value={inputFields?.startPosition}
+          />
+          <ComboBox
+            name="startSupplier"
+            multi
+            xxl={6}
+            xl={6}
+            options={supplierList}
+            label="تامین  کننده مبداء"
+            onChange={handleChangeInputs}
+            value={inputFields?.startSupplier}
+          />
+          <ComboBox
+            name="endLocation"
+            multi
+            label="فروشگاه مقصد"
+            xxl={6}
+            xl={6}
+            options={locationList}
+            onChange={handleChangeInputs}
+            value={inputFields?.endLocation}
+          />
+          <ComboBox
+            multi
+            name="endPosition"
+            xxl={6}
+            xl={6}
+            options={positionList}
+            rtlEnabled={true}
+            label="سمت مقصد"
+            displayExpr="positionName"
+            onChange={handleChangeInputs}
+            value={inputFields?.endPosition}
+          />
+          <ComboBox
+            name="endSupplier"
+            multi
+            xxl={6}
+            xl={6}
+            options={supplierList}
+            label="تامین کننده مقصد"
+            onChange={handleChangeInputs}
+            value={inputFields?.endSupplier}
+          />
+        </Row>
       </Modal>
     </span>
   );

@@ -239,12 +239,12 @@ class OrderByUpload extends React.Component {
                         </Row>
                         <Row className="standardPadding">
                             <Col xs="auto">
-                                <Label className="standardLabelFont">انبار مبدا</Label>
+                                <Label className="standardLabelFont">انبار مبداء</Label>
                                 <SelectBox
                                     dataSource={this.state.cmbSourceLocation}
                                     searchEnabled={true}
                                     displayExpr="label"
-                                    placeholder="انبار مبدا"
+                                    placeholder="انبار مبداء"
                                     valueExpr="id"
                                     rtlEnabled={true}
                                     onValueChange={this.cmbSourceLocation_onChange}
