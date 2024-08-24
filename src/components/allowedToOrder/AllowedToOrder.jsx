@@ -16,144 +16,107 @@ import Table from "../common/Tables/Table";
 import { Gfn_FormatNumber } from "../../utiliy/GlobalMethods";
 import SearchIcon from "@mui/icons-material/Search";
 import GroupDelete from "./GroupDelete";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
+import CommonFields from "./CommonFields";
+import { userLocationListUserId } from "../../redux/reducers/user/user-actions";
+import { positionListWithCompanyId } from "../../redux/reducers/position/position-actions";
+import { RsetShowToast } from "../../redux/reducers/main/main-slice";
+import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
+import Validation from "../../utiliy/validations";
 
 const AllowedToOrder = () => {
-  const { users, main } = useSelector((state) => state);
+  const { users, main,companies } = useSelector((state) => state);
   const dispatch = useDispatch();
   const [showAdd, setShowAdd] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
+  const [isEditFields, setIsEditFields] = useState(false);
   const [showCopy, setShowCopy] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [locationList, setLocationList] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
+  const [positionList, setPositionList] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [inputFields, setInputFields] = useState({});
 
-  const columns = [
-    {
-      dataField: 1,
-      caption: "ردیف",
-      allowEditing: false,
-      cellRender: (item) => {
-        return <>{item?.row?.dataIndex + 1}</>;
-      },
-    },
-    {
-      dataField: "LocationId",
-      caption: "فروشگاه",
-      allowEditing: false,
-    },
-    {
-      dataField: "PositionId",
-      caption: "سمت",
-      allowEditing: false,
-      cellRender: ({ data }) => {
-        return <>{Gfn_FormatNumber(data?.PositionId)}</>;
-      },
-    },
-    {
-      dataField: "SupplierId",
-      caption: "تامین کننده",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxOrderNumber",
-      caption: "تعداد مجاز ویرایش (کاهش دادن) سفارش انباری",
-      allowEditing: false,
-      cellRender: ({ data }) => {
-        return <>{Gfn_FormatNumber(data?.maxOrderNumber)}</>;
-      },
-    },
-    {
-      dataField: "MaxIncEditOrderNumber",
-      caption: "تعداد مجاز ویرایش (افزایش دادن) سفارش انباری",
-      allowEditing: false,
-      cellRender: ({ data }) => {
-        return <>{Gfn_FormatNumber(data?.MaxIncEditOrderNumber)}</>;
-      },
-    },
-    {
-      dataField: "maxOrderWeight",
-      caption: "تعداد مجاز سفارش جدید انباری",
-      allowEditing: false,
-      cellRender: ({ data }) => {
-        return <>{Gfn_FormatNumber(data?.maxOrderWeight)}</>;
-      },
-    },
-    {
-      dataField: "maxNewInventoryOrderNumber",
-      caption: "تعداد مجاز سفارش جدید انباری",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxZeroInventoryOrderNumber",
-      caption: "تعداد مجاز صفر کردن سفارش انباری",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxOutRouteNumber",
-      caption: "تعداد ویرایش سفارش بدون برنامه ریزی انباری",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxDecEditSupplierOrderNumber",
-      caption: "تعداد مجاز ویرایش (کم کردن) سفارش دایرکتی",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxIncEditSupplierOrderNumber",
-      caption: "تعداد مجاز ویرایش (افزایش دادن) سفارش دایرکتی",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxNewSupplierOrderNumber",
-      caption: "تعداد مجاز سفارش جدید دایرکتی",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxZeroSupplierOrderNumber",
-      caption: "تعداد مجاز صفر کردن سفارش دایرکتی",
-      allowEditing: false,
-    },
-    {
-      dataField: "maxOutRouteSupplierOrderNumber",
-      caption: "تعداد مجاز صفر کردن سفارش دایرکتی",
-      allowEditing: false,
-    },
-  ];
+  const handleChangeInputs = (
+    name,
+    value,
+    validationNameList = undefined,
+    index
+  ) => {
+    const temp = [];
+    validationNameList &&
+      validationNameList.map((item) => {
+        if (Validation[item[0]](value, item[1]) === true) {
+          return null;
+        } else {
+          temp.push(Validation[item[0]](value, item[1]));
+        }
+      });
+    setErrors((prevstate) => {
+      return { ...prevstate, [name]: [...temp] };
+    });
+    setInputFields((prevstate) => {
+      return { ...prevstate, [name]: value };
+    });
+  };
 
+  const handleLocationList = asyncWrapper(async () => {
+    const res = await userLocationListUserId(
+      users?.userId,
+      companies?.currentCompanyId
+    );
+    setLocationList(res?.data?.data);
+  });
+
+  useEffect(() => {
+    handleLocationList();
+    handleSupplierList();
+    handlePositionList();
+  }, []);
+
+  const handlePositionList = asyncWrapper(async () => {
+    const res = await positionListWithCompanyId(companies.currentCompanyId);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setPositionList(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+
+  const handleSupplierList = asyncWrapper(async () => {
+    const res = await supplierByCompanyId(companies.currentCompanyId);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setSupplierList(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
   return (
     <>
       <Container fluid className="mt-4">
         <MainTitle label="تعداد مجاز سفارش فروشگاه‌ها" />
         <Card className=" shadow bg-white border pointer">
           <div className="m-2">
-            {/* <ComboBox
-              multi
-              label="فروشگاه "
-              xxl={12}
-              xl={12}
-              //   options={locationList}
-              //   onChange={cmbLocationList}
-              //   value={location}
-              className="my-2"
-            />
-            <ComboBox
-              multi
-              //   options={supplierList}
-              label="تامین کنندگان"
-              //   onValueChange={handleGroupListBySupplier}
-              //   value={supplier}
-              className="my-2"
-            />
-            <ComboBox
-              multi
-              //   options={supplierList}
-              label="تامین کنندگان"
-              //   onValueChange={handleGroupListBySupplier}
-              //   value={supplier}
-              className="my-2"
-            /> */}
             <div className="d-flex gap-3">
               <Button
-                onClick={() => setShowAdd(true)}
+                onClick={() => {
+                  setIsEditFields(false);
+                  setShowAdd(true);
+                }}
                 type="success"
                 icon={<AddIcon className="ms-1 font18 fw-bold" />}
                 label="افزودن گروهی"
@@ -166,7 +129,10 @@ const AllowedToOrder = () => {
               />
               <Button
                 type="success"
-                onClick={() => setShowEdit(true)}
+                onClick={() => {
+                  setIsEditFields(true);
+                  setShowAdd(true);
+                }}
                 icon={<EditIcon className="font18" />}
                 label="ویرایش گروهی"
                 className=""
@@ -180,50 +146,48 @@ const AllowedToOrder = () => {
                 rtlEnabled={true}
               />
             </div>
-            <Row className="mt-3">
+            <Row>
               <ComboBox
+                name="location"
                 multi
                 label="فروشگاه"
                 xxl={4}
                 xl={4}
-                // options={locationList}
-                // onChange={cmbLocationList}
-                // value={location}
+                options={locationList}
+                onChange={handleChangeInputs}
+                value={inputFields?.location}
               />
               <ComboBox
+                name="position"
                 multi
                 xxl={4}
                 xl={4}
+                options={positionList}
                 label="سمت"
-                searchEnabled={true}
-                rtlEnabled={true}
+                displayExpr="positionName"
+                onChange={handleChangeInputs}
+                value={inputFields?.position}
               />
               <ComboBox
+                name="supplier"
                 multi
                 xxl={4}
                 xl={4}
-                // options={supplierList}
+                options={supplierList}
                 label="تامین کننده"
-                // onValueChange={handleGroupListBySupplier}
-                // value={supplier}
+                onChange={handleChangeInputs}
+                value={inputFields?.supplier}
               />
-              <Col className="d-flex justify-content-end" xxl={12} xl={12}>
-                <Button
-                  // onClick={() => setShowAdd(true)}
-                  className="mt-2"
-                  type="default"
-                  icon={<SearchIcon className="d-flex ms-2 font18" />}
-                  label="جستجو"
-                />
-              </Col>
             </Row>
-            <Table
-              filterRow
-              headerFilter
-              //   onRowClick={!!permission && handleOnRowClick}
-              columns={columns}
-              allListRF={["allLocationSupplier"]}
-            />
+            <Col className="d-flex justify-content-end" xxl={12} xl={12}>
+              <Button
+                // onClick={() => setShowAdd(true)}
+                className="mt-2"
+                type="default"
+                icon={<SearchIcon className="d-flex ms-2 font18" />}
+                label="جستجو"
+              />
+            </Col>
           </div>
         </Card>
         {showCopy && (
@@ -233,13 +197,6 @@ const AllowedToOrder = () => {
             setShowCopy={setShowCopy}
           />
         )}
-        {showEdit && (
-          <GroupEdit
-            locPosSupp={true}
-            showEdit={showEdit}
-            setShowEdit={setShowEdit}
-          />
-        )}
         {showDelete && (
           <GroupDelete
             locPosSupp={true}
@@ -247,9 +204,9 @@ const AllowedToOrder = () => {
             setShowDelete={setShowDelete}
           />
         )}
-
         {showAdd && (
           <GroupAdd
+            isEditFields={isEditFields}
             locPosSupp={true}
             showAdd={showAdd}
             setShowAdd={setShowAdd}

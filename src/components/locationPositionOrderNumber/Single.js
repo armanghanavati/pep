@@ -95,7 +95,7 @@ class LocationPositionOrderNumber extends React.Component {
       LocationId: null,
       PositionId: null,
       RowSelected: null,
-      LocationPositionOrderNumberGridData: null,
+      // LocationPositionOrderNumberGridData: null,
       stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
@@ -174,7 +174,7 @@ class LocationPositionOrderNumber extends React.Component {
 
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show)
-      this.setState({
+      this.props.setLocationPositionOrderNumberGridData({
         LocationPositionOrderNumberGridData:
           await locationPositionOrderNumberList(
             this.props.Company.currentCompanyId,
@@ -210,36 +210,34 @@ class LocationPositionOrderNumber extends React.Component {
     });
   };
 
-  grdLocationPositionOrderNumber_onClickRow = async (e) => {
-    const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
-    this.setState({
-      LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
-    });
-
-    // this.fn_positionList(this.props.Company.currentCompanyId);
-    // this.fn_locationGroupList(this.props.Company.currentCompanyId);
-
-    this.setState({
-      txtMaxOrderNumberValue: e.data.maxOrderNumber,
-      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
-      txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
-      txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
-      txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
-      txtMaxDecEditSupplierOrderNumberValue:
-        e.data.maxDecEditSupplierOrderNumber,
-      txtMaxIncEditSupplierOrderNumberValue:
-        e.data.maxIncEditSupplierOrderNumber,
-      txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
-      txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
-      txtMaxOutRouteSupplierOrderNumberValue:
-        e.data.maxOutRouteSupplierOrderNumber,
-      stateUpdateDelete: true,
-      RowSelected: e.data,
-      PositionId: e.data.positionId,
-      LocationGroupId: e.data.locationId,
-      LocationId: e.data.locationId,
-    });
-  };
+  // grdLocationPositionOrderNumber_onClickRow = async (e) => {
+  //   const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
+  //   this.setState({
+  //     LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
+  //   });
+  //   // this.fn_positionList(this.props.Company.currentCompanyId);
+  //   // this.fn_locationGroupList(this.props.Company.currentCompanyId);
+  //   this.setState({
+  //     txtMaxOrderNumberValue: e.data.maxOrderNumber,
+  //     txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
+  //     txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
+  //     txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
+  //     txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
+  //     txtMaxDecEditSupplierOrderNumberValue:
+  //       e.data.maxDecEditSupplierOrderNumber,
+  //     txtMaxIncEditSupplierOrderNumberValue:
+  //       e.data.maxIncEditSupplierOrderNumber,
+  //     txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
+  //     txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
+  //     txtMaxOutRouteSupplierOrderNumberValue:
+  //       e.data.maxOutRouteSupplierOrderNumber,
+  //     stateUpdateDelete: true,
+  //     RowSelected: e.data,
+  //     PositionId: e.data.positionId,
+  //     LocationGroupId: e.data.locationId,
+  //     LocationId: e.data.locationId,
+  //   });
+  // };
 
   btnNew_onClick = () => {
     this.setState({
@@ -462,13 +460,6 @@ class LocationPositionOrderNumber extends React.Component {
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
-  };
-
-  btnExportExcel_onClick = () => {
-    Gfn_ExportToExcel(
-      this.state.LocationPositionOrderNumberGridData,
-      "LocationPositionOrderNumber"
-    );
   };
 
   render() {
@@ -819,64 +810,14 @@ class LocationPositionOrderNumber extends React.Component {
           </Row>
         </Card>
         <p></p>
-        <TableOrderNumb
+        {/* <TableOrderNumb
           LocationPositionOrderNumberGridData={
             this.state.LocationPositionOrderNumberGridData
           }
           grdLocationPositionOrderNumber_onClickRow={
             this.grdLocationPositionOrderNumber_onClickRow
           }
-          btnExportExcel_onClick={this.btnExportExcel_onClick}
-        />
-        {/* <Card className="shadow bg-white border pointer">
-          <Row className="standardPadding">
-            <Row>
-              <Label className="title">
-                لیست تعداد مجاز ثبت درخواست فروشگاه
-              </Label>
-            </Row>
-            <Row style={{ direction: "ltr" }}>
-              <Col xs="auto">
-                <Button
-                  icon={ExportExcelIcon}
-                  type="default"
-                  stylingMode="contained"
-                  rtlEnabled={true}
-                  onClick={this.btnExportExcel_onClick}
-                />
-              </Col>
-            </Row>
-            <Row className="standardSpaceTop">
-              <Col xs="auto" className="standardMarginRight">
-                <DataGrid
-                  dataSource={this.state.LocationPositionOrderNumberGridData}
-                  defaultColumns={DataGridLocationPositionOrderNumberColumns}
-                  showBorders={true}
-                  rtlEnabled={true}
-                  allowColumnResizing={true}
-                  onRowClick={this.grdLocationPositionOrderNumber_onClickRow}
-                  height={DataGridDefaultHeight}
-                >
-                  <Scrolling
-                    rowRenderingMode="virtual"
-                    showScrollbar="always"
-                    columnRenderingMode="virtual"
-                  />
-
-                  <Paging defaultPageSize={DataGridDefaultPageSize} />
-                  <Pager
-                    visible={true}
-                    allowedPageSizes={DataGridPageSizes}
-                    showPageSizeSelector={true}
-                    showNavigationButtons={true}
-                  />
-                  <FilterRow visible={true} />
-                  <FilterPanel visible={true} />
-                </DataGrid>
-              </Col>
-            </Row>
-          </Row>
-        </Card> */}
+        /> */}
       </div>
     );
   }

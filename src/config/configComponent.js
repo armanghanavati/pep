@@ -311,7 +311,7 @@ export const REAL_COMPONENT = [
     strComponent: "PrintLabels",
     orgComponent: <PrintLabels />,
   },
-  
+
   // {
   //   strComponent: "DiffItemsSnappReports",
   //   orgComponent: <DiffItemsSnappReports />,

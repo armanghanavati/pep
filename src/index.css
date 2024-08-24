@@ -24,6 +24,11 @@ body * {
   font-family:iranSansFaNum
 }
 
+/* tab bar */
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root{
+  font-family: iranSansFaNum !important;
+}
+
 .cursorPointer{
   cursor: pointer;
 }
