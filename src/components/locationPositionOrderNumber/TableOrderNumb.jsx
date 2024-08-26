@@ -16,28 +16,18 @@ import {
 } from "devextreme-react/data-grid";
 import Button from "../common/Buttons/Button";
 import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
-import ArticleIcon from "@mui/icons-material/Article";
 
 const TableOrderNumb = ({
   btnExportExcel_onClick,
   LocationPositionOrderNumberGridData,
   grdLocationPositionOrderNumber_onClickRow,
 }) => {
+
   return (
     <>
-      <Row>
+      {/* <Row>
         <Label className="title">لیست تعداد مجاز ثبت درخواست فروشگاه</Label>
-      </Row>
-      <Row className="mb-2" style={{ direction: "ltr" }}>
-        <Button
-          icon={<ArticleIcon className="font18 fwbold me-2" />}
-          label="اکسل"
-          type="success"
-          stylingMode="contained"
-          rtlEnabled={true}
-          onClick={btnExportExcel_onClick}
-        />
-      </Row>
+      </Row> */}
       <Row className="standardSpaceTop">
         <Col xs="auto" className="standardMarginRight">
           <DataGrid

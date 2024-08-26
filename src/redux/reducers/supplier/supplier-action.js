@@ -306,10 +306,18 @@ export const copySupplierLocationSupplierLimitList = async (postData) => {
   return response?.data;
 };
 
-export const supplierByCompanyId = async (companyId) => {
+export const insertSupplierListByCompany = async (companyId) => {
   const url =
     window?.apiAddress +
     `/Supplier/supplierListComboByCompanyId?companyId=${companyId}`;
+  const response = await axios.get(url);
+  return response?.data;
+};
+
+export const supplierByCompanyId = async () => {
+  const url =
+    window?.apiAddress +
+    `/Supplier/supplierByLocationPositionOrderNumberList`;
   const response = await axios.get(url);
   return response?.data;
 };

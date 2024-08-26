@@ -11,7 +11,7 @@ export const DataGridLocationPositionOrderNumberColumns = [
   },
   {
     dataField: "supplierName",
-    caption: "نام سمت",
+    caption: "نام تامین کننده",
     allowEditing: false,
   },
 

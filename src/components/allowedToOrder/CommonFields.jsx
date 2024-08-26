@@ -16,89 +16,48 @@ const CommonFields = ({
   errors,
   inputFields,
   handleChangeInputs,
+  locationList,
+  supplierList,
+  positionList,
+  editLcationList,
+  editSupplierList,
+  editPositionList,
 }) => {
-  const dispatch = useDispatch();
-  const { companies, users } = useSelector((state) => state);
-  const [locationList, setLocationList] = useState([]);
-  const [supplierList, setSupplierList] = useState([]);
-  const [positionList, setPositionList] = useState([]);
-
-  const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(
-      users?.userId,
-      companies?.currentCompanyId
-    );
-    setLocationList(res?.data?.data);
-  });
-
-  useEffect(() => {
-    handleLocationList();
-    handleSupplierList();
-    handlePositionList();
-  }, []);
-
-  const handlePositionList = asyncWrapper(async () => {
-    const res = await positionListWithCompanyId(companies.currentCompanyId);
-    const { data, status, message } = res;
-    if (status == "Success") {
-      setPositionList(data);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
-
-  const handleSupplierList = asyncWrapper(async () => {
-    const res = await supplierByCompanyId(companies.currentCompanyId);
-    const { data, status, message } = res;
-    if (status == "Success") {
-      setSupplierList(data);
-    } else {
-      dispatch(
-        RsetShowToast({
-          isToastVisible: true,
-          Message: message || "لطفا دوباره امتحان کنید",
-          Type: status,
-        })
-      );
-    }
-  });
-
   return (
     <>
       <Row>
         <ComboBox
+          error={errors?.location}
+          validations={[["required"]]}
           name="location"
           multi
           label="فروشگاه"
           xxl={6}
           xl={6}
-          options={locationList}
+          options={isEditFields ? editLcationList : locationList}
           onChange={handleChangeInputs}
           value={inputFields?.location}
         />
         <ComboBox
+          error={errors?.position}
+          validations={[["required"]]}
           name="position"
           multi
           xxl={6}
           xl={6}
-          options={positionList}
+          options={isEditFields ? editPositionList : positionList}
           label="سمت"
-          displayExpr="positionName"
           onChange={handleChangeInputs}
           value={inputFields?.position}
         />
         <ComboBox
+          error={errors?.supplier}
+          validations={[["required"]]}
           name="supplier"
           multi
           xxl={6}
           xl={6}
-          options={supplierList}
+          options={isEditFields ? editSupplierList : supplierList}
           label="تامین کننده"
           onChange={handleChangeInputs}
           value={inputFields?.supplier}
@@ -119,6 +78,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxIncEditOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -130,6 +91,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxNewInventoryOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -141,6 +104,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxZeroInventoryOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -152,6 +117,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxOutRouteNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -163,6 +130,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxDecEditSupplierOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -174,6 +143,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxIncEditSupplierOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -185,6 +156,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxNewSupplierOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -196,6 +169,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxZeroSupplierOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}
@@ -207,6 +182,8 @@ const CommonFields = ({
               xl="6"
             />
             <Input
+              error={errors?.maxOutRouteSupplierOrderNumber}
+              validations={[["required"]]}
               className="my-2"
               type="number"
               maxLength={30}

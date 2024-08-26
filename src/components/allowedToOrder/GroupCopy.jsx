@@ -11,6 +11,8 @@ import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-acti
 import asyncWrapper from "../../utiliy/asyncWrapper";
 import { RsetShowToast } from "../../redux/reducers/main/main-slice";
 import { Row } from "reactstrap";
+import { copyLocationPositionOrderNumberGroup } from "../../redux/reducers/locationPositionOrderNumber/locationPositionOrderNumber-actions";
+import StringHelpers from "../../utiliy/GlobalMethods";
 
 const GroupCopy = ({ setShowCopy, showCopy }) => {
   const dispatch = useDispatch();
@@ -96,6 +98,46 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
     }
   });
 
+  const handleAccept = asyncWrapper(async () => {
+    console.log(inputFields?.startLocation);
+    const postData = {
+      locationSourceId:
+        inputFields?.startLocation === 0
+          ? StringHelpers.fixComboId(inputFields?.startLocation, locationList)
+          : inputFields?.startLocation,
+      positionSourceId:
+        inputFields?.startPosition === 0
+          ? StringHelpers.fixComboId(inputFields?.startPosition, positionList)
+          : inputFields?.startPosition,
+      supplierSourceId:
+        inputFields?.startSupplier === 0
+          ? StringHelpers.fixComboId(inputFields?.startSupplier, supplierList)
+          : inputFields?.startSupplier,
+      locationDestinationIds: inputFields?.endLocation?.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.endLocation, locationList)
+        : inputFields?.endLocation,
+      positioDestinationIds: inputFields?.endPosition?.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.endPosition, positionList)
+        : inputFields?.endPosition,
+      supplierDestinationIds: inputFields?.endSupplier?.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.endSupplier, supplierList)
+        : inputFields?.endSupplier,
+    };
+    const res = await copyLocationPositionOrderNumberGroup(postData);
+    const { data, status, message } = res;
+    if (status === "Success") {
+      setShowCopy(false);
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+    console.log(res);
+  });
+
   return (
     <span>
       <Modal
@@ -110,12 +152,11 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
             onClick={() => setShowCopy(false)}
             label="لغو"
           />,
-          <Button type="success" onClick={() => {}} label="تایید" />,
+          <Button type="success" onClick={handleAccept} label="تایید" />,
         ]}
       >
         <Row>
           <ComboBox
-            multi
             name="startLocation"
             label="فروشگاه مبداء"
             xxl={6}
@@ -126,19 +167,16 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
           />
           <ComboBox
             name="startPosition"
-            multi
             xxl={6}
             xl={6}
             options={positionList}
             rtlEnabled={true}
             label="سمت  مبداء"
-            displayExpr="positionName"
             onChange={handleChangeInputs}
             value={inputFields?.startPosition}
           />
           <ComboBox
             name="startSupplier"
-            multi
             xxl={6}
             xl={6}
             options={supplierList}
@@ -164,7 +202,6 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
             options={positionList}
             rtlEnabled={true}
             label="سمت مقصد"
-            displayExpr="positionName"
             onChange={handleChangeInputs}
             value={inputFields?.endPosition}
           />

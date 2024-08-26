@@ -3,6 +3,7 @@ import StringHelpers from "../../utiliy/GlobalMethods";
 
 const Validation = {
   required: (value, message = null) =>
+    // alert("dddd"),
     value === 0 || !!value || message || "پرکردن این فیلد الزامی است",
   digits: (value, length) => {
     if (!value) {

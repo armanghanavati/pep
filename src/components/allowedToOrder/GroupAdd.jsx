@@ -1,20 +1,92 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../common/Modals/Modal";
 import Button from "../common/Buttons/Button";
 import CommonFields from "./CommonFields";
 import asyncWrapper from "../../utiliy/asyncWrapper";
 import Validation from "../../utiliy/validations";
-import { addLocPosOrderNum } from "../../redux/reducers/locationPositionOrderNumber/locationPositionOrderNumber-actions";
+import {
+  addLocPosOrderNum,
+  insertLocationPositionOrderNumberGroup,
+  updateLocationPositionOrderNumberGroup,
+} from "../../redux/reducers/locationPositionOrderNumber/locationPositionOrderNumber-actions";
 import {
   RsetIsLoading,
   RsetShowToast,
 } from "../../redux/reducers/main/main-slice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import StringHelpers from "../../utiliy/GlobalMethods";
+import {
+  userLocationListComboByUserId,
+  userLocationListUserId,
+} from "../../redux/reducers/user/user-actions";
+import {
+  positionListWithCompanyId,
+  supplierByLocationPositionOrderNumberList,
+} from "../../redux/reducers/position/position-actions";
+import { insertSupplierListByCompany, supplierByCompanyId, supplierListByCompany } from "../../redux/reducers/supplier/supplier-action";
 
 const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
-  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
+  const { companies, users } = useSelector((state) => state);
+  const [locationList, setLocationList] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
+  const [positionList, setPositionList] = useState([]);
+  const [editLcationList, setEditLocationList] = useState([]);
+  const [editSupplierList, setEditSupplierList] = useState([]);
+  const [editPositionList, setEditPositionList] = useState([]);
   const [inputFields, setInputFields] = useState({});
+  const [errors, setErrors] = useState({});
+
+  const handleValidation = (inputsName = []) => {
+    const err = { ...errors };
+    inputsName.map((item) => {
+      if (
+        inputFields[item] === undefined ||
+        inputFields[item] === null ||
+        JSON.stringify(inputFields[item])?.trim() === ""
+      ) {
+        console.log(inputFields[item]);
+        err[item] = ["پرکردن این فیلد الزامی است"];
+      }
+    });
+    setErrors(err);
+    return err;
+  };
+
+  const permitForNextStep = (inputsName = []) => {
+    const error = handleValidation(inputsName);
+    for (var key in error) {
+      if (error[key]?.length > 0) {
+        if (inputsName.includes(key)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const questionError = (e) => {
+    if (
+      permitForNextStep([
+        "maxOrderNumber",
+        "maxOrderNumber",
+        "maxIncEditOrderNumber",
+        "maxNewInventoryOrderNumber",
+        "maxZeroInventoryOrderNumber",
+        "maxOutRouteNumber",
+        "maxDecEditSupplierOrderNumber",
+        "maxIncEditSupplierOrderNumber",
+        "maxNewSupplierOrderNumber",
+        "maxZeroSupplierOrderNumber",
+        "maxOutRouteSupplierOrderNumber",
+        "location",
+        "position",
+        "supplier",
+      ]) === true
+    ) {
+      handleAccept();
+    }
+  };
 
   const handleChangeInputs = (
     name,
@@ -31,6 +103,7 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
           temp.push(Validation[item[0]](value, item[1]));
         }
       });
+    console.log(validationNameList, Validation);
     setErrors((prevstate) => {
       return { ...prevstate, [name]: [...temp] };
     });
@@ -41,9 +114,15 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
 
   const handleAccept = asyncWrapper(async () => {
     const postData = {
-      locationIds: inputFields?.location,
-      positionIds: inputFields?.position,
-      supplierIds: inputFields?.supplier,
+      locationIds: inputFields?.location.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.location, locationList)
+        : inputFields?.location,
+      positionIds: inputFields?.position?.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.position, positionList)
+        : inputFields?.position,
+      supplierIds: inputFields?.supplier?.includes(0)
+        ? StringHelpers.fixComboListId(inputFields?.supplier, supplierList)
+        : inputFields?.supplier,
       maxOrderNumber: inputFields?.maxOrderNumber,
       maxIncEditOrderNumber: inputFields?.maxIncEditOrderNumber,
       maxNewInventoryOrderNumber: inputFields?.maxNewInventoryOrderNumber,
@@ -57,12 +136,79 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
         inputFields?.maxOutRouteSupplierOrderNumber,
     };
     dispatch(RsetIsLoading({ stateWait: true }));
-    const res = await addLocPosOrderNum(postData);
-    dispatch(RsetIsLoading({ stateWait: false }));
+    if (isEditFields) {
+      const res = await updateLocationPositionOrderNumberGroup(postData);
+      dispatch(RsetIsLoading({ stateWait: false }));
+      const { data, status, message } = res;
+      console.log(res);
+      if (status === "Success") {
+        setShowAdd(false);
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      } else {
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      }
+    } else {
+      const res = await insertLocationPositionOrderNumberGroup(postData);
+      dispatch(RsetIsLoading({ stateWait: false }));
+      const { data, status, message } = res;
+      if (status === "Success") {
+        setShowAdd(false);
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      } else {
+        dispatch(
+          RsetShowToast({
+            isToastVisible: true,
+            Message: message || "لطفا دوباره امتحان کنید",
+            Type: status,
+          })
+        );
+      }
+    }
+  });
+
+  const handleLocationList = asyncWrapper(async () => {
+    const res = await userLocationListUserId(
+      users?.userId,
+      companies?.currentCompanyId
+    );
+    setLocationList(res?.data?.data);
+  });
+
+  useEffect(() => {
+    if (!isEditFields) {
+      handleEditLocationList();
+      handleEditSupplierList();
+    } else {
+      handleLocationList();
+      handleSupplierList();
+      handlePositionList();
+    }
+  }, []);
+
+  const handleEditSupplierList = asyncWrapper(async () => {
+    const res = await insertSupplierListByCompany();
     const { data, status, message } = res;
-    console.log(res);
-    if (status === "Success") {
-      setShowAdd(false);
+    if (status == "Success") {
+      setEditSupplierList(data);
+    } else {
       dispatch(
         RsetShowToast({
           isToastVisible: true,
@@ -70,6 +216,47 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
           Type: status,
         })
       );
+    }
+  });
+  
+  // سرویس فروشگاه برای ویرایش
+  const handleEditLocationList = asyncWrapper(async () => {
+    const res = await userLocationListComboByUserId(companies.currentCompanyId);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setEditLocationList(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+
+  const handlePositionList = asyncWrapper(async () => {
+    const res = await positionListWithCompanyId(companies.currentCompanyId);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setPositionList(data);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+  
+  const handleSupplierList = asyncWrapper(async () => {
+    const res = await supplierByCompanyId(companies.currentCompanyId);
+    const { data, status, message } = res;
+    if (status == "Success") {
+      setSupplierList(data);
     } else {
       dispatch(
         RsetShowToast({
@@ -95,10 +282,19 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
             onClick={() => setShowAdd(false)}
             label="لغو"
           />,
-          <Button type="success" onClick={handleAccept} label="تایید" />,
+          <Button type="success" onClick={questionError} label="تایید" />,
         ]}
       >
         <CommonFields
+          editLcationList={editLcationList}
+          editSupplierList={editSupplierList}
+          editPositionList={editPositionList}
+          locationList={locationList}
+          setLocationList={setLocationList}
+          supplierList={supplierList}
+          setSupplierList={setSupplierList}
+          positionList={positionList}
+          setPositionList={setPositionList}
           errors={errors}
           inputFields={inputFields}
           handleChangeInputs={handleChangeInputs}

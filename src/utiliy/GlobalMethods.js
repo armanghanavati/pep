@@ -282,16 +282,23 @@ export default class StringHelpers {
       return undefined;
     }
   };
+
   static fixComboListId(field, data) {
-    console.log(field, data);
-    const test = data?.some((item) => {
+    const findZeroId = data?.some((item) => {
       return item?.id === 0;
     });
-    console.log(test);
-    if (test) {
+    if (findZeroId) {
       return data?.map((item) => item?.id);
     } else {
       return field?.map((item) => item?.id);
+    }
+  }
+  static fixComboId(field, list) {
+    console.log(field, list);
+    if (field === 0) {
+      return list?.map((item) => item?.id);
+    } else {
+      return field;
     }
   }
   static sliderThree = (value) => {

@@ -262,9 +262,20 @@ export async function updateProfile(Object, Token) {
   return 0;
 }
 
-export const userLocationListUserId = async (userId, companyId) => {
+export const userLocationListComboByUserId = async (userId, companyId) => {
   const url =
     window.apiAddress +
-    "/User/userLocationListCombo?userId="+userId+"&companyId="+companyId;
+    "/User/userLocationListCombo?userId=" +
+    userId +
+    "&companyId=" +
+    companyId;
+  return axios.get(url);
+};
+
+export const userLocationListUserId = async (userId) => {
+  const url =
+    window.apiAddress +
+    "/Location/locationByLocationPositionOrderNumberList?userId=" +
+    userId;
   return axios.get(url);
 };

@@ -57,7 +57,8 @@
 }
 
 label {
-  font-weight: bold;
+  font-weight: thin;
+  font-size: 14px;
 }
 
 #content {
@@ -68,5 +69,3 @@ label {
 #content h2 {
   font-size: 26px;
 }
-
-/* --------------------------------- */

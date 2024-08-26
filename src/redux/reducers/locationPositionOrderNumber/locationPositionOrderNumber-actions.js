@@ -71,6 +71,7 @@ export async function updateLocationPositionOrderNumber(Object, Token) {
 export async function deleteLocationPositionOrderNumber(
   locationId,
   positionId,
+  supplier,
   Token
 ) {
   const url =
@@ -78,7 +79,9 @@ export async function deleteLocationPositionOrderNumber(
     "/LocationPositionOrderNumber/deleteLocationPositionOrderNumber?locationId=" +
     locationId +
     "&positionId=" +
-    positionId;
+    positionId +
+    "&supplierId=" +
+    supplier;
   const response = await fetch(url, {
     method: "DELETE",
     headers: {
@@ -97,10 +100,48 @@ export async function deleteLocationPositionOrderNumber(
 }
 
 // افزودن
-export const addLocPosOrderNum = async (postData) => {
+export const insertLocationPositionOrderNumberGroup = async (postData) => {
   const url =
     window.apiAddress +
-    `/LocationPositionOrderNumber/addLocationPositionOrderNumber`;
+    `/LocationPositionOrderNumber/insertLocationPositionOrderNumberGroup`;
   const response = await axios.post(url, postData);
+  return response?.data;
+};
+
+// ویرایش
+export const updateLocationPositionOrderNumberGroup = async (postData) => {
+  const url =
+    window.apiAddress +
+    `/LocationPositionOrderNumber/updateLocationPositionOrderNumberGroup`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};
+
+// کپی
+export const copyLocationPositionOrderNumberGroup = async (postData) => {
+  const url =
+    window.apiAddress +
+    `/LocationPositionOrderNumber/copyLocationPositionOrderNumberGroup`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};
+
+// جستجو
+export const selectLocationPositionOrderNumber = async (postData) => {
+  const url =
+    window.apiAddress +
+    `/LocationPositionOrderNumber/selectLocationPositionOrderNumber`;
+  const response = await axios.post(url, postData);
+  return response?.data;
+};
+
+// حذف
+export const deleteLocationPositionSupplierOrderNumberGroup = async (
+  postData
+) => {
+  const url =
+    window.apiAddress +
+    `/LocationPositionOrderNumber/DeleteLocationPositionSupplierOrderNumberGroup`;
+  const response = await axios.delete(url, postData);
   return response?.data;
 };

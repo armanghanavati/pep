@@ -77,6 +77,8 @@ import DeleteIcon from "../../assets/images/icon/delete.png";
 import { ElevenMp } from "@mui/icons-material";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import TableOrderNumb from "./TableOrderNumb";
+import asyncWrapper from "../../utiliy/asyncWrapper";
+import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 
 class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
@@ -97,6 +99,8 @@ class LocationPositionOrderNumber extends React.Component {
       RowSelected: null,
       // LocationPositionOrderNumberGridData: null,
       stateUpdateDelete: true,
+      supplierList: null,
+      supplier: null,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
       stateDisable_show: false,
@@ -115,6 +119,7 @@ class LocationPositionOrderNumber extends React.Component {
   async componentDidMount() {
     await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
+    await this.handleSupplierList();
     await this.fn_locationGroupList(this.props.Company.currentCompanyId);
     await this.fn_positionList(this.props.Company.currentCompanyId);
     this.fn_updateGrid();
@@ -174,13 +179,12 @@ class LocationPositionOrderNumber extends React.Component {
 
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show)
-      this.props.setLocationPositionOrderNumberGridData({
-        LocationPositionOrderNumberGridData:
-          await locationPositionOrderNumberList(
-            this.props.Company.currentCompanyId,
-            this.props.User.token
-          ),
-      });
+      this.props.setLocationPositionOrderNumberGridData(
+        await locationPositionOrderNumberList(
+          this.props.Company.currentCompanyId,
+          this.props.User.token
+        )
+      );
   };
 
   cmbLocationGroup_onChange = async (e) => {
@@ -204,13 +208,14 @@ class LocationPositionOrderNumber extends React.Component {
       LocationId: e,
     });
   };
+
   cmbPosition_onChange = (e) => {
     this.setState({
       PositionId: e,
     });
   };
 
-  // grdLocationPositionOrderNumber_onClickRow = async (e) => {
+  // grdLocationPositionOrderNumber_onClickRow = (e) => {
   //   const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
   //   this.setState({
   //     LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
@@ -246,6 +251,7 @@ class LocationPositionOrderNumber extends React.Component {
       LocationGroupId: null,
       LocationId: null,
       PositionId: null,
+      supplier: null,
       stateUpdateDelete: false,
     });
   };
@@ -255,6 +261,7 @@ class LocationPositionOrderNumber extends React.Component {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
+        supplierId: this.state.supplier,
         maxOrderNumber: parseInt(this.state.txtMaxOrderNumberValue),
         maxOutRouteNumber: parseInt(this.state.txtMaxOutRouteNumberValue),
         maxIncEditOrderNumber: parseInt(
@@ -400,6 +407,7 @@ class LocationPositionOrderNumber extends React.Component {
       const data = {
         locationId: this.state.LocationId,
         positionId: this.state.PositionId,
+        supplierId: this.state.supplier,
         maxOrderNumber: parseInt(this.state.txtMaxOrderNumberValue),
         maxOutRouteNumber: parseInt(this.state.txtMaxOutRouteNumberValue),
         maxIncEditOrderNumber: parseInt(
@@ -446,6 +454,7 @@ class LocationPositionOrderNumber extends React.Component {
     const MSG = await deleteLocationPositionOrderNumber(
       this.state.LocationId,
       this.state.PositionId,
+      this.state.supplier,
       this.props.User.token
     );
     this.setState({
@@ -460,6 +469,21 @@ class LocationPositionOrderNumber extends React.Component {
 
   onHidingToast = () => {
     this.setState({ ToastProps: { isToastVisible: false } });
+  };
+
+  handleSupplierList = asyncWrapper(async () => {
+    const res = await supplierByCompanyId(this.props.Company.currentCompanyId);
+    const { data, status, message } = res;
+    console.log(data);
+    if (status == "Success") {
+      this.setState({ supplierList: data });
+    }
+  });
+
+  cmbSupplier_onChange = (e) => {
+    this.setState({
+      supplier: e,
+    });
   };
 
   render() {
@@ -547,6 +571,25 @@ class LocationPositionOrderNumber extends React.Component {
                 <Row>
                   <Label
                     id="errPosition"
+                    className="standardLabelFont errMessage"
+                  />
+                </Row>
+              </Col>
+              <Col xs="auto">
+                <Label className="standardLabelFont">تامین کننده</Label>
+                <SelectBox
+                  dataSource={this.state.supplierList}
+                  displayExpr="label"
+                  placeholder="تامین کننده"
+                  valueExpr="id"
+                  searchEnabled={true}
+                  rtlEnabled={true}
+                  onValueChange={this.cmbSupplier_onChange}
+                  value={this.state.supplier}
+                />
+                <Row>
+                  <Label
+                    id="errSupplier"
                     className="standardLabelFont errMessage"
                   />
                 </Row>
@@ -822,6 +865,7 @@ class LocationPositionOrderNumber extends React.Component {
     );
   }
 }
+
 const mapStateToProps = (state) => ({
   User: state.users,
   Company: state.companies,

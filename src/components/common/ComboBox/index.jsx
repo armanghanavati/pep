@@ -45,7 +45,6 @@ export default function ComboBox({
           name={name}
           rtlEnabled={true}
           onValueChange={handleChange}
-          className={`${error && "border border-danger"} `}
         />
       ) : (
         <SelectBox
@@ -62,13 +61,12 @@ export default function ComboBox({
           value={value}
           onValueChange={handleChange}
           rtlEnabled={true}
-          className="fontStyle"
         />
       )}
       <span className="">
         {error &&
           error.map((err, index) => (
-            <span key={`${name}-errors-${index}`} className="text-danger">
+            <span key={`${name}-errors-${index}`} className="font12 text-danger">
               {err}
             </span>
           ))}

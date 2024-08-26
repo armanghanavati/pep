@@ -121,7 +121,14 @@ export async function searchPositionByUserId(userId, companyId, Token) {
 
 export const positionListWithCompanyId = async (companyId) => {
   const url =
-    window?.apiAddress + `/Position/positionList?companyId=${companyId}`;
+    window?.apiAddress + `/Position/positionByLocationPositionOrderNumberList?companyId=${companyId}`;
+  const response = await axios.get(url);
+  return response?.data;
+};
+
+export const supplierByLocationPositionOrderNumberList = async () => {
+  const url =
+    window?.apiAddress + `/Supplier/supplierByLocationPositionOrderNumberList`;
   const response = await axios.get(url);
   return response?.data;
 };
