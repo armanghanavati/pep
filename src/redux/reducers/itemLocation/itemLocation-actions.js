@@ -42,3 +42,10 @@ export const copyItemLocationGroup = async (postData) => {
   console.log(response);
   return response?.data;
 };
+
+export const userLocationListByUserId = async (userId, companyId) => {
+  const url =
+    window.apiAddress +
+    "/User/userLocationListCombo?userId="+userId+"&companyId="+companyId;
+  return axios.get(url);
+};

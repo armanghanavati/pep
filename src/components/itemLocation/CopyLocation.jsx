@@ -10,7 +10,10 @@ import ComboBox from "../common/ComboBox";
 import { searchItemLocationByLocationIdList } from "../../redux/reducers/location/location-actions";
 import StringHelpers from "../../utiliy/GlobalMethods";
 import DataSource from "devextreme/data/data_source";
-import { copyItemLocationGroup } from "../../redux/reducers/itemLocation/itemLocation-actions";
+import {
+  copyItemLocationGroup,
+  userLocationListByUserId,
+} from "../../redux/reducers/itemLocation/itemLocation-actions";
 import {
   RsetIsLoading,
   RsetShowToast,
@@ -39,10 +42,11 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
   const [errors, setErrors] = useState({});
   const [inputFields, setInputFields] = useState({});
 
-  console.log(inputFields);
-
   const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(users?.userId);
+    const res = await userLocationListByUserId(
+      users?.userId,
+      companies?.currentCompanyId
+    );
     setLocationList(res?.data);
   });
 
