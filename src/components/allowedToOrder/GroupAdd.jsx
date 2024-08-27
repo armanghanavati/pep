@@ -19,11 +19,12 @@ import {
   userLocationListComboByUserId,
   userLocationListUserId,
 } from "../../redux/reducers/user/user-actions";
+import { positionListWithCompanyId } from "../../redux/reducers/position/position-actions";
 import {
-  positionListWithCompanyId,
-  supplierByLocationPositionOrderNumberList,
-} from "../../redux/reducers/position/position-actions";
-import { insertSupplierListByCompany, supplierByCompanyId, supplierListByCompany } from "../../redux/reducers/supplier/supplier-action";
+  insertSupplierListByCompany,
+  supplierByCompanyId,
+  supplierListByCompany,
+} from "../../redux/reducers/supplier/supplier-action";
 
 const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
   const dispatch = useDispatch();
@@ -184,30 +185,30 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
     }
   });
 
-  const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(
-      users?.userId,
-      companies?.currentCompanyId
-    );
-    setLocationList(res?.data?.data);
+  const handleEditLocationList = asyncWrapper(async () => {
+    const res = await userLocationListUserId(users?.userId);
+    console.log(res);
+    setLocationList(res?.data);
   });
 
   useEffect(() => {
     if (!isEditFields) {
+      // افزودن
+      handleAddLocationList();
+      handleAddSupplierList();
+    } else {
+      // ویرایش
       handleEditLocationList();
       handleEditSupplierList();
-    } else {
-      handleLocationList();
-      handleSupplierList();
-      handlePositionList();
     }
+    handlePositionList();
   }, []);
 
-  const handleEditSupplierList = asyncWrapper(async () => {
-    const res = await insertSupplierListByCompany();
+  const handleAddSupplierList = asyncWrapper(async () => {
+    const res = await insertSupplierListByCompany(companies?.currentCompanyId);
     const { data, status, message } = res;
     if (status == "Success") {
-      setEditSupplierList(data);
+      setSupplierList(data);
     } else {
       dispatch(
         RsetShowToast({
@@ -218,13 +219,17 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
       );
     }
   });
-  
-  // سرویس فروشگاه برای ویرایش
-  const handleEditLocationList = asyncWrapper(async () => {
-    const res = await userLocationListComboByUserId(companies.currentCompanyId);
+
+  // سرویس فروشگاه برای افزودن
+  const handleAddLocationList = asyncWrapper(async () => {
+    const res = await userLocationListComboByUserId(
+      users?.userId,
+      companies?.currentCompanyId
+    );
+    console.log(res);
     const { data, status, message } = res;
     if (status == "Success") {
-      setEditLocationList(data);
+      setLocationList(data);
     } else {
       dispatch(
         RsetShowToast({
@@ -237,7 +242,7 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
   });
 
   const handlePositionList = asyncWrapper(async () => {
-    const res = await positionListWithCompanyId(companies.currentCompanyId);
+    const res = await positionListWithCompanyId(companies?.currentCompanyId);
     const { data, status, message } = res;
     if (status == "Success") {
       setPositionList(data);
@@ -251,9 +256,9 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
       );
     }
   });
-  
-  const handleSupplierList = asyncWrapper(async () => {
-    const res = await supplierByCompanyId(companies.currentCompanyId);
+
+  const handleEditSupplierList = asyncWrapper(async () => {
+    const res = await supplierByCompanyId(companies?.currentCompanyId);
     const { data, status, message } = res;
     if (status == "Success") {
       setSupplierList(data);
@@ -286,9 +291,6 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
         ]}
       >
         <CommonFields
-          editLcationList={editLcationList}
-          editSupplierList={editSupplierList}
-          editPositionList={editPositionList}
           locationList={locationList}
           setLocationList={setLocationList}
           supplierList={supplierList}

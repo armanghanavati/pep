@@ -42,11 +42,8 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
   console.log(inputFields);
 
   const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(
-      users?.userId,
-      companies?.currentCompanyId
-    );
-    setLocationList(res?.data?.data);
+    const res = await userLocationListUserId(users?.userId);
+    setLocationList(res?.data);
   });
 
   useEffect(() => {

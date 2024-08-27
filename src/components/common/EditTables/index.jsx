@@ -51,11 +51,8 @@ const EditTables = ({
   const [groupList, setGroupList] = useState([]);
 
   const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(
-      users?.userId,
-      companies?.currentCompanyId
-    );
-    setLocationList(res?.data?.data);
+    const res = await userLocationListUserId(users?.userId);
+    setLocationList(res?.data);
   });
 
   const handleGroupListBySupplier = asyncWrapper(async (e) => {

@@ -316,8 +316,7 @@ export const insertSupplierListByCompany = async (companyId) => {
 
 export const supplierByCompanyId = async () => {
   const url =
-    window?.apiAddress +
-    `/Supplier/supplierByLocationPositionOrderNumberList`;
+    window?.apiAddress + `/Supplier/supplierByLocationPositionOrderNumberList`;
   const response = await axios.get(url);
   return response?.data;
 };

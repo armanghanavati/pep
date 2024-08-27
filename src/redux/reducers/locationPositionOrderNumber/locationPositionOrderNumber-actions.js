@@ -136,12 +136,29 @@ export const selectLocationPositionOrderNumber = async (postData) => {
 };
 
 // حذف
+// export const deleteLocationPositionSupplierOrderNumberGroup = async (
+//   postData
+// ) => {
+//   const url =
+//     window.apiAddress +
+//     ``;
+//   console.log(url, postData);
+//   const response = await axios.delete(url, postData);
+//   console.log(response);
+//   return response?.data;
+// };
+
 export const deleteLocationPositionSupplierOrderNumberGroup = async (
   postData
 ) => {
   const url =
     window.apiAddress +
-    `/LocationPositionOrderNumber/DeleteLocationPositionSupplierOrderNumberGroup`;
-  const response = await axios.delete(url, postData);
-  return response?.data;
+    "/LocationPositionOrderNumber/DeleteLocationPositionSupplierOrderNumberGroup";
+  const result = await axios.delete(url, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: postData,
+  });
+  return result?.data;
 };

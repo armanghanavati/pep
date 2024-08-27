@@ -74,6 +74,8 @@ const GroupDelete = ({ setShowDelete, showDelete, isEditFields }) => {
     });
   };
 
+  console.log(inputFields);
+
   const handleAccept = asyncWrapper(async () => {
     const postData = {
       locationIds: inputFields?.location?.includes(0)
@@ -86,7 +88,6 @@ const GroupDelete = ({ setShowDelete, showDelete, isEditFields }) => {
         ? StringHelpers.fixComboListId(inputFields?.supplier, supplierList)
         : inputFields?.supplier,
     };
-    console.log(postData);
     dispatch(RsetIsLoading({ stateWait: true }));
     const res = await deleteLocationPositionSupplierOrderNumberGroup(postData);
     dispatch(RsetIsLoading({ stateWait: false }));
@@ -113,11 +114,9 @@ const GroupDelete = ({ setShowDelete, showDelete, isEditFields }) => {
   });
 
   const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(
-      users?.userId,
-      companies?.currentCompanyId
-    );
-    setLocationList(res?.data?.data);
+    const res = await userLocationListUserId(users?.userId);
+    console.log(res);
+    setLocationList(res?.data);
   });
 
   useEffect(() => {

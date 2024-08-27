@@ -119,16 +119,11 @@ export async function searchPositionByUserId(userId, companyId, Token) {
   return null;
 }
 
+// main position
 export const positionListWithCompanyId = async (companyId) => {
   const url =
-    window?.apiAddress + `/Position/positionByLocationPositionOrderNumberList?companyId=${companyId}`;
-  const response = await axios.get(url);
-  return response?.data;
-};
-
-export const supplierByLocationPositionOrderNumberList = async () => {
-  const url =
-    window?.apiAddress + `/Supplier/supplierByLocationPositionOrderNumberList`;
+    window?.apiAddress +
+    `/Position/positionByLocationPositionOrderNumberList?companyId=${companyId}`;
   const response = await axios.get(url);
   return response?.data;
 };

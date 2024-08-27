@@ -18,7 +18,7 @@ import {
 import { groupBySupplierId } from "../../redux/reducers/itemGroup/itemGroup-actions";
 import { listByGroupIds } from "../../redux/reducers/item/item-action";
 
-const GroupEdit = ({ showEdit, setShowEdit , supplierList }) => {
+const GroupEdit = ({ showEdit, setShowEdit, supplierList }) => {
   const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
   const [locationList, setLocationList] = useState([]);
@@ -32,11 +32,8 @@ const GroupEdit = ({ showEdit, setShowEdit , supplierList }) => {
   const [group, setGroup] = useState([]);
 
   const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(
-      users?.userId,
-      companies?.currentCompanyId
-    );
-    setLocationList(res?.data?.data);
+    const res = await userLocationListUserId(users?.userId);
+    setLocationList(res?.data);
   });
 
   useEffect(() => {

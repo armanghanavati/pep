@@ -269,13 +269,16 @@ export const userLocationListComboByUserId = async (userId, companyId) => {
     userId +
     "&companyId=" +
     companyId;
-  return axios.get(url);
+  const response = await axios.get(url);
+  return response?.data;
 };
 
+// all location without add
 export const userLocationListUserId = async (userId) => {
   const url =
     window.apiAddress +
     "/Location/locationByLocationPositionOrderNumberList?userId=" +
     userId;
-  return axios.get(url);
+  const response = await axios.get(url);
+  return response?.data;
 };

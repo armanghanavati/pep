@@ -7,12 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import Validation from "../../utiliy/validations";
 import { userLocationListUserId } from "../../redux/reducers/user/user-actions";
 import { positionListWithCompanyId } from "../../redux/reducers/position/position-actions";
-import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 import asyncWrapper from "../../utiliy/asyncWrapper";
 import { RsetShowToast } from "../../redux/reducers/main/main-slice";
 import { Row } from "reactstrap";
 import { copyLocationPositionOrderNumberGroup } from "../../redux/reducers/locationPositionOrderNumber/locationPositionOrderNumber-actions";
 import StringHelpers from "../../utiliy/GlobalMethods";
+import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 
 const GroupCopy = ({ setShowCopy, showCopy }) => {
   const dispatch = useDispatch();
@@ -53,11 +53,8 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
   console.log(inputFields);
 
   const handleLocationList = asyncWrapper(async () => {
-    const res = await userLocationListUserId(
-      users?.userId,
-      companies?.currentCompanyId
-    );
-    setLocationList(res?.data?.data);
+    const res = await userLocationListUserId(users?.userId);
+    setLocationList(res?.data);
   });
 
   useEffect(() => {

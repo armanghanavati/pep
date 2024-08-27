@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import asyncWrapper from "../../utiliy/asyncWrapper";
 import { userLocationListUserId } from "../../redux/reducers/user/user-actions";
 import { RsetShowToast } from "../../redux/reducers/main/main-slice";
-import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 import { positionListWithCompanyId } from "../../redux/reducers/position/position-actions";
 import { Col, Row } from "reactstrap";
 import Input from "../common/Inputs/Input";
@@ -34,7 +33,7 @@ const CommonFields = ({
           label="فروشگاه"
           xxl={6}
           xl={6}
-          options={isEditFields ? editLcationList : locationList}
+          options={locationList}
           onChange={handleChangeInputs}
           value={inputFields?.location}
         />
@@ -45,7 +44,7 @@ const CommonFields = ({
           multi
           xxl={6}
           xl={6}
-          options={isEditFields ? editPositionList : positionList}
+          options={positionList}
           label="سمت"
           onChange={handleChangeInputs}
           value={inputFields?.position}
@@ -57,7 +56,7 @@ const CommonFields = ({
           multi
           xxl={6}
           xl={6}
-          options={isEditFields ? editSupplierList : supplierList}
+          options={supplierList}
           label="تامین کننده"
           onChange={handleChangeInputs}
           value={inputFields?.supplier}

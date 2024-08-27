@@ -4,6 +4,7 @@ import { RsetMessageModal, RsetShowToast } from "../reducers/main/main-slice";
 
 axios.interceptors.request.use(
   function (config) {
+    console.log(config);
     config.headers["Content-Type"] = "application/json; charset=utf-8";
 
     const tokenId = !!store?.getState()?.users?.token;
@@ -20,6 +21,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   async function (response) {
+    console.log(response);
     // const rowMsgMod = response?.data?.message?.split("//");
     // const allRowMsgMod = rowMsgMod?.map((item) => (
     //   <ul className="px-4 py-2">
