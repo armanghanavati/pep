@@ -16,7 +16,6 @@ import {
   ModalFooter,
 } from "reactstrap";
 import classnames from "classnames";
-import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import TextBox from "devextreme-react/text-box";
 import TextArea from "devextreme-react/text-area";
 import SelectBox from "devextreme-react/select-box";
@@ -45,9 +44,9 @@ import DataGrid, {
 import {
   DataGridPageSizes,
   DataGridDefaultPageSize,
+  DataGridDefaultHeight,
   ToastTime,
   ToastWidth,
-  DataGridDefaultHeight,
 } from "../../config/config";
 import { Gfn_ExportToExcel } from "../../utiliy/GlobalMethods";
 import {
@@ -74,14 +73,11 @@ import PlusNewIcon from "../../assets/images/icon/plus.png";
 import SaveIcon from "../../assets/images/icon/save.png";
 import UpdateIcon from "../../assets/images/icon/update.png";
 import DeleteIcon from "../../assets/images/icon/delete.png";
+import ExportExcelIcon from "../../assets/images/icon/export_excel.png";
 import { ElevenMp } from "@mui/icons-material";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
-import TableOrderNumb from "./TableOrderNumb";
 import asyncWrapper from "../../utiliy/asyncWrapper";
-import {
-  insertSupplierListByCompany,
-  supplierByCompanyId,
-} from "../../redux/reducers/supplier/supplier-action";
+import { insertSupplierListByCompany } from "../../redux/reducers/supplier/supplier-action";
 
 class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
@@ -100,10 +96,10 @@ class LocationPositionOrderNumber extends React.Component {
       LocationId: null,
       PositionId: null,
       RowSelected: null,
-      // LocationPositionOrderNumberGridData: null,
-      stateUpdateDelete: true,
+      LocationPositionOrderNumberGridData: null,
       supplierList: null,
       supplier: null,
+      stateUpdateDelete: true,
       stateDisable_btnAdd: false,
       stateDisable_btnUpdate: false,
       stateDisable_show: false,
@@ -120,9 +116,9 @@ class LocationPositionOrderNumber extends React.Component {
   }
 
   async componentDidMount() {
+    await this.handleSupplierList();
     await this.fn_GetPermissions();
     await this.fn_CheckRequireState();
-    await this.handleSupplierList();
     await this.fn_locationGroupList(this.props.Company.currentCompanyId);
     await this.fn_positionList(this.props.Company.currentCompanyId);
     this.fn_updateGrid();
@@ -182,12 +178,13 @@ class LocationPositionOrderNumber extends React.Component {
 
   fn_updateGrid = async () => {
     if (this.state.stateDisable_show)
-      this.props.setLocationPositionOrderNumberGridData(
-        await locationPositionOrderNumberList(
-          this.props.Company.currentCompanyId,
-          this.props.User.token
-        )
-      );
+      this.setState({
+        LocationPositionOrderNumberGridData:
+          await locationPositionOrderNumberList(
+            this.props.Company.currentCompanyId,
+            this.props.User.token
+          ),
+      });
   };
 
   cmbLocationGroup_onChange = async (e) => {
@@ -211,21 +208,22 @@ class LocationPositionOrderNumber extends React.Component {
       LocationId: e,
     });
   };
-
   cmbPosition_onChange = (e) => {
     this.setState({
       PositionId: e,
     });
   };
 
-  grdLocationPositionOrderNumber_onClickRow = (e) => {
+  grdLocationPositionOrderNumber_onClickRow = async (e) => {
     const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
     this.setState({
       LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
     });
+
     // this.fn_positionList(this.props.Company.currentCompanyId);
     // this.fn_locationGroupList(this.props.Company.currentCompanyId);
-    this.props.editRow({
+
+    this.setState({
       txtMaxOrderNumberValue: e.data.maxOrderNumber,
       txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
       txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
@@ -255,6 +253,7 @@ class LocationPositionOrderNumber extends React.Component {
       LocationId: null,
       PositionId: null,
       supplier: null,
+
       stateUpdateDelete: false,
     });
   };
@@ -474,6 +473,19 @@ class LocationPositionOrderNumber extends React.Component {
     this.setState({ ToastProps: { isToastVisible: false } });
   };
 
+  btnExportExcel_onClick = () => {
+    Gfn_ExportToExcel(
+      this.state.LocationPositionOrderNumberGridData,
+      "LocationPositionOrderNumber"
+    );
+  };
+
+  cmbSupplier_onChange = (e) => {
+    this.setState({
+      supplier: e,
+    });
+  };
+
   handleSupplierList = asyncWrapper(async () => {
     const res = await insertSupplierListByCompany(
       this.props.Company.currentCompanyId
@@ -486,12 +498,6 @@ class LocationPositionOrderNumber extends React.Component {
       this.setState({ supplierList: fixZeroId });
     }
   });
-
-  cmbSupplier_onChange = (e) => {
-    this.setState({
-      supplier: e,
-    });
-  };
 
   render() {
     return (
@@ -860,19 +866,59 @@ class LocationPositionOrderNumber extends React.Component {
           </Row>
         </Card>
         <p></p>
-        {/* <TableOrderNumb
-          LocationPositionOrderNumberGridData={
-            this.state.LocationPositionOrderNumberGridData
-          }
-          grdLocationPositionOrderNumber_onClickRow={
-            this.grdLocationPositionOrderNumber_onClickRow
-          }
-        /> */}
+        <Card className="shadow bg-white border pointer">
+          <Row className="standardPadding">
+            <Row>
+              <Label className="title">
+                لیست تعداد مجاز ثبت درخواست فروشگاه
+              </Label>
+            </Row>
+            <Row style={{ direction: "ltr" }}>
+              <Col xs="auto">
+                <Button
+                  icon={ExportExcelIcon}
+                  type="default"
+                  stylingMode="contained"
+                  rtlEnabled={true}
+                  onClick={this.btnExportExcel_onClick}
+                />
+              </Col>
+            </Row>
+            <Row className="standardSpaceTop">
+              <Col xs="auto" className="standardMarginRight">
+                <DataGrid
+                  dataSource={this.state.LocationPositionOrderNumberGridData}
+                  defaultColumns={DataGridLocationPositionOrderNumberColumns}
+                  showBorders={true}
+                  rtlEnabled={true}
+                  allowColumnResizing={true}
+                  onRowClick={this.grdLocationPositionOrderNumber_onClickRow}
+                  height={DataGridDefaultHeight}
+                >
+                  <Scrolling
+                    rowRenderingMode="virtual"
+                    showScrollbar="always"
+                    columnRenderingMode="virtual"
+                  />
+
+                  <Paging defaultPageSize={DataGridDefaultPageSize} />
+                  <Pager
+                    visible={true}
+                    allowedPageSizes={DataGridPageSizes}
+                    showPageSizeSelector={true}
+                    showNavigationButtons={true}
+                  />
+                  <FilterRow visible={true} />
+                  <FilterPanel visible={true} />
+                </DataGrid>
+              </Col>
+            </Row>
+          </Row>
+        </Card>
       </div>
     );
   }
 }
-
 const mapStateToProps = (state) => ({
   User: state.users,
   Company: state.companies,

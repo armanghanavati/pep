@@ -196,12 +196,13 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
     const { data, status, message } = res;
     console.log(data);
     if (status == "Success") {
+      let temp = [];
       const fixData = data?.map((item) => ({
         id: item?.id,
         label: item?.positionName,
       }));
-      console.log(fixData);
-      setPositionList(fixData);
+      temp.push({ id: 0, label: "همه" }, ...fixData);
+      setPositionList(temp);
     } else {
       dispatch(
         RsetShowToast({
@@ -249,9 +250,9 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
       users?.userId,
       companies?.currentCompanyId
     );
-    console.log(res);
     const { data, status, message } = res;
     if (status == "Success") {
+      console.log(data);
       setLocationList(data);
     } else {
       dispatch(

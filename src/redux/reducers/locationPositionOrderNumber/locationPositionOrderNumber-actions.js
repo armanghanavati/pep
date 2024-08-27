@@ -162,3 +162,12 @@ export const deleteLocationPositionSupplierOrderNumberGroup = async (
   });
   return result?.data;
 };
+
+export const listTablePositionOrderNumb = async (companyId) => {
+  const url =
+    window.apiAddress +
+    "/LocationPositionOrderNumber/locationPositionOrderNumberList?companyId=" +
+    companyId;
+  const response = await axios.get(url);
+  return response?.data;
+};
