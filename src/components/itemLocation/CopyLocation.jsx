@@ -47,7 +47,8 @@ const CopyLocation = ({ inventoryList, supplierList }) => {
       users?.userId,
       companies?.currentCompanyId
     );
-    setLocationList(res?.data);
+    console.log(res);
+    setLocationList(res?.data?.data);
   });
 
   useEffect(() => {
