@@ -36,7 +36,7 @@ const LocationPositionOrderNumber = () => {
   const [locationList, setLocationList] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
   const [positionList, setPositionList] = useState([]);
-
+  const [editRow, setEditRow] = useState({});
   const [inputFields, setInputFields] = useState({});
   const handleChangeInputs = (
     name,
@@ -69,32 +69,34 @@ const LocationPositionOrderNumber = () => {
 
   const grdLocationPositionOrderNumber_onClickRow = (e) => {
     console.log(e);
+    // ---------------------------------------------------------------------------------
     // const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
     // this.setState({
     //   LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
     // });
+    // // ---------------------------------------------------------------------------------
     // this.fn_positionList(this.props.Company.currentCompanyId);
     // this.fn_locationGroupList(this.props.Company.currentCompanyId);
-    // this.setState({
-    //   txtMaxOrderNumberValue: e.data.maxOrderNumber,
-    //   txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
-    //   txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
-    //   txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
-    //   txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
-    //   txtMaxDecEditSupplierOrderNumberValue:
-    //     e.data.maxDecEditSupplierOrderNumber,
-    //   txtMaxIncEditSupplierOrderNumberValue:
-    //     e.data.maxIncEditSupplierOrderNumber,
-    //   txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
-    //   txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
-    //   txtMaxOutRouteSupplierOrderNumberValue:
-    //     e.data.maxOutRouteSupplierOrderNumber,
-    //   stateUpdateDelete: true,
-    //   RowSelected: e.data,
-    //   PositionId: e.data.positionId,
-    //   LocationGroupId: e.data.locationId,
-    //   LocationId: e.data.locationId,
-    // });
+    setEditRow({
+      txtMaxOrderNumberValue: e.data.maxOrderNumber,
+      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
+      txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
+      txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
+      txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
+      txtMaxDecEditSupplierOrderNumberValue:
+        e.data.maxDecEditSupplierOrderNumber,
+      txtMaxIncEditSupplierOrderNumberValue:
+        e.data.maxIncEditSupplierOrderNumber,
+      txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
+      txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
+      txtMaxOutRouteSupplierOrderNumberValue:
+        e.data.maxOutRouteSupplierOrderNumber,
+      stateUpdateDelete: true,
+      RowSelected: e.data,
+      PositionId: e.data.positionId,
+      LocationGroupId: e.data.locationId,
+      LocationId: e.data.locationId,
+    });
   };
 
   const handleLocationList = asyncWrapper(async () => {
@@ -186,6 +188,7 @@ const LocationPositionOrderNumber = () => {
             </TabList>
             <TabPanel value="1">
               <Single
+                editRow={editRow}
                 LocationPositionOrderNumberGridData={
                   locationPositionOrderNumberGridData
                 }

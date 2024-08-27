@@ -127,3 +127,10 @@ export const positionListWithCompanyId = async (companyId) => {
   const response = await axios.get(url);
   return response?.data;
 };
+
+export const positionListByCompanyId = async (companyId) => {
+  const url =
+    window.apiAddress + "/Position/positionList?companyId=" + companyId;
+  const response = await axios.get(url);
+  return response?.data;
+};
