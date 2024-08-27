@@ -19,7 +19,10 @@ import {
   userLocationListComboByUserId,
   userLocationListUserId,
 } from "../../redux/reducers/user/user-actions";
-import { positionListWithCompanyId } from "../../redux/reducers/position/position-actions";
+import {
+  positionListByCompanyId,
+  positionListWithCompanyId,
+} from "../../redux/reducers/position/position-actions";
 import {
   insertSupplierListByCompany,
   supplierByCompanyId,
@@ -32,9 +35,6 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
   const [locationList, setLocationList] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
   const [positionList, setPositionList] = useState([]);
-  const [editLcationList, setEditLocationList] = useState([]);
-  const [editSupplierList, setEditSupplierList] = useState([]);
-  const [editPositionList, setEditPositionList] = useState([]);
   const [inputFields, setInputFields] = useState({});
   const [errors, setErrors] = useState({});
 
@@ -191,17 +191,40 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
     setLocationList(res?.data);
   });
 
+  const handleAddPositionList = asyncWrapper(async () => {
+    const res = await positionListByCompanyId(companies?.currentCompanyId);
+    const { data, status, message } = res;
+    console.log(data);
+    if (status == "Success") {
+      const fixData = data?.map((item) => ({
+        id: item?.id,
+        label: item?.positionName,
+      }));
+      console.log(fixData);
+      setPositionList(fixData);
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
+    }
+  });
+
   useEffect(() => {
     if (!isEditFields) {
       // افزودن
       handleAddLocationList();
       handleAddSupplierList();
+      handleAddPositionList();
     } else {
       // ویرایش
       handleEditLocationList();
       handleEditSupplierList();
+      handleEditPositionList();
     }
-    handlePositionList();
   }, []);
 
   const handleAddSupplierList = asyncWrapper(async () => {
@@ -241,7 +264,7 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
     }
   });
 
-  const handlePositionList = asyncWrapper(async () => {
+  const handleEditPositionList = asyncWrapper(async () => {
     const res = await positionListWithCompanyId(companies?.currentCompanyId);
     const { data, status, message } = res;
     if (status == "Success") {

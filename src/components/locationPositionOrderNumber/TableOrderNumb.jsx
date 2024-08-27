@@ -10,6 +10,7 @@ import { DataGrid } from "devextreme-react";
 import {
   FilterPanel,
   FilterRow,
+  HeaderFilter,
   Pager,
   Paging,
   Scrolling,
@@ -22,7 +23,6 @@ const TableOrderNumb = ({
   LocationPositionOrderNumberGridData,
   grdLocationPositionOrderNumber_onClickRow,
 }) => {
-
   return (
     <>
       {/* <Row>
@@ -53,6 +53,10 @@ const TableOrderNumb = ({
               showNavigationButtons={true}
             />
             <FilterRow visible={true} />
+            <HeaderFilter
+              texts={{ cancel: "لغو", ok: "تایید" }}
+              visible={true}
+            />
             <FilterPanel visible={true} />
           </DataGrid>
         </Col>

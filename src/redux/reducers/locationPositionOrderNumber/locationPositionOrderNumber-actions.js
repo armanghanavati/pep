@@ -113,7 +113,7 @@ export const updateLocationPositionOrderNumberGroup = async (postData) => {
   const url =
     window.apiAddress +
     `/LocationPositionOrderNumber/updateLocationPositionOrderNumberGroup`;
-  const response = await axios.post(url, postData);
+  const response = await axios.patch(url, postData);
   return response?.data;
 };
 

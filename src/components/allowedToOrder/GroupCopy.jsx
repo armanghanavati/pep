@@ -18,11 +18,8 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
   const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
   const [locationList, setLocationList] = useState([]);
-  const [location, setLocation] = useState([]);
-  const [supplier, setSupplier] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
   const [positionList, setPositionList] = useState([]);
-  const [position, setPosition] = useState([]);
   const [errors, setErrors] = useState({});
   const [inputFields, setInputFields] = useState({});
 
@@ -49,8 +46,6 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
     });
     console.log(value, name);
   };
-
-  console.log(inputFields);
 
   const handleLocationList = asyncWrapper(async () => {
     const res = await userLocationListUserId(users?.userId);
@@ -96,7 +91,6 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
   });
 
   const handleAccept = asyncWrapper(async () => {
-    console.log(inputFields?.startLocation);
     const postData = {
       locationSourceId:
         inputFields?.startLocation === 0
@@ -131,9 +125,24 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
           Type: status,
         })
       );
+    } else {
+      dispatch(
+        RsetShowToast({
+          isToastVisible: true,
+          Message: message || "لطفا دوباره امتحان کنید",
+          Type: status,
+        })
+      );
     }
-    console.log(res);
   });
+
+  const fixLocationRemoveZeroId = locationList?.filter((item) => item?.id > 0);
+  const fixPositionListRemoveZeroId = positionList?.filter(
+    (item) => item?.id > 0
+  );
+  const fixSupplierListRemoveZeroId = supplierList?.filter(
+    (item) => item?.id > 0
+  );
 
   return (
     <span>
@@ -158,7 +167,7 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
             label="فروشگاه مبداء"
             xxl={6}
             xl={6}
-            options={locationList}
+            options={fixLocationRemoveZeroId}
             onChange={handleChangeInputs}
             value={inputFields?.startLocation}
           />
@@ -166,7 +175,7 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
             name="startPosition"
             xxl={6}
             xl={6}
-            options={positionList}
+            options={fixPositionListRemoveZeroId}
             rtlEnabled={true}
             label="سمت  مبداء"
             onChange={handleChangeInputs}
@@ -176,7 +185,7 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
             name="startSupplier"
             xxl={6}
             xl={6}
-            options={supplierList}
+            options={fixSupplierListRemoveZeroId}
             label="تامین  کننده مبداء"
             onChange={handleChangeInputs}
             value={inputFields?.startSupplier}

@@ -78,7 +78,10 @@ import { ElevenMp } from "@mui/icons-material";
 import { userLocationList } from "../../redux/reducers/user/user-actions";
 import TableOrderNumb from "./TableOrderNumb";
 import asyncWrapper from "../../utiliy/asyncWrapper";
-import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
+import {
+  insertSupplierListByCompany,
+  supplierByCompanyId,
+} from "../../redux/reducers/supplier/supplier-action";
 
 class LocationPositionOrderNumber extends React.Component {
   constructor(props) {
@@ -215,34 +218,34 @@ class LocationPositionOrderNumber extends React.Component {
     });
   };
 
-  // grdLocationPositionOrderNumber_onClickRow = (e) => {
-  //   const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
-  //   this.setState({
-  //     LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
-  //   });
-  //   // this.fn_positionList(this.props.Company.currentCompanyId);
-  //   // this.fn_locationGroupList(this.props.Company.currentCompanyId);
-  //   this.setState({
-  //     txtMaxOrderNumberValue: e.data.maxOrderNumber,
-  //     txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
-  //     txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
-  //     txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
-  //     txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
-  //     txtMaxDecEditSupplierOrderNumberValue:
-  //       e.data.maxDecEditSupplierOrderNumber,
-  //     txtMaxIncEditSupplierOrderNumberValue:
-  //       e.data.maxIncEditSupplierOrderNumber,
-  //     txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
-  //     txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
-  //     txtMaxOutRouteSupplierOrderNumberValue:
-  //       e.data.maxOutRouteSupplierOrderNumber,
-  //     stateUpdateDelete: true,
-  //     RowSelected: e.data,
-  //     PositionId: e.data.positionId,
-  //     LocationGroupId: e.data.locationId,
-  //     LocationId: e.data.locationId,
-  //   });
-  // };
+  grdLocationPositionOrderNumber_onClickRow = (e) => {
+    const LOCATIONS = [{ id: e.data.locationId, label: e.data.locationName }];
+    this.setState({
+      LocationList: LOCATIONS, //await location(e.data.locationId, this.props.User.token),
+    });
+    // this.fn_positionList(this.props.Company.currentCompanyId);
+    // this.fn_locationGroupList(this.props.Company.currentCompanyId);
+    this.props.editRow({
+      txtMaxOrderNumberValue: e.data.maxOrderNumber,
+      txtMaxOutRouteNumberValue: e.data.maxOutRouteNumber,
+      txtMaxIncEditOrderNumberValue: e.data.maxIncEditOrderNumber,
+      txtMaxNewInventoryOrderNumberValue: e.data.maxNewInventoryOrderNumber,
+      txtMaxZeroInventoryOrderNumberValue: e.data.maxZeroInventoryOrderNumber,
+      txtMaxDecEditSupplierOrderNumberValue:
+        e.data.maxDecEditSupplierOrderNumber,
+      txtMaxIncEditSupplierOrderNumberValue:
+        e.data.maxIncEditSupplierOrderNumber,
+      txtMaxNewSupplierOrderNumberValue: e.data.maxNewSupplierOrderNumber,
+      txtMaxZeroSupplierOrderNumberValue: e.data.maxZeroSupplierOrderNumber,
+      txtMaxOutRouteSupplierOrderNumberValue:
+        e.data.maxOutRouteSupplierOrderNumber,
+      stateUpdateDelete: true,
+      RowSelected: e.data,
+      PositionId: e.data.positionId,
+      LocationGroupId: e.data.locationId,
+      LocationId: e.data.locationId,
+    });
+  };
 
   btnNew_onClick = () => {
     this.setState({
@@ -472,11 +475,15 @@ class LocationPositionOrderNumber extends React.Component {
   };
 
   handleSupplierList = asyncWrapper(async () => {
-    const res = await supplierByCompanyId(this.props.Company.currentCompanyId);
+    const res = await insertSupplierListByCompany(
+      this.props.Company.currentCompanyId
+    );
     const { data, status, message } = res;
     console.log(data);
     if (status == "Success") {
-      this.setState({ supplierList: data });
+      const fixZeroId = data?.filter((item) => item?.id > 0);
+
+      this.setState({ supplierList: fixZeroId });
     }
   });
 
