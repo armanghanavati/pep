@@ -144,10 +144,8 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
       console.log(res);
       if (status === "Success") {
         setShowAdd(false);
-        console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-        mountLists()
-        console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRR");
-        dispatch(
+        mountLists();
+        dispatch( 
           RsetShowToast({
             isToastVisible: true,
             Message: message || "لطفا دوباره امتحان کنید",
@@ -163,13 +161,14 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
           })
         );
       }
+      
     } else {
       const res = await insertLocationPositionOrderNumberGroup(postData);
       dispatch(RsetIsLoading({ stateWait: false }));
       const { data, status, message } = res;
       if (status === "Success") {
         setShowAdd(false);
-        mountLists()
+        mountLists();
         dispatch(
           RsetShowToast({
             isToastVisible: true,
