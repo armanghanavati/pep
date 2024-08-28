@@ -14,7 +14,7 @@ import { copyLocationPositionOrderNumberGroup } from "../../redux/reducers/locat
 import StringHelpers from "../../utiliy/GlobalMethods";
 import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 
-const GroupCopy = ({ setShowCopy, showCopy }) => {
+const GroupCopy = ({ setShowCopy, showCopy, mountLists }) => {
   const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
   const [locationList, setLocationList] = useState([]);
@@ -118,6 +118,7 @@ const GroupCopy = ({ setShowCopy, showCopy }) => {
     const { data, status, message } = res;
     if (status === "Success") {
       setShowCopy(false);
+      mountLists();
       dispatch(
         RsetShowToast({
           isToastVisible: true,

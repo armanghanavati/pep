@@ -29,7 +29,7 @@ import {
   supplierListByCompany,
 } from "../../redux/reducers/supplier/supplier-action";
 
-const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
+const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
   const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
   const [locationList, setLocationList] = useState([]);
@@ -144,6 +144,9 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
       console.log(res);
       if (status === "Success") {
         setShowAdd(false);
+        console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+        mountLists()
+        console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRR");
         dispatch(
           RsetShowToast({
             isToastVisible: true,
@@ -166,6 +169,7 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields }) => {
       const { data, status, message } = res;
       if (status === "Success") {
         setShowAdd(false);
+        mountLists()
         dispatch(
           RsetShowToast({
             isToastVisible: true,

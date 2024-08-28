@@ -10,7 +10,6 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ComboBox from "../common/ComboBox";
 import AddIcon from "@mui/icons-material/Add";
 import GroupCopy from "./GroupCopy";
-import GroupEdit from "./GroupEdit";
 import GroupAdd from "./GroupAdd";
 import Table from "../common/Tables/Table";
 import StringHelpers, {
@@ -84,11 +83,15 @@ const AllowedToOrder = () => {
     setLocationList(res?.data);
   });
 
-  useEffect(() => {
+  const mountLists = () => {
     handleLocationList();
     handleSupplierList();
     handlePositionList();
     listTable();
+  };
+
+  useEffect(() => {
+    mountLists();
   }, []);
 
   const handlePositionList = asyncWrapper(async () => {
@@ -260,6 +263,7 @@ const AllowedToOrder = () => {
       </div>
       {showCopy && (
         <GroupCopy
+          mountLists={mountLists}
           isEditFields={isEditFields}
           locPosSupp={true}
           showCopy={showCopy}
@@ -268,6 +272,7 @@ const AllowedToOrder = () => {
       )}
       {showDelete && (
         <GroupDelete
+          mountLists={mountLists}
           isEditFields={isEditFields}
           locPosSupp={true}
           showDelete={showDelete}
@@ -276,6 +281,7 @@ const AllowedToOrder = () => {
       )}
       {showAdd && (
         <GroupAdd
+          mountLists={mountLists}
           isEditFields={isEditFields}
           locPosSupp={true}
           showAdd={showAdd}

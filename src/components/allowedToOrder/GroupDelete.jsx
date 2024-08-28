@@ -20,7 +20,12 @@ import { userLocationListUserId } from "../../redux/reducers/user/user-actions";
 import { positionListWithCompanyId } from "../../redux/reducers/position/position-actions";
 import { supplierByCompanyId } from "../../redux/reducers/supplier/supplier-action";
 
-const GroupDelete = ({ setShowDelete, showDelete, isEditFields }) => {
+const GroupDelete = ({
+  setShowDelete,
+  showDelete,
+  isEditFields,
+  mountLists,
+}) => {
   const dispatch = useDispatch();
   const { companies, users } = useSelector((state) => state);
   const [locationList, setLocationList] = useState([]);
@@ -94,6 +99,7 @@ const GroupDelete = ({ setShowDelete, showDelete, isEditFields }) => {
     const { data, status, message } = res;
     console.log(res);
     if (status === "Success") {
+      mountLists();
       setShowDelete(false);
       dispatch(
         RsetShowToast({

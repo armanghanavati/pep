@@ -17,7 +17,7 @@ import MainTitle from "../common/MainTitles/MailTitle";
 
 const LocationPositionOrderNumber = () => {
   const [value, setValue] = useState("1");
-  
+
   return (
     <>
       <MainTitle className="mt-4" label="تعداد مجاز سفارش فروشگاه‌ها" />
