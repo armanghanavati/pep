@@ -66,7 +66,7 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
     return true;
   };
 
-  const questionError = (e) => {
+  const questionAcceptError = (e) => {
     if (
       permitForNextStep([
         "maxOrderNumber",
@@ -85,6 +85,12 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
         "supplier",
       ]) === true
     ) {
+      handleAccept();
+    }
+  };
+
+  const questionEditError = (e) => {
+    if (permitForNextStep(["location", "position", "supplier"]) === true) {
       handleAccept();
     }
   };
@@ -115,7 +121,7 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
 
   const handleAccept = asyncWrapper(async () => {
     const postData = {
-      locationIds: inputFields?.location.includes(0)
+      locationIds: inputFields?.location?.includes(0)
         ? StringHelpers.fixComboListId(inputFields?.location, locationList)
         : inputFields?.location,
       positionIds: inputFields?.position?.includes(0)
@@ -124,17 +130,22 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
       supplierIds: inputFields?.supplier?.includes(0)
         ? StringHelpers.fixComboListId(inputFields?.supplier, supplierList)
         : inputFields?.supplier,
-      maxOrderNumber: inputFields?.maxOrderNumber,
-      maxIncEditOrderNumber: inputFields?.maxIncEditOrderNumber,
-      maxNewInventoryOrderNumber: inputFields?.maxNewInventoryOrderNumber,
-      maxZeroInventoryOrderNumber: inputFields?.maxZeroInventoryOrderNumber,
-      maxOutRouteNumber: inputFields?.maxOutRouteNumber,
-      maxDecEditSupplierOrderNumber: inputFields?.maxDecEditSupplierOrderNumber,
-      maxIncEditSupplierOrderNumber: inputFields?.maxIncEditSupplierOrderNumber,
-      maxNewSupplierOrderNumber: inputFields?.maxNewSupplierOrderNumber,
-      maxZeroSupplierOrderNumber: inputFields?.maxZeroSupplierOrderNumber,
+      maxIncEditOrderNumber: inputFields?.maxIncEditOrderNumber || null,
+      maxOrderNumber: inputFields?.maxOrderNumber || null,
+      maxNewInventoryOrderNumber:
+        inputFields?.maxNewInventoryOrderNumber || null,
+      maxZeroInventoryOrderNumber:
+        inputFields?.maxZeroInventoryOrderNumber || null,
+      maxOutRouteNumber: inputFields?.maxOutRouteNumber || null,
+      maxDecEditSupplierOrderNumber:
+        inputFields?.maxDecEditSupplierOrderNumber || null,
+      maxIncEditSupplierOrderNumber:
+        inputFields?.maxIncEditSupplierOrderNumber || null,
+      maxNewSupplierOrderNumber: inputFields?.maxNewSupplierOrderNumber || null,
+      maxZeroSupplierOrderNumber:
+        inputFields?.maxZeroSupplierOrderNumber || null,
       maxOutRouteSupplierOrderNumber:
-        inputFields?.maxOutRouteSupplierOrderNumber,
+        inputFields?.maxOutRouteSupplierOrderNumber || null,
     };
     dispatch(RsetIsLoading({ stateWait: true }));
     if (isEditFields) {
@@ -145,7 +156,7 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
       if (status === "Success") {
         setShowAdd(false);
         mountLists();
-        dispatch( 
+        dispatch(
           RsetShowToast({
             isToastVisible: true,
             Message: message || "لطفا دوباره امتحان کنید",
@@ -161,7 +172,6 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
           })
         );
       }
-      
     } else {
       const res = await insertLocationPositionOrderNumberGroup(postData);
       dispatch(RsetIsLoading({ stateWait: false }));
@@ -314,7 +324,11 @@ const GroupAdd = ({ showAdd, setShowAdd, isEditFields, mountLists }) => {
             onClick={() => setShowAdd(false)}
             label="لغو"
           />,
-          <Button type="success" onClick={questionError} label="تایید" />,
+          <Button
+            type="success"
+            onClick={!isEditFields ? questionAcceptError : questionEditError}
+            label="تایید"
+          />,
         ]}
       >
         <CommonFields

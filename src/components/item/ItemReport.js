@@ -119,8 +119,6 @@ const ItemReport = () => {
     }
   };
 
-  console.log(productGroupList);
-
   const handleProductGP = asyncWrapper(async (e) => {
     const res = await itemComboByItemGroupIdList(e);
     console.log(res);
