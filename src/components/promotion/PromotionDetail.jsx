@@ -437,6 +437,7 @@ const PromotionDetail = ({
             allListRF={productList}
             allowDeleting
             // allowEditing
+            headerFilter
             allowUpdating
             columns={columnsProduct}
             filterRow

@@ -177,7 +177,7 @@ class MainMenu extends React.Component {
                 ></Route>
               </Routes>
             </div>
-            <div style={{ color: "black" }}>
+            <div className="mt-5" style={{ color: "black" }}>
               <Link id="lnkRoute" to={this.state.linkPath}></Link>
               <Routes>
                 <Route
